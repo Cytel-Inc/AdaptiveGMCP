@@ -3,9 +3,9 @@
 #' Function to perform Adaptive GMCP by using Combined P-Value(Inverse Normal) by user input P-values
 #' @param K  Number of looks(default = 3)
 #' @param D  Number of Hypothesis(default = 4)
-#' @param WI Vector of Initial Weights for Global Null(default = equal weights)
-#' @param G  Transition Matrix (default = equal distribution)
-#' @param Threshold Vector of Critical points to reject H0i in terms of p-values in the interim looks
+#' @param WI Vector of Initial Weights for Global Null(default = rep(1/4,4))
+#' @param G  Transition Matrix (default = matrix(c(0,1/3,1/3,1/3,  1/3,0,1/3,1/3, 1/3,1/3,0,1/3, 1/3,1/3,1/3,0),nrow = 4))
+#' @param Threshold Vector of Critical points to reject H0i in terms of p-values in the interim looks (default = c(0.001,0.0015,0.025))
 #' @param Correlation Matrix of correlation between test statistics, NA if the correlation is unknown
 #' @param ShowGraph Logical, If set as True graphs will be printed
 
@@ -16,7 +16,8 @@ adaptGMCP_PC <- function(
     G = matrix(c(0,1/3,1/3,1/3,  1/3,0,1/3,1/3, 1/3,1/3,0,1/3, 1/3,1/3,1/3,0),nrow = 4),
     Threshold = c(0.001,0.0015,0.025),
     Correlation = matrix(c(1,0.5,NA,NA,  0.5,1,NA,NA,  NA,NA,1,NA, NA,NA,NA,1),nrow = 4),
-    Selection=T, ShowGraph = F
+    Selection=T,
+    ShowGraph = F
 )
 {
   GlobalIndexSet <- paste("H",1:D, sep ='')
@@ -25,21 +26,28 @@ adaptGMCP_PC <- function(
   WH <- as.data.frame(generateWeights(G, WI))
   colnames(WH) <- c(GlobalIndexSet, paste("Weight",1:D, sep = ''))
 
-  rej_flag_Prev <- rej_flag_Curr <-  rep(FALSE, D)
-  names(rej_flag_Prev) <- names(rej_flag_Curr) <- paste("H",1:D, sep = '')
+  rej_flag_Prev <- rej_flag_Curr <- DropedFlag <- rep(FALSE, D)
+  names(rej_flag_Prev) <- names(rej_flag_Curr) <- names(DropedFlag) <-paste("H",1:D, sep = '')
 
 
-  mcpObj <- list('CurrentLook'= NA, 'IndexSet'= GlobalIndexSet,
-                 'p_raw' = NA, 'WH'= WH,
-                 'Correlation' = Correlation,'AdjPValues' = NA,'CutOff' = NA,
+  mcpObj <- list('CurrentLook'= NA,
+                 'IndexSet'= GlobalIndexSet,
+                 'p_raw' = NA,
+                 'WH'= WH,
+                 'Correlation' = Correlation,
+                 'AdjPValues' = NA,
+                 'CutOff' = NA,
                  'rej_flag_Prev'= rej_flag_Prev ,
                  'rej_flag_Curr'= rej_flag_Curr,
-                 'SelectionLook'= c(), 'SelectedIndex'=NA)
+                 'SelectionLook'= c(),
+                 'SelectedIndex'=NA,
+                 'DropedFlag'=DropedFlag,
+                 'LastLook'=K)
 
 
-  look = 1; StopTrial = F
+  look = 1; ContTrial = T
 
-  while(look <= K || !StopTrial) ## Loop for each Interim Analysis
+  while(ContTrial) ## Loop for each Interim Analysis
   {
     mcpObj$CurrentLook <- look
     p_raw <- getRawPValues(mcpObj) ## User Input raw p-values
@@ -52,9 +60,9 @@ adaptGMCP_PC <- function(
 
     ShowResults(mcpObj)
 
-    if(all(mcpObj$rej_flag_Curr==T)) break #Stop if all the primary hypothesis are rejected
+    if(StopTrial(mcpObj)) break
 
-    # Selection
+    # Selection for next look
     if(Selection & (look< K))
     {
       mcpObj <- do_Selection(mcpObj)
@@ -129,93 +137,11 @@ PerLookMCPAnalysis<- function(mcpObj)
     }
   }
   notRejected <- names(mcpObj$rej_flag_Curr[!mcpObj$rej_flag_Curr])
-  mcpObj$IndexSet <- notRejected
+  Droped <- names(mcpObj$DropedFlag[mcpObj$DropedFlag])
+  mcpObj$IndexSet <- setdiff(notRejected,Droped)
 
   mcpObj
-
 }
-
-#Combined P-value(Inverse Normal) assuming equal spacing
-
-CombinedPvalue <- function(CurrentLook, adjPValue)
-{
-  weights <- rep(sqrt(1/CurrentLook),CurrentLook)
-  p_look <- as.numeric(adjPValue[,grep('PAdj',names(adjPValue))])
-  if(any(is.na(p_look)))
-  {
-    return(NA)
-  }else
-  {
-    1- pnorm(sum(weights*qnorm(1-p_look)))
-  }
-
-}
-
-
-#Collect User Input Raw P-values
-getRawPValues <- function(mcpObj)
-{
-  P_raw <- c()
-  cat('User Input for Look : ',mcpObj$CurrentLook,'\n')
-  for (i in mcpObj$IndexSet) {
-    P_raw[i] <- as.numeric(readline(prompt = paste('Enter Raw P-Values for ', i, ' : ')))
-  }
-  P_raw
-}
-
-#User Input Selection
-do_Selection <- function(mcpObj)
-{
-  SelectFlag <- readline(prompt = 'Selection for the next look(y/n) : ')
-  if(SelectFlag == 'y')
-  {
-    mcpObj$SelectionLook <- c(mcpObj$SelectionLook, (mcpObj$CurrentLook+1))
-
-    cat('Out of ', paste(mcpObj$IndexSet, collapse = ', '),
-        'Select the primary hypothesis to carry forward into the next look (e.g. H2,H3)','\n')
-
-    select_index <- readline()
-
-    mcpObj$SelectedIndex <- stringr::str_trim(
-      unlist(strsplit(select_index,split = ',')),
-      'both')
-
-    mcpObj$IndexSet <- intersect(mcpObj$IndexSet, mcpObj$SelectedIndex)
-    mcpObj$WH <- mcpObj$WH[which(apply(mcpObj$WH[mcpObj$IndexSet], 1, sum, na.rm=T) != 0),]
-  }
-  mcpObj
-}
-
-#Add NA for already rejected hypothesis
-addNAPvalue <- function(p_raw, GlobalIndexSet)
-{
-  p_raw_na <- rep(NA,length(GlobalIndexSet))
-  names(p_raw_na) <- GlobalIndexSet
-  p_raw_na[names(p_raw)] <- p_raw
-  p_raw_na
-}
-
-
-#Console Output of Look Wise results
-ShowResults <- function(mcpObj)
-{
-  cat('\n')
-  cat('\n')
-
-  cat('Intersection hypothesis at Look : ',mcpObj$CurrentLook,'\n')
-  print(mcpObj$AdjPValues)
-
-  cat('\n')
-  cat('\n')
-
-  cat('Rejection Status of primary Hypothesis at Look : ',mcpObj$CurrentLook,'\n')
-  print(mcpObj$rej_flag_Curr)
-
-  cat('\n')
-  cat('\n')
-}
-
-
 
 
 
