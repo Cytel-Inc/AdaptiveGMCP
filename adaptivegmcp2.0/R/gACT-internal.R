@@ -55,48 +55,6 @@ p.dunnet <- function(p,cr,w,upscale, alternatives="less"){
   lconn <- sapply(conn,length)
   conn <- lapply(conn,as.numeric)
 
-  P_ij <- function(i,edx) #i:index of the hypothesis, edx: one connected set
-  {
-    if(length(edx)>1){
-      if (upscale=="o3") {
-        return((1-mvtnorm::pmvnorm(
-          lower=ifelse(twosided[edx],qnorm(pmin(1,(w[edx]*p[i]/(w[i]*sum(w))))/2),-Inf),
-          upper=ifelse(twosided[edx],qnorm(1-pmin(1,(w[edx]*p[i]/(w[i]*sum(w))))/2),qnorm(1-pmin(1,(w[edx]*p[i]/(w[i]*sum(w)))))),
-          corr=cr[edx,edx],abseps=10^-5)))
-      } else {
-        return((1-mvtnorm::pmvnorm(
-          lower=ifelse(twosided[edx],qnorm(pmin(1,(w[edx]*p[i]/(w[i])))/2),-Inf),
-          upper=ifelse(twosided[edx],qnorm(1-pmin(1,(w[edx]*p[i]/(w[i])))/2),qnorm(1-pmin(1,(w[edx]*p[i]/(w[i]))))),
-          corr=cr[edx,edx],abseps=10^-5))/ifelse(upscale,1,sum(w)))
-      }
-    } else {
-      if(upscale=="o3" || !upscale){
-        return((w[edx]*p[i]/(w[i]*sum(w))))
-      } else {
-        return((w[edx]*p[i]/(w[i])))
-      }
-    }
-  }
-
-  ## Ajoy.M: To debug the following e
-  P_J <- function() #input: collection of connected set from the intersection hypothesis set
-  {
-    p_i <- c()
-    P_val_ls <- list()
-    for (i in 1:length(p)) {
-      #print(i)
-      P_edx <- c()
-      for( edx in conn)
-      {
-        #print(edx)
-        pedx <- P_ij(i,edx)
-        P_edx <- c(P_edx,pedx)
-      }
-      p_i[i] <- sum(P_edx)
-      P_val_ls[[i]] = list('conn'=conn, 'P_edx'=P_edx)
-    }
-    p_i
-  }
 
   e <- sapply(1:length(p),function(i){
     sum(sapply(conn,function(edx){
@@ -133,12 +91,13 @@ pvals.dunnett <- function(h,cr,p,upscale, alternatives="less") {
   I <- h[1:(n/2)]
   w <- h[((n/2)+1):n]
   hw <- sapply(w,function(x) !isTRUE(all.equal(x,0)))
-  e <- which(I>0 & hw)
+  #e <- which(I>0 & hw)
+  e <- which(I>0 & hw & !is.na(p)) #Ajoy.M: Removed retained hypothesis from the test
   zb <- rep(NA,n/2)
   if(length(e) == 0){
     return(zb)
   }
-  zb[e] <- p.dunnet(p[e],cr[e,e],w[e],upscale, alternatives=alternatives)
+  zb[e] <- p.dunnet(as.numeric(p[e]),cr[e,e],as.numeric(w[e]),upscale, alternatives=alternatives)
   zb[which(I>0 & !hw)] <- 1
   return(zb)
 }

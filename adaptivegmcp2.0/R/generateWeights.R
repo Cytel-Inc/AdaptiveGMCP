@@ -81,8 +81,8 @@ generateWeights <- function(g,w){
   }
   ## compute all intersection hypotheses and corresponding weights for a given graph
   n <- length(w)
-  intersect <- (permutations(n))[-1,]
-  g <- apply(intersect,1,function(i) list(int=i,
+  Intersect <- (permutations(n))[-1,]
+  g <- apply(Intersect,1,function(i) list(int=i,
                                           w=mtp.weights(i,g,w)#, g=mtp.edges(i,g,w)
                                      ))
   m <- as.matrix(as.data.frame(lapply(g,function(i) c(i$int,i$w))))
