@@ -83,6 +83,58 @@ p.dunnet <- function(p,cr,w,upscale, alternatives="less"){
   e
 }
 
+##Ajoy.M: Combination of parametric and non-parametric test
+# Modification made to p.dunnet function
+comb.test <- function(p,cr,w,upscale, alternatives="less"){
+  if(length(cr)>1){
+    conn <- conn.comp(cr)
+  } else {
+    conn <- 1
+  }
+  twosided <- alternatives==rep("two.sided", length(w))
+  lconn <- sapply(conn,length)
+  conn <- lapply(conn,as.numeric)
+
+
+  e <- sapply(conn,function(edx){
+      if(length(edx)>1) #disjoint set with known distribution: Parametric One Sided Test
+        {
+        q <- min(1,as.numeric(p[edx])/as.numeric(w[edx]))
+        upper <- qnorm(1-as.numeric(w[edx])*q) #z-scale upper bound for right tailed tests
+        p_param <- (1-mvtnorm::pmvnorm(
+          lower=-Inf,
+          upper=upper,
+          corr=cr[edx,edx],abseps=10^-5))
+        return(min(1, p_param/sum(as.numeric(w[edx])))) #Partial Parametric
+
+      } else { #disjoint set with unknown distribution: Non-Parametric One Sided Test
+
+        return(min(1, min(1,as.numeric(p[edx])/as.numeric(w[edx]))))
+      }
+    }
+    )
+
+  e <- min(e,1)
+  e
+}
+
+Comb.Test <- function(h,cr,p,upscale, alternatives="less") {
+  #  if(a > .5){
+  #    stop("alpha levels above .5 are not supported")
+  #  }
+  n <- length(h)
+  I <- h[1:(n/2)]
+  w <- h[((n/2)+1):n]
+  hw <- sapply(w,function(x) !isTRUE(all.equal(x,0)))
+  e <- which(I>0 & hw & !is.na(p))
+  adj_pj <- NA
+  if(length(e) == 0){
+    return(adj_pj)
+  }
+  adj_pj <- comb.test(p[e],cr[e,e],w[e],upscale, alternatives=alternatives)
+  return(adj_pj)
+}
+
 pvals.dunnett <- function(h,cr,p,upscale, alternatives="less") {
 #  if(a > .5){
 #    stop("alpha levels above .5 are not supported")
@@ -91,13 +143,12 @@ pvals.dunnett <- function(h,cr,p,upscale, alternatives="less") {
   I <- h[1:(n/2)]
   w <- h[((n/2)+1):n]
   hw <- sapply(w,function(x) !isTRUE(all.equal(x,0)))
-  #e <- which(I>0 & hw)
-  e <- which(I>0 & hw & !is.na(p)) #Ajoy.M: Removed retained hypothesis from the test
+  e <- which(I>0 & hw)
   zb <- rep(NA,n/2)
   if(length(e) == 0){
     return(zb)
   }
-  zb[e] <- p.dunnet(as.numeric(p[e]),cr[e,e],as.numeric(w[e]),upscale, alternatives=alternatives)
+  zb[e] <- p.dunnet(p[e],cr[e,e],w[e],upscale, alternatives=alternatives)
   zb[which(I>0 & !hw)] <- 1
   return(zb)
 }

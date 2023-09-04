@@ -17,6 +17,7 @@ adaptGMCP_PC <- function(
     Threshold = c(0.001,0.0015,0.025),
     Correlation = matrix(c(1,0.5,NA,NA,  0.5,1,NA,NA,  NA,NA,1,NA, NA,NA,NA,1),nrow = 4),
     Selection=T,
+    UpdateStrategy=T,
     ShowGraph = F
 )
 {
@@ -29,8 +30,15 @@ adaptGMCP_PC <- function(
   rej_flag_Prev <- rej_flag_Curr <- DropedFlag <- rep(FALSE, D)
   names(rej_flag_Prev) <- names(rej_flag_Curr) <- names(DropedFlag) <-paste("H",1:D, sep = '')
 
+  #Modified Weights and Graph based on interim data
+  modifiedStrategy <- list('Modify'=F,
+                           'ModificationLook'=c(),
+                           'newWeights' =NA,
+                           'newG' = NA)
 
   mcpObj <- list('CurrentLook'= NA,
+                 'IntialWeights'=WI,
+                 'IntialHypothesis'=GlobalIndexSet,
                  'IndexSet'= GlobalIndexSet,
                  'p_raw' = NA,
                  'WH'= WH,
@@ -42,7 +50,8 @@ adaptGMCP_PC <- function(
                  'SelectionLook'= c(),
                  'SelectedIndex'=NA,
                  'DropedFlag'=DropedFlag,
-                 'LastLook'=K)
+                 'LastLook'=K,
+                 'ModifiedStrategy'= modifiedStrategy)
 
 
   look = 1; ContTrial = T
@@ -60,7 +69,7 @@ adaptGMCP_PC <- function(
 
     ShowResults(mcpObj)
 
-    if(StopTrial(mcpObj)) break
+    if(StopTrial(mcpObj)) break  #Early Stoping
 
     # Selection for next look
     if(Selection & (look< K))
@@ -68,80 +77,18 @@ adaptGMCP_PC <- function(
       mcpObj <- do_Selection(mcpObj)
     }
 
+    #Modify the weights and testing strategy
+    if(UpdateStrategy & (look< K) & (length(mcpObj$IndexSet)>1))
+    {
+      mcpObj <- do_modifyStrategy(mcpObj)
+    }
+
     look <- look + 1
   }
+
+  #mcpObj
 }
 
-
-#Per look testing
-
-PerLookMCPAnalysis<- function(mcpObj)
-{
-  p_intersect <- t(apply(mcpObj$WH,1,pvals.dunnett,
-                         p=mcpObj$p_raw ,cr=mcpObj$Correlation,upscale=T))
-
-
-
-  P_Adj <- as.data.frame(apply(p_intersect, 1, min, na.rm=T))
-  names(P_Adj) <- paste('PAdj',mcpObj$CurrentLook, sep = '')
-
-  PooledDF <- cbind(mcpObj$WH[, grep('H',names(mcpObj$WH))],P_Adj)
-
-  if(mcpObj$CurrentLook == 1)
-  {
-    mcpObj$AdjPValues <- PooledDF
-  }else
-  {
-    mcpObj$AdjPValues <- merge(mcpObj$AdjPValues, PooledDF, all = T)
-  }
-
-  if(mcpObj$CurrentLook > 1)
-  {
-    Comb_p <- c()
-    for(i in 1:nrow(mcpObj$AdjPValues))
-    {
-      Comb_p[i] <- CombinedPvalue(CurrentLook = mcpObj$CurrentLook,
-                               adjPValue = mcpObj$AdjPValues[i,])
-    }
-    Comb_p <- as.data.frame(Comb_p)
-    Comb_P_name <- paste('Comb_P',mcpObj$CurrentLook, sep = '')
-    names(Comb_p) <- Comb_P_name
-    mcpObj$AdjPValues <- cbind(mcpObj$AdjPValues, Comb_p)
-  }
-
-
-  for(idx in mcpObj$IndexSet) ## Closed test for each primary hypothesis
-  {
-    if(!mcpObj$rej_flag_Prev[idx]) #If not rejected in earlier look
-    {
-
-      if(mcpObj$CurrentLook == 1)
-      {
-        Intersect_IDX <- which(mcpObj$AdjPValues[idx]==1)
-        mcpObj$rej_flag_Curr[idx] <- all(mcpObj$AdjPValues['PAdj1'][Intersect_IDX,] <= mcpObj$CutOff)
-
-      }else #Combined P-Values
-      {
-        Intersect_IDX <- which(mcpObj$AdjPValues[idx]==1 &
-                      !is.na(mcpObj$AdjPValues[paste('PAdj',mcpObj$CurrentLook,sep = '')]))
-
-        mcpObj$rej_flag_Curr[idx] <- all( mcpObj$AdjPValues[Intersect_IDX,Comb_P_name] <= mcpObj$CutOff)
-
-      }
-
-      if(mcpObj$rej_flag_Curr[idx])
-      {
-        #If any hypothesis is rejected all the intersection hypothesis containing that can be removed
-        mcpObj$WH <- mcpObj$WH[mcpObj$WH[idx] != 1,]
-      }
-    }
-  }
-  notRejected <- names(mcpObj$rej_flag_Curr[!mcpObj$rej_flag_Curr])
-  Droped <- names(mcpObj$DropedFlag[mcpObj$DropedFlag])
-  mcpObj$IndexSet <- setdiff(notRejected,Droped)
-
-  mcpObj
-}
 
 
 

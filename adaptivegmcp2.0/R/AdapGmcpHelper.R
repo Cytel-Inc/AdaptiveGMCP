@@ -1,4 +1,75 @@
 
+#Per look testing
+
+PerLookMCPAnalysis<- function(mcpObj)
+{
+  P_Adj <- as.data.frame(apply(mcpObj$WH,1,Comb.Test,
+                               p=mcpObj$p_raw ,cr=mcpObj$Correlation,upscale=T))
+  names(P_Adj) <- paste('PAdj',mcpObj$CurrentLook, sep = '')
+
+  PooledDF <- cbind(mcpObj$WH[, grep('H',names(mcpObj$WH))],P_Adj)
+
+  if(mcpObj$CurrentLook == 1)
+  {
+    mcpObj$AdjPValues <- PooledDF
+  }else
+  {
+    mcpObj$AdjPValues <- merge(mcpObj$AdjPValues, PooledDF, all = T)
+  }
+
+  if(mcpObj$CurrentLook > 1)
+  {
+    Comb_p <- c()
+    for(i in 1:nrow(mcpObj$AdjPValues))
+    {
+      Comb_p[i] <- CombinedPvalue(CurrentLook = mcpObj$CurrentLook,
+                                  adjPValue = mcpObj$AdjPValues[i,])
+    }
+    Comb_p <- as.data.frame(Comb_p)
+    Comb_P_name <- paste('Comb_P',mcpObj$CurrentLook, sep = '')
+    names(Comb_p) <- Comb_P_name
+    mcpObj$AdjPValues <- cbind(mcpObj$AdjPValues, Comb_p)
+  }
+
+
+  for(idx in mcpObj$IndexSet) ## Closed test for each primary hypothesis
+  {
+    if(!mcpObj$rej_flag_Prev[idx]) #If not rejected in earlier look
+    {
+
+      if(mcpObj$CurrentLook == 1)
+      {
+        Intersect_IDX <- which(mcpObj$AdjPValues[idx]==1)
+        mcpObj$rej_flag_Curr[idx] <- all(mcpObj$AdjPValues['PAdj1'][Intersect_IDX,] <= mcpObj$CutOff)
+
+      }else #Combined P-Values
+      {
+        Intersect_IDX <- which(mcpObj$AdjPValues[idx]==1 &
+                                 !is.na(mcpObj$AdjPValues[paste('PAdj',mcpObj$CurrentLook,sep = '')]))
+
+        mcpObj$rej_flag_Curr[idx] <- all( mcpObj$AdjPValues[Intersect_IDX,Comb_P_name] <= mcpObj$CutOff)
+
+      }
+
+      if(mcpObj$rej_flag_Curr[idx])
+      {
+        #If any hypothesis is rejected all the intersection hypothesis containing that can be removed
+        mcpObj$WH <- mcpObj$WH[mcpObj$WH[idx] != 1,]
+      }
+    }
+  }
+  notRejected <- names(mcpObj$rej_flag_Curr[!mcpObj$rej_flag_Curr])
+  Droped <- names(mcpObj$DropedFlag[mcpObj$DropedFlag])
+  mcpObj$IndexSet <- setdiff(notRejected,Droped)
+
+  mcpObj
+}
+
+
+
+
+
+
 #Combined P-value(Inverse Normal) assuming equal spacing
 
 CombinedPvalue <- function(CurrentLook, adjPValue)
@@ -55,6 +126,120 @@ do_Selection <- function(mcpObj)
   }
   mcpObj
 }
+
+
+get_numeric_part <- function(vec) {
+  numeric_part <- as.numeric(gsub("[^0-9]", "", vec))
+  return(numeric_part)
+}
+
+#Modification of weights and graph for the continuing hypothesis
+do_modifyStrategy <- function(mcpObj, showExistingStrategy = T)
+{
+  ModificationFlag <- readline(prompt = paste('Change Testing Strategy for the look',(mcpObj$CurrentLook+1),' (y/n) : \n'))
+
+  if(ModificationFlag == 'y')
+  {
+    if(showExistingStrategy)
+    {
+      cat('Existing Strategy for reference \n')
+      print(mcpObj$WH)
+    }
+
+    mcpObj$modifiedStrategy$ModificationLook <- c((mcpObj$modifiedStrategy)$ModificationLook,mcpObj$CurrentLook)
+
+    #User input weights
+    cat("Enter new weights for (",paste(mcpObj$IndexSet, collapse = ', '),') as comma seperated values (e.g.- 0.5,0.5) :\n')
+    new_weights <- readline()
+
+    mcpObj$ModifiedStrategy$newWeights <- as.numeric(stringr::str_trim(
+      unlist(strsplit(new_weights,split = ',')),
+      'both'))
+    names(mcpObj$ModifiedStrategy$newWeights) = paste('Weight',get_numeric_part(mcpObj$IndexSet),sep='')
+
+    #User input transition matrix
+    m = length(mcpObj$IndexSet)
+    new_G = matrix(0, nrow = m, ncol = m)
+    cat("\n Enter the elements of the transition matrix G=(gij) \n")
+    for(i in 1:m)
+    {
+      for (j in 1:m) {
+        if(i != j)
+        {
+          cat('Enter g(',paste(mcpObj$IndexSet[i],mcpObj$IndexSet[j],sep = ','),') :\n')
+          new_G[i,j] = as.numeric(readline())
+        }
+      }
+    }
+    colnames(new_G) <- mcpObj$IndexSet
+    mcpObj$ModifiedStrategy$newG <- new_G
+
+    modifiedWeights <- modifyIntersectWeights(mcpObj)
+    return(modifiedWeights$mcpObj)
+  }else
+  {
+    return(mcpObj)
+  }
+}
+
+#Merge Existing and Modified weights
+modifyIntersectWeights <- function(mcpObj)
+{
+  A <- mcpObj$WH
+  B <- as.data.frame(generateWeights(g = mcpObj$ModifiedStrategy$newG,
+                                     w = mcpObj$ModifiedStrategy$newWeights))
+  names(B) <- c(mcpObj$IndexSet,
+                          paste('Weight',get_numeric_part(mcpObj$IndexSet),sep=''))
+
+  ## If the weights for the hypothesis belongs to IA set(Section 8.2) needs to be
+  ## considered from the before modification strategy
+  isIAsameIC = F # Ajoy.M: it should consider the earlier strategy(4thSept,23)
+  if(isIAsameIC == F)
+  {
+    HypNotAvail <- setdiff(names(A)[ grep('H',names(A))], mcpObj$IndexSet)
+    if(length(HypNotAvail) < 2 )
+    {
+      B[HypNotAvail] <- rep(0, nrow(B))
+
+    }else
+    {
+      B[HypNotAvail] <- matrix(0,nrow = nrow(B), ncol = length(HypNotAvail))
+    }
+    UpdatedWeights <- A
+    HA <- apply(A[,grep('H',names(A))], 1, paste,collapse = '')
+    HB <- apply(B[,grep('H',names(B))], 1, paste,collapse = '')
+
+    if(!all(HB %in% HA)) return("Error in MergeWeights")
+    modrows <- c()
+
+    for (i in 1:nrow(B)) {
+      r <- which(HA==HB[i])
+      modrows <- c(modrows, r)
+
+      l1 <- A[r, grep('Weight',names(A))]
+      l2 <- B[i, grep('Weight',names(B))]
+      for(l in names(l1))
+      {
+        if(l %in% names(l2))
+        {
+          UpdatedWeights[r,l] = l2[l]
+        }else
+        {
+          UpdatedWeights[r,l] = NA
+        }
+      }
+    }
+
+    mcpObj$WH <- UpdatedWeights
+    return(list('mcpObj'=mcpObj, 'modifiedColumns'=modrows))
+  }else
+  {
+    mcpObj$WH <- B
+    return(list('mcpObj'=mcpObj))
+  }
+
+}
+
 
 #Add NA for already rejected hypothesis
 addNAPvalue <- function(p_raw, GlobalIndexSet)

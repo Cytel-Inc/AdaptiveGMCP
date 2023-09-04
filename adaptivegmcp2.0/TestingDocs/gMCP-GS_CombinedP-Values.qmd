@@ -1,0 +1,51 @@
+---
+title: "Adaptive Multiple Testing Procedures in Confirmatory Adaptive Designs"
+format: html
+editor: visual
+---
+
+### Group Sequential gMCP by Combined P-Values method
+##(1) Bonferroni Test: Example from P2P3 technical document 
+
+```{r}
+#Loading Functions
+library(usethis)
+library(devtools)
+load_all()
+#####################
+##  Design Inputs  ##
+
+#Number of looks
+K <- 2 
+
+#Number of hypothesis
+D <- 4
+
+#Weights : Bonferroni equal weights for all primary hypothesis
+WI <- rep(1/D,D)
+
+#Transition Matrix: Bonferroni Holms Procedure
+G <- matrix(c(0,1/3,1/3,1/3,
+              1/3,0,1/3,1/3,
+              1/3,1/3,0,1/3,
+              1/3,1/3,1/3,0),
+            nrow = 4,byrow = T)
+
+#Correlation Matrix: Non-Parametric
+Corr <- matrix(c(1,NA,NA,NA,
+                 NA,1,NA,NA,
+                 NA,NA,1,NA,
+                 NA,NA,NA,1),
+            nrow = 4,byrow = T)
+
+```
+
+Testing with AdapGmcp
+
+```{r}
+adaptGMCP_PC(K=K,D=D,G=G,WI = WI,Correlation = Corr,Selection = T, Threshold = c(0.00001,0.025))
+
+
+
+```
+
