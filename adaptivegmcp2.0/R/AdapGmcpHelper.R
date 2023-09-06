@@ -22,8 +22,9 @@ PerLookMCPAnalysis<- function(mcpObj)
     Comb_p <- c()
     for(i in 1:nrow(mcpObj$AdjPValues))
     {
+      W_Norm <- mcpObj$W_Norm
       Comb_p[i] <- CombinedPvalue(CurrentLook = mcpObj$CurrentLook,
-                                  adjPValue = mcpObj$AdjPValues[i,])
+                                  adjPValue = mcpObj$AdjPValues[i,], W_Norm = W_Norm)
     }
     Comb_p <- as.data.frame(Comb_p)
     Comb_P_name <- paste('Comb_P',mcpObj$CurrentLook, sep = '')
@@ -45,7 +46,7 @@ PerLookMCPAnalysis<- function(mcpObj)
       }else #Combined P-Values
       {
         Intersect_IDX <- which(mcpObj$AdjPValues[idx]==1 &
-                                 !is.na(mcpObj$AdjPValues[paste('PAdj',mcpObj$CurrentLook,sep = '')]))
+                             !is.na(mcpObj$AdjPValues[paste('PAdj',mcpObj$CurrentLook,sep = '')]))
 
         mcpObj$rej_flag_Curr[idx] <- all( mcpObj$AdjPValues[Intersect_IDX,Comb_P_name] <= mcpObj$CutOff)
 
@@ -61,20 +62,17 @@ PerLookMCPAnalysis<- function(mcpObj)
   notRejected <- names(mcpObj$rej_flag_Curr[!mcpObj$rej_flag_Curr])
   Droped <- names(mcpObj$DropedFlag[mcpObj$DropedFlag])
   mcpObj$IndexSet <- setdiff(notRejected,Droped)
-
   mcpObj
+
 }
-
-
-
 
 
 
 #Combined P-value(Inverse Normal) assuming equal spacing
 
-CombinedPvalue <- function(CurrentLook, adjPValue)
+CombinedPvalue <- function(CurrentLook, adjPValue, W_Norm)
 {
-  weights <- rep(sqrt(1/CurrentLook),CurrentLook)
+  weights <- rep(W_Norm[CurrentLook-1],CurrentLook)
   p_look <- as.numeric(adjPValue[,grep('PAdj',names(adjPValue))])
   if(any(is.na(p_look)))
   {
@@ -91,9 +89,9 @@ CombinedPvalue <- function(CurrentLook, adjPValue)
 getRawPValues <- function(mcpObj)
 {
   P_raw <- c()
-  cat('User Input for Look : ',mcpObj$CurrentLook,'\n')
+  cat('User Input for the look : ',mcpObj$CurrentLook,'\n')
   for (i in mcpObj$IndexSet) {
-    P_raw[i] <- as.numeric(readline(prompt = paste('Enter Raw P-Values for ', i, ' : ')))
+    P_raw[i] <- as.numeric(readline(prompt = paste('Enter the raw P-Values for ', i, ' : ')))
   }
   P_raw
 }
@@ -136,7 +134,7 @@ get_numeric_part <- function(vec) {
 #Modification of weights and graph for the continuing hypothesis
 do_modifyStrategy <- function(mcpObj, showExistingStrategy = T)
 {
-  ModificationFlag <- readline(prompt = paste('Change Testing Strategy for the look',(mcpObj$CurrentLook+1),' (y/n) : \n'))
+  ModificationFlag <- readline(prompt = paste('Change the testing Strategy from the look :',(mcpObj$CurrentLook+1),' (y/n) : \n'))
 
   if(ModificationFlag == 'y')
   {
@@ -146,16 +144,16 @@ do_modifyStrategy <- function(mcpObj, showExistingStrategy = T)
       print(mcpObj$WH)
     }
 
-    mcpObj$modifiedStrategy$ModificationLook <- c((mcpObj$modifiedStrategy)$ModificationLook,mcpObj$CurrentLook)
+    mcpObj$ModificationLook <- c(mcpObj$ModificationLook,mcpObj$CurrentLook)
 
     #User input weights
-    cat("Enter new weights for (",paste(mcpObj$IndexSet, collapse = ', '),') as comma seperated values (e.g.- 0.5,0.5) :\n')
+    cat("Enter the new weights for (",paste(mcpObj$IndexSet, collapse = ', '),') as comma seperated values (e.g.- 0.5,0.5) :\n')
     new_weights <- readline()
 
-    mcpObj$ModifiedStrategy$newWeights <- as.numeric(stringr::str_trim(
+    mcpObj$newWeights <- as.numeric(stringr::str_trim(
       unlist(strsplit(new_weights,split = ',')),
       'both'))
-    names(mcpObj$ModifiedStrategy$newWeights) = paste('Weight',get_numeric_part(mcpObj$IndexSet),sep='')
+    names(mcpObj$newWeights) = paste('Weight',get_numeric_part(mcpObj$IndexSet),sep='')
 
     #User input transition matrix
     m = length(mcpObj$IndexSet)
@@ -172,7 +170,7 @@ do_modifyStrategy <- function(mcpObj, showExistingStrategy = T)
       }
     }
     colnames(new_G) <- mcpObj$IndexSet
-    mcpObj$ModifiedStrategy$newG <- new_G
+    mcpObj$newG <- new_G
 
     modifiedWeights <- modifyIntersectWeights(mcpObj)
     return(modifiedWeights$mcpObj)
@@ -186,26 +184,31 @@ do_modifyStrategy <- function(mcpObj, showExistingStrategy = T)
 modifyIntersectWeights <- function(mcpObj)
 {
   A <- mcpObj$WH
-  B <- as.data.frame(generateWeights(g = mcpObj$ModifiedStrategy$newG,
-                                     w = mcpObj$ModifiedStrategy$newWeights))
+  B <- as.data.frame(generateWeights(g = mcpObj$newG,
+                                     w = mcpObj$newWeights))
   names(B) <- c(mcpObj$IndexSet,
                           paste('Weight',get_numeric_part(mcpObj$IndexSet),sep=''))
 
   ## If the weights for the hypothesis belongs to IA set(Section 8.2) needs to be
   ## considered from the before modification strategy
+
   isIAsameIC = F # Ajoy.M: it should consider the earlier strategy(4thSept,23)
+
   if(isIAsameIC == F)
   {
     HypNotAvail <- setdiff(names(A)[ grep('H',names(A))], mcpObj$IndexSet)
+    WNotAvail <- paste('Weight',get_numeric_part(HypNotAvail),sep='')
     if(length(HypNotAvail) < 2 )
     {
       B[HypNotAvail] <- rep(0, nrow(B))
-
+      B[WNotAvail] <- rep(0, nrow(B))
     }else
     {
       B[HypNotAvail] <- matrix(0,nrow = nrow(B), ncol = length(HypNotAvail))
+      B[WNotAvail] <- matrix(0,nrow = nrow(B), ncol = length(WNotAvail))
     }
     UpdatedWeights <- A
+    B <- B[,colnames(A)] #Reordering columns of B
     HA <- apply(A[,grep('H',names(A))], 1, paste,collapse = '')
     HB <- apply(B[,grep('H',names(B))], 1, paste,collapse = '')
 
@@ -255,9 +258,17 @@ addNAPvalue <- function(p_raw, GlobalIndexSet)
 ShowResults <- function(mcpObj)
 {
   cat('\n')
+  cat('Analysis results for Look : ',mcpObj$CurrentLook,'\n')
+  cat('\n')
   cat('\n')
 
-  cat('Intersection hypothesis at Look : ',mcpObj$CurrentLook,'\n')
+  cat('Weights for the intersection hypothesis at Look : ',mcpObj$CurrentLook,'\n')
+  print(mcpObj$WH_Prev)
+
+  cat('\n')
+  cat('\n')
+
+  cat('Adj P-values for the intersection hypothesis at Look : ',mcpObj$CurrentLook,'\n')
   print(mcpObj$AdjPValues)
 
   cat('\n')
