@@ -1,0 +1,75 @@
+---
+title: "CER method for Weighted Mixed Tests"
+format: html
+editor: visual
+---
+
+## Example 8.2.2
+
+Let $H_1$ denote the null hypothesis of no difference between the 100 mg/day dose and standard of care with respect to the primary endpoint. Let $H_2$ denote the null hypothesis of no difference between the 50mg/day dose and standard of care with respect to the primary endpoint. Let $H_3$ and $H_4$ denote corresponding null hypotheses for the high and low doses, respectively, with respect to the secondary endpoint.
+
+**Testing Strategy**
+
+```{r}
+library(usethis)
+library(devtools)
+load_all()
+
+##########################################
+#Initial Weights
+WI <- c(1/2,1/2,0,0)
+
+#Initial Transition Matrix
+G <- matrix(c(0,0.5, 0.5, 0,
+              0.5, 0, 0,0.5,
+              0,1,0,0,
+              1,0,0,0),
+            nrow = 4, byrow = T)
+#Graph
+cordinates = list(c(-1,1), c(1,1), c(-1,-1),c(1,-1))
+gmcpPlot(WI = WI, G = G, hGroup = c('P','P','S','S'), cordinates = cordinates)
+```
+
+**Weights for all Intersection hypothesis**
+
+```{r}
+WH <- data.frame(gMCPLite::generateWeights(g = G, w = WI))
+colnames(WH) <- c(paste('H',1:length(WI),sep = ''), paste('Weight',1:length(WI),sep = ''))
+WH
+
+```
+
+Inputs for Stage-1 analysis
+
+```{r}
+alpha <- 0.025                   #Design alpha
+nLooks <- 2                      #number of looks
+info_frac <- c(0.5,1)            #Information fraction
+nArms <- 3                       #number of arms
+nEPs <- 2                        #number of endpoints
+nHypothesis <- (nArms-1)+nEPs    #number of hypothesis
+
+ctrSS <- c(108, 216)             #2 stage cumulative Samples in Control arm
+ctrSS <- c(50,100)               #look-wise planned sample Size in control arm
+allocRatio <- c(1,1,1)           #Arm-Wise planned Allocation ratio
+sigma <- c(1,1,1)                #Arm-wise planned standard deviation
+```
+
+Planned Boundaries for Parametric Weighted Dunnett
+H12,H13
+```{r}
+###############################  Inputs  #########################################
+alpha <- 0.025                   #Design alpha
+allocRatio <- c(1,1,1)           #Arm-Wise planned Allocation ratio
+wJ <- c(0.5,0.5)                 #Weights for the intersection hypothesis
+######################### End of inputs #########################################
+
+```
+
+
+
+
+
+
+
+

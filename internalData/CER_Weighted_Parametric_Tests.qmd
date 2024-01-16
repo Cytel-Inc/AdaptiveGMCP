@@ -1,0 +1,464 @@
+---
+title: "CER method for Weighted Parametric Tests"
+format: html
+editor: visual
+---
+
+## Two-Stage Multi-Arm(common control) designs for continuous endpoints
+
+$i=\{0,1,2,..,D\}$ : Index for the arms.
+
+$k =\{1,2\}$ : Index for the stages.
+
+$I_1 = \{1,2,..D\}$ : Index for the primary hypothesis at stage-1.
+
+$I_2$ : Index for the primary hypothesis at stage-2.
+
+$J$ : Index for any intersection hypothesis.
+
+$j$ : Index for any primary hypothesis as a part of intersection $J$
+
+Let $\bar{X}_{i,k}$ denotes the sample mean for the $i^{th} \space (i=0,1,2,..,D)$ arm based on the cumulative sample size $n_{i,k} \space (k=1,2)$
+
+Under Null, $\bar{X}_{i,k} \sim N(0, \frac{\sigma_i}{\sqrt{n}})$
+
+**Variance Covariance Structure of** $\bar{X}_{i,k}$
+
+$Cov(\bar{X}_{i_1,k} , \bar{X}_{i_2,k}) = 0 \space ; i_1 \neq i_2$
+
+$Cov(\bar{X}_{i,k_1} , \bar{X}_{i,k_2}) = Cov(\bar{X}_{i,k_1}, \frac{n_{i,k_1}}{n_{i,k_2}}*\bar{X}_{i,k_1} + \frac{1}{n_{i,k_2}} \sum_{m=(n_{i,k_1}+1)}^{n_{i,k_2}} X_{i,m})$
+
+$\implies Cov(\bar{X}_{i,k_1} , \bar{X}_{i,k_2})=\frac{n_{i,k_1}}{n_{i,k_2}} *var(\bar{X}_{i,k_1})$
+
+$\implies Cov(\bar{X}_{i,k_1} , \bar{X}_{i,k_2}) = \frac{\sigma_i^2}{n_{i,k_2}} ; \space \forall \space k_2 >k_1$
+
+**Z Statistics**
+
+$Z_{i,k} = \frac{\delta_{i,k}}{\sqrt{Var(\delta_{i,k})}}$
+
+where
+
+$\delta_{i,k} = (\bar{X}_{i,k} - \bar{X}_{0,k})$
+
+$Var(\delta_{i,k})^{-1} = I_{i,k} = n_{0,k}*(\sigma_0^2 + \frac{\sigma_i^2}{\lambda_i})^{-1} = n_{0,k}*\Lambda_i$
+
+where $\lambda_i$ = allocation ratio for the $i^{th}$ treatment arm.
+
+**Variance Covariance Structure of** $Z_{i,k}$
+
+**Case-1**
+
+$Var(Z_{i,k}) = 1 \space \forall \space i, k$
+
+**Case-2**
+
+$Cov(Z_{i_1,k} , Z_{i_2,k}) = Cov(\sqrt{I_{i_1,k}}*(\bar{X}_{i_1,k} - \bar{X}_{0,k}) ,\sqrt{I_{i_2,k}}*(\bar{X}_{i_2,k} - \bar{X}_{0,k}))$
+
+$\implies Cov(Z_{i_1,k} , Z_{i_2,k}) = \sqrt{I_{i_1,k} I_{i_2,k}} * Var(\bar{X}_{0,k})$
+
+$\implies Cov(Z_{i_1,k} , Z_{i_2,k}) = \sqrt{I_{i_1,k} I_{i_2,k}}*\frac{\sigma_0^2}{n_{0,k}} \space \forall \space i_2 \neq i_1$
+
+**Case-3**
+
+$Cov(Z_{i,k_1} , Z_{i,k_2}) = Cov(\sqrt{I_{i,k_1}}*(\bar{X}_{i,k_1} - \bar{X}_{0,k_1}) ,\sqrt{I_{i,k_2}}*(\bar{X}_{i,k_2} - \bar{X}_{0,k_2}))$
+
+$\implies Cov(Z_{i,k_1} , Z_{i,k_2}) = \sqrt{I_{i,k_1} I_{i,k_2}} * [ Cov(\bar{X}_{i,k_1} , \bar{X}_{i,k_2}) + Cov(\bar{X}_{0,k_1} , \bar{X}_{0,k_2})]$
+
+$\implies Cov(Z_{i,k_1} , Z_{i,k_2}) = \sqrt{I_{i,k_1} I_{i,k_2}}* [ \frac{\sigma_i^2}{n_{i,k_2}} + \frac{\sigma_0^2}{n_{0,k_2}} ] \space \forall \space k_2 > k_1$
+
+**Case-4**
+
+$Cov(Z_{i_1,k_1} , Z_{i_2,k_2}) = Cov(\sqrt{I_{i_1,k_1}}*(\bar{X}_{i_1,k_1} - \bar{X}_{0,k_1}) ,\sqrt{I_{i_2,k_2}}*(\bar{X}_{i_2,k_2} - \bar{X}_{0,k_2}))$
+
+$\implies Cov(Z_{i_1,k_1} , Z_{i_2,k_2}) = \sqrt{I_{i_1,k_1} I_{i_2,k_2}} * Cov(\bar{X}_{0,k_1} , \bar{X}_{0,k_2})$
+
+$\implies Cov(Z_{i_1,k_1} , Z_{i_2,k_2}) = \sqrt{I_{i_1,k_1} I_{i_2,k_2}} * \frac{\sigma_0^2}{n_{i,k_2}}\space \forall \space i_1 \neq i_2, \space k_1 \neq k_2 \space \& \space k_2 > k_1$
+
+### Stage-Wise Planned Boundary Computation
+
+Consider testing any intersection hypothesis $J$ ($\forall J \subseteq I_1$), Let $\alpha_{J,1}$, denoting the amount of type-1 error to be spent at stage one of a two stage level-$\alpha$ test, can be obtain by using a spending function or otherwise.
+
+Then the two stage critical boundaries($C_{J,1}, C_{J,2}$) can be computed by solving the following equations.
+
+**Stage-1 boundary**
+
+$P_{H_J} [\cup_{j \in J} P_{j,1} \leq w_{j,J}*C_{J,1}] = \alpha_{J,1}$
+
+$\implies P_{H_J} [ \cap_{j \in J} \{Z_{j,1} \leq \Phi^{-1}(1-w_{j,J}*C_{J,1})\}] = 1 - \alpha_{J,1}$
+
+**Stage-2 boundary**
+
+$P_{H_J} [\cap_{j \in J} \{P_{j,1} \geq w_{j,J}*C_{J,1}\} \space \& \space \cup_{j \in J} \{P_{j,2} \leq w_{j,J}*C_{J,2}\} ] = \alpha - \alpha_{J,1}$
+
+$\implies P_{H_J} [\cap_{j \in J} \{Z_{j,1} \leq \Phi^{-1}(1-w_{j,J}*C_{J,1})\} \space \cap \space \cup_{j \in J} \{Z_{j,2} \geq \Phi^{-1}(1-w_{j,J}*C_{J,2})\} ] = \alpha - \alpha_{J,1}$
+
+$\implies P_{H_J} [\cap_{j \in J} \{Z_{j,1} \leq \Phi^{-1}(1-w_{j,J}*C_{J,1})\}] - P_{H_J} [\cap_{j \in J} \{Z_{j,1} \leq \Phi^{-1}(1-w_{j,J}*C_{J,1})\} \space \cap \space \cap_{j \in J} \{Z_{j,2} \leq \Phi^{-1}(1-w_{j,J}*C_{J,2})\} ] = \alpha - \alpha_{J,1}$
+
+$\implies 1-\alpha_{J,1} - P_{H_J} [\cap_{j \in J} \{Z_{j,1} \leq \Phi^{-1}(1-w_{j,J}*C_{J,1})\} \space \cap \space \cap_{j \in J} \{Z_{j,2} \leq \Phi^{-1}(1-w_{j,J}*C_{J,2})\} ] = \alpha - \alpha_{J,1}$
+
+$\implies P_{H_J} [\cap_{j \in J} \{Z_{j,1} \leq \Phi^{-1}(1-w_{j,J}*C_{J,1})\} \space \cap \space \cap_{j \in J} \{Z_{j,2} \leq \Phi^{-1}(1-w_{j,J}*C_{J,2})\} ] = 1- \alpha$
+
+Where the distribution of Z is
+
+$\tilde{Z} =(Z_{1,1},Z_{2,1},...,Z_{D,1},Z_{1,2},Z_{2,2},...,Z_{D,2})' \sim N(\mu_z, \Sigma_z)$
+
+Under Null, $\mu_z = 0$ and $\Sigma_z$ can be obtained from the above variance co-varience structure.
+
+### In the following section the r-codes computation are documented
+
+This section is to collect the primary inputs and to compute the intermediate variables required for boundary(un-adjusted) computation.
+
+Note: This part is common for testing all intersection hypothesis.
+
+```{r}
+
+###############################  Inputs  #########################################
+alpha <- 0.025                   #Design alpha
+nHypothesis <- 2                 #number of hypothesis
+nLooks <- 2                      #number of looks
+nArms <- (nHypothesis+1)         #Multi-Arm common control
+ctrSS <- c(108, 216)               #look-wise planned sample Size in control arm
+allocRatio <- c(1,1,1)           #Arm-Wise planned Allocation ratio
+sigma <- c(1,1,1)                #Arm-wise planned standard deviation
+mu <- c(0,0.3,0.3)               #Arm-wise planned mean under alternative
+info_frac <- c(0.5,1)            #Information fraction
+wJ <- c(0.5,0.5)                 #Weights for the intersection hypothesis
+p1 <- c(0.00045 , 0.0952)  #Stage-1 raw p-values for all primary hypothesis
+######################### End of inputs #########################################
+
+#Look-1 alpha spent from desiered spending function
+
+alpha1 <- rpact::getDesignGroupSequential(
+  kMax = 2, alpha = alpha, informationRates = info_frac, typeOfDesign = 'asOF')$alphaSpent[1]
+
+
+######################## Intermidiate computations ##############################
+sigma_0 <- sigma[1]
+sigma_trt <- sigma[-1]
+capLambda <- (sigma_0^2 + sigma_trt^2/allocRatio[-1])^(-1)
+
+trtSS <- sapply(ctrSS, function(x){x*allocRatio[-1]}) #row= trt-arms, col=looks
+
+InfoMatrix <- sapply(ctrSS, function(x){x*capLambda}) #row=hypothesis, col=looks
+
+########### Elements of the Z-scale Covariance Matrix##############
+# (i1,i2) : index for the hypothesis 
+# (k1,k2) : index for the looks
+# sigma_0 : Standard deviation for the control arm
+# sigma_trt : Standard deviation for the treatment arms
+# ctrSS : stage-wise cumulative samples in control arm
+# trtSS : stage-wise cumulative samples in treatment arms
+# InfoMatrix : Fisher information matrix
+# Returns: The Probability of rejecting in atleast one primary hypothesis at stage1
+#--------------------------------------------------------------------------
+varCovZ <- function(i1,k1,i2,k2,sigma_0,sigma_trt,ctrSS,trtSS,InfoMatrix) 
+{
+  if(i1 == i2 & k1 == k2){ #Variance Case-1
+    1                           
+    
+  }else if(k1 == k2 & i1 != i2) #Covariance Case-2
+  {
+    sqrt(InfoMatrix[i1,k1]*InfoMatrix[i2,k2]) * (sigma_0^2/ctrSS[k2])
+    
+  }else if(i1 == i2 & k1 != k2) #Covariance Case-3
+  {
+    sqrt(InfoMatrix[i1,k1]*InfoMatrix[i2,k2]) *
+      ((sigma_trt[i2]^2/trtSS[i2,max(k1,k2)])+(sigma_0^2/ctrSS[max(k1,k2)]))
+    
+  }else if(i1 != i2 || k1 !=k2) #Covariance Case-4
+  {
+    sqrt(InfoMatrix[i1,k1]*InfoMatrix[i2,k2]) * (sigma_0^2/ctrSS[max(k1,k2)])
+    
+  }else
+  {
+    'Error in covZ'
+  }
+}
+
+########## Computation of  Z-scale Covariance Matrix #################
+sigmaZ <- matrix(NA, nrow = nHypothesis*nLooks, ncol = nHypothesis*nLooks)
+hIDX <- rep(1:nHypothesis,nLooks)
+lIDX <- rep(1:nLooks,each = nHypothesis)
+
+for(l in 1:length(hIDX))
+{
+  for (m in l:length(hIDX)) {
+    sigmaZ[l,m] <- sigmaZ[m,l] <- varCovZ(i1 = hIDX[l], k1 = lIDX[l], 
+                                          i2 = hIDX[m], k2 = lIDX[m],
+                                          sigma_0 = sigma_0,sigma_trt = sigma_trt,
+                                          ctrSS = ctrSS,trtSS = trtSS,InfoMatrix = InfoMatrix)
+  }
+}
+rownames(sigmaZ) <- colnames(sigmaZ) <- paste('Z',hIDX,lIDX,sep = '')
+
+############# Computed covariance matrix #########################
+print('The covariance matrix for stage-1 & stage-2 cumulative Z-statistics')
+sigmaZ
+
+```
+
+Once the intermediate results are obtain the later processes are same for all the intersection hypothesis. In this documentation the computations are described for a particular intersection hypothesis $J$ for which $w_J$ is given as in the inputs. The code should work for any intersection hypothesis, only thing require is the intersection weights. The length of the $w_J$ is always same as the number of hypothesis i.e. $|I_1|$ and $w_j = 0; \forall j \notin J$
+
+```{r}
+#--------------------------------------------------------------------------
+########### probability of crossing the boundary at stage 1##############
+# cJ1    : the stage-1 critical point for the intersection hypothesis HJ
+# wJ     : the weight for the intersection hypothesis HJ
+# sigmaZ : the co-variance matrix of cummulative z-statistics (2 stages combined)
+# underNull : TRUE if the probability is under null
+# Returns: The Probability of rejecting in atleast one primary hypothesis at stage1 #--------------------------------------------------------------------------
+exitProbStage1 <- function(cJ1, wJ, sigmaZ, underNull=TRUE)
+{
+  interHyp <- which(wJ != 0)
+  if(underNull)
+  {
+    mu_z <- rep(0, length(interHyp))
+  }
+  sigma <- sigmaZ[interHyp,interHyp]
+  upper <- qnorm(1-wJ*cJ1)
+  lower <- -Inf
+  1- mvtnorm::pmvnorm(
+    lower = lower,upper = upper,mean = mu_z,sigma = sigma
+  )[1]
+}
+
+#--------------------------------------------------------------------------
+#################### Search for stage-1 boundary ##########################
+# alpha1    : alpha spent at stage 1 
+# wJ     : The weight for the intersection hypothesis HJ
+# sigmaZ : The co-variance matrix of cummulative z-statistics (2 stages combined)
+# Returns: The critical point cJ1 for testing HJ at stage1 #--------------------------------------------------------------------------
+getBdryStage1 <- function(alpha1, wJ, sigmaZ)
+{
+  minbdry <- 0; maxbdry <- 1/max(wJ[wJ != 0])
+  bdry1 <-function(x)
+    {
+     exitProbStage1(cJ1 = x, wJ = wJ, sigmaZ = sigmaZ, underNull=TRUE) - alpha1
+  }
+  uniroot(f = bdry1, interval = c(minbdry, maxbdry), tol = 1E-12)$root
+}
+
+#Stage-1 boundary
+cJ1 <- getBdryStage1(alpha1, wJ, sigmaZ)
+print('The planned boundaries to test HJ at stage-1: wj*CJ1')
+cJ1*wJ
+print('The Critical Point CJ1')
+cJ1
+```
+
+```{r}
+
+#--------------------------------------------------------------------------
+########### probability of crossing the boundary at stage-2##############
+# cJ1    : The stage-1 critical point for the intersection hypothesis HJ
+# wJ     : The weight for the intersection hypothesis HJ
+# sigmaZ : The co-variance matrix of cummulative z-statistics (2 stages combined)
+# underNull : TRUE if the probability is under null
+# Returns: The Probability of rejecting in atleast one primary hypothesis at stage1 #--------------------------------------------------------------------------
+exitProbStage2 <- function(cJ2, cJ1, wJ, sigmaZ, underNull=TRUE)
+{
+  interHyp <- which(wJ != 0)
+  #stage-2 index = stage-1 sigma index + nHypo
+  sigmaIDX <- c(interHyp, interHyp+length(wJ)) 
+    
+  if(underNull)
+  {
+    mu_z <- rep(0, length(interHyp))
+  }
+  sigma <- sigmaZ[sigmaIDX,sigmaIDX]
+  upper <- c(qnorm(1-wJ*cJ1),qnorm(1-wJ*cJ2))
+  lower <- -Inf
+  prob <- mvtnorm::pmvnorm(  
+    lower = lower,
+    upper = upper,
+    mean = mu_z,
+    sigma = sigma
+  )[1]
+  (1-prob) #Under null this should be cummulative alpha for that look
+}
+
+#--------------------------------------------------------------------------
+#################### Search for stage-2 boundary ##########################
+# alpha  : planned alpha 
+# cJ1    : The stage-1 critical point for the intersection hypothesis HJ
+# exitProb1 : Boundary crossing probability at stage-1 
+# wJ     : The weight for the intersection hypothesis HJ
+# sigmaZ : The co-variance matrix of cummulative z-statistics (2 stages combined)
+# Returns: The critical point cJ2 for testing HJ at stage2 #--------------------------------------------------------------------------
+getBdryStage2 <- function(alpha, cJ1, wJ, sigmaZ)
+{
+  minbdry <- 0; maxbdry <- 1/max(wJ[wJ != 0])
+  bdry2 <-function(x)
+    {
+     exitProbStage2(cJ2 = x, cJ1 = cJ1, wJ = wJ, sigmaZ = sigmaZ, underNull=TRUE) - alpha
+  }
+  uniroot(f = bdry2, interval = c(minbdry, maxbdry), tol = 1E-12)$root
+}
+
+#Stage-2 boundary
+cJ2 <- getBdryStage2(alpha = alpha,cJ1 = cJ1,wJ=wJ,sigmaZ=sigmaZ)
+print('The planned boundaries to test HJ at Stage-2: wj*CJ2')
+cJ2*wJ
+print('The Critical Point CJ2')
+cJ2
+```
+
+### Conditional Error Rate
+
+Computation of Conditional Error Rate for the intersection hypothesis $J \subseteq I_2$
+
+$B_J^{param}(\alpha | \chi_1) = P_{H_J}[\cup_{j \in J} \{ P_{j,2} \leq w_{j,J}*C_{J,2} | p_{j,1} \}]$
+
+$\implies B_J^{param}(\alpha | \chi_1) = P_{H_J}[\cup_{j \in J} \{ Z_{j,2} \geq \Phi^{-1}(1- w_{j,J}*C_{J,2}) | Z_{j,1} = \Phi^{-1}(1-p_{j,1}) \}]$
+
+The above probability can be evaluated by taking transformation to Score Statistics defined as:
+
+$\tilde{S} = (S_{1,1},S_{2,1},...,S_{D,1},S_{1,2},S_{2,2},...,S_{D,2})'$
+
+$or,\tilde{S}= (Z_{1,1}\sqrt{I_{1,1}},Z_{2,1}\sqrt{I_{2,1}},...,Z_{D,1}\sqrt{I_{D,1}},Z_{1,2}\sqrt{I_{1,2}},Z_{2,2}\sqrt{I_{2,2}},...,Z_{D,2}\sqrt{I_{D,2}})'$
+
+Hence
+
+$B_J^{param}(\alpha | \chi_1) = 1 - P_{H_J}[\cap_{j \in J} \{\sqrt{I_{j,2}}Z_{j,2} \leq \sqrt{I_{j,2}}\Phi^{-1}(1- w_{j,J}*C_{J,2}) | \sqrt{I_{j,1}}Z_{j,1} = \sqrt{I_{j,1}}*(1-\Phi^{-1}(1-p_{j,1}))\}$
+
+$\implies B_J^{param}(\alpha | \chi_1) = 1 - P_{H_J}[\cap_{j \in J} \{S_{j,2}-S_{j,1} \leq \sqrt{I_{j,2}}\Phi^{-1}(1- w_{j,J}*C_{J,2})-\sqrt{I_{j,1}}*(1-\Phi^{-1}(1-p_{j,1}))\}]$
+
+**Variance Covariance Structure for** $\tilde{S}$
+
+The variance-covariance matrix $\Sigma_s$ for $\tilde{S}$ can be computed from $\Sigma_z$ as below:
+
+$\Sigma_s = ((l_u*l_v*\sigma_{u,v}^z))$
+
+where $l_u$ is the u-th element from the vector $l=(\sqrt{I_{1,1}},\sqrt{I_{2,1}},...,\sqrt{I_{D,2}})'$ and $\sigma_{u,v}^z$ is the (u,v)-th element of the $\Sigma_z$ matrix
+
+The co-variance matrix for the stage-2 incremental statistics $\tilde{S}_{(2)} = (S_{1,2} - S_{1,1}, S_{2,2} - S_{2,1},...,S_{D,2} - S_{D,1})$ can be obtain from the $\Sigma_s$ matrix by using the following matrix transformation:
+
+$\tilde{S}_{(2)} = A \tilde{S}$
+
+$\implies Var(\tilde{S}_{(2)}) = A \Sigma_s A^T$
+
+where A is matrix of dimension (Number of Hypothesis x Number of Hypothesis\*Number of looks). An example of A is given bellow for testing three hypothesis in two stages.
+
+![](images/A_matrixS.PNG){fig-align="center" width="226"}
+
+```{r}
+############ Covariance Matrix for Score Statistics ############
+l <- c(sqrt(InfoMatrix[,1]),sqrt(InfoMatrix[,2]))
+
+sigmaS <- matrix(NA, nrow = nHypothesis*nLooks, ncol = nHypothesis*nLooks)
+
+for (i in 1:nrow(sigmaS)) {
+  for (j in i:ncol(sigmaS)) {
+   sigmaS[i,j] = sigmaS[j,i] = l[i]*l[j]*sigmaZ[i,j] 
+  }
+}
+#########Covariance Matrix for incremental stage-2 Score Statistics############
+getAmatrix <- function(nrow, ncol) {
+  mat <- matrix(0, nrow = nrow, ncol = ncol)
+  for (i in 1:nrow) {
+    mat[i, i] <- -1; mat[i, (i+ncol/2)] <- 1
+  }
+  mat
+}
+
+########## Difference Operator ###################
+A <- getAmatrix(nrow = nHypothesis, ncol = (nHypothesis*nLooks))
+
+### Covariance for the incremental Test Statistics ###
+sigmaS_incr <- A %*% sigmaS %*% t(A)
+
+
+#--------------------------------------------------------------------------
+#################### Score Scale CER ##########################
+# cJ2    : The stage-2 critical point for the intersection hypothesis HJ
+# p1     : The stage-1 raw p-values
+# wJ     : The weight for the intersection hypothesis HJ
+# sigmaS_incr : The co-variance matrix of stage-2 incremental Score-statistics 
+# Returns: The critical point cJ2 for testing HJ at stage2 #--------------------------------------------------------------------------
+CER_param <- function(cJ2, p1, wJ, sigmaS_incr)
+{
+  interHyp <- which(wJ != 0)
+  p_J1 <- p1[interHyp]
+  upper <-sqrt(InfoMatrix[interHyp,2])*qnorm(1-wJ*cJ2)-sqrt(InfoMatrix[interHyp,1])*qnorm(1-p_J1)
+  
+  lower <- -Inf
+  sigma <- sigmaS_incr[interHyp,interHyp]
+  
+  1- mvtnorm::pmvnorm(
+    lower = lower,upper = upper,sigma = sigma
+  )[1]
+}
+
+############CER for the intersection hypothesis HJ####################
+BJ <- CER_param(cJ2, p1, wJ, sigmaS_incr)
+print('The CER for HJ: BJ')
+BJ
+```
+
+### Stage-2 Design
+
+$n_{(2)}^{Ctr}$: The stage-2 sample size for control arm
+
+$\lambda_{(2)}$ : The stage-2 allocation ratio
+
+$\mu_{(2)}$ : The stage-2 mean response
+
+$\sigma_{(2)}$ : The stage-2 standard deviation
+
+$p_{(2)}$ : The stage-2 raw p-values
+
+$v_{j,J}$ : The modified weight for the primary hypothesis $H_j$ as a part of the intersection hypothesis $H_J; J \subseteq I_2$
+
+Then the stage-2 adjusted critical point $C_{J,(2)}$ can be obtain by
+
+$P_{H_J} [\cup_{j \in J} P_{j,(2)} \leq v_{j,J}*C_{J,(2)}] = B_J^{param}(\alpha | \chi_1)$
+
+$\implies P_{H_J} [ \cap_{j \in J} \{Z_{j,(2)} \leq \Phi^{-1}(1-v_{j,J}*C_{J,(2)})\}] = 1 - B_J^{param}(\alpha | \chi_1)$
+
+```{r}
+
+###############################  Inputs  #########################################
+stage2ctrSS <- 75                #Stage-2 sample Size in control arm
+stage2allocRatio <- c(1,2,1)     #Stage-2 Allocation ratio
+stage2sigma <- c(1,1,1)          #Stage-2 Arm-wise standard deviation
+stage2mu <- c(0,0.3,0.3)         #Stage-2 Arm-wise mean under alternative
+vJ <- c(0.75,0.5)                #Stage-2 modified weights for testing HJ
+######################### End of inputs #########################################
+
+######################## Intermidiate computations ##############################
+stage2sigma_0 <- stage2sigma[1]
+stage2sigma_trt <- stage2sigma[-1]
+stage2capLambda <- (stage2sigma_0^2 + stage2sigma_trt^2/stage2allocRatio[-1])^(-1)
+
+stage2trtSS <- stage2ctrSS*stage2allocRatio[-1]
+stage2InfoMatrix <- matrix(stage2ctrSS*stage2capLambda,ncol = 1) 
+
+########## Computation of  Z-scale Covariance Matrix #################
+stage2sigmaZ <- matrix(NA, nrow = nHypothesis, ncol = nHypothesis)
+
+for(l in 1:length(vJ))
+{
+  for (m in l:length(vJ)) {
+    stage2sigmaZ[l,m] <- stage2sigmaZ[m,l] <- 
+      varCovZ(i1 = l, k1 = 1,i2 = m, k2 = 1,stage2sigma_0,stage2sigma_trt,
+              stage2ctrSS,stage2trtSS,stage2InfoMatrix)
+  }
+}
+
+############# Computed stage2 covariance matrix #########################
+print('The covariance matrix for stage-2 incremental Z-statistics')
+stage2sigmaZ
+
+```
+
+Modified Critical Point
+
+```{r}
+
+#Stage-2 boundary
+cJStage2 <- getBdryStage1(BJ, vJ, stage2sigmaZ)
+print('The boundaries to test HJ: wj*CJ(2)')
+cJStage2*wJ
+print('The Critical point CJ(2)')
+cJStage2
+```
