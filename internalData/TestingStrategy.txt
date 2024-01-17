@@ -1,0 +1,38 @@
+
+
+
+
+Automated UnitTesting
+
+- genWeights: Weights Computations( with gmcpLite benchmarks) 
+
+- PerLookMCPAnalysis: look-wise analysis for combining p-values method(with East benchmarks)
+  a) Adjusted p-values, b) Combining p-values, c)Final Rejection Status
+
+- getPlanNonParmBdry: boundary for non parametric test(with East benchmarks)
+  a) Early Efficacy Boundary(Spending Function LD-OF) b)No Efficacy Boundary 
+- getBdryStage2Nparam: plan non parametric boundary for stage-2(with East benchmarks)
+- getPCER: partial conditional error(with East benchmarks)
+- getStage2CondNParamBdry: Stage-2 conditional boundary for non-parametric tests(with East benchmarks)
+  a) Consistency with the plan boundary if no changes are made.
+
+
+
+- getSigma: Planned Sigma matrix for parametric and partly parametric tests
+- getStage2Sigma: modified Sigma matrix for parametric and partly parametric tests after adaptations
+  a) Consistency with the plan sigma if no changes are made
+- getPlanParmBdry: boundary for parametric test(with East benchmarks)
+- getStage2CondParamBdry: Stage-2 conditional boundary for parametric tests(with East benchmarks)
+  a) Consistency with the plan boundary if no changes are made
+- getPlanCorrelation: correlation matrix for combining p-values method for MAMSMEP designs
+
+- getPerLookTestStatDOM: Test statistics computations(with pre computed benchmarks/East benchmarks)
+
+
+
+
+
+ 
+ 
+
+
