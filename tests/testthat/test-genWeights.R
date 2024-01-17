@@ -42,6 +42,26 @@ test_that("Test Intersection Weights Computation",{
 
   expect_equal(object = outWeights,expected = benchmark2)
 
+  #----------------------------------------------------------
+  ##Test Case-3 Error if dimension of w and g are not consistent
+  w <- c(1/3,1/3,1/3)
+  g <- matrix(c(0,1,
+                1,0), nrow = 2)
+  expect_error(genWeights(w = w, g = g))
+
+  w <- c(1/2,1/2)
+  g <- matrix(c(0,1/2,1/2,
+                1/2,0,1/2,
+                1/2,1/2,0), nrow = 3)
+  expect_error(genWeights(w = w, g = g))
+
+  w <- c(1/3,1/3,1/3)
+  g <- matrix(c(0,1/2,1/2,
+                1/2,0,1/2,
+                1/2,1/2,0), nrow = 3)
+  expect_error(genWeights(w = w, g = g, HypothesisName = c('A','B')))
+
+
 })
 
 

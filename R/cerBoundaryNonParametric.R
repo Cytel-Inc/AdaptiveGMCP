@@ -41,9 +41,7 @@ getPCER <- function(a2, p1, ss1,ss2)
 #Function to compute the stage-2 boundary crossing probability
 exitProbStage2Nparam <- function(aj2, aj1,  ss1, ss2) #e: sig level, a1: stage-1 boundary
 {
-  #Make Seed restricted to local##
-  old <- .Random.seed
-  on.exit( { .Random.seed <<- old } )
+  #Set local seed##
   set.seed(200295)
   #################################
   upper <- c(qnorm(1-aj1), Inf)
@@ -51,12 +49,13 @@ exitProbStage2Nparam <- function(aj2, aj1,  ss1, ss2) #e: sig level, a1: stage-1
   r <- sqrt(ss1/ss2)
   sigma <- matrix(c(1,r, r,1), nrow = 2)
   prob <- mvtnorm::pmvnorm(lower = lower, upper = upper, sigma = sigma)[1]
-  return(prob)
+  return(prob+aj1)
 }
 
 #Optimization function to get stage-2 boundary
 getBdryStage2Nparam <- function(ej, aj1,  ss1, ss2)
 {
+  if(ss1 == 0 || ss2 == 0) stop('Error: ss1 == 0 || ss2 == 0 is not true | function: getBdryStage2Nparam')
   minbdry <- 0; maxbdry <- 1 #Set interval
   bdry2NP <-function(x)
   {

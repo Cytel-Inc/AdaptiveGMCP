@@ -126,8 +126,14 @@ CombinedPvalue <- function(CurrentLook, adjPValue, W_Norm)
   {
     return('Error in CombinedPvalue function')
   }
+  if(abs(sum(W_Inv^2)-1) > 1E-6) stop('Error: abs(sum(W_Inv^2)-1) < 1E-6 not true| function: CombinedPvalue')
+
 
   p_look <- as.numeric(adjPValue[,grep('PAdj',names(adjPValue))])
+
+  if(any(is.na(p_look))) stop('Error:any(is.na(p_look)) is not true| function: CombinedPvalue')
+
+
   if(any(is.na(p_look)))
   {
     return(NA)

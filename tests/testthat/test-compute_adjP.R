@@ -194,5 +194,6 @@ test_that('Test computations of Adjusted P-values',{
   OutRej <- adjP < c(rep(0.002,4), rep(0.025,4))
   benchmark <- c(F, F, F, F,  T, F, F,T)
   expect_equal(object = OutRej, expected = benchmark)
+  #------------------------------------------------------------------------------
 
 })
