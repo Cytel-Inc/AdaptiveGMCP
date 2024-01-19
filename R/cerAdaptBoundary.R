@@ -203,7 +203,7 @@ getAdaptBdry <- function(J,w1,w2,a2,a1,p1,test.type,HypoMap,
     NPGrpsMod <- NParamGrps[NParamGrps %in% Stage2HypoIDX &
                             NParamGrps %in% which(w2>0)] #boundaries for only available hypothesis
 
-    if(length(NPGrpsMod)!=0 & cerNParam < 1)
+    if(length(NPGrpsMod)!=0) #& cerNParam < 1
     {
       SS1Mod <-ModSSHyp[[1]][NPGrpsMod]
       SS2Mod <-ModSSHyp[[2]][NPGrpsMod]

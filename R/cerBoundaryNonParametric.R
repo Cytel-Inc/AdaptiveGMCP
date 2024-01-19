@@ -44,7 +44,7 @@ exitProbStage2Nparam <- function(aj2, aj1,  ss1, ss2) #aj2: sig level, a1: stage
   set.seed(200295)
   #################################
   upper <- c(qnorm(1-aj1), Inf)
-  lower <- c(-Inf, qnorm(1-aj2))
+  lower <- c(-Inf, ifelse(1-aj2>=0,qnorm(1-aj2),-Inf))
   r <- sqrt(ss1/ss2)
   sigma <- matrix(c(1,r, r,1), nrow = 2)
   prob <- mvtnorm::pmvnorm(lower = lower, upper = upper, sigma = sigma)[1]
@@ -59,12 +59,13 @@ getBdryStage2Nparam <- function(ej, aj1,  ss1, ss2)
   bdry2NP <-function(x)
   {
     #cat('ej :', ej, 'aj1 :', aj1, 'aj2 :',x)
-    if(ej==1){ #when the the threshold is 1 the exit prob can be assumed to be 1
-      extProb <- 1
-    }else
-    {
-      extProb <- exitProbStage2Nparam(x, aj1,  ss1, ss2)
-    }
+    extProb <- exitProbStage2Nparam(x, aj1,  ss1, ss2)
+    # if(ej==1){ #when the the threshold is 1 the exit prob can be assumed to be 1
+    #   extProb <- 1
+    # }else
+    # {
+    #   extProb <- exitProbStage2Nparam(x, aj1,  ss1, ss2)
+    # }
     #cat('extProb:',extProb,'\n')
     extProb - ej
   }
@@ -72,12 +73,10 @@ getBdryStage2Nparam <- function(ej, aj1,  ss1, ss2)
   if((ej-aj1)>0 & ej != 0) #compute boundary when the exit prob >0
   {
     uniroot(f = bdry2NP, interval = c(minbdry, maxbdry), tol = 1E-16)$root
-
   }else
   {
     0
   }
-
 }
 
 #Function to compute the Adj Boundary based on modified weights
@@ -100,18 +99,19 @@ getStage2CondNParamBdry <- function(a1,p1,v,BJ,SS1, SS2)
   #Function to search for optimum g
   OptimGamma <- function(x)
   {
-    #cat('gammaJ : ' , x)
-    if(x==0)
-    {
-      modBJ <- 0
-    }else if( x == 1)
-    {
-      modBJ <- 1
-    }else
-    {
-      modBJ <- sum(getAdjPCER(g = x,a1 = a1,p1 = p1, v = v, SS1=SS1, SS2=SS2))
-    }
-    #cat('BJ : ',modBJ,'\n')
+    #cat('gammaJ : ' , x, '\n')
+    modBJ <- sum(getAdjPCER(g = x,a1 = a1,p1 = p1, v = v, SS1=SS1, SS2=SS2))
+    # if(x==0)
+    # {
+    #   modBJ <- 0
+    # }else if( x == 1)
+    # {
+    #   modBJ <- 1
+    # }else
+    # {
+    #   modBJ <- sum(getAdjPCER(g = x,a1 = a1,p1 = p1, v = v, SS1=SS1, SS2=SS2))
+    # }
+    #cat(' modBJ : ',modBJ,' BJ : ',BJ ,' modBJ-BJ : ',modBJ-BJ,'\n')
     modBJ-BJ
   }
 
@@ -123,6 +123,8 @@ getStage2CondNParamBdry <- function(a1,p1,v,BJ,SS1, SS2)
   Stage2AdjBdry <- unlist(lapply(1:length(v), function(x){
     getBdryStage2Nparam(ej = gOpt*v[x], aj1= a1[x], ss1 = SS1[x], ss2 = SS2[x])
   }))
+  Stage2AdjBdry[Stage2AdjBdry>=1] = 1
+
 
   list('gamma'=gOpt, 'PCER_adj'=PCER_adj, 'Stage2AdjBdry'=Stage2AdjBdry)
 }
