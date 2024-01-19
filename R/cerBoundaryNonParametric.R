@@ -29,9 +29,8 @@ getPlanNonParmBdry <- function(nLooks, sig_level, info_frac, typeOfDesign = 'asO
 #Component-wise PCER
 getPCER <- function(a2, p1, ss1,ss2)
 {
-  #Make Seed restricted to local##
-  old <- .Random.seed
-  on.exit( { .Random.seed <<- old } )
+  if(ss1 == 0 || ss2 == 0) stop('Error: ss1 or ss2 is zero | function:getPCER')
+  #local Seed##
   set.seed(200295)
   #################################
   r <- sqrt(ss1/ss2)
@@ -39,7 +38,7 @@ getPCER <- function(a2, p1, ss1,ss2)
 }
 
 #Function to compute the stage-2 boundary crossing probability
-exitProbStage2Nparam <- function(aj2, aj1,  ss1, ss2) #e: sig level, a1: stage-1 boundary
+exitProbStage2Nparam <- function(aj2, aj1,  ss1, ss2) #aj2: sig level, a1: stage-1 boundary
 {
   #Set local seed##
   set.seed(200295)
@@ -55,21 +54,22 @@ exitProbStage2Nparam <- function(aj2, aj1,  ss1, ss2) #e: sig level, a1: stage-1
 #Optimization function to get stage-2 boundary
 getBdryStage2Nparam <- function(ej, aj1,  ss1, ss2)
 {
-  if(ss1 == 0 || ss2 == 0) stop('Error: ss1 == 0 || ss2 == 0 is not true | function: getBdryStage2Nparam')
+  if(ss1 == 0 || ss2 == 0) stop('Error: ss1 or ss2 is zero | function: getBdryStage2Nparam')
   minbdry <- 0; maxbdry <- 1 #Set interval
   bdry2NP <-function(x)
   {
+    #cat('ej :', ej, 'aj1 :', aj1, 'aj2 :',x)
     if(ej==1){ #when the the threshold is 1 the exit prob can be assumed to be 1
       extProb <- 1
     }else
     {
       extProb <- exitProbStage2Nparam(x, aj1,  ss1, ss2)
     }
-    #cat('aj2 :',x,'extProb:',extProb,'\n')
+    #cat('extProb:',extProb,'\n')
     extProb - ej
   }
 
-  if((ej-aj1)>0 || ej != 0) #compute boundary when the exit prob >0
+  if((ej-aj1)>0 & ej != 0) #compute boundary when the exit prob >0
   {
     uniroot(f = bdry2NP, interval = c(minbdry, maxbdry), tol = 1E-16)$root
 
@@ -100,6 +100,7 @@ getStage2CondNParamBdry <- function(a1,p1,v,BJ,SS1, SS2)
   #Function to search for optimum g
   OptimGamma <- function(x)
   {
+    #cat('gammaJ : ' , x)
     if(x==0)
     {
       modBJ <- 0
@@ -110,7 +111,7 @@ getStage2CondNParamBdry <- function(a1,p1,v,BJ,SS1, SS2)
     {
       modBJ <- sum(getAdjPCER(g = x,a1 = a1,p1 = p1, v = v, SS1=SS1, SS2=SS2))
     }
-    #cat('gammaJ : ' , x, 'BJ : ',modBJ,'\n')
+    #cat('BJ : ',modBJ,'\n')
     modBJ-BJ
   }
 

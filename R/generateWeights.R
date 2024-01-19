@@ -3,9 +3,9 @@
 genWeights <- function(w,g,HypothesisName)
 {
   #################Input Validation##################
-  if(length(w) !=nrow(g) || length(w)!= ncol(g)) stop('Error: length(w) !=nrow(g) || length(w)!= ncol(g) not true | function: genWeights')
+  if(length(w) !=nrow(g) || length(w)!= ncol(g)) stop('Error: length(w), nrow(g) and ncol(g) are not same | function: genWeights')
   if(!missing(HypothesisName)){
-    if(length(w) != length(HypothesisName))stop('Error:!missing(HypothesisName) & length(w)==length(HypothesisName) not true | function: genWeights')
+    if(length(w) != length(HypothesisName))stop('Error: length(w) and length(HypothesisName) are not same | function: genWeights')
   }
 
   ###################################################

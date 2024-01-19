@@ -131,7 +131,7 @@ CombinedPvalue <- function(CurrentLook, adjPValue, W_Norm)
 
   p_look <- as.numeric(adjPValue[,grep('PAdj',names(adjPValue))])
 
-  if(any(is.na(p_look))) stop('Error:any(is.na(p_look)) is not true| function: CombinedPvalue')
+  if(any(is.na(p_look))) stop('Error: p_look contains NA | function: CombinedPvalue')
 
 
   if(any(is.na(p_look)))
