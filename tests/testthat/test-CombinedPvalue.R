@@ -42,13 +42,14 @@ test_that('Test Combining p-value computations',{
   out <- CombinedPvalue(CurrentLook=2, adjPValue=adjPValue, W_Norm=W_Norm)
   expect_equal(object = out, expected = 0)
 
-  #Test Case-2: Expect Error
+  #Test Case-2: Expect NA if one of the adjusted p-value is NA
   planSSIncr <- matrix(c(100000,150000,190000,
                          150000,190000,10000),nrow = 2, byrow = T)
   invNorm <- getInvNormWeights(planSSIncr = planSSIncr)
   W_Norm <- invNorm$W_Norm
   adjPValue <- data.frame(matrix(c(NA,0.1),nrow = 1))
   colnames(adjPValue) <- rep('PAdj', 2)
-  expect_error(CombinedPvalue(CurrentLook=2, adjPValue=adjPValue, W_Norm=W_Norm))
+  expect_equal(is.na(CombinedPvalue(CurrentLook=2, adjPValue=adjPValue, W_Norm=W_Norm)),
+               expected = TRUE)
 
 })

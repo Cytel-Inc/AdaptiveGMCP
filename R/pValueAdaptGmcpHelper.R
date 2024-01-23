@@ -26,7 +26,17 @@ PerLookMCPAnalysis<- function(mcpObj)
     mcpObj$AdjPValues <- PooledDF
   }else
   {
-    mcpObj$AdjPValues <- merge(mcpObj$AdjPValues, PooledDF, all = T)
+    PooledDFIDX <- as.vector(apply(PooledDF[,grep('H',names(PooledDF))], 1, function(x){paste(x,collapse = '')}))
+    AdjPValuesIDX <- as.vector(apply(mcpObj$AdjPValues[,grep('H',names(mcpObj$AdjPValues))], 1, function(x){paste(x,collapse = '')}))
+
+    AdjPval <- data.frame(unlist(lapply(AdjPValuesIDX, function(x){
+      idx <- which(PooledDFIDX == x)
+      ifelse(length(idx)==0,NA,PooledDF$PAdj2[idx])
+    })))
+
+    names(AdjPval) <- paste('PAdj',mcpObj$CurrentLook, sep = '')
+
+    mcpObj$AdjPValues <- cbind(mcpObj$AdjPValues, AdjPval)
   }
 
   if(mcpObj$CurrentLook > 1)
@@ -130,9 +140,6 @@ CombinedPvalue <- function(CurrentLook, adjPValue, W_Norm)
 
 
   p_look <- as.numeric(adjPValue[,grep('PAdj',names(adjPValue))])
-
-  if(any(is.na(p_look))) stop('Error: p_look contains NA | function: CombinedPvalue')
-
 
   if(any(is.na(p_look)))
   {

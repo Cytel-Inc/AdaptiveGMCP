@@ -4,7 +4,7 @@
 #----------------- -
 SingleSimCombPValue <- function(simID, gmcpSimObj,preSimObjs)
 {
-  #print(simID)
+  print(simID)
   mcpObj <- initialize_mcpObj(gmcpSimObj = gmcpSimObj, preSimObjs = preSimObjs)
   SummStatDF <- mcpObj$SummStatBlank
   ArmWiseDF <- mcpObj$ArmWiseDataBlank
@@ -82,11 +82,18 @@ SingleSimCombPValue <- function(simID, gmcpSimObj,preSimObjs)
 
   powerCountDF <- CountPower(simID = simID, SummaryStatFile = SummStatDF, TrueNull = mcpObj$TrueNull)
   EffCountDF <- CountEfficacy(simID = simID, SummaryStatFile = SummStatDF)
+  SelectionDF <- data.frame()
+  if(mcpObj$Selection & length(mcpObj$SelectedIndex)>0)
+  {
+    SelectionDF <-data.frame('simID'=simID,
+                             'SelectedHypothesis'=mcpObj$SelectedIndex)
+  }
 
   list('SummStatDF'=SummStatDF,
        'ArmWiseDF'=ArmWiseDF,
        'powerCountDF'=powerCountDF,
-       'EfficacyTable'=EffCountDF )
+       'EfficacyTable'=EffCountDF,
+       'SelectionDF'=SelectionDF)
 }
 
 #----------------- -
@@ -212,10 +219,18 @@ SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
   powerCountDF <- CountPower(simID = simID, SummaryStatFile = SummStatDF, TrueNull = mcpObj$TrueNull)
   EffCountDF <- CountEfficacy(simID = simID, SummaryStatFile = SummStatDF)
 
+  SelectionDF <- data.frame()
+  if(mcpObj$Selection & length(mcpObj$SelectedIndex)>0)
+  {
+    SelectionDF <-data.frame('simID'=simID,
+                             'SelectedHypothesis'=mcpObj$SelectedIndex)
+  }
+
   list('SummStatDF'=SummStatDF,
        'ArmWiseDF'=ArmWiseDF,
        'powerCountDF'=powerCountDF,
-       'EfficacyTable'=EffCountDF )
+       'EfficacyTable'=EffCountDF,
+       'SelectionDF'=SelectionDF)
 }
 
 

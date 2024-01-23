@@ -62,22 +62,22 @@ getSelectedHypo2<-function(mcpObj)
   #----------------------------------------------------------------------------
 
   ########Step-2: get the scale variable on which selection will be performed##########
-  if(mcpObj$SelectionMethods == 'pvalue')
+  if(mcpObj$SelectionScale == 'pvalue')
   {
     ScaleVar <- mcpObj$SummStatDF[mcpObj$SummStatDF$LookID==mcpObj$CurrentLook,
                                   grep('RawPvalues', names(mcpObj$SummStatDF))]
 
-  }else if(mcpObj$SelectionMethods == 'delta')
+  }else if(mcpObj$SelectionScale == 'delta')
   {
     ScaleVar <- mcpObj$SummStatDF[mcpObj$SummStatDF$LookID==mcpObj$CurrentLook,
                                   grep('Delta', names(mcpObj$SummStatDF))]
 
-  }else if(mcpObj$SelectionMethods == 'teststat')
+  }else if(mcpObj$SelectionScale == 'teststat')
   {
     ScaleVar <- mcpObj$SummStatDF[mcpObj$SummStatDF$LookID==mcpObj$CurrentLook,
                                   grep('TestStat', names(mcpObj$SummStatDF))]
 
-  }else if(mcpObj$SelectionMethods == 'stderror')
+  }else if(mcpObj$SelectionScale == 'stderror')
   {
     ScaleVar <- mcpObj$SummStatDF[mcpObj$SummStatDF$LookID==mcpObj$CurrentLook,
                                   grep('StdError', names(mcpObj$SummStatDF))]
@@ -89,7 +89,7 @@ getSelectedHypo2<-function(mcpObj)
   if(mcpObj$SelectionCriterion=='best')
   {
     #Best r
-    if(mcpObj$SelectionMethods == 'stderror' || mcpObj$SelectionMethods == 'pvalue')
+    if(mcpObj$SelectionScale == 'stderror' || mcpObj$SelectionScale == 'pvalue')
     {
       # for p-values and stderror the smaller the better
       ranks <- rank(ScaleVar,ties.method = 'random')
@@ -103,7 +103,7 @@ getSelectedHypo2<-function(mcpObj)
   }else if(mcpObj$SelectionCriterion=='threshold')
   {
     #threshold based selection
-    if(mcpObj$SelectionMethods == 'stderror' || mcpObj$SelectionMethods == 'pvalue')
+    if(mcpObj$SelectionScale == 'stderror' || mcpObj$SelectionScale == 'pvalue')
     {
       # for p-values and stderror the smaller the better
       selectedH <- contHypo$Hypothesis[ScaleVar <= mcpObj$SelectionParmeter]
@@ -115,7 +115,7 @@ getSelectedHypo2<-function(mcpObj)
   }else if(mcpObj$SelectionCriterion=='epsilon')
   {
     #epsilon neighbour of best
-    if(mcpObj$SelectionMethods == 'stderror' || mcpObj$SelectionMethods == 'pvalue')
+    if(mcpObj$SelectionScale == 'stderror' || mcpObj$SelectionScale == 'pvalue')
     {
       # for p-values and stderror the smaller the better
       ranks <- rank(ScaleVar,ties.method = 'random')
@@ -133,6 +133,15 @@ getSelectedHypo2<-function(mcpObj)
 
   if(length(selectedH) != 0) #If the selection set is non empty
   {
+    if(mcpObj$KeepAssosiatedEps){ #Keep all the associated hypothesis
+      notRejSet <- mcpObj$HypoMap[mcpObj$HypoPresent,]
+      selectedArms <- getArms2(SetH =  selectedH, HypoMap = notRejSet)
+      AssociatedHypo <- notRejSet$Hypothesis[notRejSet$Treatment %in% selectedArms]
+
+      selectedH <- AssociatedHypo
+    }
+
+
     dropedArms <- setdiff((1:length(mcpObj$ArmsPresent))[mcpObj$ArmsPresent],
                           getArms2(SetH =  selectedH,HypoMap = mcpObj$HypoMap))
 
@@ -164,7 +173,7 @@ getSelectedHypo<-function(mcpObj,gmcpSimObj,PreSimObj)
 {
   df1 <-PreSimObj$index_map[PreSimObj$index_map$GlobalIndexSet %in% mcpObj$IndexSet,] #for the present hypothesis
   if(
-    gmcpSimObj$SelectionMethods == 'pvalue'     ## Selection based on hypothesis
+    gmcpSimObj$SelectionScale == 'pvalue'     ## Selection based on hypothesis
   ){
     #Remaining Hypothesis after rejection
     ScaleVar <- mcpObj$SummStat[,paste('RawPvalues',get_numeric_part(mcpObj$IndexSet),sep = '')]
@@ -212,7 +221,7 @@ getSelectedHypo<-function(mcpObj,gmcpSimObj,PreSimObj)
     }
 
   }else if(      #Selection based on Arms
-      gmcpSimObj$SelectionMethods == 'ArmID'
+      gmcpSimObj$SelectionScale == 'ArmID'
   ){
     if(is.character(gmcpSimObj$SelectionParmeter))
     {

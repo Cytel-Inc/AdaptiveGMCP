@@ -16,7 +16,7 @@
 #' @param Selection Logical: TRUE if selection required at interim(default = FALSE)
 #' @param SelectionLook Numeric Vector to specify the selection looks
 #' @param SelectEndPoint Indicator to specify which endpoint to select from, e.g. '1': Endpoint 1, '2':Endpoint 2, 'overall': overall
-#' @param SelectionMethods Character: Scale parameter on which selection will be based on, options 'delta': delta, 'teststat': Test Statistics, 'stderror' : Standard Error of the test stat,  'pvalue': p-value(un-adj) based selection
+#' @param SelectionScale Character: Scale parameter on which selection will be based on, options 'delta': delta, 'teststat': Test Statistics, 'stderror' : Standard Error of the test stat,  'pvalue': p-value(un-adj) based selection
 #' @param SelectionCriterion Character: 'best': best r, 'threshold': threshold for selection, 'epsilon': for epsilon neighborhood
 #' @param SelectionParmeter r for best, threshold value for threshold or epsilon distance
 #' @param ImplicitSSR Character; 'Selection': re-allocate samples only from de-selected arms to available arms, 'All': Allocate all the planned samples(for the look) to the available arms, 'None': No Re-allocation
@@ -51,9 +51,10 @@ simMAMSMEP <- function(
     Selection= TRUE,
     SelectionLook = 1,
     SelectEndPoint = 1,
-    SelectionMethods = 'pvalue',
+    SelectionScale = 'pvalue',
     SelectionCriterion ='best',
     SelectionParmeter = 1,
+    KeepAssosiatedEps = TRUE,
     ImplicitSSR = 'All',
     nSimulation = 1000,
     Seed = 100,
@@ -92,8 +93,9 @@ simMAMSMEP <- function(
 
     #Selection
     'SelectEndPoint'= SelectEndPoint,         'Selection' = Selection,
-    'SelectionLook' = SelectionLook,          'SelectionMethods' = SelectionMethods,
+    'SelectionLook' = SelectionLook,          'SelectionScale' = SelectionScale,
     'SelectionCriterion' = SelectionCriterion,'SelectionParmeter' = SelectionParmeter,
+    'KeepAssosiatedEps' = KeepAssosiatedEps,
 
     #Simulation Parameters
     'nSimulation' = nSimulation,               'Seed' = Seed,

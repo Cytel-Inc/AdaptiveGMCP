@@ -33,7 +33,7 @@ genIncrLookSummaryDOM <- function(SimSeed,simID,lookID,Arms.Mean,Arms.std.dev,Ar
 {
   tryCatch(
     {
-      returnSubjData <- T
+      returnSubjData <- F #Flag to get the Subject level responses(Arm-Wise) as a return object
       #filter by available hypothesis
       HypoMapAvl <- HypoMap[HypoPresent,]
 

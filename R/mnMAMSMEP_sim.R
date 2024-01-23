@@ -19,6 +19,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
   PowerTab <- data.frame(matrix(nrow = 0, ncol = length(powersName)))
   EfficacyTable <- data.frame()
   names(PowerTab) <- powersName
+  SelectionTab <- data.frame()
 
   if(gmcpSimObj$Method=='CER')
   {
@@ -39,6 +40,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
     ArmWiseSummary <- rbind(ArmWiseSummary, out[[i]]$ArmWiseDF)
     PowerTab <- rbind(PowerTab, out[[i]]$powerCountDF)
     EfficacyTable <- plyr::rbind.fill(EfficacyTable,out[[i]]$EfficacyTable)
+    SelectionTab <- rbind(SelectionTab,out[[i]]$SelectionDF)
   }
 
   #Overall Powers
@@ -50,6 +52,20 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
                           'Count'=eff_count,
                           'Percentage'=100*(eff_count/nrow(EfficacyTable)))
   rownames(EffTab) <- NULL
+
+  if(gmcpSimObj$Selection){
+    #Selection Table
+    SelcCount <- table(SelectionTab$SelectedHypothesis)
+    SelcPerc <- 100*(SelcCount/gmcpSimObj$nSimulation)
+    SelecTab <- data.frame('Hypothesis'=names(SelcCount),
+                           'Count'=SelcCount,
+                           'Percentage'=SelcPerc)
+  }else
+  {
+    SelecTab <- NA
+  }
+
+
 
   elapsedTime <- Sys.time()-starttime
   #------------------------------------------------------------------------------
@@ -63,6 +79,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
                              'Boundary_Table' = preSimObjs$plan_Bdry$PlanBdryTab,
                              'Overall_Powers' = Sim_power,
                              'EfficacyTable'=EffTab,
+                             'SelectionTable'= SelecTab,
                              'Summary_Stat' = SummaryStatFile,
                              'ArmWiseSummary' = ArmWiseSummary,
                              'Seed'= preSimObjs$SimSeed,
@@ -74,6 +91,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
                              'Boundary_Table' = preSimObjs$plan_Bdry$PlanBdryTab,
                              'Overall_Powers' = Sim_power,
                              'EfficacyTable'=EffTab,
+                             'SelectionTable'= SelecTab,
                              'Seed'= preSimObjs$SimSeed,
                              'elapsedTime' = elapsedTime
                            )
@@ -88,6 +106,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
                              'Inverse_Normal_Weights' = preSimObjs$InvNormWeights$InvNormWeightsTab,
                              'Overall_Powers' = Sim_power,
                              'EfficacyTable'=EffTab,
+                             'SelectionTable'= SelecTab,
                              'Summary_Stat' = SummaryStatFile,
                              'ArmWiseSummary' = ArmWiseSummary,
                              'Seed'= preSimObjs$SimSeed,
@@ -100,6 +119,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
                              'Inverse_Normal_Weights' = preSimObjs$InvNormWeights$InvNormWeightsTab,
                              'Overall_Powers' = Sim_power,
                              'EfficacyTable'=EffTab,
+                             'SelectionTable'= SelecTab,
                              'Seed'= preSimObjs$SimSeed,
                              'elapsedTime' = elapsedTime
                            )
@@ -238,8 +258,8 @@ getPreSimObjs <- function(gmcpSimObj)
               G = gmcpSimObj$G,
               Titel = 'Initial Graph',
               Text = SubText)
+    PreSimObj$iniGraph <- iniGraph
   }
-  PreSimObj$iniGraph <- iniGraph
 
   PreSimObj
 }
