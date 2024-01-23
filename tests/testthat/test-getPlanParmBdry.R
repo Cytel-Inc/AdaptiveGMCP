@@ -1,8 +1,5 @@
 
 
-getPlanParmBdry(gIDX, hIDX, alpha, nLooks, info_frac, wJ, Sigma, typeOfDesign,Scale)
-
-
 test_that('Test Plan Parametric Boundary(CER Method)',{
 
   #Test Case1: Validate with East MAMS-GS boundary

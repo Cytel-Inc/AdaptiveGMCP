@@ -33,6 +33,7 @@ genIncrLookSummaryDOM <- function(SimSeed,simID,lookID,Arms.Mean,Arms.std.dev,Ar
 {
   tryCatch(
     {
+      returnSubjData <- T
       #filter by available hypothesis
       HypoMapAvl <- HypoMap[HypoPresent,]
 
@@ -40,6 +41,7 @@ genIncrLookSummaryDOM <- function(SimSeed,simID,lookID,Arms.Mean,Arms.std.dev,Ar
         CtrMean <- TrtMean <- rep(NA, nrow(HypoMap))
 
       armData <- data.frame()
+      SubjData <- list()
       for(armIDX in 1:length(ArmsPresent))
       {
         if(ArmsPresent[armIDX])
@@ -67,6 +69,7 @@ genIncrLookSummaryDOM <- function(SimSeed,simID,lookID,Arms.Mean,Arms.std.dev,Ar
                                           mean = arm_mean,
                                           arm_sigma = arm_Sigma,
                                           seed = getRunSeed(SimSeed = SimSeed,simID = simID, lookID = lookID,armIndex = armIDX))
+          if(returnSubjData) SubjData[[paste('Arm',armIDX,sep = '')]] <- arm_response
 
           arm_sumry <- data.frame(armSumry(arm_response))
           arm_sumry$Groups <- grps
@@ -110,7 +113,12 @@ genIncrLookSummaryDOM <- function(SimSeed,simID,lookID,Arms.Mean,Arms.std.dev,Ar
       MEAN_df <- data.frame(cbind(CtrMean,TrtMean))
       colnames(SoS_df) <- colnames(SUM_df) <- colnames(MEAN_df) <- names(HypoMap)[3:4]
 
-      list('SSIncrDF'=SS_df, 'SumOfSquareDF'=SoS_df, 'SumDF'=SUM_df, 'MeanDF'=MEAN_df, 'ArmData'=armData)
+      if(returnSubjData){
+        return(list('SSIncrDF'=SS_df, 'SumOfSquareDF'=SoS_df, 'SumDF'=SUM_df, 'MeanDF'=MEAN_df, 'ArmData'=armData, 'SubjData'=SubjData))
+      }else{
+        return(list('SSIncrDF'=SS_df, 'SumOfSquareDF'=SoS_df, 'SumDF'=SUM_df, 'MeanDF'=MEAN_df, 'ArmData'=armData))
+      }
+
     },
     error = function(err){
       print('Error in genIncrLookSummaryDOM')
