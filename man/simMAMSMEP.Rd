@@ -23,9 +23,10 @@ simMAMSMEP(
   Selection = TRUE,
   SelectionLook = 1,
   SelectEndPoint = 1,
-  SelectionMethods = "pvalue",
+  SelectionScale = "pvalue",
   SelectionCriterion = "best",
   SelectionParmeter = 1,
+  KeepAssosiatedEps = TRUE,
   ImplicitSSR = "All",
   nSimulation = 1000,
   Seed = 100,
@@ -69,11 +70,13 @@ simMAMSMEP(
 
 \item{SelectEndPoint}{Indicator to specify which endpoint to select from, e.g. '1': Endpoint 1, '2':Endpoint 2, 'overall': overall}
 
-\item{SelectionMethods}{Character: Scale parameter on which selection will be based on, options 'delta': delta, 'teststat': Test Statistics, 'stderror' : Standard Error of the test stat,  'pvalue': p-value(un-adj) based selection}
+\item{SelectionScale}{Character: Scale parameter on which selection will be based on, options 'delta': delta, 'teststat': Test Statistics, 'stderror' : Standard Error of the test stat,  'pvalue': p-value(un-adj) based selection}
 
 \item{SelectionCriterion}{Character: 'best': best r, 'threshold': threshold for selection, 'epsilon': for epsilon neighborhood}
 
 \item{SelectionParmeter}{r for best, threshold value for threshold or epsilon distance}
+
+\item{KeepAssosiatedEps}{Logical, True: keep all the associated hypothesis for the selected arms}
 
 \item{ImplicitSSR}{Character; 'Selection': re-allocate samples only from de-selected arms to available arms, 'All': Allocate all the planned samples(for the look) to the available arms, 'None': No Re-allocation}
 
@@ -154,7 +157,7 @@ typeOfDesign <- "asOF"
 #-----------------Multiple Winner Option--------------
 MultipleWinners <- TRUE
 
-#-----------------Multiple Winner Option--------------
+#-----------------Treatment Selection Choice--------------
 Selection <- TRUE
 
 #-----------------Selection based on look-------------
@@ -166,7 +169,7 @@ SelectEndPoint <- 1
 
 #-----------------Selection Based on----------------------
 #Options- 'delta': delta, 'teststat': Test Statistics, 'stderror' : Standard Error of the test stat,  'pvalue': p-value(un-adj)
-SelectionMethods <- 'pvalue'
+SelectionScale <- 'pvalue'
 
 #-----------------Selection Criteria----------------------
 #Options- 'best': best r, 'threshold': threshold for selection, 'epsilon': for epsilon neighborhood
@@ -175,6 +178,10 @@ SelectionCriterion <- 'best'
 #-----------------Selection Criteria Parameter----------------------
 # r for best, threshold value for threshold and epsilon distance for criteria 'epsilon'
 SelectionParmeter <- 1
+
+#----------------Keep associated Hypothesis-------------------------
+#TRUE: keep all the associated hypothesis for the selected arms, FALSE otherwise
+KeepAssosiatedEps <- TRUE
 
 #-------------------Implicit SSR-------------------------------------
 #'Selection': re-allocate samples only from de-selected arms to available arms,
@@ -202,8 +209,8 @@ simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps,
            Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, Arms.alloc.ratio = Arms.alloc.ratio,
            EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,info_frac = info_frac,
            typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
-           Selection = Selection,SelectionLook = SelectionLook,SelectEndPoint = SelectEndPoint,SelectionMethods = SelectionMethods,
-           SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter,
+           Selection = Selection,SelectionLook = SelectionLook,SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
            ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
            Method = Method, plotGraphs = plotGraphs)
 }

@@ -50,9 +50,15 @@ Automated UnitTesting
 
 FSD
 - Two Sample Multiple Endpoint Mixed Type(Normal)
-- Many Sample Single Look Study(Parametric, Non-Parametric)
+- Many Sample Single Look Study(Non-Parametric)
 
 Two Stage Many Sample Single Endpoint Designs
 - MAMS Combining p-values method
 - MAMS group sequential method
+
+#Run Examples form Published papers
+- KlingMuller
+- Bretz
+
+
 

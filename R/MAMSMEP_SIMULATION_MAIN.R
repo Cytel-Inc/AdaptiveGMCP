@@ -19,6 +19,7 @@
 #' @param SelectionScale Character: Scale parameter on which selection will be based on, options 'delta': delta, 'teststat': Test Statistics, 'stderror' : Standard Error of the test stat,  'pvalue': p-value(un-adj) based selection
 #' @param SelectionCriterion Character: 'best': best r, 'threshold': threshold for selection, 'epsilon': for epsilon neighborhood
 #' @param SelectionParmeter r for best, threshold value for threshold or epsilon distance
+#' @param KeepAssosiatedEps Logical, True: keep all the associated hypothesis for the selected arms
 #' @param ImplicitSSR Character; 'Selection': re-allocate samples only from de-selected arms to available arms, 'All': Allocate all the planned samples(for the look) to the available arms, 'None': No Re-allocation
 #' @param UpdateStrategy Logical to specify the updated strategy (Not Implemented yet) default FALSE
 #' @param nSimulation Numeric: number of simulations(default=1000)

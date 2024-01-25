@@ -1,0 +1,736 @@
+
+############################################### Consistency Testing with Existing East Design #############################################
+
+#------------------------------------------------------------------------------------------------
+###################################### FSD-2S-4EP Design : Input Parameters #####################
+#------------------------------------------------------------------------------------------------
+alpha <- 0.025
+SampleSize <- 500
+nArms <- 2
+nEps  <- 4
+Arms.std.dev <- list('EP1' = c(1,1),'EP2' = c(1,1),'EP3' = c(1,1),'EP4' = c(1,1))
+Arms.alloc.ratio <- c(1,1)
+EP.Corr <- matrix(c(1,0.5,0.5,0.5,  0.5,1,0.5,0.5,  0.5,0.5,1,0.5, 0.5,0.5,0.5,1),  nrow = 4)
+WI <-  c(0.5,0.5,0,0)
+G <- matrix(c(0,0.5,0.5,0,  0.5,0,0,0.5,  0,1,0,0,  1,0,0,0), nrow = nEps*(nArms-1), byrow = T)
+info_frac <- 1
+typeOfDesign <- "asOF"
+MultipleWinners <- T
+Selection <- T
+SelectionLook <- 1
+SelectEndPoint <- 1
+SelectionScale <- 'pvalue'
+SelectionCriterion <- 'best'
+SelectionParmeter <- 1
+KeepAssosiatedEps <- T
+ImplicitSSR <- 'All'
+nSimulation <- 5000
+Seed <- 100
+SummaryStat <- F
+
+###################################################################################################
+## TestCase-1 FSD-2S-4EP(CombPValue : Bonferroni, Under Alternative)
+Arms.Mean <- list('EP1' = c(0.1,0.3), 'EP2' = c(0.2,0.4),'EP3' = c(0.2,0.4),'EP4' = c(0.3,0.5))
+test.type <- 'Bonf'
+Method <- 'CombPValue' #CombPValue/CER
+fsd2S4Ep_pc <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+           Method = Method,plotGraphs = FALSE)
+		   
+####################################################################################################
+## TestCase-2 FSD-2S-4EP(CombPValue : Bonferroni, Under Null)
+Arms.Mean <- list('EP1' = c(0.1,0.1), 'EP2' = c(0.2,0.2),'EP3' = c(0.2,0.2),'EP4' = c(0.3,0.3))
+test.type <- 'Bonf'
+Method <- 'CombPValue' #CombPValue/CER
+fsd2S4Ep_pc_null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+           Method = Method,plotGraphs = FALSE)
+		   
+######################################################################################################
+## TestCase-3 FSD-2S-4EP(CER : Non-parametric , Under Alternative)
+Arms.Mean <- list('EP1' = c(0.1,0.3), 'EP2' = c(0.2,0.4),'EP3' = c(0.2,0.4),'EP4' = c(0.3,0.5))
+test.type <- 'Non-parametric'
+Method <- 'CER' #CombPValue/CER
+fsd2S4Ep_cer <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+           Method = Method,plotGraphs = FALSE)
+		   
+#######################################################################################################  
+## TestCase-4 FSD-2S-4EP(CER : Non-parametric , Under Null)
+Arms.Mean <- list('EP1' = c(0.1,0.1), 'EP2' = c(0.2,0.2),'EP3' = c(0.2,0.2),'EP4' = c(0.3,0.3))
+test.type <- 'Non-parametric'
+Method <- 'CER' #CombPValue/CER
+fsd2S4Ep_cer_Null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+           Method = Method,plotGraphs = FALSE)
+
+
+
+#------------------------------------------------------------------------------------------------
+###################################### FSD-4S-1EP : Input Parameters #####################
+#------------------------------------------------------------------------------------------------
+
+alpha <- 0.025
+SampleSize <- 400
+nArms <- 4
+nEps  <- 1
+Arms.std.dev <- list('EP1' = c(1,1,1,1))
+Arms.alloc.ratio <- c(1,1,1,1)
+WI <-  c(1/3,1/3,1/3)
+G <- matrix(c(0,1/2,1/2,
+              1/2,0,1/2,
+              1/2,1/2,0),
+              nrow = nEps*(nArms-1), byrow = T)
+
+info_frac <- 1
+typeOfDesign <- "asOF"
+MultipleWinners <- T
+Selection <- FALSE
+SelectionLook <- 1
+SelectEndPoint <- 1
+SelectionScale <- 'pvalue'
+SelectionCriterion <- 'best'
+SelectionParmeter <- 1
+KeepAssosiatedEps <- T
+ImplicitSSR <- 'All'
+
+
+###################################################################################################
+## TestCase-5 FSD-4S-1EP(CombPValue : Bonferroni, Under Alternative)
+Arms.Mean <- list('EP1' = c(0,0.1,0.3,0.4))
+test.type <- 'Bonf'
+Method <- 'CombPValue' #CombPValue/CER
+fsd4S1EPBonf_pc <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+           Method = Method,plotGraphs = FALSE)
+		   
+###################################################################################################
+## TestCase-6 FSD-4S-1EP(CombPValue : Bonferroni, Under Null)
+Arms.Mean <- list('EP1' = c(0,0,0,0))
+test.type <- 'Bonf'
+Method <- 'CombPValue' #CombPValue/CER
+fsd4S1EPBonf_pc_Null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+           Method = Method,plotGraphs = FALSE)
+		   
+###################################################################################################
+## TestCase-7 FSD-4S-1EP(CombPValue : Dunnett, Under Alternative)
+Arms.Mean <- list('EP1' = c(0,0.1,0.3,0.4))
+test.type <- 'Dunnett'
+Method <- 'CombPValue' #CombPValue/CER
+fsd4S1EPDunn_pc <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+           Method = Method,plotGraphs = FALSE)
+		   
+###################################################################################################
+## TestCase-8 FSD-4S-1EP(CombPValue : Dunnett, Under Null)
+Arms.Mean <- list('EP1' = c(0,0,0,0))
+test.type <- 'Dunnett'
+Method <- 'CombPValue' #CombPValue/CER
+fsd4S1EPDunn_pc_Null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+           Method = Method,plotGraphs = FALSE)
+		   
+###################################################################################################
+## TestCase-9 FSD-4S-1EP(CER : Non-parametric, Under Alternative)
+Arms.Mean <- list('EP1' = c(0,0.1,0.3,0.4))
+test.type <- 'Non-parametric'
+Method <- 'CER' #CombPValue/CER
+fsd4S1EPNP_cer <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+           nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+           Method = Method,plotGraphs = FALSE)
+		   
+###################################################################################################
+## TestCase-10 FSD-4S-1EP(CER : Non-parametric, Under Null)
+Arms.Mean <- list('EP1' = c(0,0,0,0))
+test.type <- 'Non-parametric'
+Method <- 'CER' #CombPValue/CER
+fsd4S1EPNP_cer_Null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+           nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+           Method = Method,plotGraphs = FALSE)
+		   
+###################################################################################################
+## TestCase-11 FSD-4S-1EP(CER : Parametric, Under Alternative)
+Arms.Mean <- list('EP1' = c(0,0.1,0.3,0.4))
+test.type <- 'Parametric'
+Method <- 'CER' #CombPValue/CER
+fsd4S1EPPa_cer <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+           nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+           Method = Method,plotGraphs = FALSE)
+		   
+###################################################################################################
+## TestCase-12 FSD-4S-1EP(CER : Non-parametric, Under Null)
+Arms.Mean <- list('EP1' = c(0,0,0,0))
+test.type <- 'Parametric'
+Method <- 'CER' #CombPValue/CER
+fsd4S1EPPa_cer_Null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+           nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+           Method = Method,plotGraphs = FALSE)
+
+
+
+
+#------------------------------------------------------------------------------------------------
+###################################### NoEff-4S-MAMS : Input Parameters #####################
+#------------------------------------------------------------------------------------------------
+alpha <- 0.025
+SampleSize <- 400
+nArms <- 4
+nEps  <- 1
+Arms.std.dev <- list('EP1' = c(1,1,1,1))
+Arms.alloc.ratio <- c(1,1,1,1)
+WI <-  c(1/3,1/3,1/3)
+G <- matrix(c(0,1/2,1/2,
+              1/2,0,1/2,
+              1/2,1/2,0),
+              nrow = nEps*(nArms-1), byrow = T)
+
+info_frac <- c(0.5,1)
+typeOfDesign <- "noEarlyEfficacy"
+Selection <- F
+SelectionLook <- 1
+SelectEndPoint <- 1
+SelectionScale <- 'pvalue'
+SelectionCriterion <- 'best'
+SelectionParmeter <- 1
+KeepAssosiatedEps <- T
+ImplicitSSR <- 'None'
+MultipleWinners <- F
+
+###################################################################################################
+## TestCase-13 NoEff-4S-MAMS-PC(CombPValue : Bonferroni, Under Alternative)
+Arms.Mean <- list('EP1' = c(0,0.1,0.3,0.4))
+test.type <- 'Bonf'
+Method <- 'CombPValue' #CombPValue/CER
+
+noEffMAMSBonf_pc <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)
+		   
+###################################################################################################
+## TestCase-14 NoEff-4S-MAMS-PC(CombPValue : Bonferroni, Under Null)
+Arms.Mean <- list('EP1' = c(0,0,0,0))
+test.type <- 'Bonf'
+Method <- 'CombPValue' #CombPValue/CER
+noEffMAMSBonf_pc_Null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)
+		   
+		   
+###################################################################################################
+## TestCase-15 NoEff-4S-MAMS-PC(CombPValue : Dunnett, Under Alternative)
+Arms.Mean <- list('EP1' = c(0,0.1,0.3,0.4))
+test.type <- 'Dunnett'
+Method <- 'CombPValue' #CombPValue/CER
+noEffMAMSDunn_pc <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)
+		   
+###################################################################################################
+## TestCase-16 NoEff-4S-MAMS-PC(CombPValue : Dunnett, Under Null)
+Arms.Mean <- list('EP1' = c(0,0,0,0))
+test.type <- 'Dunnett'
+Method <- 'CombPValue' #CombPValue/CER
+noEffMAMSDunn_pc_Null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)
+		   
+		   
+###################################################################################################
+## TestCase-17 NoEff-4S-MAMS-GS(CER : Non-Parametric, Under Alternative)
+Arms.Mean <- list('EP1' = c(0,0.1,0.3,0.4))
+test.type <- 'Non-Parametric'
+Method <- 'CER' #CombPValue/CER
+noEffMAMSNP_cer <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)
+		   
+###################################################################################################
+## TestCase-18 NoEff-4S-MAMS-GS(CER : Non-Parametric, Under Null)
+Arms.Mean <- list('EP1' = c(0,0,0,0))
+test.type <- 'Non-Parametric'
+Method <- 'CER' #CombPValue/CER
+noEffMAMSNP_cer_Null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)	
+		   
+###################################################################################################
+## TestCase-19 NoEff-4S-MAMS-GS(CER : Parametric, Under Alternative)
+Arms.Mean <- list('EP1' = c(0,0.1,0.3,0.4))
+test.type <- 'Parametric'
+Method <- 'CER' #CombPValue/CER
+noEffMAMSPa_cer <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)
+		   
+###################################################################################################
+## TestCase-20 NoEff-4S-MAMS-GS(CER : Parametric, Under Null)
+Arms.Mean <- list('EP1' = c(0,0,0,0))
+test.type <- 'Parametric'
+Method <- 'CER' #CombPValue/CER
+noEffMAMSPa_cer_Null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)	
+		   
+#------------------------------------------------------------------------------------------------
+###################################### NoEff-Best-MAMS : Input Parameters #####################
+#------------------------------------------------------------------------------------------------
+alpha <- 0.025
+SampleSize <- 400
+nArms <- 4
+nEps  <- 1
+Arms.std.dev <- list('EP1' = c(1,1,1,1))
+Arms.alloc.ratio <- c(1,1,1,1)
+WI <-  c(1/3,1/3,1/3)
+G <- matrix(c(0,1/2,1/2,
+              1/2,0,1/2,
+              1/2,1/2,0),
+              nrow = nEps*(nArms-1), byrow = T)
+
+info_frac <- c(0.5,1)
+typeOfDesign <- "noEarlyEfficacy"
+Selection <- T
+SelectionLook <- 1
+SelectEndPoint <- 'overall'
+SelectionScale <- 'pvalue'
+SelectionCriterion <- 'best'
+SelectionParmeter <- 1
+KeepAssosiatedEps <- F
+ImplicitSSR <- 'Selection'
+MultipleWinners <- F
+
+
+###################################################################################################
+## TestCase-21 NoEff-Best-MAMS-PC(CombPValue : Bonferroni, Under Alternative)
+Arms.Mean <- list('EP1' = c(0,0.1,0.3,0.4))
+test.type <- 'Bonf'
+Method <- 'CombPValue' #CombPValue/CER
+
+noEffMAMSBonfBest_pc <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)
+		   
+###################################################################################################
+## TestCase-22  NoEff-Best-MAMS-PC(CombPValue : Bonferroni, Under Null)
+Arms.Mean <- list('EP1' = c(0,0,0,0))
+test.type <- 'Bonf'
+Method <- 'CombPValue' #CombPValue/CER
+noEffMAMSBonfBest_pc_Null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)
+		   
+		   
+###################################################################################################
+## TestCase-23 NoEff-Best-MAMS-PC(CombPValue : Dunnett, Under Alternative)
+Arms.Mean <- list('EP1' = c(0,0.1,0.3,0.4))
+test.type <- 'Dunnett'
+Method <- 'CombPValue' #CombPValue/CER
+noEffMAMSDunnBest_pc <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)
+		   
+###################################################################################################
+## TestCase-24  NoEff-Best-MAMS-PC(CombPValue : Dunnett, Under Null)
+Arms.Mean <- list('EP1' = c(0,0,0,0))
+test.type <- 'Dunnett'
+Method <- 'CombPValue' #CombPValue/CER
+noEffMAMSDunnBest_pc_Null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)
+		   
+		   
+###################################################################################################
+## TestCase-25 NoEff-Best-MAMS-GS(CER : Non-Parametric, Under Alternative)
+Arms.Mean <- list('EP1' = c(0,0.1,0.3,0.4))
+test.type <- 'Non-Parametric'
+Method <- 'CER' #CombPValue/CER
+noEffMAMSNPBest_cer <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)
+		   
+###################################################################################################
+## TestCase-26 NoEff-Best-MAMS-GS(CER : Non-Parametric, Under Null)
+Arms.Mean <- list('EP1' = c(0,0,0,0))
+test.type <- 'Non-Parametric'
+Method <- 'CER' #CombPValue/CER
+noEffMAMSNPBest_cer_Null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)	
+		   
+###################################################################################################
+## TestCase-27 NoEff-Best-MAMS-GS(CER : Parametric, Under Alternative)
+Arms.Mean <- list('EP1' = c(0,0.1,0.3,0.4))
+test.type <- 'Parametric'
+Method <- 'CER' #CombPValue/CER
+noEffMAMSPaBest_cer <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)
+		   
+###################################################################################################
+## TestCase-28 NoEff-Best-MAMS-GS(CER : Parametric, Under Null)
+Arms.Mean <- list('EP1' = c(0,0,0,0))
+test.type <- 'Parametric'
+Method <- 'CER' #CombPValue/CER
+noEffMAMSPaBest_cer_Null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
+          nArms = nArms,
+           nEps = nEps,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
+           Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
+           info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
+           Selection = Selection,SelectionLook = SelectionLook,
+           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, 
+           SelectionParmeter = SelectionParmeter,
+           KeepAssosiatedEps=KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
+           Seed = Seed, SummaryStat = SummaryStat,
+		   Method = Method,plotGraphs = FALSE)		   		   

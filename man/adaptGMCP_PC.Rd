@@ -5,18 +5,17 @@
 \title{Function to perform Adaptive GMCP Analysis following Combined P-Value(Inverse Normal) method}
 \usage{
 adaptGMCP_PC(
-  WI = rep(1/4, 4),
-  G = matrix(c(0, 1/3, 1/3, 1/3, 1/3, 0, 1/3, 1/3, 1/3, 1/3, 0, 1/3, 1/3, 1/3, 1/3, 0),
-    nrow = 4),
+  WI = c(0.5, 0.5, 0, 0),
+  G = matrix(c(0, 0.5, 0.5, 0, 0.5, 0, 0, 0.5, 0, 1, 0, 0, 1, 0, 0, 0), nrow = 4),
   test.type = "Partly-Parametric",
   alpha = 0.025,
-  info_frac = c(1/3, 2/3, 1),
+  info_frac = c(1/2, 1),
   typeOfDesign = "asOF",
-  Correlation = matrix(c(1, 0.5, NA, NA, 0.5, 1, NA, NA, NA, NA, 1, NA, NA, NA, NA, 1),
+  Correlation = matrix(c(1, 0.5, NA, NA, 0.5, 1, NA, NA, NA, NA, 1, 0.5, NA, NA, 0.5, 1),
     nrow = 4),
-  MultipleWinners = T,
-  Selection = F,
-  UpdateStrategy = F,
+  MultipleWinners = TRUE,
+  Selection = TRUE,
+  UpdateStrategy = TRUE,
   plotGraphs = TRUE
 )
 }

@@ -116,7 +116,15 @@ getStage2CondNParamBdry <- function(a1,p1,v,BJ,SS1, SS2)
   }
 
   #Optimization
-  gOpt <- uniroot(OptimGamma,interval = c(0,1),tol = 1E-16)$root
+  gOpt <- tryCatch({uniroot(OptimGamma,interval = c(0,1),tol = 1E-16)$root},
+           error=function(err){"Error"})
+
+  if(gOpt == "Error" & BJ >= 1){
+    gOpt = 1
+  }else if(gOpt == "Error" & BJ < 1)
+  {
+    stop('Error in getStage2CondNParamBdry optimization')
+  }
 
   PCER_adj <- getAdjPCER(g = gOpt,a1 = a1, p1 = p1, v=v, SS1=SS1, SS2=SS2)
 

@@ -63,7 +63,7 @@ typeOfDesign <- "asOF"
 #-----------------Multiple Winner Option--------------
 MultipleWinners <- TRUE
 
-#-----------------Multiple Winner Option--------------
+#-----------------Treatment Selection Choice--------------
 Selection <- TRUE
 
 #-----------------Selection based on look-------------
@@ -75,7 +75,7 @@ SelectEndPoint <- 1
 
 #-----------------Selection Based on----------------------
 #Options- 'delta': delta, 'teststat': Test Statistics, 'stderror' : Standard Error of the test stat,  'pvalue': p-value(un-adj)
-SelectionMethods <- 'pvalue'
+SelectionScale <- 'pvalue'
 
 #-----------------Selection Criteria----------------------
 #Options- 'best': best r, 'threshold': threshold for selection, 'epsilon': for epsilon neighborhood
@@ -84,6 +84,10 @@ SelectionCriterion <- 'best'
 #-----------------Selection Criteria Parameter----------------------
 # r for best, threshold value for threshold and epsilon distance for criteria 'epsilon'
 SelectionParmeter <- 1
+
+#----------------Keep associated Hypothesis-------------------------
+#TRUE: keep all the associated hypothesis for the selected arms, FALSE otherwise
+KeepAssosiatedEps <- TRUE
 
 #-------------------Implicit SSR-------------------------------------
 #'Selection': re-allocate samples only from de-selected arms to available arms,
@@ -111,7 +115,7 @@ simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps,
            Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, Arms.alloc.ratio = Arms.alloc.ratio,
            EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,info_frac = info_frac,
            typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
-           Selection = Selection,SelectionLook = SelectionLook,SelectEndPoint = SelectEndPoint,SelectionMethods = SelectionMethods,
-           SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter,
+           Selection = Selection,SelectionLook = SelectionLook,SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
            ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
            Method = Method, plotGraphs = plotGraphs)

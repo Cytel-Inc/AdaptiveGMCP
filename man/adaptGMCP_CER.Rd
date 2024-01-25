@@ -36,7 +36,7 @@ adaptGMCP_CER(
 
 \item{G}{Transition Matrix (default = \code{matrix(c(0,1/3,1/3,1/3,  1/3,0,1/3,1/3, 1/3,1/3,0,1/3, 1/3,1/3,1/3,0),nrow = 4)})}
 
-\item{test.type}{Character to specify the type of test want to perform; 'Bonf': Bonferroni, 'Sidak': Sidak, 'Simes': Simes, 'Dunnett': Dunnett and  'Partly-Parametric': Partly Parametric Tests}
+\item{test.type}{Character to specify the type of test want to perform; "Parametric": Weighted Dunnett , "Non-Parametric": Weighted Bonferroni and  'Partly-Parametric': Mixed type Tests.}
 
 \item{alpha}{Type-1 error}
 
