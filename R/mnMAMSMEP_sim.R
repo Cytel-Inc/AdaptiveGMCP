@@ -58,8 +58,8 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
     SelcCount <- table(SelectionTab$SelectedHypothesis)
     SelcPerc <- 100*(SelcCount/gmcpSimObj$nSimulation)
     SelecTab <- data.frame('Hypothesis'=names(SelcCount),
-                           'Count'=SelcCount,
-                           'Percentage'=SelcPerc)
+                           'Count'= as.vector(SelcCount),
+                           'Percentage'= as.vector(SelcPerc))
   }else
   {
     SelecTab <- NA

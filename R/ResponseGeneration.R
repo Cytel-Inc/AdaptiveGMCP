@@ -131,8 +131,8 @@ genIncrLookSummaryDOM <- function(SimSeed,simID,lookID,Arms.Mean,Arms.std.dev,Ar
 #Compute Test Statistics
 #----------------- -
 
-getPerLookTestStatDOM <- function(simID, lookID, IncrLookSummaryDOM,
-                                  IncrLookSummaryDOMPrev,Cumulative)
+getPerLookTestStatDOM <- function(simID, lookID,TestStat,Arms.std.dev,IncrLookSummaryDOM,
+                                  IncrLookSummaryDOMPrev,HypoMap,Cumulative)
 {
  tryCatch(
    {
@@ -141,30 +141,116 @@ getPerLookTestStatDOM <- function(simID, lookID, IncrLookSummaryDOM,
        #delta incremental scale
        delta_incr <- (IncrLookSummaryDOM$MeanDF$Treatment - IncrLookSummaryDOM$MeanDF$Control)
 
-       #Per arm Std.dev
-       std_err_incr <- lapply(1:nrow(IncrLookSummaryDOM$MeanDF), function(h){
-         #print(h)
-         unlist(lapply(1:2, function(trtIDX){
-           #print(trtIDX)
-           sqrt((1/(as.numeric(IncrLookSummaryDOM$SSIncrDF[h,trtIDX])-1))*
-                  (as.numeric(IncrLookSummaryDOM$SumOfSquareDF[h,trtIDX])-
-                     as.numeric(IncrLookSummaryDOM$SSIncrDF[h,trtIDX])*(as.numeric(IncrLookSummaryDOM$MeanDF[h,trtIDX])^2)))
-         }))})
-
-       #Pair-Wise Independent Std.dev for test stat
-       SE_Pair_incr <- unlist(lapply(1:nrow(IncrLookSummaryDOM$MeanDF), function(h){
-         sqrt(std_err_incr[[h]][1]^2/as.numeric(IncrLookSummaryDOM$SSIncrDF[h,1])+
-                std_err_incr[[h]][2]^2/as.numeric(IncrLookSummaryDOM$SSIncrDF[h,2]))}))
-
-       #Test Stat
-       testStatIncr <- delta_incr/SE_Pair_incr
-
-       #P-value
-       RightTail=T
-       if(RightTail)
+       std_incr_arm <- nt <- c()
+       for(armIDX in 1:nrow(IncrLookSummaryDOM$ArmData))
        {
-         pValIncr <- 1-pnorm(testStatIncr)
+         if(TestStat=='z'){
+           std_incr_arm <- c(std_incr_arm, Arms.std.dev[[IncrLookSummaryDOM$ArmData$EpID[armIDX]]]
+                              [IncrLookSummaryDOM$ArmData$ArmID[armIDX]])
+         }else
+         {
+           n <- as.numeric(IncrLookSummaryDOM$ArmData$Completers[armIDX])
+           SoS <- as.numeric(IncrLookSummaryDOM$ArmData$SumOfSquares[armIDX])
+           x_bar <- as.numeric(IncrLookSummaryDOM$ArmData$Mean[armIDX])
+           std_incr_arm <- c(std_incr_arm, sqrt((1/(n-1))*(SoS-n*x_bar^2)))
+           nt <- c(nt, n)
+         }
        }
+
+       SE_Pair_incr <- testStatIncr <- pValIncr <- rep(NA, length(delta_incr))
+
+       for(hIDX in 1:nrow(HypoMap)){
+         if(!is.na(delta_incr[hIDX])){
+           epIDX <- HypoMap$Groups[hIDX]
+           ctrIDX <- HypoMap$Control[hIDX]
+           trtIDX <- HypoMap$Treatment[hIDX]
+
+           if(TestStat == 'z' || TestStat == 't-unequal'){
+             sigma_ctr <- std_incr_arm[which(IncrLookSummaryDOM$ArmData$EpID == epIDX &
+                                               IncrLookSummaryDOM$ArmData$ArmID == ctrIDX)]
+             n_ctr <- IncrLookSummaryDOM$ArmData$Completers[which(IncrLookSummaryDOM$ArmData$EpID == epIDX &
+                                                                    IncrLookSummaryDOM$ArmData$ArmID == ctrIDX)]
+
+             n_trt <- IncrLookSummaryDOM$ArmData$Completers[which(IncrLookSummaryDOM$ArmData$EpID == epIDX &
+                                                                    IncrLookSummaryDOM$ArmData$ArmID == trtIDX)]
+             sigma_trt <- std_incr_arm[which(IncrLookSummaryDOM$ArmData$EpID == epIDX &
+                                               IncrLookSummaryDOM$ArmData$ArmID == trtIDX)]
+
+             SE <- sqrt(((sigma_trt^2)/n_trt + (sigma_ctr^2)/n_ctr))
+             testStat <- delta_incr[hIDX]/SE
+
+             SE_Pair_incr[hIDX] <- SE
+             testStatIncr[hIDX] <-  testStat
+
+             if(TestStat == 'z') #Z-stat
+             {
+               pVal <- 1-pnorm(testStat)
+
+             }else #t unequal
+             {
+               V <- ((sigma_trt^2)/n_trt + (sigma_ctr^2)/n_ctr)
+               b <- (((sigma_trt^2)/n_trt)^2)/(n_trt-1) +
+                          (((sigma_ctr^2)/n_ctr)^2)/(n_ctr-1)
+               dof <- round(V^2/b)
+               pVal <- 1-pt(q = testStat, df = dof)
+             }
+             pValIncr[hIDX] <- pVal
+             #End of computations for Z and t-unequal
+
+           }else if(TestStat == 't-equal')
+           {
+             sigma_ep <- std_incr_arm[which(IncrLookSummaryDOM$ArmData$EpID == epIDX)]
+             n_ep <- nt[which(IncrLookSummaryDOM$ArmData$EpID == epIDX)]
+             sigma_pool <- sqrt(sum(((n_ep-1)*sigma_ep^2))/sum(n_ep-1))
+
+             n_ctr <- IncrLookSummaryDOM$ArmData$Completers[which(IncrLookSummaryDOM$ArmData$EpID == epIDX &
+                                                                    IncrLookSummaryDOM$ArmData$ArmID == ctrIDX)]
+
+             n_trt <- IncrLookSummaryDOM$ArmData$Completers[which(IncrLookSummaryDOM$ArmData$EpID == epIDX &
+                                                                    IncrLookSummaryDOM$ArmData$ArmID == trtIDX)]
+
+             SE <- sqrt(1/n_trt + 1/n_ctr)*sigma_pool
+             testStat <- delta_incr[hIDX]/SE
+
+             SE_Pair_incr[hIDX] <- SE
+             testStatIncr[hIDX] <-  testStat
+
+             dof <- sum(n_ep)-length(which(!is.na(testStat)))-1 #(n-k-1)
+             pVal <- 1-pt(q = testStat, df = dof)
+             pValIncr[hIDX] <- pVal
+             #End of computations for t-equal
+
+           }else
+           {
+             stop("Error: TestStat computation(Incr.)")
+           }
+         }
+       }
+
+       # std_err_incr <- lapply(1:nrow(IncrLookSummaryDOM$MeanDF), function(h){
+       #   #print(h)
+       #   unlist(lapply(1:2, function(trtIDX){
+       #     #print(trtIDX)
+       #     sqrt((1/(as.numeric(IncrLookSummaryDOM$SSIncrDF[h,trtIDX])-1))*
+       #            (as.numeric(IncrLookSummaryDOM$SumOfSquareDF[h,trtIDX])-
+       #               as.numeric(IncrLookSummaryDOM$SSIncrDF[h,trtIDX])*
+       #               (as.numeric(IncrLookSummaryDOM$MeanDF[h,trtIDX])^2)))
+       #   }))})
+       #
+       # #Pair-Wise Independent Std.dev for test stat
+       # SE_Pair_incr <- unlist(lapply(1:nrow(IncrLookSummaryDOM$MeanDF), function(h){
+       #   sqrt(std_err_incr[[h]][1]^2/as.numeric(IncrLookSummaryDOM$SSIncrDF[h,1])+
+       #          std_err_incr[[h]][2]^2/as.numeric(IncrLookSummaryDOM$SSIncrDF[h,2]))}))
+       #
+       # #Test Stat
+       # testStatIncr <- delta_incr/SE_Pair_incr
+       #
+       # #P-value
+       # RightTail=T
+       # if(RightTail)
+       # {
+       #   pValIncr <- 1-pnorm(testStatIncr)
+       # }
 
        sumstatdf <- data.frame(matrix(c(simID,lookID,delta_incr,SE_Pair_incr,testStatIncr, pValIncr),
                                       nrow = 1))
@@ -192,40 +278,145 @@ getPerLookTestStatDOM <- function(simID, lookID, IncrLookSummaryDOM,
        #Cumulative delta
        delta_cum <- (trt_mean_cum-ctr_mean_cum)
 
-       #Cumulative sum of squares
-       ctr_SoS_cum <-  (IncrLookSummaryDOM$SumOfSquareDF$Control+IncrLookSummaryDOMPrev$SumOfSquareDF$Control)
-       trt_SoS_cum <-  (IncrLookSummaryDOM$SumOfSquareDF$Treatment+IncrLookSummaryDOMPrev$SumOfSquareDF$Treatment)
-       SoS_cum <- data.frame(cbind(ctr_SoS_cum,trt_SoS_cum))
+       #Cumulative Arm Data
+       ArmDataCum <- IncrLookSummaryDOM$ArmData
+       for (i in 1:nrow(ArmDataCum)) {
+         armIDX <-  ArmDataCum[i,'ArmID']; epIDX <- ArmDataCum[i,'EpID']
+         rowIDX <-  which(IncrLookSummaryDOMPrev$ArmData$ArmID == armIDX &
+                      IncrLookSummaryDOMPrev$ArmData$EpID == epIDX)
+         ArmDataCum[i,'Completers'] <- IncrLookSummaryDOM$ArmData[i,'Completers']+
+                                        IncrLookSummaryDOMPrev$ArmData[rowIDX,'Completers']
 
-       #Per arm Std.dev cumulative
-       std_err_cum <- lapply(1:nrow(cum_ss), function(h){
-         unlist(lapply(1:2, function(trtIDX){
-           sqrt((1/(cum_ss[h,trtIDX]-1))*
-                  (SoS_cum[h,trtIDX]-cum_ss[h,trtIDX]*(cum_mean[h,trtIDX]^2)))
-         }))})
+         ArmDataCum[i,'Mean'] <- (IncrLookSummaryDOM$ArmData[i,'Completers']*IncrLookSummaryDOM$ArmData[i,'Mean']+
+                                  IncrLookSummaryDOMPrev$ArmData[rowIDX,'Completers']*IncrLookSummaryDOMPrev$ArmData[rowIDX,'Mean'])/ArmDataCum[i,'Completers']
 
-       #Pair-Wise Independent Std.dev(Cum.) for test stat
-       SE_Pair_cum <- unlist(lapply(1:nrow(cum_ss), function(h){
-         sqrt(std_err_cum[[h]][1]^2/cum_ss[h,1]+std_err_cum[[h]][2]^2/cum_ss[h,2])}))
+         ArmDataCum[i,'SumOfSquares'] <- IncrLookSummaryDOM$ArmData[i,'SumOfSquares']+
+           IncrLookSummaryDOMPrev$ArmData[rowIDX,'SumOfSquares']
 
-       #Test Stat cumulative
-       testStatCum <- delta_cum/SE_Pair_cum
-
-       #P-value cumulative
-       RightTail=T
-       if(RightTail)
-       {
-         pValCum <- 1-pnorm(testStatCum)
        }
 
-       sumstatdf <- data.frame(matrix(c(simID,lookID,delta_cum,SE_Pair_cum,testStatCum, pValCum),
+
+       std_cum_arm <- nt <- c()
+       for(armIDX in 1:nrow(ArmDataCum))
+       {
+         if(TestStat=='z'){
+           std_cum_arm <- c(std_cum_arm, Arms.std.dev[[ArmDataCum$EpID[armIDX]]]
+                             [ArmDataCum$ArmID[armIDX]])
+         }else
+         {
+           n <- as.numeric(ArmDataCum$Completers[armIDX])
+           SoS <- as.numeric(ArmDataCum$SumOfSquares[armIDX])
+           x_bar <- as.numeric(ArmDataCum$Mean[armIDX])
+           std_cum_arm <- c(std_cum_arm, sqrt((1/(n-1))*(SoS-n*x_bar^2)))
+           nt <- c(nt, n)
+         }
+       }
+
+       SE_Pair_cum <- test_Stat_cum <- pVal_cum <- rep(NA, length(delta_cum))
+
+       for(hIDX in 1:nrow(HypoMap)){
+         if(!is.na(delta_cum[hIDX])){
+           epIDX <- HypoMap$Groups[hIDX]
+           ctrIDX <- HypoMap$Control[hIDX]
+           trtIDX <- HypoMap$Treatment[hIDX]
+
+           if(TestStat == 'z' || TestStat == 't-unequal'){
+             sigma_ctr <- std_cum_arm[which(ArmDataCum$EpID == epIDX &
+                                               ArmDataCum$ArmID == ctrIDX)]
+             n_ctr <- ArmDataCum$Completers[which(ArmDataCum$EpID == epIDX &
+                                                ArmDataCum$ArmID == ctrIDX)]
+
+             n_trt <- ArmDataCum$Completers[which(ArmDataCum$EpID == epIDX &
+                                                    ArmDataCum$ArmID == trtIDX)]
+             sigma_trt <- std_cum_arm[which(ArmDataCum$EpID == epIDX &
+                                               ArmDataCum$ArmID == trtIDX)]
+
+             SE <- sqrt(((sigma_trt^2)/n_trt + (sigma_ctr^2)/n_ctr))
+             testStat <- delta_cum[hIDX]/SE
+
+             SE_Pair_cum[hIDX] <- SE
+             test_Stat_cum[hIDX] <-  testStat
+
+             if(TestStat == 'z')
+             {
+               pVal <- 1-pnorm(testStat)
+
+             }else #t unequal
+             {
+               V <- ((sigma_trt^2)/n_trt + (sigma_ctr^2)/n_ctr)
+               b <- (((sigma_trt^2)/n_trt)^2)/(n_trt-1) +
+                 (((sigma_ctr^2)/n_ctr)^2)/(n_ctr-1)
+               dof <- round(V^2/b)
+               pVal <- 1-pt(q = testStat, df = dof)
+             }
+             pVal_cum[hIDX] <- pVal
+             #End of computations for Z and t-unequal
+
+           }else if(TestStat == 't-equal')
+           {
+             sigma_ep <- std_cum_arm[which(ArmDataCum$EpID == epIDX)]
+             n_ep <- nt[which(ArmDataCum$EpID == epIDX)]
+             sigma_pool <- sqrt(sum(((n_ep-1)*sigma_ep^2))/sum(n_ep-1))
+
+             n_ctr <- ArmDataCum$Completers[which(ArmDataCum$EpID == epIDX &
+                                                  ArmDataCum$ArmID == ctrIDX)]
+
+             n_trt <- ArmDataCum$Completers[which(ArmDataCum$EpID == epIDX &
+                                                    ArmDataCum$ArmID == trtIDX)]
+
+             SE <- sqrt(1/n_trt + 1/n_ctr)*sigma_pool
+             testStat <- delta_cum[hIDX]/SE
+
+             SE_Pair_cum[hIDX] <- SE
+             test_Stat_cum[hIDX] <-  testStat
+
+             dof <- sum(n_ep)-length(which(!is.na(testStat)))-1 #(n-k-1)
+             pVal <- 1-pt(q = testStat, df = dof)
+             pVal_cum[hIDX] <- pVal
+             #End of computations for t-equal
+
+           }else
+           {
+             stop("Error: TestStat computation(Cum.)")
+           }
+         }
+       }
+
+
+       # #Cumulative sum of squares
+       # ctr_SoS_cum <-  (IncrLookSummaryDOM$SumOfSquareDF$Control+IncrLookSummaryDOMPrev$SumOfSquareDF$Control)
+       # trt_SoS_cum <-  (IncrLookSummaryDOM$SumOfSquareDF$Treatment+IncrLookSummaryDOMPrev$SumOfSquareDF$Treatment)
+       # SoS_cum <- data.frame(cbind(ctr_SoS_cum,trt_SoS_cum))
+       #
+       # #Per arm Std.dev cumulative
+       # std_err_cum <- lapply(1:nrow(cum_ss), function(h){
+       #   unlist(lapply(1:2, function(trtIDX){
+       #     sqrt((1/(cum_ss[h,trtIDX]-1))*
+       #            (SoS_cum[h,trtIDX]-cum_ss[h,trtIDX]*(cum_mean[h,trtIDX]^2)))
+       #   }))})
+       #
+       # #Pair-Wise Independent Std.dev(Cum.) for test stat
+       # SE_Pair_cum <- unlist(lapply(1:nrow(cum_ss), function(h){
+       #   sqrt(std_err_cum[[h]][1]^2/cum_ss[h,1]+std_err_cum[[h]][2]^2/cum_ss[h,2])}))
+       #
+       # #Test Stat cumulative
+       # testStatCum <- delta_cum/SE_Pair_cum
+       #
+       # #P-value cumulative
+       # RightTail=T
+       # if(RightTail)
+       # {
+       #   pValCum <- 1-pnorm(testStatCum)
+       # }
+
+       sumstatdf <- data.frame(matrix(c(simID,lookID,delta_cum,SE_Pair_cum,
+                                        test_Stat_cum, pVal_cum),
                                       nrow = 1))
        colnames(sumstatdf) <- c('SimID','LookID',
                                 paste('Delta',1:length(delta_cum),sep=''),
                                 paste('StdError',1:length(delta_cum),sep=''),
                                 paste('TestStat',1:length(delta_cum),sep=''),
                                 paste('RawPvalues',1:length(delta_cum),sep=''))
-
 
      }
      sumstatdf

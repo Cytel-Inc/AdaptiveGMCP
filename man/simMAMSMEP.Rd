@@ -5,8 +5,10 @@
 \title{Function to perform Adaptive GMCP simulation for Multi-Arm Multi-Stage Multi-Endpoint simulations for Combining p-values method and CER method(2-Stage)}
 \usage{
 simMAMSMEP(
+  Method = "CombPValue",
   alpha = 0.025,
   SampleSize = 500,
+  TestStat = "t-equal",
   nArms = 3,
   nEps = 2,
   Arms.Mean = list(EP1 = c(0, 0.4, 0.3), EP2 = c(0.1, 0.45, 0.25)),
@@ -31,14 +33,17 @@ simMAMSMEP(
   nSimulation = 1000,
   Seed = 100,
   SummaryStat = FALSE,
-  Method = "CombPValue",
   plotGraphs = TRUE
 )
 }
 \arguments{
+\item{Method}{'CombPValue': for combining p-values method, 'CER': for Conditional Error method.}
+
 \item{alpha}{Type-1 error}
 
 \item{SampleSize}{integer valued Sample Size(default: 500)}
+
+\item{TestStat}{'t-equal' : for t statistics with equal variance, 't-unequal' : for t statistics with unequal variance, 'z' for z statistics}
 
 \item{nArms}{integer value to specify the number of arms (default: 3)}
 
@@ -104,6 +109,11 @@ Method <- 'CombPValue' #CombPValue/CER
 SampleSize <- 324
 #-----------------------Design Alpha-----------------------------
 alpha <- 0.025
+
+#----------------------Test Statistics---------------------------
+#options : 'z' :- Z Statistics, 't-equal' :- t Statistics with equal variance, 't-unequal' :- t Statistics with unequal variance
+TestStat <- 't-equal'
+
 #-----------------------Number of Arms--------------------------
 nArms <- 3
 #-------------------Number of Endpoints-------------------------
@@ -205,7 +215,7 @@ plotGraphs <- TRUE
 #Please uncomment the following code to run the simulation(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
 #
 
-simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps,
+simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps, TestStat=TestStat,
            Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, Arms.alloc.ratio = Arms.alloc.ratio,
            EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,info_frac = info_frac,
            typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,

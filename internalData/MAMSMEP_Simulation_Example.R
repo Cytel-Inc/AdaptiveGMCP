@@ -10,6 +10,11 @@ Method <- 'CombPValue' #CombPValue/CER
 SampleSize <- 324
 #-----------------------Design Alpha-----------------------------
 alpha <- 0.025
+
+#----------------------Test Statistics---------------------------
+#options : 'z' :- Z Statistics, 't-equal' :- t Statistics with equal variance, 't-unequal' :- t Statistics with unequal variance
+TestStat <- 't-equal'
+
 #-----------------------Number of Arms--------------------------
 nArms <- 3
 #-------------------Number of Endpoints-------------------------
@@ -111,7 +116,7 @@ plotGraphs <- TRUE
 #Please uncomment the following code to run the simulation(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
 #
 
-simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps,
+simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps, TestStat=TestStat,
            Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, Arms.alloc.ratio = Arms.alloc.ratio,
            EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,info_frac = info_frac,
            typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,

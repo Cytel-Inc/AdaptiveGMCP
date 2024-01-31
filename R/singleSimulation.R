@@ -37,7 +37,10 @@ SingleSimCombPValue <- function(simID, gmcpSimObj,preSimObjs)
     #Compute Test Stat and p-values
     SummStat <- getPerLookTestStatDOM(simID = simID,
                                       lookID=mcpObj$CurrentLook,
+                                      TestStat = mcpObj$TestStat,
+                                      Arms.std.dev=mcpObj$Arms.std.dev,
                                       IncrLookSummaryDOM=currLookDataIncr,
+                                      HypoMap=mcpObj$HypoMap,
                                       Cumulative=FALSE)
     #Perform per look Test
     mcpObj <- perLookTest(Arms.SS.Incr=Arms.SS.Incr,SummStat = SummStat, mcpObj=mcpObj)
@@ -161,16 +164,22 @@ SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
     if(mcpObj$CurrentLook==1)
     {
       SummStat <- getPerLookTestStatDOM(simID = simID,
-                                        lookID=mcpObj$CurrentLook,
-                                        IncrLookSummaryDOM=currLookDataIncr,
+                                        lookID = mcpObj$CurrentLook,
+                                        TestStat = mcpObj$TestStat,
+                                        Arms.std.dev=mcpObj$Arms.std.dev,
+                                        IncrLookSummaryDOM = currLookDataIncr,
+                                        HypoMap=mcpObj$HypoMap,
                                         Cumulative=FALSE)
 
     }else
     {
       SummStat <- getPerLookTestStatDOM(simID = simID,
                                         lookID=mcpObj$CurrentLook,
+                                        TestStat = mcpObj$TestStat,
+                                        Arms.std.dev=mcpObj$Arms.std.dev,
                                         IncrLookSummaryDOM=currLookDataIncr,
                                         IncrLookSummaryDOMPrev = IncrLookSummaryDOMPrev,
+                                        HypoMap=mcpObj$HypoMap,
                                         Cumulative=TRUE)
     }
     #Storing the current look incremental data to compute next look cumulative data

@@ -1,6 +1,8 @@
 #' Function to perform Adaptive GMCP simulation for Multi-Arm Multi-Stage Multi-Endpoint simulations for Combining p-values method and CER method(2-Stage)
+#' @param Method 'CombPValue': for combining p-values method, 'CER': for Conditional Error method.
 #' @param alpha Type-1 error
 #' @param SampleSize integer valued Sample Size(default: 500)
+#' @param TestStat 't-equal' : for t statistics with equal variance, 't-unequal' : for t statistics with unequal variance, 'z' for z statistics
 #' @param nArms integer value to specify the number of arms (default: 3)
 #' @param nEps integer value to specify the number of endpoints
 #' @param Arms.Mean Numeric list to specify the arm-wise mean for each endpoint
@@ -28,8 +30,10 @@
 #' @example ./internalData/MAMSMEP_Simulation_Example.R
 #' @export
 simMAMSMEP <- function(
+    Method = 'CombPValue',
     alpha = 0.025,
     SampleSize = 500,
+    TestStat = 't-equal',
     nArms = 3,
     nEps  = 2,
     Arms.Mean = list('EP1' = c(0,0.4,0.3),
@@ -60,7 +64,6 @@ simMAMSMEP <- function(
     nSimulation = 1000,
     Seed = 100,
     SummaryStat = FALSE,
-    Method = 'CombPValue',
     plotGraphs = TRUE
 )
 {
@@ -74,12 +77,13 @@ simMAMSMEP <- function(
     'Method' = Method,
 
     #test parameters
+    'TestStat' = TestStat,                     'alpha' = alpha,
     'nArms'= nArms,                            'nLooks'= length(info_frac),
     'nEps'= nEps,                              'nHypothesis' = nEps*(nArms-1),
     'TailType' = TailType,                     'des.type' = des.type,
     'Max_SS' = SampleSize,                     'test.type' = test.type,
     'IntialWeights'=WI,                        'G' = G,
-    'Correlation' = NA,                        'alpha' = alpha,
+    'Correlation' = NA,
 
     #Boundary
     'InfoFrac' = info_frac,                    'typeOfDesign'=typeOfDesign,
