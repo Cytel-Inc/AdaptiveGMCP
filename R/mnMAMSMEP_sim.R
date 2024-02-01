@@ -23,13 +23,31 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
 
   if(gmcpSimObj$Method=='CER')
   {
-    out<-lapply(1:gmcpSimObj$nSimulation, function(x){
-      SingleSimCER(x, gmcpSimObj,preSimObjs)})
-
+    if(gmcpSimObj$Parallel){
+      cl <- parallel::makeCluster(parallel::detectCores())
+      parallel::clusterExport(cl = cl, envir = environment())
+      out <- parallel::parLapply(cl = cl,
+                          1:gmcpSimObj$nSimulation, function(x){
+                            SingleSimCER(x, gmcpSimObj,preSimObjs)})
+      parallel::stopCluster(cl)
+    }else{
+      out<-lapply(1:gmcpSimObj$nSimulation, function(x){
+        SingleSimCER(x, gmcpSimObj,preSimObjs)})
+    }
   }else
   {
-    out<-lapply(1:gmcpSimObj$nSimulation, function(x){
-      SingleSimCombPValue(x, gmcpSimObj,preSimObjs)})
+    if(gmcpSimObj$Parallel){
+      cl <- parallel::makeCluster(parallel::detectCores())
+      parallel::clusterExport(cl = cl,varlist = ls(getNamespace("AdaptGMCP")) ,
+                              envir = environment())
+      out <- parallel::parLapply(cl = cl,
+                          1:gmcpSimObj$nSimulation, function(x){
+                            SingleSimCombPValue(x, gmcpSimObj,preSimObjs)})
+      parallel::stopCluster(cl)
+    }else{
+      out<-lapply(1:gmcpSimObj$nSimulation, function(x){
+        SingleSimCombPValue(x, gmcpSimObj,preSimObjs)})
+    }
   }
   #------------------------------------------------------------------------------
 

@@ -27,6 +27,8 @@
 #' @param nSimulation Numeric: number of simulations(default=1000)
 #' @param Seed 'Random' for randomly generating seed else any integer value(default = 'Random')
 #' @param SummaryStat Logical; TRUE if simulation level data is required(default = FALSE)
+#' @param plotGraphs Logical; TRUE: plot the initial graph
+#' @param Parallel Logical; TRUE: parallel computation
 #' @example ./internalData/MAMSMEP_Simulation_Example.R
 #' @export
 simMAMSMEP <- function(
@@ -65,8 +67,10 @@ simMAMSMEP <- function(
     Seed = 100,
     SummaryStat = FALSE,
     plotGraphs = TRUE
+
 )
 {
+  Parallel = FALSE
   TailType <- 'RightTail'       ##Default Right
   UpdateStrategy <- F           ##Not implemented yet
   des.type <- 'MAMSMEP'         ##Multi-Arm Multi-Stage Multi-EndPoints
@@ -104,7 +108,7 @@ simMAMSMEP <- function(
 
     #Simulation Parameters
     'nSimulation' = nSimulation,               'Seed' = Seed,
-    'SummaryStat' = SummaryStat,
+    'SummaryStat' = SummaryStat,               'Parallel'=Parallel,
 
     #SSR
     'ImplicitSSR' = ImplicitSSR,
