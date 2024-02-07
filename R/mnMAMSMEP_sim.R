@@ -7,6 +7,8 @@
 #------------------ -
 mnMAMSMEP_sim2 <- function(gmcpSimObj)
 {
+  # library(foreach)
+  # library(doParallel)
   ########################Computation of intermediate inputs#####################
   preSimObjs <- getPreSimObjs(gmcpSimObj = gmcpSimObj)
 
@@ -24,12 +26,12 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
   if(gmcpSimObj$Method=='CER')
   {
     if(gmcpSimObj$Parallel){
-      cl <- parallel::makeCluster(parallel::detectCores())
-      parallel::clusterExport(cl = cl, envir = environment())
-      out <- parallel::parLapply(cl = cl,
-                          1:gmcpSimObj$nSimulation, function(x){
-                            SingleSimCER(x, gmcpSimObj,preSimObjs)})
-      parallel::stopCluster(cl)
+      # cl <- parallel::makeCluster(parallel::detectCores())
+      # parallel::clusterExport(cl = cl, envir = environment())
+      # out <- parallel::parLapply(cl = cl,
+      #                     1:gmcpSimObj$nSimulation, function(x){
+      #                       SingleSimCER(x, gmcpSimObj,preSimObjs)})
+      # parallel::stopCluster(cl)
     }else{
       out<-lapply(1:gmcpSimObj$nSimulation, function(x){
         SingleSimCER(x, gmcpSimObj,preSimObjs)})
@@ -37,13 +39,22 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
   }else
   {
     if(gmcpSimObj$Parallel){
-      cl <- parallel::makeCluster(parallel::detectCores())
-      parallel::clusterExport(cl = cl,varlist = ls(getNamespace("AdaptGMCP")) ,
-                              envir = environment())
-      out <- parallel::parLapply(cl = cl,
-                          1:gmcpSimObj$nSimulation, function(x){
-                            SingleSimCombPValue(x, gmcpSimObj,preSimObjs)})
-      parallel::stopCluster(cl)
+      # cores=detectCores()
+      # clust_cores <- makeCluster(cores[1]-1) #not to overload your computer
+      # registerDoParallel(clust_cores)
+      # clusterExport(cl = clust_cores,varlist = ls(getNamespace("AdaptGMCP")),envir = environment())
+      # out <- foreach(i = 1:gmcpSimObj$nSimulation, .combine=list, .multicombine=TRUE) %dopar% {
+      #   out[[i]] <- SingleSimCombPValue(simID = i, gmcpSimObj,preSimObjs)
+      # }
+      # stopCluster(cores)
+
+      # cl <- parallel::makeCluster(1) #parallel::detectCores()
+      # parallel::clusterExport(cl = cl,varlist = ls(getNamespace("AdaptGMCP")) ,
+      #                         envir = environment())
+      # out <- parallel::parLapply(cl = cl,
+      #                     1:gmcpSimObj$nSimulation, function(x){
+      #                       SingleSimCombPValue(x, gmcpSimObj,preSimObjs)})
+      # parallel::stopCluster(cl)
     }else{
       out<-lapply(1:gmcpSimObj$nSimulation, function(x){
         SingleSimCombPValue(x, gmcpSimObj,preSimObjs)})
@@ -193,14 +204,15 @@ getPreSimObjs <- function(gmcpSimObj)
   planSSCum <- planSS$CumulativeSamples
 
   #----------------------------------------------------------------------------------
+  ########Computation of Inverse Normal Weights from planned sample size##############
+  #Needed for combining p-values method and CER with FWER control as 'CombinationTest'
+  InvNormWeights <- getInvNormWeights(planSSIncr = planSSIncr)
+
+  #----------------------------------------------------------------------------------
 
   #Prepare the preSim objects for two methods
   if(gmcpSimObj$Method == 'CombPValue') #Inputs for Combining P-values method
   {
-    #----------------------------------------------------------------------------------
-    ########Computation of Inverse Normal Weights from planned sample size##############
-    InvNormWeights <- getInvNormWeights(planSSIncr = planSSIncr)
-
     #----------------------------------------------------------------------------------
     ######################Get the stage-wise p-value boundaries####################
     pValBdry <- getPvalBdry(alpha = gmcpSimObj$alpha,
@@ -262,7 +274,7 @@ getPreSimObjs <- function(gmcpSimObj)
       'SimSeed' = SimSeed,                       'HypoMap' = HypoMap,
       'TrueNull' = TrueNull,                     'planSS' = planSS,
       'WH' = WH,                                 'Sigma'=Sigma,
-      'plan_Bdry'=plan_Bdry
+      'plan_Bdry'=plan_Bdry,                     'InvNormWeights' = InvNormWeights
     )
 
   }

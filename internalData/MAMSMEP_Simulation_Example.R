@@ -4,7 +4,7 @@ library(AdaptGMCP)
 ########################## Inputs ##############################
 #------------------Test Method----------------------------------
 #options- 'CombPValue': Combining p-values, 'CER': Conditional Error
-Method <- 'CombPValue' #CombPValue/CER
+Method <- 'CER' #CombPValue/CER
 
 #-----------------------Total Sample Size------------------------
 SampleSize <- 324
@@ -15,8 +15,13 @@ alpha <- 0.025
 #options : 'z' :- Z Statistics, 't-equal' :- t Statistics with equal variance, 't-unequal' :- t Statistics with unequal variance
 TestStat <- 't-equal'
 
+#---------FWER Control Method(Applicable for CER Method only)------
+#options: 'CombinationTest' : combined incremental p-values for stage-2 testing, 'None': Cumulative classical test statistics.
+FWERControl <- 'None'
+
 #-----------------------Number of Arms--------------------------
 nArms <- 3
+
 #-------------------Number of Endpoints-------------------------
 nEps  <- 2
 #-------------Arm-Wise mean for each endpoints-----------------
@@ -24,8 +29,8 @@ Arms.Mean <- list('EP1' = c(0,0.4,0.3),
                  'EP2' = c(0.1,0.45,0.25))
 
 #-------------Arm-Wise planned Std. Dev. for each endpoints-----
-Arms.std.dev <- list('EP1' = c(1,1,1),
-                     'EP2' = c(1.5,1.5,1.5))
+Arms.std.dev <- list('EP1' = c(1.1,1.2,1.3),
+                     'EP2' = c(1.5,1.6,1.7))
 
 #-------------Arm-Wise planned allocation Ratio----------------
 Arms.alloc.ratio <- c(1,1,1)
@@ -48,7 +53,7 @@ G <- matrix(c(0,0.5,0.5,0,
 # Testing Procedure
 #Available tests for Combining P-values Method :- 'Bonf','Sidak','Simes','Dunnett','Partly-Parametric'
 #Available tests for CER Method :- 'Parametric','Non-Parametric','Partly-Parametric'
-test.type = 'Partly-Parametric'
+test.type <- 'Partly-Parametric'
 
 #----------------Information Fraction----------------
 #The number of lookes is same as the length of info_frac(for FSD info_frac = 1)
@@ -104,7 +109,7 @@ ImplicitSSR <- 'Selection'
 nSimulation <- 1000
 
 #-------------------Simulation Seed-------------------------------------
-Seed <- 'Random'
+Seed <- 100
 
 #------------------Print Summary Statistics file------------------------
 SummaryStat <- FALSE
@@ -116,7 +121,7 @@ plotGraphs <- TRUE
 #Please uncomment the following code to run the simulation(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
 #
 
-simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps, TestStat=TestStat,
+simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps, TestStat=TestStat, FWERControl = FWERControl,
            Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, Arms.alloc.ratio = Arms.alloc.ratio,
            EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,info_frac = info_frac,
            typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,

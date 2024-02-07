@@ -9,6 +9,7 @@ simMAMSMEP(
   alpha = 0.025,
   SampleSize = 500,
   TestStat = "t-equal",
+  FWERControl = "CombinationTest",
   nArms = 3,
   nEps = 2,
   Arms.Mean = list(EP1 = c(0, 0.4, 0.3), EP2 = c(0.1, 0.45, 0.25)),
@@ -44,6 +45,8 @@ simMAMSMEP(
 \item{SampleSize}{integer valued Sample Size(default: 500)}
 
 \item{TestStat}{'t-equal' : for t statistics with equal variance, 't-unequal' : for t statistics with unequal variance, 'z' for z statistics}
+
+\item{FWERControl}{applicable for CER method only, 'CombinationTest': combined two stage incremental test statistics, 'None': Cumulative test statistics.}
 
 \item{nArms}{integer value to specify the number of arms (default: 3)}
 
@@ -91,7 +94,11 @@ simMAMSMEP(
 
 \item{SummaryStat}{Logical; TRUE if simulation level data is required(default = FALSE)}
 
+\item{plotGraphs}{Logical; TRUE: plot the initial graph}
+
 \item{UpdateStrategy}{Logical to specify the updated strategy (Not Implemented yet) default FALSE}
+
+\item{Parallel}{Logical; TRUE: parallel computation}
 }
 \description{
 Function to perform Adaptive GMCP simulation for Multi-Arm Multi-Stage Multi-Endpoint simulations for Combining p-values method and CER method(2-Stage)
@@ -103,7 +110,7 @@ library(AdaptGMCP)
 ########################## Inputs ##############################
 #------------------Test Method----------------------------------
 #options- 'CombPValue': Combining p-values, 'CER': Conditional Error
-Method <- 'CombPValue' #CombPValue/CER
+Method <- 'CER' #CombPValue/CER
 
 #-----------------------Total Sample Size------------------------
 SampleSize <- 324
@@ -113,6 +120,10 @@ alpha <- 0.025
 #----------------------Test Statistics---------------------------
 #options : 'z' :- Z Statistics, 't-equal' :- t Statistics with equal variance, 't-unequal' :- t Statistics with unequal variance
 TestStat <- 't-equal'
+
+#---------FWER Control Method(Applicable for CER Method only)------
+#options: 'CombinationTest' : combined incremental p-values for stage-2 testing, 'None': Cumulative classical test statistics.
+FWERControl <- 'CombinationTest'
 
 #-----------------------Number of Arms--------------------------
 nArms <- 3

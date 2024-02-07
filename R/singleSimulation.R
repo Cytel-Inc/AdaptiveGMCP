@@ -173,14 +173,55 @@ SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
 
     }else
     {
-      SummStat <- getPerLookTestStatDOM(simID = simID,
-                                        lookID=mcpObj$CurrentLook,
-                                        TestStat = mcpObj$TestStat,
-                                        Arms.std.dev=mcpObj$Arms.std.dev,
-                                        IncrLookSummaryDOM=currLookDataIncr,
-                                        IncrLookSummaryDOMPrev = IncrLookSummaryDOMPrev,
-                                        HypoMap=mcpObj$HypoMap,
-                                        Cumulative=TRUE)
+      if(mcpObj$FWERControl == 'CombinationTest')
+      {
+        SummStat <- getPerLookTestStatDOM(simID = simID,
+                                          lookID=mcpObj$CurrentLook,
+                                          TestStat = mcpObj$TestStat,
+                                          Arms.std.dev=mcpObj$Arms.std.dev,
+                                          IncrLookSummaryDOM=currLookDataIncr,
+                                          HypoMap=mcpObj$HypoMap,
+                                          Cumulative=FALSE)
+        pValIncrPrev <- mcpObj$SummStatDF[mcpObj$SummStatDF$LookID == (mcpObj$CurrentLook-1),
+                                          grep('RawPvalues', names(mcpObj$SummStatDF))]
+        pValIncrCurr <- SummStat[,grep('RawPvalues', names(SummStat))]
+
+        pValIncr <- plyr::rbind.fill(pValIncrPrev,pValIncrCurr)
+        zIncr <- apply(pValIncr, 2, function(x){qnorm(1-x)})
+
+        W_Norm <- mcpObj$InvNormWeights$W_Norm
+        if(is.vector(W_Norm) & mcpObj$CurrentLook == 2) #W_Norm is a vector for 2 looks
+        {
+          W_Inv <- W_Norm
+        }else if(is.matrix(W_Norm)) #W_Norm is a matrix for more than 2 looks
+        {
+          W_Inv <- W_Norm[((mcpObj$CurrentLook)-1),1:(mcpObj$CurrentLook)]
+        }else
+        {
+          return('Error in CombinedPvalue function')
+        }
+        if(abs(sum(W_Inv^2)-1) > 1E-6) stop('Error: abs(sum(W_Inv^2)-1) < 1E-6 not true| function: CombinedPvalue')
+
+        combStage2TestStat <- unlist(lapply(1:ncol(zIncr), function(i){sum(W_Inv*zIncr[,i])}))
+
+        combStage2pVal <- unlist(lapply(1:ncol(zIncr), function(i){
+          1-pnorm(sum(W_Inv*zIncr[,i]))
+        }))
+        SummStat[,grep('TestStat', names(SummStat))] <- combStage2TestStat
+        SummStat[,grep('RawPvalues', names(SummStat))] <- combStage2pVal
+
+      }else
+      {
+        SummStat <- getPerLookTestStatDOM(simID = simID,
+                                          lookID=mcpObj$CurrentLook,
+                                          TestStat = mcpObj$TestStat,
+                                          Arms.std.dev=mcpObj$Arms.std.dev,
+                                          IncrLookSummaryDOM=currLookDataIncr,
+                                          IncrLookSummaryDOMPrev = IncrLookSummaryDOMPrev,
+                                          HypoMap=mcpObj$HypoMap,
+                                          Cumulative=TRUE)
+      }
+
     }
     #Storing the current look incremental data to compute next look cumulative data
     IncrLookSummaryDOMPrev <- currLookDataIncr
