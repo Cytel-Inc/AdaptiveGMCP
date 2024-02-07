@@ -38,7 +38,7 @@ simMAMSMEP(
 )
 }
 \arguments{
-\item{Method}{'CombPValue': for combining p-values method, 'CER': for Conditional Error method.}
+\item{Method}{'CER': for combining p-values method, 'CER': for Conditional Error method.}
 
 \item{alpha}{Type-1 error}
 
@@ -104,6 +104,15 @@ Function to perform Adaptive GMCP simulation for Multi-Arm Multi-Stage Multi-End
 \examples{
 
 library(AdaptGMCP)
+library(rstudioapi)
+
+timeNow <- format(Sys.time(), "\%Y-\%m-\%d_\%H-\%M-\%S")
+ConsoleOutput <- file(paste0("Console_output_", timeNow, ".txt")) # File name of output log
+sink(ConsoleOutput, append = TRUE, type = 'output')
+sink(ConsoleOutput, append = TRUE, type = 'message')
+cat(readChar(rstudioapi::getSourceEditorContext()$path, # Writing currently opened R script to file
+             file.info(rstudioapi::getSourceEditorContext()$path)$size))
+
 
 ########################## Inputs ##############################
 #------------------Test Method----------------------------------
@@ -224,8 +233,7 @@ plotGraphs <- TRUE
 #-----------------------Run Simulation--------------------------------------
 #Please uncomment the following code to run the simulation(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
 #
-
-simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps, TestStat=TestStat, FWERControl = FWERControl,
+out <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps, TestStat=TestStat, FWERControl = FWERControl,
            Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, Arms.alloc.ratio = Arms.alloc.ratio,
            EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,info_frac = info_frac,
            typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
@@ -233,4 +241,8 @@ simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps, Tes
            SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
            ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
            Method = Method, plotGraphs = plotGraphs)
+out
+
+closeAllConnections() # Close connection to log file
+save(out, file = paste0("Output_simMAMSMEP_",timeNow, ".RData"))
 }

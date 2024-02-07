@@ -1,12 +1,14 @@
 
 library(AdaptGMCP)
+library(rstudioapi)
 
 timeNow <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
-sink(paste0("Console_output_", timeNow, ".txt"), append = TRUE, type = 'output')
-sink(paste0("Console_output_", timeNow, ".txt"), append = TRUE, type = 'message')
-
+ConsoleOutput <- file(paste0("Console_output_", timeNow, ".txt")) # File name of output log
+sink(ConsoleOutput, append = TRUE, type = 'output')
+sink(ConsoleOutput, append = TRUE, type = 'message')
 cat(readChar(rstudioapi::getSourceEditorContext()$path, # Writing currently opened R script to file
              file.info(rstudioapi::getSourceEditorContext()$path)$size))
+
 
 ########################## Inputs ##############################
 #------------------Test Method----------------------------------
@@ -137,9 +139,5 @@ out <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nE
            Method = Method, plotGraphs = plotGraphs)
 out
 
-# sink()
 closeAllConnections() # Close connection to log file
 save(out, file = paste0("Output_simMAMSMEP_",timeNow, ".RData"))
-
-# # Use the following code to reload the file
-# load("Result_simMAMSMEP_2024-01-31_12-29-48.RData")
