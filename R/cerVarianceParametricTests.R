@@ -171,6 +171,12 @@ getStage2Sigma <- function(nHypothesis,nLooks,Sigma,
   {
     Stage2sigma_0 <- Stage2sigma[[i]][1]
     Stage2sigma_trt <- Stage2sigma[[i]][-1]
+    #The Cumulative InfoMatrix is needed for transformation(z to score)
+    Stage2SSCum <-  (Stage2AllocSampleSize[2,])
+    for(s in 1:length(Stage2SSCum)){
+      if(is.na(Stage2SSCum[s])) Stage2SSCum[s] <- AllocSampleSize[1,s]
+    }
+    Stage2allocRatio <- as.numeric(Stage2SSCum)/as.numeric(Stage2SSCum[1])
     Stage2capLambda <- (Stage2sigma_0^2 + Stage2sigma_trt^2/Stage2allocRatio[-1])^(-1)
 
     #The following adjustment is due to change in distribution(as the sample size modified)
@@ -178,9 +184,6 @@ getStage2Sigma <- function(nHypothesis,nLooks,Sigma,
     Stage2ctrSS <- Stage2SSIncr[1]
     Stage2trtSS <- Stage2SSIncr[-1]
     Stage2InfoMatrix <- matrix(Stage2ctrSS*Stage2capLambda,ncol = 1)
-
-    #The Cumulative InfoMatrix is needed for transformation(z to score)
-    Stage2SSCum <-  (Stage2AllocSampleSize[2,])
     Stage2InfoMatrixCum <- matrix(as.numeric(Stage2SSCum[,1])*Stage2capLambda,ncol = 1)
 
 

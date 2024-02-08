@@ -38,7 +38,7 @@ simMAMSMEP(
 )
 }
 \arguments{
-\item{Method}{'CER': for combining p-values method, 'CER': for Conditional Error method.}
+\item{Method}{'CombPValue': for combining p-values method, 'CER': for Conditional Error method.}
 
 \item{alpha}{Type-1 error}
 

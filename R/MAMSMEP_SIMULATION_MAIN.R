@@ -1,5 +1,5 @@
 #' Function to perform Adaptive GMCP simulation for Multi-Arm Multi-Stage Multi-Endpoint simulations for Combining p-values method and CER method(2-Stage)
-#' @param Method 'CER': for combining p-values method, 'CER': for Conditional Error method.
+#' @param Method 'CombPValue': for combining p-values method, 'CER': for Conditional Error method.
 #' @param alpha Type-1 error
 #' @param SampleSize integer valued Sample Size(default: 500)
 #' @param TestStat 't-equal' : for t statistics with equal variance, 't-unequal' : for t statistics with unequal variance, 'z' for z statistics
