@@ -1,6 +1,7 @@
 
-library(AdaptGMCP)
+suppressWarnings(library(AdaptGMCP))
 library(rstudioapi)
+
 
 timeNow <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
 ConsoleOutput <- file(paste0("Console_output_", timeNow, ".txt")) # File name of output log
@@ -34,21 +35,30 @@ nArms <- 3
 #-------------------Number of Endpoints-------------------------
 nEps  <- 2
 #-------------Arm-Wise mean for each endpoints-----------------
+#Note: The first input is for control arm and the rest are for the treatments
 Arms.Mean <- list('EP1' = c(0,0.4,0.3),
                  'EP2' = c(0.1,0.45,0.25))
 
 #-------------Arm-Wise planned Std. Dev. for each endpoints-----
+#Note: The first input is for control arm and the rest are for the treatments
 Arms.std.dev <- list('EP1' = c(1.1,1.2,1.3),
                      'EP2' = c(1.5,1.6,1.7))
 
 #-------------Arm-Wise planned allocation Ratio----------------
+#Note: The first input is for control arm and the rest are for the treatments
 Arms.alloc.ratio <- c(1,1,1)
 
 #-------------Correlation between End points -------------------
 EP.Corr <- matrix(c(1,0.5,
                    0.5,1),
                  nrow = 2)
+
 #----------------Initial Weights---------------------
+#Note: Hypotheses will follow the order of Endpoints and Treatments as given in 'Arms.Mean' and 'Arms.std.dev' inputs
+#e.g.: If 'Arms.Mean' are given in the format list('EP1'=c(ctr_mean, trt1_mean, trt2_mean), 'EP2'=c(ctr_mean, trt1_mean, trt2_mean)) then the hypothesis will be
+# H1 = (Trt1 vs Ctr for EP1), H2 = (Trt2 vs Ctr for EP1), H3 = (Trt1 vs Ctr for EP2), H4 = (Trt2 vs Ctr for EP2)
+#The initial weights and the transition matrix will follow the order accordingly as (H1,H2,H3,H4)
+
 WI <-  c(0.5,0.5,0,0)
 
 #---------------Transition Matrix--------------------
@@ -115,7 +125,7 @@ KeepAssosiatedEps <- TRUE
 ImplicitSSR <- 'Selection'
 
 #-------------------Number of Simulations-------------------------------------
-nSimulation <- 1000
+nSimulation <- 10
 
 #-------------------Simulation Seed-------------------------------------
 Seed <- 100
@@ -125,6 +135,9 @@ SummaryStat <- FALSE
 
 #-------------------Plot Initial Graph------------------------
 plotGraphs <- TRUE
+
+#--------------Parallel Logical; TRUE: Parallel computations--------
+Parallel <- TRUE
 
 #-----------------------Run Simulation--------------------------------------
 #Please uncomment the following code to run the simulation(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
@@ -136,7 +149,7 @@ out <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nE
            Selection = Selection,SelectionLook = SelectionLook,SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
            SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
            ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
-           Method = Method, plotGraphs = plotGraphs)
+           Method = Method, plotGraphs = plotGraphs, Parallel = Parallel)
 out
 
 closeAllConnections() # Close connection to log file

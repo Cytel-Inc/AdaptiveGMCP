@@ -6,11 +6,11 @@
 #' @param FWERControl applicable for CER method only, 'CombinationTest': combined two stage incremental test statistics, 'None': Cumulative test statistics.
 #' @param nArms integer value to specify the number of arms (default: 3)
 #' @param nEps integer value to specify the number of endpoints
-#' @param Arms.Mean Numeric list to specify the arm-wise mean for each endpoint
-#' @param Arms.std.dev Numeric list to specify the arm-wise standard deviation for each endpoint
-#' @param Arms.alloc.ratio Numeric Vector to specify the arm-wise allocation ratio
+#' @param Arms.Mean Numeric list to specify the arm-wise mean for each endpoint; Note: The first input is for control arm and the rest are for the treatments.
+#' @param Arms.std.dev Numeric list to specify the arm-wise standard deviation for each endpoint; Note: The first input is for control arm and the rest are for the treatments.
+#' @param Arms.alloc.ratio Numeric Vector to specify the arm-wise allocation ratio; Note: The first input is for control arm and the rest are for the treatments.
 #' @param EP.Corr correlation matrix for the endpoints(Normal)
-#' @param WI Vector of Initial Weights for Global Null.
+#' @param WI Vector of Initial Weights for Global Null; Note: Hypotheses will follow the order of Endpoints and Treatments as given in 'Arms.Mean' and 'Arms.std.dev' inputs e.g.: If 'Arms.Mean' are given in the format list('EP1'=c(ctr_mean, trt1_mean, trt2_mean), 'EP2'=c(ctr_mean, trt1_mean, trt2_mean)) then the four hypotheses will be H1 = (Trt1 vs Ctr for EP1), H2 = (Trt2 vs Ctr for EP1), H3 = (Trt1 vs Ctr for EP2), H4 = (Trt2 vs Ctr for EP2), The initial weights and the transition matrix will follow the order of hypothesis accordingly as (H1,H2,H3,H4)
 #' @param G  Numeric Matrix to specify the Transition Matrix.
 #' @param test.type Character to specify the type of test want to perform; Available tests for Combining P-values Method :- 'Bonf': Bonferroni, 'Sidak': Sidak, 'Simes': Simes, 'Dunnett': Dunnett and  'Partly-Parametric': Mixed type Tests. Available tests for CER Method :- "Parametric": Weighted Dunnett , "Non-Parametric": Weighted Bonferroni and  'Partly-Parametric': Mixed type Tests.
 #' @param info_frac Numeric Vector to specify look position as fraction of sample size.(for one look can be specified as 1)
