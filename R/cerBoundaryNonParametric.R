@@ -116,8 +116,11 @@ getStage2CondNParamBdry <- function(a1,p1,v,BJ,SS1, SS2)
   }
 
   #Optimization
-  gOpt <- tryCatch({uniroot(OptimGamma,interval = c(0,1),tol = 1E-16)$root},
-           error=function(err){"Error"})
+  # gOpt <- tryCatch({uniroot(OptimGamma,interval = c(0,1),tol = 1E-16)$root},
+  #          error=function(err){"Error"})
+
+  gOpt <- tryCatch({optimise(OptimGamma, interval = c(0,1), tol = 1E-16, maximum = FALSE)$minimum},
+                             error=function(err){"Error"})
 
   if(gOpt == "Error" & BJ >= 1){
     gOpt = 1
