@@ -10,7 +10,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
   # library(foreach)
   # library(doParallel)
   ########################Computation of intermediate inputs#####################
-  preSimObjs <- getPreSimObjs(gmcpSimObj = gmcpSimObj)
+  preSimObjs <<- getPreSimObjs(gmcpSimObj = gmcpSimObj)
 
   #-----------------------------------------------------------------------------
 
@@ -26,12 +26,17 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
   if(gmcpSimObj$Method=='CER')
   {
     if(gmcpSimObj$Parallel){
-      # cl <- parallel::makeCluster(parallel::detectCores())
-      # parallel::clusterExport(cl = cl, envir = environment())
-      # out <- parallel::parLapply(cl = cl,
-      #                     1:gmcpSimObj$nSimulation, function(x){
-      #                       SingleSimCER(x, gmcpSimObj,preSimObjs)})
-      # parallel::stopCluster(cl)
+      cores=detectCores()
+      clust_cores <- makeCluster(cores[1]-1) # leave 1 core and use the remaining for this computation
+      cl <- parallel::makeCluster(clust_cores)
+      parallel::clusterSetRNGStream(cl, iseed = preSimObjs$SimSeed)
+      clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
+
+      out <- parallel::parLapply(cl = cl, 1:gmcpSimObj$nSimulation, function(x){
+        out_SingleSim <- SingleSimCER(x, gmcpSimObj,preSimObjs)
+        return(out_SingleSim)
+      })
+      parallel::stopCluster(cl)
     }else{
       out<-lapply(1:gmcpSimObj$nSimulation, function(x){
         SingleSimCER(x, gmcpSimObj,preSimObjs)})
@@ -39,22 +44,17 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
   }else
   {
     if(gmcpSimObj$Parallel){
-      # cores=detectCores()
-      # clust_cores <- makeCluster(cores[1]-1) #not to overload your computer
-      # registerDoParallel(clust_cores)
-      # clusterExport(cl = clust_cores,varlist = ls(getNamespace("AdaptGMCP")),envir = environment())
-      # out <- foreach(i = 1:gmcpSimObj$nSimulation, .combine=list, .multicombine=TRUE) %dopar% {
-      #   out[[i]] <- SingleSimCombPValue(simID = i, gmcpSimObj,preSimObjs)
-      # }
-      # stopCluster(cores)
+      cores=detectCores()
+      clust_cores <- makeCluster(cores[1]-1) # leave 1 core and use the remaining for this computation
+      cl <- parallel::makeCluster(clust_cores)
+      parallel::clusterSetRNGStream(cl, iseed = preSimObjs$SimSeed)
+      clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
 
-      # cl <- parallel::makeCluster(1) #parallel::detectCores()
-      # parallel::clusterExport(cl = cl,varlist = ls(getNamespace("AdaptGMCP")) ,
-      #                         envir = environment())
-      # out <- parallel::parLapply(cl = cl,
-      #                     1:gmcpSimObj$nSimulation, function(x){
-      #                       SingleSimCombPValue(x, gmcpSimObj,preSimObjs)})
-      # parallel::stopCluster(cl)
+      out <- parallel::parLapply(cl = cl, 1:gmcpSimObj$nSimulation, function(x){
+        out_SingleSim <- SingleSimCombPValue(x, gmcpSimObj,preSimObjs)
+        return(out_SingleSim)
+      })
+      parallel::stopCluster(cl)
     }else{
       out<-lapply(1:gmcpSimObj$nSimulation, function(x){
         SingleSimCombPValue(x, gmcpSimObj,preSimObjs)})

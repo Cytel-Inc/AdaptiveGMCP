@@ -34,7 +34,8 @@ simMAMSMEP(
   nSimulation = 1000,
   Seed = 100,
   SummaryStat = FALSE,
-  plotGraphs = TRUE
+  plotGraphs = TRUE,
+  Parallel = TRUE
 )
 }
 \arguments{
@@ -95,6 +96,8 @@ simMAMSMEP(
 \item{SummaryStat}{Logical; TRUE if simulation level data is required(default = FALSE)}
 
 \item{plotGraphs}{Logical; TRUE: plot the initial graph}
+
+\item{Parallel}{Logical; TRUE: Parallel computations}
 
 \item{UpdateStrategy}{Logical to specify the updated strategy (Not Implemented yet) default FALSE}
 }
