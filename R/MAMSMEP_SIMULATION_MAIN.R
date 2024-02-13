@@ -122,6 +122,14 @@ simMAMSMEP <- function(
     'plotGraphs' = plotGraphs
   )
 
+  logs <- valInpsimMAMSMEP(inps = gmcpSimObj)
+  FailedLogs <- logs[sapply(logs, function(lg) lg != 0)]
+
+  if(length(FailedLogs)!=0){
+    return(FailedLogs)
+    stop('Input Error')
+  }
+
   out <- mnMAMSMEP_sim2(gmcpSimObj)
   if(plotGraphs){
     #out$iniGraph

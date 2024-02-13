@@ -106,9 +106,10 @@ Function to perform Adaptive GMCP simulation for Multi-Arm Multi-Stage Multi-End
 }
 \examples{
 
-suppressWarnings(library(AdaptGMCP))
-library(rstudioapi)
 
+rm(list = ls())
+library(AdaptGMCP)
+library(rstudioapi)
 
 timeNow <- format(Sys.time(), "\%Y-\%m-\%d_\%H-\%M-\%S")
 ConsoleOutput <- file(paste0("Console_output_", timeNow, ".txt")) # File name of output log
@@ -116,7 +117,6 @@ sink(ConsoleOutput, append = TRUE, type = 'output')
 sink(ConsoleOutput, append = TRUE, type = 'message')
 cat(readChar(rstudioapi::getSourceEditorContext()$path, # Writing currently opened R script to file
              file.info(rstudioapi::getSourceEditorContext()$path)$size))
-
 
 ########################## Inputs ##############################
 #------------------Test Method----------------------------------
@@ -134,7 +134,7 @@ TestStat <- 't-equal'
 
 #---------FWER Control Method(Applicable for CER Method only)------
 #options: 'CombinationTest' : combined incremental p-values for stage-2 testing, 'None': Cumulative classical test statistics.
-FWERControl <- 'None'
+FWERControl <- 'CombinationTest'
 
 #-----------------------Number of Arms--------------------------
 nArms <- 3
@@ -232,7 +232,7 @@ KeepAssosiatedEps <- TRUE
 ImplicitSSR <- 'Selection'
 
 #-------------------Number of Simulations-------------------------------------
-nSimulation <- 10
+nSimulation <- 1000
 
 #-------------------Simulation Seed-------------------------------------
 Seed <- 100
@@ -261,4 +261,5 @@ out
 
 closeAllConnections() # Close connection to log file
 save(out, file = paste0("Output_simMAMSMEP_",timeNow, ".RData"))
+out
 }

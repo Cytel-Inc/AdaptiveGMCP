@@ -60,23 +60,25 @@ getBdryStage2Nparam <- function(ej, aj1,  ss1, ss2)
   {
     #cat('ej :', ej, 'aj1 :', aj1, 'aj2 :',x)
     extProb <- exitProbStage2Nparam(x, aj1,  ss1, ss2)
-    # if(ej==1){ #when the the threshold is 1 the exit prob can be assumed to be 1
-    #   extProb <- 1
-    # }else
-    # {
-    #   extProb <- exitProbStage2Nparam(x, aj1,  ss1, ss2)
-    # }
     #cat('extProb:',extProb,'\n')
     extProb - ej
   }
 
   if((ej-aj1)>0 & ej != 0) #compute boundary when the exit prob >0
   {
-    uniroot(f = bdry2NP, interval = c(minbdry, maxbdry), tol = 1E-16)$root
+    stage2bdryAdj <- tryCatch({uniroot(f = bdry2NP, interval = c(minbdry, maxbdry), tol = 1E-16)$root},
+                              error=function(err){"Error"})
+    if(stage2bdryAdj == 'Error')
+    {
+      #Use optimise when uniroot fail
+      absbdry2NP <- function(x) abs(bdry2NP(x))
+      stage2bdryAdj <- optimise(f = bdry2NP, interval = c(minbdry, maxbdry), tol = 1E-16, maximum = FALSE)$minimum
+    }
   }else
   {
-    0
+    stage2bdryAdj <- 0
   }
+  stage2bdryAdj
 }
 
 #Function to compute the Adj Boundary based on modified weights
@@ -101,32 +103,24 @@ getStage2CondNParamBdry <- function(a1,p1,v,BJ,SS1, SS2)
   {
     #cat('gammaJ : ' , x, '\n')
     modBJ <- sum(getAdjPCER(g = x,a1 = a1,p1 = p1, v = v, SS1=SS1, SS2=SS2))
-    # if(x==0)
-    # {
-    #   modBJ <- 0
-    # }else if( x == 1)
-    # {
-    #   modBJ <- 1
-    # }else
-    # {
-    #   modBJ <- sum(getAdjPCER(g = x,a1 = a1,p1 = p1, v = v, SS1=SS1, SS2=SS2))
-    # }
     #cat(' modBJ : ',modBJ,' BJ : ',BJ ,' modBJ-BJ : ',modBJ-BJ,'\n')
     modBJ-BJ
   }
 
   #Optimization
-  # gOpt <- tryCatch({uniroot(OptimGamma,interval = c(0,1),tol = 1E-16)$root},
-  #          error=function(err){"Error"})
-
-  gOpt <- tryCatch({optimise(OptimGamma, interval = c(0,1), tol = 1E-16, maximum = FALSE)$minimum},
-                             error=function(err){"Error"})
+  gOpt <- tryCatch({uniroot(OptimGamma,interval = c(0,1),tol = 1E-16)$root},
+           error=function(err){"Error"})
 
   if(gOpt == "Error" & BJ >= 1){
     gOpt = 1
   }else if(gOpt == "Error" & BJ < 1)
   {
-    stop('Error in getStage2CondNParamBdry optimization')
+    #Use optimise when uniroot fail
+    absOptimGamma <- function(x) abs(OptimGamma(x))
+    gOpt <- tryCatch({optimise(absOptimGamma, interval = c(0,1), tol = 1E-16, maximum = FALSE)$minimum},
+                     error=function(err){"Error"})
+
+    # stop('Error in getStage2CondNParamBdry optimization')
   }
 
   PCER_adj <- getAdjPCER(g = gOpt,a1 = a1, p1 = p1, v=v, SS1=SS1, SS2=SS2)
