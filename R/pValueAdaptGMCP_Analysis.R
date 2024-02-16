@@ -14,7 +14,10 @@
 #' @export
 adaptGMCP_PC <- function(
     WI = c(0.5,0.5,0,0),
-    G = matrix(c(0,0.5,0.5,0,  0.5,0,0,0.5,  0,1,0,0, 1,0,0,0),nrow = 4),
+    G = matrix(c(0,0.5,0.5,0,
+                 0.5,0,0,0.5,
+                 0,1,0,0,
+                 1,0,0,0),byrow = T, nrow = 4),
     test.type = 'Partly-Parametric',
     alpha = 0.025,
     info_frac = c(1/2,1),
@@ -65,7 +68,12 @@ adaptGMCP_PC <- function(
   }else if(test.type == 'Sidak'||test.type == 'Simes')
   {
     Correlation <- NA
+
+  }else if(test.type == "Dunnett" || test.type == "Partly-Parametric"){
+
+    rownames(Correlation) <- colnames(Correlation) <- GlobalIndexSet
   }
+
 
   ##############Computation of Inverse normal weights from information fraction########
   info_frac_incr <- c(info_frac[1], diff(info_frac))
@@ -93,7 +101,10 @@ adaptGMCP_PC <- function(
                  'WH_Prev' = WH,
                  'WH'= WH,
                  'Correlation' = Correlation,
+                 'WeightTable' = NA,
                  'AdjPValues' = NA,
+                 'AdjPValueTable' = NA,
+                 'CombinedPValuesTable' = NA,
                  'W_Norm' = W_Norm,
                  'CutOff' = NA,
                  'MultipleWinners'= MultipleWinners,
@@ -131,10 +142,11 @@ adaptGMCP_PC <- function(
 
     #Pre-computation for the next look
     mcpObj$rej_flag_Prev <- mcpObj$rej_flag_Curr
-    mcpObj$WH_Prev <- mcpObj$WH
 
     #Print Look-wise results in the console
     ShowResults(mcpObj)
+
+    mcpObj$WH_Prev <- mcpObj$WH
 
     if(plotGraphs) #Plot after Stage-wise analysis
     {

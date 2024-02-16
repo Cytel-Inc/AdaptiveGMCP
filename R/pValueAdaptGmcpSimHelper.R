@@ -486,7 +486,8 @@ getInvNormWeights <- function(planSSIncr)
   rownames(InvNormWeights) <- paste('Look',1:nrow(planSSIncr),sep='')
   W_Norm <- W_Norm[-1,] #Removing the first row
 
-  list('InvNormWeightsTab'=InvNormWeights, 'W_Norm'=W_Norm)
+  list('InvNormWeightsTab'= knitr::kable(InvNormWeights,align = 'c'),
+       'W_Norm'=W_Norm)
 }
 
 
@@ -510,6 +511,10 @@ getPvalBdry <- function(alpha, nLooks, info_frac, typeOfDesign)
                           'Incr_alpha_spent'=incr_alpha,
                           'ZScale_Eff_Bbry'=des$criticalValues,
                           'PValue_Eff_Bbry'= Threshold)
+
+    colnames(bdryTab) <- c('Looks','InfoFrac','Alpha(Incr.)',
+                           'Boundary(Z)', 'Boundary(P-Value)')
+    bdryTab <- knitr::kable(bdryTab, align = 'c')
 
   }
   list('pValueBdryTab'=bdryTab,

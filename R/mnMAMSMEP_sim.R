@@ -74,6 +74,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
 
   #Overall Powers
   Sim_power <- SimPowers(nSimulation=gmcpSimObj$nSimulation,PowerTab=PowerTab)
+  Sim_power <- knitr::kable(Sim_power, align = 'c')
 
   #Detailed Efficacy Table
   eff_count <- colSums(EfficacyTable[,-1])
@@ -81,6 +82,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
                           'Count'=eff_count,
                           'Percentage'=100*(eff_count/nrow(EfficacyTable)))
   rownames(EffTab) <- NULL
+  EffTab <- knitr::kable(EffTab, align = 'c')
 
   if(gmcpSimObj$Selection){
     #Selection Table
@@ -89,6 +91,8 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
     SelecTab <- data.frame('Hypothesis'=names(SelcCount),
                            'Count'= as.vector(SelcCount),
                            'Percentage'= as.vector(SelcPerc))
+
+    SelecTab <- knitr::kable(SelecTab, align = 'c')
   }else
   {
     SelecTab <- NA
@@ -131,7 +135,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
                            list(
                              'PlanSampleSizeIncr' = preSimObjs$planSS$IncrementalSamples,
                              'PlannedCorrelation' = preSimObjs$PlanCorrelation,
-                             'Boundary_Table' = preSimObjs$pValBdry,
+                             'Boundary_Table' = preSimObjs$pValBdry$pValueBdryTab,
                              'Inverse_Normal_Weights' = preSimObjs$InvNormWeights$InvNormWeightsTab,
                              'Overall_Powers' = Sim_power,
                              'EfficacyTable'=EffTab,
@@ -144,7 +148,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
                            list(
                              'PlanSampleSize' = preSimObjs$planSS$IncrementalSamples,
                              'PlannedCorrelation' = preSimObjs$PlanCorrelation,
-                             'Boundary_Table' = preSimObjs$pValBdry,
+                             'Boundary_Table' = preSimObjs$pValBdry$pValueBdryTab,
                              'Inverse_Normal_Weights' = preSimObjs$InvNormWeights$InvNormWeightsTab,
                              'Overall_Powers' = Sim_power,
                              'EfficacyTable'=EffTab,

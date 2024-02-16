@@ -189,8 +189,8 @@ adaptGMCP_CER <- function(
     }else{
       #Stage 2 Analysis
       Stage2Test <- PerformStage2Test(mcpObj=mcpObj, AdaptStage2= AdaptStage2)
-      print(Stage2Test)
-      mcpObj$rej_flag_Curr <- Stage2Test$Rejection_Status
+      print(Stage2Test$Stage2Tables)
+      mcpObj$rej_flag_Curr <- Stage2Test$RejStat
 
       if(plotGraphs) #Plot after Stage-2 analysis
       {

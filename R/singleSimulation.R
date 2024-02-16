@@ -104,7 +104,7 @@ SingleSimCombPValue <- function(simID, gmcpSimObj,preSimObjs)
 #----------------- -
 SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
 {
-  print(simID)
+  #print(simID)
   mcpObj <- initialize_mcpObj(gmcpSimObj = gmcpSimObj, preSimObjs = preSimObjs)
   SummStatDF <- mcpObj$SummStatBlank
   ArmWiseDF <- mcpObj$ArmWiseDataBlank

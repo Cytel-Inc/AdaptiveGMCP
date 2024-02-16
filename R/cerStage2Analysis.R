@@ -22,21 +22,57 @@ PerformStage2Test <- function(mcpObj, AdaptStage2)
                                  pValues = mcpObj$p_raw,
                                  Stage1RejStatus=mcpObj$rej_flag_Prev)
 
-    Stage2Tables <- list('Test_Intersection_Hypothesis'=Stage2Analysis$IntersectHypoTest,
-                         'Rejection_Status'=Stage2Analysis$PrimaryHypoTest)
+    intHypTab <- Stage2Analysis$IntersectHypoTest
+    HypoTab <- intHypTab[,grep('H',names(intHypTab))]
+    InterHyp <- apply(HypoTab, 1, function(h){
+      paste(names(HypoTab)[which(h==1)],collapse=',')})
+
+    intRejStat <- sapply(intHypTab$Rejected, function(x){
+      ifelse(x,'Rejected','Not_Rejected')
+    })
+    IntersectHypoTest <- knitr::kable(data.frame('Hypotheses'=InterHyp,
+                                                 'Status'=intRejStat), align = 'c')
+
+    rejTab <- Stage2Analysis$PrimaryHypoTest
+    FinRejStat <- sapply(rejTab, function(x){
+      ifelse(x,'Rejected','Not_Rejected')
+    })
+    FinalRejTab <- knitr::kable(data.frame('Hypotheses'=names(rejTab),
+                                           'Status'=FinRejStat, row.names = NULL), align = 'c')
+
+    Stage2Tables <- list('Test_Intersection_Hypothesis'=IntersectHypoTest,
+                         'Final_Rejection_Status'=FinalRejTab)
   }else
   {
     Stage2Analysis <- closedTest(WH = mcpObj$WH,
                                  boundary = mcpObj$AdaptObj$Stage2AdjBdry,
                                  pValues = mcpObj$p_raw,
                                  Stage1RejStatus=mcpObj$rej_flag_Prev)
+    intHypTab <- Stage2Analysis$IntersectHypoTest
+    HypoTab <- intHypTab[,grep('H',names(intHypTab))]
+    InterHyp <- apply(HypoTab, 1, function(h){
+      paste(names(HypoTab)[which(h==1)],collapse=',')})
+
+    intRejStat <- sapply(intHypTab$Rejected, function(x){
+      ifelse(x,'Rejected','Not_Rejected')
+    })
+    IntersectHypoTest <- knitr::kable(data.frame('Hypotheses'=InterHyp,
+                                                 'Status'=intRejStat), align = 'c')
+
+    rejTab <- Stage2Analysis$PrimaryHypoTest
+    FinRejStat <- sapply(rejTab, function(x){
+      ifelse(x,'Rejected','Not_Rejected')
+    })
+    FinalRejTab <- knitr::kable(data.frame('Hypotheses'=names(rejTab),
+                                           'Status'=FinRejStat, row.names = NULL), align = 'c')
+
     Stage2Tables <- list(
       'Adapt_Test_Tables'= mcpObj$AdaptObj$Stage2Tables,
-      'Test_Intersection_Hypothesis'=Stage2Analysis$IntersectHypoTest,
-      'Rejection_Status'=Stage2Analysis$PrimaryHypoTest)
+      'Test_Intersection_Hypothesis'=IntersectHypoTest,
+      'Final_Rejection_Status'=FinalRejTab)
   }
 
-  Stage2Tables
+  list('Stage2Tables'=Stage2Tables,'RejStat'=Stage2Analysis$PrimaryHypoTest)
 }
 
 #To modify the stage-2 sample size(SSR)

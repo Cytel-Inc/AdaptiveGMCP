@@ -78,21 +78,47 @@ adaptBdryCER <- function(mcpObj)
   colnames(Stage2AdjBdry) <- paste('a', 1:nHypothesis,'2_adj', sep='')
 
   #Modified Sample Size table
-  ModfiedSSTab <- mcpObj$Stage2AllocSampleSize
+
+  ModfiedSSTab <- knitr::kable(mcpObj$Stage2AllocSampleSize, align = 'c')
 
   #Modified weights table
+  HypoTab <- WH_modified[,grep('H',names(WH_modified))]
+
+  InterHyp <- apply(HypoTab, 1, function(h){
+    paste(names(HypoTab)[which(h==1)],collapse=',')})
+
+  InterWeight <- apply(WH_modified, 1, function(h){
+    J <- which(h[1:(length(h)/2)]==1)
+    w <- h[((length(h)/2)+1):length(h)]
+    paste(w[J],collapse=',')})
+
   ModifiedWeightTab <- WH_modified
 
+
   #Adaptive Test Procedure
-  TestProcedureTab <- cbind(WH_modified[1:nHypothesis],SubSets,ConditionalError)
+  #TestProcedureTab <- cbind(WH_modified[1:nHypothesis],SubSets,ConditionalError)
+  TestProcedureTab1 <- knitr::kable(data.frame('Hypotheses'=InterHyp,
+                                  'Weights'=InterWeight,
+                                  'SubSets'=SubSets,
+                                  'Conditional_Error'=ConditionalError), align = 'c')
+
 
   #Adjusted Boundary
-  AdjBdryTab <- cbind(WH_modified[1:nHypothesis],Stage2AdjBdry)
+  #AdjBdryTab <- cbind(WH_modified[1:nHypothesis],Stage2AdjBdry)
+  stg2bdry <- c()
+
+  for (hypIDX in 1:nrow(Stage2AdjBdry)) {
+    J <- which(WH_modified[hypIDX,1:(length(WH_modified)/2)]==1)
+    stg2bdry <- c(stg2bdry,
+                  paste(round(Stage2AdjBdry[hypIDX, J],6),collapse = ','))
+  }
+  AdjBdryTab1 <- knitr::kable(data.frame('Hypotheses'=InterHyp,
+                                         'Adapt_Boundary'=stg2bdry), align = 'c')
+
 
   AdaptTable <- list('Sample_Size' = ModfiedSSTab,
-                     'Modified_Weights'=ModifiedWeightTab,
-                     'Stage2_Test_Procedure'=TestProcedureTab,
-                     'Adjusted_Boundary'=AdjBdryTab)
+                     'Stage2_Test_Procedure'=TestProcedureTab1,
+                     'Adjusted_Boundary'=AdjBdryTab1)
 
   list(
     'Stage2Tables' = AdaptTable,

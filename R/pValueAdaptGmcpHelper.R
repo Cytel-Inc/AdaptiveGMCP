@@ -15,11 +15,45 @@ PerLookMCPAnalysis<- function(mcpObj)
     WH_Correction <- getICIndex(mcpObj)
   }
 
+  #Weight Table Preparation for outputs
+  HypoTab <- WH_Correction[,1:(ncol(WH_Correction)/2)]
+  InterHyp <- apply(HypoTab, 1, function(h){
+                paste(names(HypoTab)[which(h==1)],collapse=',')})
+  InterWeight <- apply(WH_Correction, 1, function(h){
+                   J <- which(h[1:(length(h)/2)]==1)
+                   w <- h[((length(h)/2)+1):length(h)]
+                   paste(w[J],collapse=',')})
+  WeightTab <- data.frame('Hypothesis'=InterHyp,
+                          'Weights'=InterWeight)
+  #------------------------------------------
 
-  P_Adj <- as.data.frame(apply(WH_Correction,1,compute_adjP,
-                               p=mcpObj$p_raw ,cr=mcpObj$Correlation, test.type = mcpObj$test.type))
-  names(P_Adj) <- paste('PAdj',mcpObj$CurrentLook, sep = '')
+  P_Adj0 <- Adj_Method <- c()
+  for(intHyp in 1:nrow(WH_Correction)){
+    #print(intHyp)
+    adjOut <- compute_adjP(h = WH_Correction[intHyp,],
+                           cr = mcpObj$Correlation,
+                           p = mcpObj$p_raw,
+                           test.type = mcpObj$test.type)
+    P_Adj0 <- c(P_Adj0, adjOut$adj_pj)
+    Adj_Method <- c(Adj_Method, adjOut$adj_method)
+  }
+
+  # P_Adj <- as.data.frame(apply(WH_Correction,1,compute_adjP,
+  #                              p=mcpObj$p_raw ,cr=mcpObj$Correlation, test.type = mcpObj$test.type))
+  #
+
+  P_Adj <- data.frame(P_Adj0)
+  colnames(P_Adj) <- paste('PAdj',mcpObj$CurrentLook, sep = '')
   PooledDF <- cbind(mcpObj$WH[, grep('H',names(mcpObj$WH))],P_Adj)
+
+
+  #Adjusted p-value Table Preparation for outputs
+  AdjPValTab <- knitr::kable(data.frame('Hypothesis'=InterHyp,
+                           'Weights'=InterWeight,
+                           'Adj_PValue'=P_Adj0,
+                           'Adj_Method'=Adj_Method),align = 'c')
+
+  mcpObj$AdjPValueTable <- AdjPValTab
 
   if(mcpObj$CurrentLook == 1)
   {
@@ -30,8 +64,9 @@ PerLookMCPAnalysis<- function(mcpObj)
     AdjPValuesIDX <- as.vector(apply(mcpObj$AdjPValues[,grep('H',names(mcpObj$AdjPValues))], 1, function(x){paste(x,collapse = '')}))
 
     AdjPval <- data.frame(unlist(lapply(AdjPValuesIDX, function(x){
+      #print(x)
       idx <- which(PooledDFIDX == x)
-      ifelse(length(idx)==0,NA,PooledDF$PAdj2[idx])
+      ifelse(length(idx)==0,NA,PooledDF[idx,grep('PAdj',names(PooledDF))])
     })))
 
     names(AdjPval) <- paste('PAdj',mcpObj$CurrentLook, sep = '')
@@ -52,6 +87,15 @@ PerLookMCPAnalysis<- function(mcpObj)
     Comb_P_name <- paste('Comb_P',mcpObj$CurrentLook, sep = '')
     names(Comb_p) <- Comb_P_name
     mcpObj$AdjPValues <- cbind(mcpObj$AdjPValues, Comb_p)
+
+    #Combined p-value table
+    HypoTabComb <- mcpObj$AdjPValues[,grep('H', names(mcpObj$AdjPValues))]
+    InterHypComb <- apply(HypoTabComb, 1, function(h){
+      paste(names(HypoTabComb)[which(h==1)],collapse=',')})
+    combPvalTab0 <- mcpObj$AdjPValues[,(length(mcpObj$IntialHypothesis)+1):ncol( mcpObj$AdjPValues)]
+    combPvalTab1 <- data.frame('Hypothesis'=InterHypComb)
+    combPvalTab1 <- cbind(combPvalTab1,combPvalTab0)
+    mcpObj$CombinedPValuesTable <- knitr::kable(combPvalTab1, align = 'c')
   }
 
   #Analysis
@@ -337,6 +381,10 @@ do_modifyCorrelation <- function(mcpObj)
   {
     m <- get_numeric_part(mcpObj$IndexSet)
     new_Corr <- mcpObj$Correlation
+
+    cat("\n Pre-Specified correlation matrix for the reference \n")
+    print(mcpObj$Correlation)
+
     cat("\n Enter the elements of the correlation matrix \n")
     countModified <- 0
     for(i in m)
@@ -354,6 +402,8 @@ do_modifyCorrelation <- function(mcpObj)
         }
       }
     }
+    #rownames(new_Corr) <- colnames(new_Corr) <- paste('H',m,sep = '')
+
     if(countModified == 0) cat("Modification not required \n")
     mcpObj$Correlation <- new_Corr
     return(mcpObj)
@@ -456,27 +506,41 @@ ShowResults <- function(mcpObj)
   cat('\n')
 
   cat('Design Boundary : \n')
-  print(mcpObj$bdryTab)
+  BdryTable <- mcpObj$bdryTab
+  colnames(BdryTable) <- c('Look','InfoFrac','Alpha(Incr.)',
+                           'Boundary(Z)','Boundary(P-Value)')
+  print(knitr::kable(BdryTable,align = 'c'))
   cat('\n')
   cat('\n')
 
   cat('Inverse Normal Weights : \n')
-  print(mcpObj$InvNormWeights)
+  print(knitr::kable(mcpObj$InvNormWeights,align = 'c'))
   cat('\n')
   cat('\n')
 
-  cat('Weights for the intersection hypothesis at Look : ',mcpObj$CurrentLook,'\n')
-  print(mcpObj$WH_Prev)
+  # cat('Weights for the intersection hypothesis at Look : ',mcpObj$CurrentLook,'\n')
+  # print(mcpObj$WH_Prev)
+  # cat('\n')
+  # cat('\n')
+
+  cat('Adj P-values for the intersection hypotheses at Look : ',mcpObj$CurrentLook,'\n')
+  print(mcpObj$AdjPValueTable)
   cat('\n')
   cat('\n')
 
-  cat('Adj P-values for the intersection hypothesis at Look : ',mcpObj$CurrentLook,'\n')
-  print(mcpObj$AdjPValues)
-  cat('\n')
-  cat('\n')
+  if(mcpObj$CurrentLook > 1)
+  {
+    cat('Combined P-values for the intersection hypotheses at Look : ',mcpObj$CurrentLook,'\n')
+    print(mcpObj$CombinedPValuesTable)
+    cat('\n')
+    cat('\n')
+  }
 
-  cat('Rejection Status of primary Hypothesis at Look : ',mcpObj$CurrentLook,'\n')
-  print(mcpObj$rej_flag_Curr)
+  cat('Final rejection status of primary hypotheses at Look : ',mcpObj$CurrentLook,'\n')
+  status <- sapply(mcpObj$rej_flag_Curr, function(x) ifelse(x, 'Rejected','Not_Rejected'))
+  rej_df <- data.frame('Hypothesis'=names(status),
+                       'Status'=status, row.names = NULL)
+  print(knitr::kable(rej_df,align = 'c'))
   cat('\n')
   cat('\n')
 }
@@ -513,8 +577,23 @@ comb.test <- function(p,cr,w){
     conn <- 1
   }
   #twosided <- alternatives==rep("two.sided", length(w))
-  lconn <- sapply(conn,length)
   conn <- lapply(conn,as.numeric)
+
+  conn_Len <- length(conn)
+  set_len <- sapply(conn, length)
+
+  if(conn_Len > 1 & any(set_len > 1)){ #Multiple sets of different length
+    adjMethod <- 'Mixed'
+
+  }else if(conn_Len==1 & all(set_len == 1)){
+    adjMethod <- 'NA'
+
+  }else if(conn_Len == 1 & all(set_len > 1)){
+    adjMethod <- 'Parametric'
+
+  }else if(conn_Len > 1 & all(set_len == 1)){
+    adjMethod <- 'Bonferroni'
+  }
 
 
   e <- sapply(conn,function(edx){
@@ -536,7 +615,7 @@ comb.test <- function(p,cr,w){
   )
 
   e <- min(e,1)
-  e
+  list('AdjPvalue' = e, 'adjMethod' = adjMethod)
 }
 #---------------------- -
 
@@ -563,18 +642,23 @@ compute_adjP <- function(h,cr,p,test.type) {
 
   if(test.type == 'Partly-Parametric'|| test.type =='Dunnett' || test.type =='Bonf')
   {
-    adj_pj <- comb.test(p[e],cr[e,e],w[e])
+    testOut <- comb.test(p[e],cr[e,e],w[e])
+    adj_pj <- testOut$AdjPvalue
+    adj_method <- testOut$adjMethod
 
   }else if(test.type == 'Sidak')
   {
     adj_pj <- sidak.test(p[e],w[e])
+    adj_method <- 'Sidak'
 
   }else if(test.type == 'Simes')
   {
     adj_pj <- gMCPLite::simes.test(pvalues=p[e], weights=w[e], adjPValues = T)
+    adj_method <- 'Simes'
   }
 
-  return(adj_pj)
+  list('adj_pj'=adj_pj, 'adj_method'=adj_method)
+
 }
 #---------------------- -
 

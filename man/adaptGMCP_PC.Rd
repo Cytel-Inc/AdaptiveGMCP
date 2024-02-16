@@ -6,7 +6,8 @@
 \usage{
 adaptGMCP_PC(
   WI = c(0.5, 0.5, 0, 0),
-  G = matrix(c(0, 0.5, 0.5, 0, 0.5, 0, 0, 0.5, 0, 1, 0, 0, 1, 0, 0, 0), nrow = 4),
+  G = matrix(c(0, 0.5, 0.5, 0, 0.5, 0, 0, 0.5, 0, 1, 0, 0, 1, 0, 0, 0), byrow = T, nrow =
+    4),
   test.type = "Partly-Parametric",
   alpha = 0.025,
   info_frac = c(1/2, 1),

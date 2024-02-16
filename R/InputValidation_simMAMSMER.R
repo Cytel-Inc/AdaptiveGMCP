@@ -52,7 +52,7 @@ valInpsimMAMSMEP <- function(inps){
   logs[[17]] <- ifelse(inps$Seed == 'Random' || is.numeric(inps$Seed)
                 ,0,"Invalid argument in 'Seed'")
 
-  logs[[18]] <- ifelse(inps$ImplicitSSR == 'Selection' || inps$ImplicitSSR == 'All'
+  logs[[18]] <- ifelse(inps$ImplicitSSR == 'Selection' || inps$ImplicitSSR == 'All' || inps$ImplicitSSR == 'None'
                 ,0,"Invalid argument in 'ImplicitSSR'")
 
   return(logs)

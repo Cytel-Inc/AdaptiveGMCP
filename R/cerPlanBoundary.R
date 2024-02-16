@@ -60,24 +60,60 @@ planBdryCER <- function(nHypothesis,nEps,nLooks, alpha,info_frac,typeOfDesign,te
   #Intersection Weights#
   InterWeightsTab <- WH
 
+  #Weight Table Preparation for outputs
+  HypoTab <- WH[,1:(ncol(WH)/2)]
+  InterHyp <- apply(HypoTab, 1, function(h){
+    paste(names(HypoTab)[which(h==1)],collapse=',')})
+  InterWeight <- apply(WH, 1, function(h){
+    J <- which(h[1:(length(h)/2)]==1)
+    w <- h[((length(h)/2)+1):length(h)]
+    paste(w[J],collapse=',')})
+  WeightTab <- data.frame('Hypothesis'=InterHyp,
+                          'Weights'=InterWeight)
+
+
   #Test procedure
   TestProcedureTab <- cbind(WH[,1:(ncol(WH)/2)],
                             SubSets,
                             Method,
                             SignfLevel)
+
+  TestProcedureTab1 <- data.frame('Hypotheses'=InterHyp, 'Weights'=InterWeight,
+                                  'SubSets'=SubSets, 'Method'=Method)
+  TestProcedureTab1 <- knitr::kable(TestProcedureTab1,align = 'c')
   #Stage-1 Boundary
   Stage1BdryTab <- cbind(WH[,1:(ncol(WH)/2)],Stage1Bdry)
+  stg1bdry <- c()
 
-  PlanBdryTab <- list('Intersection_Weights'=InterWeightsTab,
-                      'Test_Procedure'=TestProcedureTab,
-                      'Stage1_Boundary'=Stage1BdryTab)
+  for (hypIDX in 1:nrow(Stage1Bdry)) {
+    J <- which(WH[hypIDX,1:(length(WH)/2)]==1)
+    stg1bdry <- c(stg1bdry,
+                  paste(round(Stage1Bdry[hypIDX, J],6),collapse = ','))
+  }
+
+  Stage1BdryTab1 <- knitr::kable(data.frame('Hypotheses'=InterHyp,
+                                          'Alpha'=SignfLevel,
+                             'Stage1Boundary'=stg1bdry),align = 'c')
+
+
+  PlanBdryTab <- list('Test_Procedure'=TestProcedureTab1,
+                      'Stage1_Bounday'=Stage1BdryTab1)
   if(nLooks == 2)
   {
     Stage2BdryTab <- cbind(WH[,1:(ncol(WH)/2)],Stage2Bdry)
-    PlanBdryTab <- list('Intersection_Weights'=InterWeightsTab,
-                        'Test_Procedure'=TestProcedureTab,
-                        'Stage1_Boundary'=Stage1BdryTab,
-                        'Stage2_Boundary'=Stage2BdryTab)
+    stg2bdry <- c()
+    for (hypIDX in 1:nrow(Stage2Bdry)) {
+      J <- which(WH[hypIDX,1:(length(WH)/2)]==1)
+      stg2bdry <- c(stg2bdry,
+                    paste(round(Stage2Bdry[hypIDX, J],6),collapse = ','))
+    }
+    Stage2BdryTab1 <- knitr::kable(data.frame('Hypotheses'=InterHyp,
+                                              'Alpha'=SignfLevel,
+                                              'Stage2Boundary'=stg2bdry),align = 'c')
+
+    PlanBdryTab <- list('Test_Procedure'=TestProcedureTab1,
+                        'Stage1_Bounday'=Stage1BdryTab1,
+                        'Stage2_Bounday'=Stage2BdryTab1)
   }
 
   list('Stage1Bdry'=Stage1Bdry,
