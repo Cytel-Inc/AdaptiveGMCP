@@ -215,7 +215,7 @@ getPerLookTestStatDOM <- function(simID, lookID,TestStat,Arms.std.dev,IncrLookSu
              SE_Pair_incr[hIDX] <- SE
              testStatIncr[hIDX] <-  testStat
 
-             dof <- sum(n_ep)-length(which(!is.na(testStat)))-1 #(n-k-1)
+             dof <- sum(n_ep)-length(nt) #(n-k-1)
              pVal <- 1-pt(q = testStat, df = dof)
              pValIncr[hIDX] <- pVal
              #End of computations for t-equal
