@@ -74,7 +74,9 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
 
   #Overall Powers
   Sim_power <- SimPowers(nSimulation=gmcpSimObj$nSimulation,PowerTab=PowerTab)
+  Sim_power_df <- Sim_power
   Sim_power <- knitr::kable(Sim_power, align = 'c')
+
 
   #Detailed Efficacy Table
   eff_count <- colSums(EfficacyTable[,-1])
@@ -111,6 +113,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
                              'PlannedSigma' = preSimObjs$Sigma,
                              'Boundary_Table' = preSimObjs$plan_Bdry$PlanBdryTab,
                              'Overall_Powers' = Sim_power,
+                             'Overall_Powers_df' = Sim_power_df,
                              'EfficacyTable'=EffTab,
                              'SelectionTable'= SelecTab,
                              'Summary_Stat' = SummaryStatFile,
@@ -123,6 +126,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
                              'PlannedSigma' = preSimObjs$Sigma,
                              'Boundary_Table' = preSimObjs$plan_Bdry$PlanBdryTab,
                              'Overall_Powers' = Sim_power,
+                             'Overall_Powers_df' = Sim_power_df,
                              'EfficacyTable'=EffTab,
                              'SelectionTable'= SelecTab,
                              'Seed'= preSimObjs$SimSeed,
@@ -138,6 +142,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
                              'Boundary_Table' = preSimObjs$pValBdry$pValueBdryTab,
                              'Inverse_Normal_Weights' = preSimObjs$InvNormWeights$InvNormWeightsTab,
                              'Overall_Powers' = Sim_power,
+                             'Overall_Powers_df' = Sim_power_df,
                              'EfficacyTable'=EffTab,
                              'SelectionTable'= SelecTab,
                              'Summary_Stat' = SummaryStatFile,
@@ -151,6 +156,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
                              'Boundary_Table' = preSimObjs$pValBdry$pValueBdryTab,
                              'Inverse_Normal_Weights' = preSimObjs$InvNormWeights$InvNormWeightsTab,
                              'Overall_Powers' = Sim_power,
+                             'Overall_Powers_df' = Sim_power_df,
                              'EfficacyTable'=EffTab,
                              'SelectionTable'= SelecTab,
                              'Seed'= preSimObjs$SimSeed,
