@@ -1,49 +1,49 @@
 Level1,Level2,Method,ModelID
-S1,Conservative,CombPValue,1
-S1,Conservative,CER,2
-S1,Normal,CombPValue,3
-S1,Normal,CER,4
-S1,Aggressive,CombPValue,5
-S1,Aggressive,CER,6
-S1,Ultra,CombPValue,7
-S1,Ultra,CER,8
-S2,Conservative,CombPValue,9
-S2,Conservative,CER,10
-S2,Normal,CombPValue,11
-S2,Normal,CER,12
-S2,Aggressive,CombPValue,13
-S2,Aggressive,CER,14
-S2,Ultra,CombPValue,15
-S2,Ultra,CER,16
-S3,Conservative,CombPValue,17
-S3,Conservative,CER,18
-S3,Normal,CombPValue,19
-S3,Normal,CER,20
-S3,Aggressive,CombPValue,21
-S3,Aggressive,CER,22
-S3,Ultra,CombPValue,23
-S3,Ultra,CER,24
-S4,Conservative,CombPValue,25
-S4,Conservative,CER,26
-S4,Normal,CombPValue,27
-S4,Normal,CER,28
-S4,Aggressive,CombPValue,29
-S4,Aggressive,CER,30
-S4,Ultra,CombPValue,31
-S4,Ultra,CER,32
-Emax1,Conservative,CombPValue,33
-Emax1,Conservative,CER,34
-Emax1,Normal,CombPValue,35
-Emax1,Normal,CER,36
-Emax1,Aggressive,CombPValue,37
-Emax1,Aggressive,CER,38
-Emax1,Ultra,CombPValue,39
-Emax1,Ultra,CER,40
-Emax2,Conservative,CombPValue,41
-Emax2,Conservative,CER,42
-Emax2,Normal,CombPValue,43
-Emax2,Normal,CER,44
-Emax2,Aggressive,CombPValue,45
-Emax2,Aggressive,CER,46
-Emax2,Ultra,CombPValue,47
-Emax2,Ultra,CER,48
+S1,Conservative,Stagewise MAMS,1
+S1,Conservative,Cumulative MAMS,2
+S1,Normal,Stagewise MAMS,3
+S1,Normal,Cumulative MAMS,4
+S1,Aggressive,Stagewise MAMS,5
+S1,Aggressive,Cumulative MAMS,6
+S1,Ultra,Stagewise MAMS,7
+S1,Ultra,Cumulative MAMS,8
+S2,Conservative,Stagewise MAMS,9
+S2,Conservative,Cumulative MAMS,10
+S2,Normal,Stagewise MAMS,11
+S2,Normal,Cumulative MAMS,12
+S2,Aggressive,Stagewise MAMS,13
+S2,Aggressive,Cumulative MAMS,14
+S2,Ultra,Stagewise MAMS,15
+S2,Ultra,Cumulative MAMS,16
+S3,Conservative,Stagewise MAMS,17
+S3,Conservative,Cumulative MAMS,18
+S3,Normal,Stagewise MAMS,19
+S3,Normal,Cumulative MAMS,20
+S3,Aggressive,Stagewise MAMS,21
+S3,Aggressive,Cumulative MAMS,22
+S3,Ultra,Stagewise MAMS,23
+S3,Ultra,Cumulative MAMS,24
+S4,Conservative,Stagewise MAMS,25
+S4,Conservative,Cumulative MAMS,26
+S4,Normal,Stagewise MAMS,27
+S4,Normal,Cumulative MAMS,28
+S4,Aggressive,Stagewise MAMS,29
+S4,Aggressive,Cumulative MAMS,30
+S4,Ultra,Stagewise MAMS,31
+S4,Ultra,Cumulative MAMS,32
+Emax1,Conservative,Stagewise MAMS,33
+Emax1,Conservative,Cumulative MAMS,34
+Emax1,Normal,Stagewise MAMS,35
+Emax1,Normal,Cumulative MAMS,36
+Emax1,Aggressive,Stagewise MAMS,37
+Emax1,Aggressive,Cumulative MAMS,38
+Emax1,Ultra,Stagewise MAMS,39
+Emax1,Ultra,Cumulative MAMS,40
+Emax2,Conservative,Stagewise MAMS,41
+Emax2,Conservative,Cumulative MAMS,42
+Emax2,Normal,Stagewise MAMS,43
+Emax2,Normal,Cumulative MAMS,44
+Emax2,Aggressive,Stagewise MAMS,45
+Emax2,Aggressive,Cumulative MAMS,46
+Emax2,Ultra,Stagewise MAMS,47
+Emax2,Ultra,Cumulative MAMS,48

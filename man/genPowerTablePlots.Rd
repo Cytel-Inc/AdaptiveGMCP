@@ -8,8 +8,6 @@ genPowerTablePlots(PowerType, dfOut, TableTemDF)
 }
 \arguments{
 \item{dfOut}{: output from simMAMSMEP_Wrapper}
-
-\item{TableTemDF}{: Table and plot format}
 }
 \description{
 Create table and plots of given format

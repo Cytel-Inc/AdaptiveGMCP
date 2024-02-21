@@ -8,14 +8,14 @@ simMAMSMEP_Wrapper <- function(InputDF){
   library(tidyr)
 
   lOut <- list()
-  for (nModelNum in InputDF$ModelID){
+  for (nModelNum in 1:nrow(InputDF)){
 
-    out <- tryCatch({run1TestCase(InputDF = InputDF[InputDF$ModelID == nModelNum, ])},
+    out <- tryCatch({run1TestCase(InputDF = InputDF[nModelNum, ])},
                     error = function(err){
                       paste0("Model ", nModelNum, " execution failed.")
                     })
-
-    if(!is.character(out)){
+    errorLog <- c(!grepl('Invalid', out[[1]]), !is.character(out), !is.null(out))
+    if(!any(errorLog == F)){
       # extract the power table from the output
       dfOverall_Powers_long <- out$Overall_Powers_df
       # convert the power table to wide format and add serial number column
@@ -24,17 +24,25 @@ simMAMSMEP_Wrapper <- function(InputDF){
         mutate(Sno = nModelNum) %>%
         relocate(Sno, .before = everything())
       #Model ID and Seed Number to reproduce
-      mInfo <- data.frame('ModelID'=nModelNum, 'Seed'=out$Seed)
+      mInfo <- data.frame('ModelID'=InputDF[nModelNum,'ModelID'], 'Seed'=out$Seed)
 
       #Output Table
       OutTab <- cbind(mInfo, data.frame(dfOverall_Powers_wide[,-1]))
       # add each iterations power table to a list
       lOut[[nModelNum]] <- OutTab
+
+      passedTxt <- paste0("Model ", nModelNum, " execution completed successfully.")
+      cat('\n',passedTxt,'\n')
       print(paste0("Power table for ", nModelNum, ":"))
       print(OutTab)
-      print(paste0("Model ", nModelNum, " execution completed successfully."))
-    }else
-    {
+
+
+    }else if(grepl('Invalid', out[[1]])){
+      failTxt <- paste0("Model ", nModelNum, " execution failed.")
+      cat('\n',failTxt,'\n')
+      cat('\n Details \n')
+      print(unlist(out))
+    }else{
       print(out)
     }
   }
@@ -98,7 +106,6 @@ run1TestCase <- function(InputDF){
 
 #' Create table and plots of given format
 #' @param dfOut : output from simMAMSMEP_Wrapper
-#' @param TableTemDF : Table and plot format
 #' @export
 genPowerTablePlots <- function(PowerType, dfOut, TableTemDF){
   library(ggplot2)
@@ -129,7 +136,7 @@ genPowerTablePlots <- function(PowerType, dfOut, TableTemDF){
   plt <- grid.arrange(grobs=plots,ncol=2)
   tab3 <- reshape(data = tab1, idvar = c('Level1','Level2'),
           v.names = PowerType,timevar = 'Method',direction = 'wide')
-  tab3$Difference <- tab3$Global.Power.CER - tab3$Global.Power.CombPValue
+  tab3$Difference <- tab3[,4]- tab3[,3]
   colnames(tab3) <- c('Scenario',
                       'Treatment Selection Rule',
                       'Stagewise MAMS',
