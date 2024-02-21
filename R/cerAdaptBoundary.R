@@ -122,7 +122,8 @@ adaptBdryCER <- function(mcpObj)
 
   list(
     'Stage2Tables' = AdaptTable,
-    'Stage2AdjBdry' = Stage2AdjBdry
+    'Stage2AdjBdry' = Stage2AdjBdry,
+    'Stage2Sigma' = Stage2Sigma
     )
 
 }
