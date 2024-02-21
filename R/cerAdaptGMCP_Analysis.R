@@ -134,6 +134,10 @@ adaptGMCP_CER <- function(
                                       typeOfDesign = typeOfDesign,des.type = des.type,
                                       test.type = test.type, Stage1Pvalues = mcpObj$p_raw,
                                       HypoMap = mcpObj$HypoMap, WH = mcpObj$WH)
+      cat('Planned Variance Covariance Matrix \n')
+      print(Stage1Test$Stage1Obj$Sigma)
+
+      cat("Stage-1 Output Tables \n")
       print(Stage1Test$Stage1Tables)
 
       mcpObj$rej_flag_Prev <- mcpObj$rej_flag_Curr <- Stage1Test$Stage1Obj$Stage1Analysis$PrimaryHypoTest
@@ -189,6 +193,11 @@ adaptGMCP_CER <- function(
     }else{
       #Stage 2 Analysis
       Stage2Test <- PerformStage2Test(mcpObj=mcpObj, AdaptStage2= AdaptStage2)
+      if(AdaptStage2){
+        cat('Variance Covariance matrix after adaptation \n')
+        print(mcpObj$AdaptObj$Stage2Sigma)
+      }
+      cat("Stage-2 Output Tables \n")
       print(Stage2Test$Stage2Tables)
       mcpObj$rej_flag_Curr <- Stage2Test$RejStat
 
