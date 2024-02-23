@@ -123,17 +123,17 @@ genPowerTablePlots <- function(PowerType, dfOut, TableTemDF){
   scenarios <- unique(tab1$Level1)
   plots <- list()
 
-  for(s in 1:length(scenarios)){
-    tab2 <- tab1[tab1$Level1 == scenarios[s], ]
-    tab2[PowerType][is.na(tab2[PowerType])] = 0
-    plots[[s]] <- ggplot(tab2, aes(x = Level2)) +
-      geom_bar(aes(y = Global.Power, fill = Method), stat = "identity", position = "dodge") +
-      ggtitle(scenarios[s])+
-      theme(plot.title = element_text(hjust = 0.5),
-            axis.title.x = element_blank())
-
-  }
-  plt <- grid.arrange(grobs=plots,ncol=2)
+  # for(s in 1:length(scenarios)){
+  #   tab2 <- tab1[tab1$Level1 == scenarios[s], ]
+  #   tab2[PowerType][is.na(tab2[PowerType])] = 0
+  #   plots[[s]] <- ggplot(tab2, aes(x = Level2)) +
+  #     geom_bar(aes(y = Global.Power, fill = Method), stat = "identity", position = "dodge") +
+  #     ggtitle(scenarios[s])+
+  #     theme(plot.title = element_text(hjust = 0.5),
+  #           axis.title.x = element_blank())
+  #
+  # }
+  # plt <- grid.arrange(grobs=plots,ncol=2)
   tab3 <- reshape(data = tab1, idvar = c('Level1','Level2'),
           v.names = PowerType,timevar = 'Method',direction = 'wide')
   tab3$Difference <- tab3[,4]- tab3[,3]
@@ -142,5 +142,14 @@ genPowerTablePlots <- function(PowerType, dfOut, TableTemDF){
                       'Stagewise MAMS',
                       'cumulative MAMS',
                       'Difference')
- list('Table'=tab3, 'Plot'=plt)
+  SelectionRuleOrder <- c("Conservative", "Normal", "Aggressive", "Ultra")
+  tab3$`Treatment Selection Rule` <- factor(tab3$`Treatment Selection Rule`, levels = SelectionRuleOrder)
+  tabLong <- tab3 %>%
+    select(!Difference) %>%
+    pivot_longer(cols = !c('Scenario', 'Treatment Selection Rule'),
+                 names_to = 'MAMS',
+                 values_to = 'value',
+                 values_drop_na = TRUE)
+
+ list('TableWide' = tab3, 'TableLong' = tabLong)
 }
