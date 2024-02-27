@@ -110,6 +110,8 @@ run1TestCase <- function(InputDF){
 genPowerTablePlots <- function(PowerType, dfOut, TableTemDF){
   library(ggplot2)
   library(gridExtra)
+  library(dplyr)
+  library(tidyr)
 
   p <- sapply(TableTemDF$ModelID, function(mID){
     p <- dfOut[dfOut$ModelID == mID, PowerType]

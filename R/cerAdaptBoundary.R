@@ -39,6 +39,7 @@ adaptBdryCER <- function(mcpObj)
   SubSets <- c()
   ConditionalError <- c()
   Stage2AdjBdry <- c()
+  ScaleWeights <- rep(NA, nrow(WH_modified))
 
   for (i in 1:nrow(WH_modified)) {
     #print(i)
@@ -73,6 +74,7 @@ adaptBdryCER <- function(mcpObj)
     SubSets <- c(SubSets,adaptOut$SubSets)
     ConditionalError <- c(ConditionalError, adaptOut$ConditionalError)
     Stage2AdjBdry <- rbind(Stage2AdjBdry, adaptOut$Stage2AdjBdry)
+    ScaleWeights[i] <- adaptOut$ScaledWeights
   }
 
   colnames(Stage2AdjBdry) <- paste('a', 1:nHypothesis,'2_adj', sep='')
@@ -99,6 +101,7 @@ adaptBdryCER <- function(mcpObj)
   #TestProcedureTab <- cbind(WH_modified[1:nHypothesis],SubSets,ConditionalError)
   TestProcedureTab1 <- knitr::kable(data.frame('Hypotheses'=InterHyp,
                                   'Weights'=InterWeight,
+                                  'ScaleWeights'=ScaleWeights,
                                   'SubSets'=SubSets,
                                   'Conditional_Error'=ConditionalError), align = 'c')
 
@@ -149,6 +152,7 @@ getAdaptBdry <- function(J,w1,w2,a2,a1,p1,test.type,HypoMap,
 
   Stage2AdjBdry <- rep(0, length(J))
   cerParamGrps <- pcerNParamGrps <- c()
+  ScaleWeights <- c()
 
   ###################Adjusted Boundary for parametric subsets######################
   if(length(ParamGrps) != 0)
@@ -203,6 +207,7 @@ getAdaptBdry <- function(J,w1,w2,a2,a1,p1,test.type,HypoMap,
                                               v=w2[pGrpMod],BJ=cerParam,SS1=SS1Mod, SS2=SS2Mod)
 
           Stage2AdjBdry[pGrpMod] <- SingleParmOut$Stage2AdjBdry
+          ScaleWeights <- c(ScaleWeights, SingleParmOut$adjWeights)
 
         }
       }
@@ -243,6 +248,7 @@ getAdaptBdry <- function(J,w1,w2,a2,a1,p1,test.type,HypoMap,
                                           SS2=SS2Mod)
 
       Stage2AdjBdry[NPGrpsMod] <- nParmOut$Stage2AdjBdry
+      ScaleWeights <- c(ScaleWeights, nParmOut$adjWeights)
     }else
     {
       Stage2AdjBdry[NPGrpsMod] <- 0
@@ -257,7 +263,6 @@ getAdaptBdry <- function(J,w1,w2,a2,a1,p1,test.type,HypoMap,
   paste("NP:", paste(
     unlist(lapply(NParamGrps,function(x){paste(x,collapse = ',')}))
     ,collapse = ","), sep = ""), sep = '')
-
 
   roundDigit <- function(err,digits)
   {
@@ -278,12 +283,18 @@ getAdaptBdry <- function(J,w1,w2,a2,a1,p1,test.type,HypoMap,
       unlist(lapply(roundDigit(pcerNParamGrps,5),function(x){paste(x,collapse = ',')}))
       ,collapse = ","), sep = ""), sep = ''
   )
+  if(length(ScaleWeights)!=0){
+    ScaleWeights2 <- paste0('(',paste0(roundDigit(ScaleWeights,5),collapse = ','),')')
+  }else{
+    ScaleWeights2 <- NA
+  }
 
 
   list(
     'SubSets' = SubSets,
     'ConditionalError' = ConditionalError,
-    'Stage2AdjBdry'=Stage2AdjBdry)
+    'Stage2AdjBdry'=Stage2AdjBdry,
+    'ScaledWeights'=ScaleWeights2)
 }
 
 

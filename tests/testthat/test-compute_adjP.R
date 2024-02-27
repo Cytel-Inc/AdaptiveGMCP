@@ -33,7 +33,7 @@ test_that('Test computations of Adjusted P-values',{
   adjP <- c()
   for(i in 1:nrow(p))
   {
-    adjP[i] <- compute_adjP(h=h[i,],cr=cr,p=p[i,],test.type=test.type)
+    adjP[i] <- compute_adjP(h=h[i,],cr=cr,p=p[i,],test.type=test.type)$adj_pj
   }
 
   OutRej <- adjP < c(rep(0.002,4), rep(0.025,4))
@@ -74,7 +74,7 @@ test_that('Test computations of Adjusted P-values',{
   adjP <- c()
   for(i in 1:nrow(p))
   {
-    adjP[i] <- compute_adjP(h=h[i,],cr=cr,p=p[i,],test.type=test.type)
+    adjP[i] <- compute_adjP(h=h[i,],cr=cr,p=p[i,],test.type=test.type)$adj_pj
   }
 
   OutRej <- adjP < c(rep(0.002,4), rep(0.025,4))
@@ -115,7 +115,7 @@ test_that('Test computations of Adjusted P-values',{
   adjP <- c()
   for(i in 1:nrow(p))
   {
-    adjP[i] <- compute_adjP(h=h[i,],cr=cr,p=p[i,],test.type=test.type)
+    adjP[i] <- compute_adjP(h=h[i,],cr=cr,p=p[i,],test.type=test.type)$adj_pj
   }
 
   OutRej <- adjP < c(rep(0.002,4), rep(0.025,4))
@@ -152,7 +152,7 @@ test_that('Test computations of Adjusted P-values',{
   adjP <- c()
   for(i in 1:nrow(p))
   {
-    adjP[i] <- compute_adjP(h=h[i,],p=p[i,],test.type=test.type)
+    adjP[i] <- compute_adjP(h=h[i,],p=p[i,],test.type=test.type)$adj_pj
   }
 
   OutRej <- adjP < c(rep(0.002,4), rep(0.025,4))
@@ -188,7 +188,7 @@ test_that('Test computations of Adjusted P-values',{
   adjP <- c()
   for(i in 1:nrow(p))
   {
-    adjP[i] <- compute_adjP(h=h[i,],p=p[i,],test.type=test.type)
+    adjP[i] <- compute_adjP(h=h[i,],p=p[i,],test.type=test.type)$adj_pj
   }
 
   OutRej <- adjP < c(rep(0.002,4), rep(0.025,4))
