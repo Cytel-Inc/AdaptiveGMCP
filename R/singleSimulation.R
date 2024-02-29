@@ -1,17 +1,19 @@
 
-#----------------- -
+
 #Perform Single Simulation for combining p-values method
-#----------------- -
+#' @param simID Simulation ID
+#' @param gmcpSimObj obj with simulation inputs
+#' @param preSimObjs obj with intermediate inputs
 SingleSimCombPValue <- function(simID, gmcpSimObj,preSimObjs)
 {
-  #print(simID)
+  #Initialize Intermediate Inputs
   mcpObj <- initialize_mcpObj(gmcpSimObj = gmcpSimObj, preSimObjs = preSimObjs)
   SummStatDF <- mcpObj$SummStatBlank
   ArmWiseDF <- mcpObj$ArmWiseDataBlank
+
+  #look-wise test
   while(mcpObj$ContTrial)
   {
-    #print(mcpObj$CurrentLook)
-
     #Get the per arm incremental sample size
     Arms.SS.Incr <- getInterimSSIncr(lookID=mcpObj$CurrentLook,
                                      PlanSSIncr=mcpObj$planSS$IncrementalSamples,
@@ -34,7 +36,7 @@ SingleSimCombPValue <- function(simID, gmcpSimObj,preSimObjs)
                                           HypoMap=mcpObj$HypoMap)
     ArmData <- currLookDataIncr$ArmData
 
-    #Compute Test Stat and p-values
+    #Compute Test Stat(Incr.) and p-values(Incr.)
     SummStat <- getPerLookTestStatDOM(simID = simID,
                                       lookID=mcpObj$CurrentLook,
                                       TestStat = mcpObj$TestStat,
@@ -44,6 +46,7 @@ SingleSimCombPValue <- function(simID, gmcpSimObj,preSimObjs)
                                       Cumulative=FALSE)
     #Perform per look Test
     mcpObj <- perLookTest(Arms.SS.Incr=Arms.SS.Incr,SummStat = SummStat, mcpObj=mcpObj)
+
     #Available Arms & hypothesis after rejection
     mcpObj$ArmsPresent <- getArmsPresent(ArmsPresent = mcpObj$ArmsPresent, rejflags = mcpObj$rej_flag_Curr, HypoMap = mcpObj$HypoMap)
     mcpObj$HypoPresent <- !mcpObj$rej_flag_Curr
@@ -62,6 +65,7 @@ SingleSimCombPValue <- function(simID, gmcpSimObj,preSimObjs)
     mcpObj$rej_flag_Prev <- mcpObj$rej_flag_Curr
     mcpObj$WH_Prev <- mcpObj$WH
 
+    #Check for Early Stopping Conditions
     if(StopTrial(mcpObj))
     {
       mcpObj$ContTrial = F
@@ -74,18 +78,18 @@ SingleSimCombPValue <- function(simID, gmcpSimObj,preSimObjs)
       {
         mcpObj <- do_SelectionSim2(mcpObj)
       }
-      #Modify the weights and testing strategy
-
     }
     mcpObj$CurrentLook  <- mcpObj$CurrentLook + 1
 
     # End of Look-wise While Loop #
   }
-  #Count Power(Efficacy)
 
+  #Power Table
   powerCountDF <- CountPower(simID = simID, SummaryStatFile = SummStatDF, TrueNull = mcpObj$TrueNull)
   EffCountDF <- CountEfficacy(simID = simID, SummaryStatFile = SummStatDF)
+
   SelectionDF <- data.frame()
+  #Selection Summary Table
   if(mcpObj$Selection & length(mcpObj$SelectedIndex)>0)
   {
     SelectionDF <-data.frame('simID'=simID,
@@ -99,20 +103,21 @@ SingleSimCombPValue <- function(simID, gmcpSimObj,preSimObjs)
        'SelectionDF'=SelectionDF)
 }
 
-#----------------- -
+
 #Perform Single Simulation for CER method
-#----------------- -
+#' @param simID Simulation ID
+#' @param gmcpSimObj obj with simulation inputs
+#' @param preSimObjs obj with intermediate inputs
 SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
 {
-  #print(simID)
+  #Initialize Intermediate Inputs
   mcpObj <- initialize_mcpObj(gmcpSimObj = gmcpSimObj, preSimObjs = preSimObjs)
   SummStatDF <- mcpObj$SummStatBlank
   ArmWiseDF <- mcpObj$ArmWiseDataBlank
 
+  #look-wise test
   while(mcpObj$ContTrial)
   {
-    #print(mcpObj$CurrentLook)
-
     #Get the per arm incremental sample size
     Arms.SS.Incr <- getInterimSSIncr(lookID=mcpObj$CurrentLook,
                                      PlanSSIncr=mcpObj$planSS$IncrementalSamples,
@@ -121,14 +126,15 @@ SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
                                      Arms.alloc.ratio=mcpObj$Arms.alloc.ratio,
                                      ImplicitSSR=mcpObj$ImplicitSSR)
 
-    #Modify Stage-2 boundaries after adaptation
+    #If current Stage = 2, check for adaptations
     if(mcpObj$CurrentLook==2)
     {
       PlanSSLk <- mcpObj$planSS$IncrementalSamples[mcpObj$CurrentLook,]
       CurrSSLk <- Arms.SS.Incr
       mcpObj$AdaptStage2 <- F
 
-      if(!all(PlanSSLk == CurrSSLk,na.rm = T)) #Adapt
+      #If Current look Sample Size is different than the plan Sample size then Adapt
+      if(!all(PlanSSLk == CurrSSLk,na.rm = T))
       {
         mcpObj$AdaptStage2 <- T
         Stage2AllocSampleSize <- unlist(mcpObj$planSS$IncrementalSamples[1,])+
@@ -137,15 +143,14 @@ SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
                                               Stage2AllocSampleSize)
         mcpObj$Stage2allocRatio <- unlist(CurrSSLk)/unlist(CurrSSLk[1])
 
-        #Modify the Stage2 boundaries
-        #AllocSS, AllocRatio,sigma, Stage2AllocSampleSize, stage2allocRatio are not defined
+        #Compute the Stage2 adaptive boundaries
         AdaptResults <- adaptBdryCER(mcpObj)
         mcpObj$AdaptObj <- AdaptResults
       }
     }
 
 
-    #Get incremental summary
+    #Generate look-wise incremental data
     currLookDataIncr <- genIncrLookSummaryDOM(SimSeed=mcpObj$SimSeed,
                                               simID=simID,
                                               lookID=mcpObj$CurrentLook,
@@ -159,10 +164,10 @@ SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
                                               HypoMap=mcpObj$HypoMap)
     ArmData <- currLookDataIncr$ArmData
 
-    #Compute Test Stat and p-values
 
     if(mcpObj$CurrentLook==1)
     {
+      # Summary Statistics based on first look data
       SummStat <- getPerLookTestStatDOM(simID = simID,
                                         lookID = mcpObj$CurrentLook,
                                         TestStat = mcpObj$TestStat,
@@ -175,6 +180,7 @@ SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
     {
       if(mcpObj$FWERControl == 'CombinationTest')
       {
+        # Summary Statistics based on 2nd look incremental data
         SummStat <- getPerLookTestStatDOM(simID = simID,
                                           lookID=mcpObj$CurrentLook,
                                           TestStat = mcpObj$TestStat,
@@ -182,26 +188,37 @@ SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
                                           IncrLookSummaryDOM=currLookDataIncr,
                                           HypoMap=mcpObj$HypoMap,
                                           Cumulative=FALSE)
+
+        # Stage-1 raw p-values(Incr.)
         pValIncrPrev <- mcpObj$SummStatDF[mcpObj$SummStatDF$LookID == (mcpObj$CurrentLook-1),
                                           grep('RawPvalues', names(mcpObj$SummStatDF))]
+        # Stage-2 raw p-values(Incr.)
         pValIncrCurr <- SummStat[,grep('RawPvalues', names(SummStat))]
 
         pValIncr <- plyr::rbind.fill(pValIncrPrev,pValIncrCurr)
+
+        # Converted to Z Statistics(Incr.)
         zIncr <- apply(pValIncr, 2, function(x){qnorm(1-x)})
 
         W_Norm <- mcpObj$InvNormWeights$W_Norm
-        if(is.vector(W_Norm) & mcpObj$CurrentLook == 2) #W_Norm is a vector for 2 looks
+        if(is.vector(W_Norm) & mcpObj$CurrentLook == 2)
         {
+          #Inverse Normal Weights for two looks based on pre-planed look positions
           W_Inv <- W_Norm
         }else if(is.matrix(W_Norm)) #W_Norm is a matrix for more than 2 looks
         {
+          #Inverse Normal Weights for more than two looks  based on pre-planed look positions
           W_Inv <- W_Norm[((mcpObj$CurrentLook)-1),1:(mcpObj$CurrentLook)]
         }else
         {
+          #Error in CombinedPvalue function
           return('Error in CombinedPvalue function')
         }
+
+        #Test The computed Inverse Normal Weights
         if(abs(sum(W_Inv^2)-1) > 1E-6) stop('Error: abs(sum(W_Inv^2)-1) < 1E-6 not true| function: CombinedPvalue')
 
+        #Inverse Normal Combination
         combStage2TestStat <- unlist(lapply(1:ncol(zIncr), function(i){sum(W_Inv*zIncr[,i])}))
 
         combStage2pVal <- unlist(lapply(1:ncol(zIncr), function(i){
@@ -212,6 +229,7 @@ SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
 
       }else
       {
+        # Summary Statistics based on 2nd look cumulative data
         SummStat <- getPerLookTestStatDOM(simID = simID,
                                           lookID=mcpObj$CurrentLook,
                                           TestStat = mcpObj$TestStat,
@@ -228,6 +246,7 @@ SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
 
     #Perform per look Test
     mcpObj <- perLookTest(Arms.SS.Incr=Arms.SS.Incr,SummStat = SummStat, mcpObj=mcpObj)
+
     #Available Arms & hypothesis after rejection
     mcpObj$ArmsPresent <- getArmsPresent(ArmsPresent = mcpObj$ArmsPresent, rejflags = mcpObj$rej_flag_Curr, HypoMap = mcpObj$HypoMap)
     mcpObj$HypoPresent <- !mcpObj$rej_flag_Curr
@@ -246,10 +265,11 @@ SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
     mcpObj$rej_flag_Prev <- mcpObj$rej_flag_Curr
 
 
+    #Check for Early Stopping Conditions
     if(StopTrial(mcpObj))
     {
       mcpObj$ContTrial = F
-      break  #Early Stopping
+      break  #Stop the Trial
 
     }else  #Next look
     {
@@ -258,18 +278,19 @@ SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
       {
         mcpObj <- do_SelectionSim2(mcpObj)
       }
-      #Modify the weights and testing strategy
 
     }
+    # move to next look
     mcpObj$CurrentLook  <- mcpObj$CurrentLook + 1
 
-    # End of Look-wise While Loop #
+    # End of Look-wise Loop #
   }
-  #Count Power(Efficacy)
+  #Power Table
   powerCountDF <- CountPower(simID = simID, SummaryStatFile = SummStatDF, TrueNull = mcpObj$TrueNull)
   EffCountDF <- CountEfficacy(simID = simID, SummaryStatFile = SummStatDF)
 
   SelectionDF <- data.frame()
+  #Selection Summary Table
   if(mcpObj$Selection & length(mcpObj$SelectedIndex)>0)
   {
     SelectionDF <-data.frame('simID'=simID,

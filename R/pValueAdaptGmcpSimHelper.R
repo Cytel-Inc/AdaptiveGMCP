@@ -505,7 +505,8 @@ getPvalBdry <- function(alpha, nLooks, info_frac, typeOfDesign)
                                          typeOfDesign = typeOfDesign)
     Threshold <- des$stageLevels
     incr_alpha <- c(des$alphaSpent[1], diff(des$alphaSpent))
-    #BdryTab
+
+    #Boundary table
     bdryTab <- data.frame('Look'=1:nLooks,
                           'Information_Fraction'= info_frac,
                           'Incr_alpha_spent'=incr_alpha,

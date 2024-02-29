@@ -138,11 +138,15 @@ genPowerTablePlots <- function(PowerType, dfOut, TableTemDF){
   # plt <- grid.arrange(grobs=plots,ncol=2)
   tab3 <- reshape(data = tab1, idvar = c('Level1','Level2'),
           v.names = PowerType,timevar = 'Method',direction = 'wide')
+
+
+
+
   tab3$Difference <- tab3[,4]- tab3[,3]
+
   colnames(tab3) <- c('Scenario',
                       'Treatment Selection Rule',
-                      'Stagewise MAMS',
-                      'cumulative MAMS',
+                      gsub(paste0("^",PowerType , "\\."), "", names(tab3)[3:4]),
                       'Difference')
   SelectionRuleOrder <- c("Conservative", "Normal", "Aggressive", "Ultra")
   tab3$`Treatment Selection Rule` <- factor(tab3$`Treatment Selection Rule`, levels = SelectionRuleOrder)

@@ -1,14 +1,15 @@
 
 #Generate weights for all intersection hypothesis
+#' @param w Initial Weights
+#' @param g Initial Transition Matrix
+#' @param HypothesisName Hypotheses Name
 genWeights <- function(w,g,HypothesisName)
 {
-  #################Input Validation##################
+  #Input Validation
   if(length(w) !=nrow(g) || length(w)!= ncol(g)) stop('Error: length(w), nrow(g) and ncol(g) are not same | function: genWeights')
   if(!missing(HypothesisName)){
     if(length(w) != length(HypothesisName))stop('Error: length(w) and length(HypothesisName) are not same | function: genWeights')
   }
-
-  ###################################################
 
   n <- length(w)
   basket <- startIntersects <- InterSects <- list('Intersect'=rep(1, n))
