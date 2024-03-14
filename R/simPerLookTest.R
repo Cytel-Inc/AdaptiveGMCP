@@ -120,6 +120,7 @@ perLookTest <- function(Arms.SS.Incr,SummStat,mcpObj)
     },
     error = function(err){
       print('Error in perLookTest')
+      traceback()
     }
   )
 

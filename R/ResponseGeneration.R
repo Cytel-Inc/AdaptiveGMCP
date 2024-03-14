@@ -122,6 +122,7 @@ genIncrLookSummaryDOM <- function(SimSeed,simID,lookID,Arms.Mean,Arms.std.dev,Ar
     },
     error = function(err){
       print('Error in genIncrLookSummaryDOM')
+      traceback()
     }
   )
 
@@ -378,6 +379,7 @@ getPerLookTestStatDOM <- function(simID, lookID,TestStat,Arms.std.dev,IncrLookSu
            }else
            {
              stop("Error: TestStat computation(Cum.)")
+             traceback()
            }
          }
        }
@@ -423,6 +425,7 @@ getPerLookTestStatDOM <- function(simID, lookID,TestStat,Arms.std.dev,IncrLookSu
    },
    error = function(err){
      print('Error in getPerLookTestStatDOM')
+     traceback()
    }
  )
 }

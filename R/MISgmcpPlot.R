@@ -6,7 +6,6 @@
 #' @param hGroup vector to specify the groups of the hypothesis(Optional)
 #' @param cordinates list to specify the node positions as co-ordinates(x,y) manually(Optional). The center of the plot is assumed to be (0,0)
 #' @example ./internalData/gmcpPlotExamples.R
-#' @export
 gmcpPlot <-function(
     WI = c(1/4,1/4,1/4,1/4),
     G  = matrix(c(0,0.75,0.25,0,

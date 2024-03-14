@@ -4,13 +4,6 @@ rm(list = ls())
 library(AdaptGMCP)
 library(rstudioapi)
 
-timeNow <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
-ConsoleOutput <- file(paste0("Console_output_", timeNow, ".txt")) # File name of output log
-sink(ConsoleOutput, append = TRUE, type = 'output')
-sink(ConsoleOutput, append = TRUE, type = 'message')
-cat(readChar(rstudioapi::getSourceEditorContext()$path, # Writing currently opened R script to file
-             file.info(rstudioapi::getSourceEditorContext()$path)$size))
-
 ########################## Inputs ##############################
 #------------------Test Method----------------------------------
 #options- 'CombPValue': Combining p-values, 'CER': Conditional Error
@@ -27,7 +20,7 @@ TestStat <- 't-equal'
 
 #---------FWER Control Method(Applicable for CER Method only)------
 #options: 'CombinationTest' : combined incremental p-values for stage-2 testing, 'None': Cumulative classical test statistics.
-FWERControl <- 'CombinationTest'
+FWERControl <- 'None'
 
 #-----------------------Number of Arms--------------------------
 nArms <- 3
@@ -66,7 +59,7 @@ G <- matrix(c(0,0.5,0.5,0,
              0.5,0,0,0.5,
              0,1,0,0,
              1,0,0,0),
-           nrow = nEps*(nArms-1), byrow = T)
+           nrow = nEps*(nArms-1), byrow = TRUE)
 
 #-------------------Test Type------------------------
 # Testing Procedure
@@ -142,16 +135,14 @@ Parallel <- TRUE
 #-----------------------Run Simulation--------------------------------------
 #Please uncomment the following code to run the simulation(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
 #
-out <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps, TestStat=TestStat, FWERControl = FWERControl,
-           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, Arms.alloc.ratio = Arms.alloc.ratio,
-           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,info_frac = info_frac,
-           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
-           Selection = Selection,SelectionLook = SelectionLook,SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
-           SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
-           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
-           Method = Method, plotGraphs = plotGraphs, Parallel = Parallel)
-out
+# out <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps, TestStat=TestStat, FWERControl = FWERControl,
+#            Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, Arms.alloc.ratio = Arms.alloc.ratio,
+#            EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,info_frac = info_frac,
+#            typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
+#            Selection = Selection,SelectionLook = SelectionLook,SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+#            SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
+#            ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
+#            Method = Method, plotGraphs = plotGraphs, Parallel = Parallel)
+# out
 
-closeAllConnections() # Close connection to log file
-save(out, file = paste0("Output_simMAMSMEP_",timeNow, ".RData"))
-out
+

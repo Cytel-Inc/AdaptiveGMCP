@@ -3,7 +3,6 @@
 
 #Run Simulation from CSV ------ -
 #' @param TestCase CSV with test cases
-#' @export
 simCSV <- function(TestCases)
 {
   simResults <- data.frame()

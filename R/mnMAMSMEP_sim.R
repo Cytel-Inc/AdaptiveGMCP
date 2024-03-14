@@ -27,8 +27,8 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
   {
     if(gmcpSimObj$Parallel){
       cores=parallel::detectCores()
-      clust_cores <- parallel::makeCluster(cores[1]-1) # leave 1 core and use the remaining for this computation
-      cl <- parallel::makeCluster(clust_cores)
+      cl <- parallel::makeCluster(cores[1]-1, type = "PSOCK") # leave 1 core and use the remaining for this computation
+      #cl <- parallel::makeCluster(clust_cores, type = "PSOCK")
       #parallel::clusterSetRNGStream(cl, iseed = preSimObjs$SimSeed)
       parallel::clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
 
@@ -45,8 +45,8 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
   {
     if(gmcpSimObj$Parallel){
       cores=parallel::detectCores()
-      clust_cores <- parallel::makeCluster(cores[1]-1) # leave 1 core and use the remaining for this computation
-      cl <- parallel::makeCluster(clust_cores)
+      cl <- parallel::makeCluster(cores[1]-1, type = "PSOCK") # leave 1 core and use the remaining for this computation
+      #cl <- parallel::makeCluster(clust_cores)
       #parallel::clusterSetRNGStream(cl, iseed = preSimObjs$SimSeed)
       parallel::clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
 
