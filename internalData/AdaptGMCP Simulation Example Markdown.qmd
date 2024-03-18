@@ -1,0 +1,173 @@
+---
+title: "Adapt GMCP Simulation Examples[Combining P-values method]"
+format: html
+editor: visual
+---
+
+## Simulation by using Adaptive GMCP package
+
+### Response Generation parameters
+
+These inputs are needed to generate stage-wise raw p-values for multi-arm scenario.
+
+Note:
+
+\(i\) The length of Arm.Mean, Arms.std.dev & Arms.alloc.ratio are same as nArms.
+
+(ii)The first input of the Arm.Mean, Arms.std.dev & Arms.alloc.ratio is assumed to be for the control arm.
+
+(iii)The test procedure assumes a right tail test.
+
+```{r}
+library(AdaptGMCP)
+#Input Sample Size
+SampleSize <- 200   
+
+#Number of Arms
+nArms <- 4   
+
+#Arm-Wise Mean
+Arms.Mean <- c(0,0.3,0.4,0.5)
+
+#Arm-Wise Standard Deviations 
+Arms.std.dev <- c(1,1,1,1)
+
+#Arm-Wise Allocation Ratio
+Arms.alloc.ratio <- c(1,1,1,1)
+```
+
+### Inputs for Testing Strategy
+
+These inputs are needed to compute the testing strategy.
+
+**Note:**
+
+(i)The length of WI has to be (nArms-1) as it's common control type of design.
+
+(ii)The transition matrix G is a symmetrical matrix with number of rows equals number of columns as (nArms-1)
+
+```{r}
+#Initial Weights
+WI <- c(0.33,0.33,0.34)
+
+#Initial Transition Matrix
+G <- matrix(c(0,1/2,1/2,
+              1/2,0,1/2,
+              1/2,1/2,0),
+            nrow = 3, byrow=T)
+
+
+```
+
+### Inputs for the weighted test
+
+These inputs are needed to specify the testing methods.
+
+**Note:**
+
+(i)test.type = 'Bonf' for Bonferroni, 'Sidak' for Sidak, 'Simes' for Simes, 'Dunnett' for Dunnett and 'Partly-Parametric'for Partly Parametric Tests.
+
+(ii)Correlation = NA for non-parametric tests otherwise is a matrix of same dimension as the number of hypothesis.
+
+example of correlation matrix as input
+
+Correlation \<- matrix(c(1,0.25,0.25, 0.25,1,0.25, 0.25,0.25,1), nrow = 3, byrow = T)
+
+(iii)info_frac is to specify the information fraction (iv)Eff_bdry to specify the stage-wise nominal alpha.
+
+```{r}
+#Testing procedure
+test.type <- 'Bonf'
+
+#Correlation
+Correlation <- NA
+
+#Information fraction
+info_frac <- c(0.5,1)
+
+#Efficacy boundary for interims
+Eff_bdry <- c(0.002,0.0242839869100347)
+
+```
+
+### Inputs for treatment selection
+
+These inputs are needed to specify the selection rule.
+
+**Descriptions**:
+
+(i)Selection True if selection required at interim.
+
+(ii)SelectionLook Vector to specify the selection looks
+
+(iii)SelectionMethods= Scale parameter on which selection will be based on. 'pvalue': p-value(un-adj) based selection (Currently available)
+
+(iv)SelectionCriterion= best': best r, 'threshold': threshold for selection
+
+(v)SelectionParmeter= r for best, threshold value for threshold
+
+```{r}
+#Selection Flag
+Selection=T
+
+#Selection Look
+SelectionLook = 1
+
+#Selection to be based on(Similar to Scale in East)
+SelectionMethods = 'pvalue'
+
+#Selection rule 
+SelectionCriterion = 'best'
+
+#Parameter for the selection rule
+SelectionParmeter= 1
+```
+
+### Multiple Winners and Implicit SSR
+
+**Description**
+
+\(i\) MultipleWinners = TRUE if multiple winners FALSE otherwise.
+
+\(ii\) ImplicitSSR =
+
+'Selection' if re-allocate samples only from de-selected arms to available arms
+
+'All': Allocate all the planned samples(for the look) to the available arms
+
+'None': No Re-allocation
+
+```{r}
+#Multiple winner Flag
+MultipleWinners = F
+
+#Implicit SSR
+ImplicitSSR = 'All'
+
+
+#Number of simulation
+nSimulation = 1000
+
+#Seed
+Seed = 100
+
+#Option to see simulation-wise data
+SummaryStat = F
+```
+
+### Run the Simulation
+
+Note: The following execution will take some time to complete depending on the number of simulations and machine's configarations. For 1,000 simulation it generally takes 14-16secs.
+
+```{r}
+Results <- adaptGMCP_SIM(
+  SampleSize=SampleSize,nArms=nArms,Arms.Mean=Arms.Mean,Arms.std.dev=Arms.std.dev
+  ,Arms.alloc.ratio=Arms.alloc.ratio,WI=WI,G=G,test.type=test.type, Correlation = Correlation,
+  Eff_bdry=Eff_bdry,info_frac=info_frac,MultipleWinners=MultipleWinners,
+  Selection=Selection,SelectionLook=SelectionLook, SelectionMethods=SelectionMethods, SelectionCriterion=SelectionCriterion,SelectionParmeter=SelectionParmeter
+  ,ImplicitSSR=ImplicitSSR,
+  nSimulation=nSimulation,Seed=Seed,SummaryStat=SummaryStat
+)
+
+Results$Overall_Powers
+```

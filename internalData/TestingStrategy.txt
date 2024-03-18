@@ -1,0 +1,64 @@
+
+
+
+
+Automated UnitTesting
+
+- genWeights: Weights Computations( with gmcpLite benchmarks) [done]
+
+- PerLookMCPAnalysis: look-wise analysis for combining p-values method(with East benchmarks) [Partially done]
+  a) Adjusted p-values[done], b) Combining p-values[done], c)Final Rejection Status
+
+- getPlanNonParmBdry: boundary for non parametric test(with East benchmarks) [done]
+  a) Early Efficacy Boundary(Spending Function LD-OF) b)No Efficacy Boundary 
+
+- getBdryStage2Nparam: plan non parametric boundary for stage-2(with East benchmarks)[done]
+
+- getPCER: partial conditional error(with East benchmarks)[done]
+
+- getStage2CondNParamBdry: Stage-2 conditional boundary for non-parametric tests(with East benchmarks)[done]
+  a) Test Adapted boundary for one hypothesis with  East benchmarks
+  b) Consistency with the plan boundary if no changes are made.
+  c) Consistency for no early efficacy for stage-1
+  d) Test BJ>1 scenarios  
+  Action Item: Review the wrappers if there is any hard coding scenario of boundary computations for BJ>=1[done]
+
+
+
+- getSigma: Planned Sigma matrix for parametric and partly parametric tests[done]
+- getPlanCorrelation: correlation matrix for combining p-values method for MAMSMEP designs[done]
+ 
+- getStage2Sigma: modified Sigma matrix for parametric and partly parametric tests after adaptations
+  a) Consistency with the plan sigma if no changes are made
+  
+- getPlanParmBdry: boundary for parametric test(with East benchmarks)[done]
+  a) Consistency with EAST MAMS-GS boundary(Balanced, Unbalanced Cases)
+  b) Consistency with EAST MAMS-GS boundary(No Early Efficacy)
+  
+- getStage2CondParamBdry: Stage-2 conditional boundary for parametric tests(with East benchmarks)[Blocked: Experimental East is not Working]
+  a) Consistency with the plan boundary if no changes are made
+  
+
+- getPerLookTestStatDOM: Test statistics computations(with pre computed Excel benchmarks)[Done]
+  a)Test Looks-wise sample size generation for different adaptive choices
+  b)Summary Statistics Computation[t with unequal variance]
+
+ 
+###########################################################################################################################################
+ 
+#Consistency Testing with Existing Designs in East
+
+FSD
+- Two Sample Multiple Endpoint Mixed Type(Normal)
+- Many Sample Single Look Study(Non-Parametric)
+
+Two Stage Many Sample Single Endpoint Designs
+- MAMS Combining p-values method
+- MAMS group sequential method
+
+#Run Examples form Published papers
+- KlingMuller
+- Bretz
+
+
+

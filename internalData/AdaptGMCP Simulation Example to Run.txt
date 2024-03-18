@@ -1,0 +1,196 @@
+
+#Installation of the package(run once)
+#Path to the package file modify as per the location
+path <- "C:/Users/ajoy.mukhopadhyay/CIC/R_Packages/AdaptGMCP_0.1.0.tar.gz" 
+install.packages(path)
+
+#Examples
+library('AdaptGMCP')
+
+##(A) Bonferroni Sequential Test with Early Efficacy and Selection
+
+#Input Sample Size
+SampleSize <- 200   
+
+#Tail Type
+TailType <- 'RightTail' 
+
+#Number of Arms
+nArms <- 4   
+
+#Arms Name(Optional)
+Arms.Name <- c('Ctr','Trt1','Trt2','Trt3')
+
+#Arm-Wise Mean
+Arms.Mean <- c(0,0.3,0.4,0.5)
+
+#Arm-Wise Standard Deviations 
+Arms.std.dev <- c(1,1,1,1)
+
+#Arm-Wise Allocation Ratio
+Arms.alloc.ratio <- c(1,1,1,1)
+
+#Hypothesis type, see description for details
+Hypothesis = 'CommonControl'
+
+#Initial Weights
+WI = c(0.33,0.33,0.34)
+
+#Initial Transition Matrix
+G = diag(0, nrow = 3)
+G[G==0] = 1/2
+diag(G) = 0
+
+#Testing procedure
+test.type = 'Bonf'
+
+#Information fraction
+info_frac = c(0.5,1)
+
+#Efficacy boundary for interims
+Eff_bdry = c(0.002,0.0242839869100347)
+
+#Multiple winner Flag
+MultipleWinners = F
+
+#Selection Flag
+Selection=T
+
+#Selection Look
+SelectionLook = 1
+
+#Selection to be based on(Similar to Scale in East)
+SelectionMethods = 'pvalue'
+
+#Selection rule 
+SelectionCriterion = 'best'
+
+#Parameter for the selection rule
+SelectionParmeter= 1
+
+#Implicit SSR
+ImplicitSSR = 'Selection'
+
+#Update Test Strategy(not implemented yet)
+UpdateStrategy=F
+
+#Number of simulation
+nSimulation = 1000
+
+#Seed
+Seed = 100
+
+#Option to see simulation-wise data
+SummaryStat = T
+
+
+SimBonf <- adaptGMCP_SIM(
+  SampleSize=SampleSize,TailType=TailType,nArms=nArms,Arms.Name=Arms.Name,Arms.Mean=Arms.Mean,Arms.std.dev=Arms.std.dev
+  ,Arms.alloc.ratio=Arms.alloc.ratio, Hypothesis =Hypothesis,WI=WI,G=G,test.type=test.type,
+  Eff_bdry=Eff_bdry,info_frac=info_frac,MultipleWinners=MultipleWinners,
+  Selection=Selection,SelectionLook=SelectionLook, SelectionMethods=SelectionMethods, SelectionCriterion=SelectionCriterion,SelectionParmeter=SelectionParmeter,
+  UpdateStrategy=UpdateStrategy,ImplicitSSR=ImplicitSSR,
+  nSimulation=nSimulation,Seed=Seed,SummaryStat=SummaryStat
+)
+
+#Output Power
+SimBonf$Overall_Powers
+
+
+##(B) Sidak Test with Early Efficacy Multiple Winners and Selection
+
+#Testing procedure
+test.type = 'Sidak'
+
+#Multiple winner Flag
+MultipleWinners = T
+
+#Implicit SSR
+ImplicitSSR = 'All'
+
+SimSidak <- adaptGMCP_SIM(
+  SampleSize=SampleSize,TailType=TailType,nArms=nArms,Arms.Name=Arms.Name,Arms.Mean=Arms.Mean,Arms.std.dev=Arms.std.dev
+  ,Arms.alloc.ratio=Arms.alloc.ratio, Hypothesis =Hypothesis,WI=WI,G=G,test.type=test.type,
+  Eff_bdry=Eff_bdry,info_frac=info_frac,MultipleWinners=MultipleWinners,
+  Selection=Selection,SelectionLook=SelectionLook, SelectionMethods=SelectionMethods, SelectionCriterion=SelectionCriterion,SelectionParmeter=SelectionParmeter,
+  UpdateStrategy=UpdateStrategy,ImplicitSSR=ImplicitSSR,
+  nSimulation=nSimulation,Seed=Seed,SummaryStat=SummaryStat
+)
+
+#Output Power
+SimSidak$Overall_Powers
+
+##(C) Simes Test 
+test.type <- 'Simes'
+
+SimSimes <- adaptGMCP_SIM(
+  SampleSize=SampleSize,TailType=TailType,nArms=nArms,Arms.Name=Arms.Name,Arms.Mean=Arms.Mean,Arms.std.dev=Arms.std.dev
+  ,Arms.alloc.ratio=Arms.alloc.ratio, Hypothesis =Hypothesis,WI=WI,G=G,test.type=test.type,
+  Eff_bdry=Eff_bdry,info_frac=info_frac,MultipleWinners=MultipleWinners,
+  Selection=Selection,SelectionLook=SelectionLook, SelectionMethods=SelectionMethods, SelectionCriterion=SelectionCriterion,SelectionParmeter=SelectionParmeter,
+  UpdateStrategy=UpdateStrategy,ImplicitSSR=ImplicitSSR,
+  nSimulation=nSimulation,Seed=Seed,SummaryStat=SummaryStat
+)
+#Output Power
+SimSidak$Overall_Powers
+
+##(C) Parametric Dunnett
+test.type <- 'Dunnett'
+Correlation <- matrix(c(1,0.25,0.25,
+                        0.25,1,0.25,
+                        0.25,0.25,1),
+                      nrow = 3, byrow = T)
+
+
+
+SimDunnett <- adaptGMCP_SIM(
+  SampleSize=SampleSize,TailType=TailType,nArms=nArms,Arms.Name=Arms.Name,Arms.Mean=Arms.Mean,Arms.std.dev=Arms.std.dev
+  ,Arms.alloc.ratio=Arms.alloc.ratio, Hypothesis =Hypothesis,WI=WI,G=G,test.type=test.type, Correlation = Correlation,
+  Eff_bdry=Eff_bdry,info_frac=info_frac,MultipleWinners=MultipleWinners,
+  Selection=Selection,SelectionLook=SelectionLook, SelectionMethods=SelectionMethods, SelectionCriterion=SelectionCriterion,SelectionParmeter=SelectionParmeter,
+  UpdateStrategy=UpdateStrategy,ImplicitSSR=ImplicitSSR,
+  nSimulation=nSimulation,Seed=Seed,SummaryStat=SummaryStat
+)
+#Output Power
+SimDunnett$Overall_Powers
+
+##(D) Partly-Parametric 
+test.type <- 'Partly-Parametric'
+Correlation <- matrix(c(1,0.25,NA,
+                        0.25,1,NA,
+                        NA, NA, 1),
+                      nrow = 3, byrow = T)
+
+
+
+SimPartParam <- adaptGMCP_SIM(
+  SampleSize=SampleSize,TailType=TailType,nArms=nArms,Arms.Name=Arms.Name,Arms.Mean=Arms.Mean,Arms.std.dev=Arms.std.dev
+  ,Arms.alloc.ratio=Arms.alloc.ratio, Hypothesis =Hypothesis,WI=WI,G=G,test.type=test.type, Correlation = Correlation,
+  Eff_bdry=Eff_bdry,info_frac=info_frac,MultipleWinners=MultipleWinners,
+  Selection=Selection,SelectionLook=SelectionLook, SelectionMethods=SelectionMethods, SelectionCriterion=SelectionCriterion,SelectionParmeter=SelectionParmeter,
+  UpdateStrategy=UpdateStrategy,ImplicitSSR=ImplicitSSR,
+  nSimulation=nSimulation,Seed=Seed,SummaryStat=SummaryStat
+)
+#Output Power
+SimPartParam$Overall_Powers
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

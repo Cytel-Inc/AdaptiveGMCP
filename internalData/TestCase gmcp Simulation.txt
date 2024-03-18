@@ -1,0 +1,96 @@
+
+#Test Case: Verify with P2P3 Bonferoni Method without treatment selection
+rm(list=ls())
+library(usethis)
+library(devtools)
+load_all()
+
+SampleSize = 200
+TailType = 'RightTail'
+InputMethod = 'Individual-Means'
+nArms = 4
+Arms.Name = c('Ctr','Trt1','Trt2','Trt3')
+Arms.Mean = c(0,0.3,0.4,0.5)
+Arms.std.dev = rep(1,4)
+Arms.alloc.ratio = rep(1,4)
+Hypothesis = 'CommonControl'
+WI = rep(1/3,3)
+G = diag(0, nrow = 3)
+G[G==0] = 1/2
+diag(G) = 0
+    
+Correlation = diag(1, nrow = 3)
+Correlation[Correlation==0] = NA
+
+test.type = 'Partly-Parametric'
+info_frac = c(0.5,1)
+Eff_bdry = c(0.01,0.025)
+MultipleWinners = F
+
+Selection=F
+SelectionLook = NA
+SelectionMethods = NA
+SelectionCriterion =NA
+SelectionParmeter=NA
+
+UpdateStrategy=F
+nSimulation = 1000
+Seed = 'Random'
+ImplicitSSR = T
+SummaryStat = T
+
+out <- adaptGMCP_SIM(
+	SampleSize=SampleSize,TailType=TailType,nArms=nArms,Arms.Name=Arms.Name,Arms.Mean=Arms.Mean,Arms.std.dev=Arms.std.dev
+	,Arms.alloc.ratio=Arms.alloc.ratio, Hypothesis =Hypothesis,WI=WI,G=G,Correlation=Correlation,test.type=test.type,Eff_bdry=Eff_bdry,info_frac=info_frac,MultipleWinners=MultipleWinners,Selection=Selection,UpdateStrategy=UpdateStrategy,ImplicitSSR=ImplicitSSR,
+	nSimulation=nSimulation,Seed=Seed,SummaryStat=SummaryStat
+)
+################################################################
+#Test Case: Verify with P2P3 Bonferoni Method with treatment selection
+
+library(usethis)
+library(devtools)
+load_all()
+
+SampleSize = 200
+TailType = 'RightTail'
+nArms = 4
+Arms.Name = c('Ctr','Trt1','Trt2','Trt3')
+Arms.Mean = c(0,0.3,0.4,0.5)
+Arms.std.dev = rep(1,4)
+Arms.alloc.ratio = rep(1,4)
+Hypothesis = 'CommonControl'
+WI = c(0.33,0.33,0.34)
+G = diag(0, nrow = 3)
+G[G==0] = 1/2
+diag(G) = 0
+    
+Correlation = diag(1, nrow = 3)
+Correlation[Correlation==0] = NA
+
+test.type = 'Partly-Parametric'
+info_frac = c(0.5,1)
+Eff_bdry = c(0.002,0.0242839869100347)
+MultipleWinners = F
+
+Selection=T
+SelectionLook = 1
+SelectionMethods = 'pvalue'
+SelectionCriterion = 'best'
+SelectionParmeter= 1
+
+UpdateStrategy=F
+nSimulation = 1000
+Seed = 100
+ImplicitSSR = 'Selection'
+SummaryStat = T
+
+
+
+out <- adaptGMCP_SIM(
+    SampleSize=SampleSize,TailType=TailType,nArms=nArms,Arms.Name=Arms.Name,Arms.Mean=Arms.Mean,Arms.std.dev=Arms.std.dev
+	,Arms.alloc.ratio=Arms.alloc.ratio, Hypothesis =Hypothesis,WI=WI,G=G,Correlation=Correlation,test.type=test.type,
+	Eff_bdry=Eff_bdry,info_frac=info_frac,MultipleWinners=MultipleWinners,
+	Selection=Selection,SelectionLook=SelectionLook, SelectionMethods=SelectionMethods, SelectionCriterion=SelectionCriterion,SelectionParmeter=SelectionParmeter,
+	UpdateStrategy=UpdateStrategy,ImplicitSSR=ImplicitSSR,
+	nSimulation=nSimulation,Seed=Seed,SummaryStat=SummaryStat
+)
