@@ -23,11 +23,12 @@ SingleSimCombPValue <- function(simID, gmcpSimObj,preSimObjs)
                                      ImplicitSSR=mcpObj$ImplicitSSR)
 
     #Get incremental summary
-    currLookDataIncr <- genIncrLookSummaryDOM(SimSeed=mcpObj$SimSeed,
+    currLookDataIncr <- genIncrLookSummary(SimSeed=mcpObj$SimSeed,
                                           simID=simID,
                                           lookID=mcpObj$CurrentLook,
                                           Arms.Mean=mcpObj$Arms.Mean,
                                           Arms.std.dev=mcpObj$Arms.std.dev,
+                                          Arms.Prop = mcpObj$Arms.Prop,
                                           Arms.alloc.ratio=mcpObj$Arms.alloc.ratio,
                                           Arms.SS=Arms.SS.Incr,
                                           EPCorr=mcpObj$EP.Corr,
@@ -37,11 +38,12 @@ SingleSimCombPValue <- function(simID, gmcpSimObj,preSimObjs)
     ArmData <- currLookDataIncr$ArmData
 
     #Compute Test Stat(Incr.) and p-values(Incr.)
-    SummStat <- getPerLookTestStatDOM(simID = simID,
+    SummStat <- getPerLookTestStat(simID = simID,
                                       lookID=mcpObj$CurrentLook,
-                                      TestStat = mcpObj$TestStat,
+                                      TestStatCont = mcpObj$TestStatCont,
+                                      TestStatBin = mcpObj$TestStatBin,
                                       Arms.std.dev=mcpObj$Arms.std.dev,
-                                      IncrLookSummaryDOM=currLookDataIncr,
+                                      IncrLookSummary=currLookDataIncr,
                                       HypoMap=mcpObj$HypoMap,
                                       Cumulative=FALSE)
     #Perform per look Test
@@ -150,44 +152,47 @@ SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
     }
 
 
-    #Generate look-wise incremental data
-    currLookDataIncr <- genIncrLookSummaryDOM(SimSeed=mcpObj$SimSeed,
-                                              simID=simID,
-                                              lookID=mcpObj$CurrentLook,
-                                              Arms.Mean=mcpObj$Arms.Mean,
-                                              Arms.std.dev=mcpObj$Arms.std.dev,
-                                              Arms.alloc.ratio=mcpObj$Arms.alloc.ratio,
-                                              Arms.SS=Arms.SS.Incr,
-                                              EPCorr=mcpObj$EP.Corr,
-                                              ArmsPresent=mcpObj$ArmsPresent,
-                                              HypoPresent=mcpObj$HypoPresent,
-                                              HypoMap=mcpObj$HypoMap)
-    ArmData <- currLookDataIncr$ArmData
+    #Get incremental summary
+    currLookDataIncr <- genIncrLookSummary(SimSeed=mcpObj$SimSeed,
+                                           simID=simID,
+                                           lookID=mcpObj$CurrentLook,
+                                           Arms.Mean=mcpObj$Arms.Mean,
+                                           Arms.std.dev=mcpObj$Arms.std.dev,
+                                           Arms.Prop = mcpObj$Arms.Prop,
+                                           Arms.alloc.ratio=mcpObj$Arms.alloc.ratio,
+                                           Arms.SS=Arms.SS.Incr,
+                                           EPCorr=mcpObj$EP.Corr,
+                                           ArmsPresent=mcpObj$ArmsPresent,
+                                           HypoPresent=mcpObj$HypoPresent,
+                                           HypoMap=mcpObj$HypoMap)
 
+    ArmData <- currLookDataIncr$ArmData
 
     if(mcpObj$CurrentLook==1)
     {
       # Summary Statistics based on first look data
-      SummStat <- getPerLookTestStatDOM(simID = simID,
-                                        lookID = mcpObj$CurrentLook,
-                                        TestStat = mcpObj$TestStat,
-                                        Arms.std.dev=mcpObj$Arms.std.dev,
-                                        IncrLookSummaryDOM = currLookDataIncr,
-                                        HypoMap=mcpObj$HypoMap,
-                                        Cumulative=FALSE)
+      SummStat <- getPerLookTestStat(simID = simID,
+                                     lookID=mcpObj$CurrentLook,
+                                     TestStatCont = mcpObj$TestStatCont,
+                                     TestStatBin = mcpObj$TestStatBin,
+                                     Arms.std.dev=mcpObj$Arms.std.dev,
+                                     IncrLookSummary=currLookDataIncr,
+                                     HypoMap=mcpObj$HypoMap,
+                                     Cumulative=FALSE)
 
     }else
     {
       if(mcpObj$FWERControl == 'CombinationTest')
       {
         # Summary Statistics based on 2nd look incremental data
-        SummStat <- getPerLookTestStatDOM(simID = simID,
-                                          lookID=mcpObj$CurrentLook,
-                                          TestStat = mcpObj$TestStat,
-                                          Arms.std.dev=mcpObj$Arms.std.dev,
-                                          IncrLookSummaryDOM=currLookDataIncr,
-                                          HypoMap=mcpObj$HypoMap,
-                                          Cumulative=FALSE)
+        SummStat <- getPerLookTestStat(simID = simID,
+                                       lookID=mcpObj$CurrentLook,
+                                       TestStatCont = mcpObj$TestStatCont,
+                                       TestStatBin = mcpObj$TestStatBin,
+                                       Arms.std.dev=mcpObj$Arms.std.dev,
+                                       IncrLookSummary=currLookDataIncr,
+                                       HypoMap=mcpObj$HypoMap,
+                                       Cumulative=FALSE)
 
         # Stage-1 raw p-values(Incr.)
         pValIncrPrev <- mcpObj$SummStatDF[mcpObj$SummStatDF$LookID == (mcpObj$CurrentLook-1),
@@ -230,19 +235,20 @@ SingleSimCER <- function(simID, gmcpSimObj,preSimObjs)
       }else
       {
         # Summary Statistics based on 2nd look cumulative data
-        SummStat <- getPerLookTestStatDOM(simID = simID,
-                                          lookID=mcpObj$CurrentLook,
-                                          TestStat = mcpObj$TestStat,
-                                          Arms.std.dev=mcpObj$Arms.std.dev,
-                                          IncrLookSummaryDOM=currLookDataIncr,
-                                          IncrLookSummaryDOMPrev = IncrLookSummaryDOMPrev,
-                                          HypoMap=mcpObj$HypoMap,
-                                          Cumulative=TRUE)
+        SummStat <- getPerLookTestStat(simID = simID,
+                                       lookID=mcpObj$CurrentLook,
+                                       TestStatCont = mcpObj$TestStatCont,
+                                       TestStatBin = mcpObj$TestStatBin,
+                                       Arms.std.dev=mcpObj$Arms.std.dev,
+                                       IncrLookSummary=currLookDataIncr,
+                                       IncrLookSummaryPrev = IncrLookSummaryPrev,
+                                       HypoMap=mcpObj$HypoMap,
+                                       Cumulative=TRUE)
       }
 
     }
     #Storing the current look incremental data to compute next look cumulative data
-    IncrLookSummaryDOMPrev <- currLookDataIncr
+    IncrLookSummaryPrev <- currLookDataIncr
 
     #Perform per look Test
     mcpObj <- perLookTest(Arms.SS.Incr=Arms.SS.Incr,SummStat = SummStat, mcpObj=mcpObj)

@@ -4,9 +4,11 @@
 PerformStage1Test <-function(
     nArms = 3,
     nEps  = 2,
+    EpType = "Binary",
     nLooks = 2,
     nHypothesis = nEps*(nArms-1),
-    sigma = list('Group1' = c(1,1,1), 'Group1' = c(1,1,1)),
+    sigma = list('Ep1' = c(1,1,1), 'Ep2' = c(1,1,1)),
+    prop.ctr = list('EP1' = 0.1, 'EP2' = 0.2),
     allocRatio = c(1,1,1),
     SampleSize = 500,
     alpha = 0.025,
@@ -26,7 +28,8 @@ PerformStage1Test <-function(
   #Computed covariance matrix
   if(test.type == 'Partly-Parametric' || test.type == 'Parametric')
   {
-    Sigma <- getSigma(SS_Cum = SS_Cum, sigma = sigma, allocRatio = allocRatio)
+    Sigma <- getSigma(SS_Cum = SS_Cum, EpType = EpType, sigma = sigma,
+                      prop.ctr = prop.ctr, allocRatio = allocRatio)
   }else
   {
     Sigma <- NA

@@ -64,6 +64,29 @@ checkTrueNull2 <- function(HypoMap,Arms.Mean)
   TrueNull
 }
 
+#------------ -
+#Identify True Null based of the response generation inputs
+#------------ -
+checkTrueNull3 <- function(HypoMap,Arms.Mean,Arms.Prop)
+{
+  delta <- unlist(lapply(1:nrow(HypoMap), function(i){
+    if(HypoMap$EpType[i] == 'Continuous'){
+
+      abs(Arms.Mean[[HypoMap$Groups[i]]][HypoMap$Treatment[i]] -
+            Arms.Mean[[HypoMap$Groups[i]]][HypoMap$Control[i]])
+
+    }else if(HypoMap$EpType[i] == 'Binary'){
+
+      abs(Arms.Prop[[HypoMap$Groups[i]]][HypoMap$Treatment[i]] -
+            Arms.Prop[[HypoMap$Groups[i]]][HypoMap$Control[i]])
+
+    }
+
+  }))
+  TrueNull <- (delta<1E-6)
+  TrueNull
+}
+
 #------------- -
 #Count contribution to different powers from each simulations
 #------------- -

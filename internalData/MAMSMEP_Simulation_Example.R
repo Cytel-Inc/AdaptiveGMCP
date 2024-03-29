@@ -135,14 +135,14 @@ Parallel <- TRUE
 #-----------------------Run Simulation--------------------------------------
 #Please uncomment the following code to run the simulation(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
 #
-# out <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps, TestStat=TestStat, FWERControl = FWERControl,
-#            Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, Arms.alloc.ratio = Arms.alloc.ratio,
-#            EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,info_frac = info_frac,
-#            typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
-#            Selection = Selection,SelectionLook = SelectionLook,SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
-#            SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
-#            ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
-#            Method = Method, plotGraphs = plotGraphs, Parallel = Parallel)
-# out
+out <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps, TestStat=TestStat, FWERControl = FWERControl,
+           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, Arms.alloc.ratio = Arms.alloc.ratio,
+           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,info_frac = info_frac,
+           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
+           Selection = Selection,SelectionLook = SelectionLook,SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
+           SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
+           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
+           Method = Method, plotGraphs = plotGraphs, Parallel = Parallel)
+out
 
 

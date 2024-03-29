@@ -27,7 +27,7 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
   {
     if(gmcpSimObj$Parallel){
       cores=parallel::detectCores()
-      cl <- parallel::makeCluster(cores[1]-1, type = "PSOCK") # leave 1 core and use the remaining for this computation
+      cl <- parallel::makeCluster(cores[1]-1, type = "PSOCK", outfile = 'log.txt') # leave 1 core and use the remaining for this computation
       #cl <- parallel::makeCluster(clust_cores, type = "PSOCK")
       #parallel::clusterSetRNGStream(cl, iseed = preSimObjs$SimSeed)
       parallel::clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
@@ -45,12 +45,13 @@ mnMAMSMEP_sim2 <- function(gmcpSimObj)
   {
     if(gmcpSimObj$Parallel){
       cores=parallel::detectCores()
-      cl <- parallel::makeCluster(cores[1]-1, type = "PSOCK") # leave 1 core and use the remaining for this computation
+      cl <- parallel::makeCluster(cores[1]-1, type = "PSOCK", outfile = 'log.txt') # leave 1 core and use the remaining for this computation
       #cl <- parallel::makeCluster(clust_cores)
       #parallel::clusterSetRNGStream(cl, iseed = preSimObjs$SimSeed)
       parallel::clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
 
-      out <- parallel::parLapply(cl = cl, 1:gmcpSimObj$nSimulation, function(x){
+      out <- parallel::parLapply(cl = cl, 1:gmcpSimObj$nSimulation,
+        function(x){
         out_SingleSim <- SingleSimCombPValue(x, gmcpSimObj,preSimObjs)
         return(out_SingleSim)
       })
@@ -232,10 +233,17 @@ getPreSimObjs <- function(gmcpSimObj)
 
     #----------------------------------------------------------------------------------
     ######################Get the stage-wise incremental Correlation####################
-    PlanCorrelation <- getPlanCorrelation(nHypothesis = gmcpSimObj$nHypothesis,
-                                      SS_Incr = planSSIncr,
-                                      Arms.std.dev = gmcpSimObj$Arms.std.dev,
-                                      test.type = gmcpSimObj$test.type)
+    if(gmcpSimObj$EpType == "Continuous"){
+      PlanCorrelation <- getPlanCorrelation(nHypothesis = gmcpSimObj$nHypothesis,
+                                            SS_Incr = planSSIncr,
+                                            Arms.std.dev = gmcpSimObj$Arms.std.dev,
+                                            test.type = gmcpSimObj$test.type,
+                                            EpType = gmcpSimObj$EpType)
+    }else if(gmcpSimObj$EpType == "Binary")
+    {
+      stop("WIP")
+    }
+
     #----------------------------------------------------------------------------------
     PreSimObj <- list(
       'IndexSet' = HypoMap$Hypothesis,
@@ -253,9 +261,16 @@ getPreSimObjs <- function(gmcpSimObj)
     ########Computation of covariance matrix##############
     if(gmcpSimObj$test.type == 'Partly-Parametric' || gmcpSimObj$test.type == 'Parametric')
     {
-      Sigma <- getSigma(SS_Cum = planSS$CumulativeSamples,
-                        sigma = gmcpSimObj$Arms.std.dev,
-                        allocRatio = gmcpSimObj$Arms.alloc.ratio)
+      if(gmcpSimObj$EpType == "Continuous"){
+        Sigma <- getSigma(SS_Cum = planSS$CumulativeSamples,
+                          sigma = gmcpSimObj$Arms.std.dev,
+                          allocRatio = gmcpSimObj$Arms.alloc.ratio,
+                          EpType = gmcpSimObj$EpType)
+
+      }else if(gmcpSimObj$EpType == "Binary"){
+        stop("WIP")
+      }
+
     }else
     {
       Sigma <- NA

@@ -48,12 +48,28 @@ connParamNParmSets <- function(conn_Sets)
 
 
 #------------------------------------------------------------- -
+#Create mapping between hypothesis arms and endpoints
 getHypoMap <- function(des.type, nHypothesis, nEps, nArms)
 {
   if(des.type == 'MAMSMEP')
   {
     HypoMap <- data.frame('Hypothesis'=paste('H',1:nHypothesis,sep = ''),
                           'Groups'=rep(1:nEps, each=(nArms-1)),
+                          'Control'=rep(1,nHypothesis),
+                          'Treatment'=rep(2:nArms, nEps))
+  }
+  HypoMap
+}
+
+#------------------------------------------------------------- -
+#Create mapping between hypothesis arms and endpoints
+getHypoMap2 <- function(des.type, nHypothesis, nEps, nArms, lEpType)
+{
+  if(des.type == 'MAMSMEP')
+  {
+    HypoMap <- data.frame('Hypothesis'=paste('H',1:nHypothesis,sep = ''),
+                          'Groups'=rep(1:nEps, each=(nArms-1)),
+                          'EpType'=rep(unlist(lEpType), each= nEps),
                           'Control'=rep(1,nHypothesis),
                           'Treatment'=rep(2:nArms, nEps))
   }

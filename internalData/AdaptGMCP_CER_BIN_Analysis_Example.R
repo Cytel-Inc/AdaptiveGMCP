@@ -18,10 +18,9 @@ nArms <- 3
 nEps  <- 2
 
 #-------------Arm-Wise planned Std. Dev. for each endpoints-----
-# Vector of length = nArms
+# proportion for control arm for each endpoint
 # Not required for test.type = 'Non-Parametric'
-sigma <- list('Ep1' = c(1,1,1),
-             'Ep2' = c(1,1,1))
+prop.ctr <- list('Ep1' = 0.1, 'Ep2' = 0.2)
 
 #-----------------------Arm-Wise Allocation Ratio------------------------
 # Vector of length = nArms
@@ -38,7 +37,7 @@ G <- matrix(c(0,1/2,1/2,0,
               1/2,0,0,1/2,
               0,1,0,0,
               1,0,0,0),
-           nrow = nEps*(nArms-1), byrow = TRUE)
+            nrow = nEps*(nArms-1), byrow = TRUE)
 
 #----------------Information Fraction----------------
 #The number of lookes is same as the length of info_frac(for FSD info_frac = 1)
@@ -74,8 +73,8 @@ plotGraphs <- TRUE
 #Please uncomment the following code to run the Analysis(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
 #
 
-adaptGMCP_CONT_CER(nArms = nArms, nEps = nEps, sigma = sigma,
-              allocRatio = allocRatio, SampleSize = SampleSize,
-              alpha = alpha, WI = WI, G = G, info_frac = info_frac,
-              typeOfDesign = typeOfDesign, test.type = test.type,
-              AdaptStage2 = AdaptStage2,plotGraphs = plotGraphs)
+adaptGMCP_BIN_CER(nArms = nArms, nEps = nEps, prop.ctr = ,
+                   allocRatio = allocRatio, SampleSize = SampleSize,
+                   alpha = alpha, WI = WI, G = G, info_frac = info_frac,
+                   typeOfDesign = typeOfDesign, test.type = test.type,
+                   AdaptStage2 = AdaptStage2,plotGraphs = plotGraphs)

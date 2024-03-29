@@ -19,11 +19,13 @@ adaptBdryCER <- function(mcpObj)
   if(mcpObj$test.type == 'Partly-Parametric' || mcpObj$test.type == 'Parametric')
   {
     Stage2Sigma <- getStage2Sigma(nHypothesis = nHypothesis,
+                                  EpType = mcpObj$EpType,
                                   nLooks = nLooks,
                                   Sigma = mcpObj$Stage1Obj$Sigma,
                                   AllocSampleSize = mcpObj$AllocSampleSize,
                                   allocRatio = mcpObj$allocRatio,
                                   sigma = mcpObj$sigma,
+                                  prop.ctr =  mcpObj$prop.ctr,
                                   Stage2AllocSampleSize = mcpObj$Stage2AllocSampleSize,
                                   Stage2allocRatio = mcpObj$Stage2allocRatio,
                                   Stage2sigma = mcpObj$sigma)

@@ -7,8 +7,8 @@ valInpsimMAMSMEP <- function(inps){
 
   logs[[1]] <- ifelse(inps$Method=='CombPValue' || inps$Method=='CER',0,"Invalid argument in 'Method'")
 
-  logs[[2]] <- ifelse(inps$TestStat=='z' || inps$TestStat=='t-equal' || inps$TestStat=='t-unequal',
-               0, "Invalid argument in 'TestStat'")
+  logs[[2]] <- ifelse(inps$TestStatCont=='z' || inps$TestStatCont=='t-equal' || inps$TestStatCont=='t-unequal',
+               0, "Invalid argument in 'TestStatCont'")
   logs[[3]] <- ifelse(inps$nArms >= 2, 0, "Invalid argument in 'nArms'")
 
   logs[[4]] <- ifelse(ifelse(inps$Method=='CER',length(inps$InfoFrac) <= 2 & length(inps$InfoFrac) >= 1,length(inps$InfoFrac) >= 1)
@@ -21,6 +21,7 @@ valInpsimMAMSMEP <- function(inps){
   logs[[7]] <- ifelse(ifelse(inps$Method=='CER',inps$test.type == 'Parametric' || inps$test.type == 'Partly-Parametric'|| inps$test.type == 'Non-Parametric',
                       inps$test.type == 'Partly-Parametric' || inps$test.type == 'Dunnett' || inps$test.type == 'Bonf' || inps$test.type == 'Sidak' || inps$test.type == 'Simes')
                ,0,"Invalid argument in 'test.type'")
+
   logs[[8]] <- ifelse(length(inps$IntialWeights)==inps$nHypothesis & sum(inps$IntialWeights) <= 1
                ,0,"Invalid argument in 'WI'")
 
@@ -30,10 +31,10 @@ valInpsimMAMSMEP <- function(inps){
   logs[[10]] <- ifelse(ifelse(inps$Method=='CER', inps$FWERControl == 'CombinationTest' || inps$FWERControl == 'None',TRUE)
                 ,0,"Invalid argument in 'FWERControl'")
 
-  logs[[11]] <- ifelse(length(inps$Arms.Mean) == inps$nEps &  all(sapply(inps$Arms.Mean,length) == inps$nArms)
+  logs[[11]] <- ifelse(length(inps$Arms.Mean) == inps$nEps
                 ,0,"Invalid argument in 'Arms.Mean'")
 
-  logs[[12]] <- ifelse(length(inps$Arms.std.dev) == inps$nEps &  all(sapply(inps$Arms.std.dev,length) == inps$nArms)
+  logs[[12]] <- ifelse(length(inps$Arms.std.dev) == inps$nEps
                 ,0,"Invalid argument in 'Arms.std.dev'")
 
   logs[[13]] <- ifelse(length(inps$Arms.alloc.ratio) == inps$nArms
@@ -54,6 +55,16 @@ valInpsimMAMSMEP <- function(inps){
 
   logs[[18]] <- ifelse(inps$ImplicitSSR == 'Selection' || inps$ImplicitSSR == 'All' || inps$ImplicitSSR == 'None'
                 ,0,"Invalid argument in 'ImplicitSSR'")
+
+  logs[[19]] <- ifelse(length(inps$lEpType) == inps$nEps
+                       ,0,"Invalid argument in 'lEpType'")
+
+  logs[[20]] <- ifelse(length(inps$Arms.Prop) == inps$nEps
+                       ,0,"Invalid argument in 'Arms.Prop'")
+
+  logs[[21]] <- ifelse(inps$TestStatBin=='UnPooled' || inps$TestStatBin=='Pooled'
+                      ,0, "Invalid argument in 'TestStatBin'")
+
 
   return(logs)
 

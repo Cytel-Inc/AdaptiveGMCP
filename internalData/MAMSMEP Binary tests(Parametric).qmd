@@ -1,0 +1,125 @@
+---
+title: "Multi Arm Two Stage Binary Tests(Parametric)"
+format: html
+editor: visual
+---
+
+## Two-Stage Multi-Arms design for Binary endpoint
+
+**Notations**
+
+$i=\{0,1,2,..,D\}$ : Index for the arms.
+
+$k =\{1,2\}$ : Index for the stages.
+
+$I_1 = \{1,2,..D\}$ : Index for the primary hypothesis at stage-1.
+
+$I_2$ : Index for the primary hypothesis at stage-2.
+
+$J$ : Index for any intersection hypothesis.
+
+$j$ : Index for any primary hypothesis as a part of intersection $J$
+
+$\pi_c$ : proportion of the control arm
+
+$n_{i,k}$ : The cumulative sample size for the kth stage $k=1,2$
+
+$\bar{\pi}_{i,k}$ : The sample proportion for the $i^{th} \space (i=0,1,2,..,D)$ arm based on the kth stage cumulative sample size
+
+$n_{i,(k)}$ : The incremental sample size for the kth stage $k=1,2$
+
+$\bar{\pi}_{i,(k)}$ : The sample proportion for the $i^{th} \space (i=0,1,2,..,D)$ arm based on the kth stage incremental sample size
+
+$Z_{i,k}$ : The cumulative Z-statistic for the ith arm in kth stage $k=1,2$
+
+$Z_{i,(k)}$ : The incremental Z-statistic for the ith arm in kth stage $k=1,2$
+
+**Under Null**
+
+$E(\pi_{0,k}) = E(\pi_{1,k}) =... = E(\pi_{D,k}) = \pi_c$ i.e. the treatment arm proportion is same as the control arm.
+
+$\bar{\pi}_{i,k} \sim N(\pi_c, \sqrt{\frac{\pi_c*(1-\pi_c)}{n_{i,k}}})$
+
+**Variance Covariance Structure of** $\bar{\pi}_{i,k}$ **(Cumulative)**
+
+$Cov(\bar{\pi}_{i_1,k} , \bar{\pi}_{i_2,k}) = 0 \space ; i_1 \neq i_2$
+
+$Cov(\bar{\pi}_{i,k_1} , \bar{\pi}_{i,k_2}) = Cov(\bar{\pi}_{i,k_1}, \frac{n_{i,k_1}}{n_{i,k_2}}*\bar{\pi}_{i,k_1} + \frac{1}{n_{i,k_2}} \sum_{m=(n_{i,k_1}+1)}^{n_{i,k_2}} \pi_{i,m})$
+
+$\implies Cov(\bar{\pi}_{i,k_1} , \bar{\pi}_{i,k_2})=\frac{n_{i,k_1}}{n_{i,k_2}} *var(\bar{\pi}_{i,k_1})$
+
+$\implies Cov(\bar{\pi}_{i,k_1} , \bar{\pi}_{i,k_2}) = \frac{\pi_c*(1-\pi_c)}{n_{i,k_2}} ; \space \forall \space k_2 >k_1$
+
+**Variance Covariance Structure of** $\bar{\pi}_{i,(k)}$ **(Incremental)**
+
+$Cov(\bar{\pi}_{i_1,(k)} , \bar{\pi}_{i_2,(k)}) = Cov(\bar{\pi}_{i,(k_1)} , \bar{\pi}_{i,(k_2)}) = 0 \space ; i_1 \neq i_2 \space \& \space k_1 \neq k_2$
+
+**Variance Covariance Structure of** $Z_{i,k}$ **(Cumulative)**
+
+Note: The Covariance for cumulative Z Statistic will be used in CER methodology
+
+$Z_{i,k} = \frac{\delta_{i,k}}{\sqrt{Var(\delta_{i,k})}}$
+
+where
+
+$\delta_{i,k} = (\bar{\pi}_{i,k} - \bar{\pi}_{0,k})$
+
+$Var(\delta_{i,k})^{-1} = I_{i,k} = n_{0,k}*(\pi_c*(1-\pi_c) + \frac{\pi_c*(1-\pi_c)}{\lambda_i})^{-1} = n_{0,k}*\Lambda_i$
+
+where $\lambda_i$ = allocation ratio for the $i^{th}$ treatment arm.
+
+**Case-1**
+
+$Var(Z_{i,k}) = 1 \space \forall \space i, k$
+
+**Case-2**
+
+$Cov(Z_{i_1,k} , Z_{i_2,k}) = Cov(\sqrt{I_{i_1,k}}*(\bar{\pi}_{i_1,k} - \bar{\pi}_{0,k}) ,\sqrt{I_{i_2,k}}*(\bar{\pi}_{i_2,k} - \bar{\pi}_{0,k}))$
+
+$\implies Cov(Z_{i_1,k} , Z_{i_2,k}) = \sqrt{I_{i_1,k} I_{i_2,k}} * Var(\bar{\pi}_{0,k})$
+
+$\implies Cov(Z_{i_1,k} , Z_{i_2,k}) = \sqrt{I_{i_1,k} I_{i_2,k}}*\frac{\pi_c*(1-\pi_c)}{n_{0,k}} \space \forall \space i_2 \neq i_1$
+
+**Case-3**
+
+$Cov(Z_{i,k_1} , Z_{i,k_2}) = Cov(\sqrt{I_{i,k_1}}*(\bar{\pi}_{i,k_1} - \bar{\pi}_{0,k_1}) ,\sqrt{I_{i,k_2}}*(\bar{\pi}_{i,k_2} - \bar{\pi}_{0,k_2}))$
+
+$\implies Cov(Z_{i,k_1} , Z_{i,k_2}) = \sqrt{I_{i,k_1} I_{i,k_2}} * [ Cov(\bar{\pi}_{i,k_1} , \bar{\pi}_{i,k_2}) + Cov(\bar{\pi}_{0,k_1} , \bar{\pi}_{0,k_2})]$
+
+$\implies Cov(Z_{i,k_1} , Z_{i,k_2}) = \sqrt{I_{i,k_1} I_{i,k_2}}* [ \frac{\pi_c*(1-\pi_c)}{n_{i,k_2}} + \frac{\pi_c*(1-\pi_c)}{n_{0,k_2}} ] \space \forall \space k_2 > k_1$
+
+**Case-4**
+
+$Cov(Z_{i_1,k_1} , Z_{i_2,k_2}) = Cov(\sqrt{I_{i_1,k_1}}*(\bar{\pi}_{i_1,k_1} - \bar{\pi}_{0,k_1}) ,\sqrt{I_{i_2,k_2}}*(\bar{\pi}_{i_2,k_2} - \bar{\pi}_{0,k_2}))$
+
+$\implies Cov(Z_{i_1,k_1} , Z_{i_2,k_2}) = \sqrt{I_{i_1,k_1} I_{i_2,k_2}} * Cov(\bar{\pi}_{0,k_1} , \bar{\pi}_{0,k_2})$
+
+$\implies Cov(Z_{i_1,k_1} , Z_{i_2,k_2}) = \sqrt{I_{i_1,k_1} I_{i_2,k_2}} * \frac{\pi_c*(1-\pi_c)}{n_{i,k_2}}\space \forall \space i_1 \neq i_2, \space k_1 \neq k_2 \space \& \space k_2 > k_1$
+
+**Variance Covariance Structure of** $Z_{i,(k)}$ **(Incremental)**
+
+Note: The Covariance for incremental Z Statistic will be used for adjusted p-value computation Combining p-value method(Dunnett tests) in the simulations(for analysis this needs to be manually entered as an input)
+
+$Z_{i,(k)} = \frac{\delta_{i,(k)}}{\sqrt{Var(\delta_{i,(k)})}}$
+
+where
+
+$\delta_{i,(k)} = (\bar{\pi}_{i,(k)} - \bar{\pi}_{0,(k)})$
+
+$Var(\delta_{i,(k)})^{-1} = I_{i,(k)} = n_{0,(k)}*(\pi_c*(1-\pi_c) + \frac{\pi_c*(1-\pi_c)}{\lambda_i})^{-1} = n_{0,(k)}*\Lambda_i$
+
+where $\lambda_i$ = allocation ratio for the $i^{th}$ treatment arm.
+
+**Case-1**
+
+$Var(Z_{i,(k)}) = 1 \space \forall \space i, k$
+
+**Case-2**
+
+$Cov(Z_{i_1,(k)} , Z_{i_2,(k)}) = Cov(\sqrt{I_{i_1,(k)}}*(\bar{\pi}_{i_1,(k)} - \bar{\pi}_{0,(k)}) ,\sqrt{I_{i_2,(k)}}*(\bar{\pi}_{i_2,(k)} - \bar{\pi}_{0,(k)}))$
+
+$\implies Cov(Z_{i_1,(k)} , Z_{i_2,(k)}) = \sqrt{I_{i_1,(k)} I_{i_2,(k)}} * Var(\bar{\pi}_{0,(k)})$
+
+$\implies Cov(Z_{i_1,(k)} , Z_{i_2,(k)}) = \sqrt{I_{i_1,(k)} I_{i_2,(k)}}*\frac{\pi_c*(1-\pi_c)}{n_{0,(k)}} \space \forall \space i_2 \neq i_1$
+
+### 

@@ -135,5 +135,16 @@ getStage2CondNParamBdry <- function(a1,p1,v,BJ,SS1, SS2)
 }
 
 
+getStage2CondNParamBdry1Hypo <- function(p1,v,BJ,SS1, SS2){
+  exitProbCond2stage <- function(x){
+    exitProb <- getPCER(a2 = x*v, p1 = p1, ss1 = SS1, ss2 = SS2)
+    exitProb - BJ
+  }
+  stage2bdryCond <- tryCatch({uniroot(f = exitProbCond2stage, interval = c(0, 1), tol = 1E-16)$root},
+                            error=function(err){"Error"})
+  list('Stage2AdjBdry' = stage2bdryCond*v)
+}
+
+
 
 

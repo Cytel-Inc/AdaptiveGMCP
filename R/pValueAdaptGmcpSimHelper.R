@@ -446,7 +446,8 @@ getArms2<- function(SetH,HypoMap)
     return(NULL)
   }else
   {
-    unique(unlist(HypoMap[HypoMap$Hypothesis %in% SetH,3:4]))
+    unique(unlist(HypoMap[HypoMap$Hypothesis %in% SetH,
+                          c('Control','Treatment')]))
   }
 }
 

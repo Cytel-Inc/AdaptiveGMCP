@@ -14,53 +14,97 @@
 # Returns: The Probability of rejecting in atleast one primary hypothesis at stage1
 #------------------------------------------------------------------------- -
 #' @export
-varCovZ <- function(i1,k1,i2,k2,sigma_0,sigma_trt,ctrSS,trtSS,InfoMatrix)
+varCovZ <- function(EpType,i1,k1,i2,k2,sigma_0,sigma_trt,ctrProp,ctrSS,trtSS,InfoMatrix)
 {
-  if(i1 == i2 & k1 == k2){ #Variance Case-1
-    1
+  if(EpType=="Binary"){
+    sigma_0 <- sigma_trt <- sqrt(ctrProp*(1-ctrProp))
+    if(i1 == i2 & k1 == k2){ #Variance Case-1
+      1
 
-  }else if(k1 == k2 & i1 != i2) #Covariance Case-2
-  {
-    sqrt(InfoMatrix[i1,k1]*InfoMatrix[i2,k2]) * (sigma_0^2/ctrSS[k2])
+    }else if(k1 == k2 & i1 != i2) #Covariance Case-2
+    {
+      sqrt(InfoMatrix[i1,k1]*InfoMatrix[i2,k2]) * (sigma_0^2/ctrSS[k2])
 
-  }else if(i1 == i2 & k1 != k2) #Covariance Case-3
-  {
-    sqrt(InfoMatrix[i1,k1]*InfoMatrix[i2,k2]) *
-      ((sigma_trt[i2]^2/trtSS[i2,max(k1,k2)])+(sigma_0^2/ctrSS[max(k1,k2)]))
+    }else if(i1 == i2 & k1 != k2) #Covariance Case-3
+    {
+      sqrt(InfoMatrix[i1,k1]*InfoMatrix[i2,k2]) *
+        ((sigma_trt^2/trtSS[i2,max(k1,k2)])+(sigma_0^2/ctrSS[max(k1,k2)]))
 
-  }else if(i1 != i2 || k1 !=k2) #Covariance Case-4
-  {
-    sqrt(InfoMatrix[i1,k1]*InfoMatrix[i2,k2]) * (sigma_0^2/ctrSS[max(k1,k2)])
+    }else if(i1 != i2 || k1 !=k2) #Covariance Case-4
+    {
+      sqrt(InfoMatrix[i1,k1]*InfoMatrix[i2,k2]) * (sigma_0^2/ctrSS[max(k1,k2)])
 
-  }else
-  {
-    'Error in covZ'
+    }else
+    {
+      'Error in covZ'
+    }
+
+  }else if(EpType=="Continuous"){
+    if(i1 == i2 & k1 == k2){ #Variance Case-1
+      1
+
+    }else if(k1 == k2 & i1 != i2) #Covariance Case-2
+    {
+      sqrt(InfoMatrix[i1,k1]*InfoMatrix[i2,k2]) * (sigma_0^2/ctrSS[k2])
+
+    }else if(i1 == i2 & k1 != k2) #Covariance Case-3
+    {
+      sqrt(InfoMatrix[i1,k1]*InfoMatrix[i2,k2]) *
+        ((sigma_trt[i2]^2/trtSS[i2,max(k1,k2)])+(sigma_0^2/ctrSS[max(k1,k2)]))
+
+    }else if(i1 != i2 || k1 !=k2) #Covariance Case-4
+    {
+      sqrt(InfoMatrix[i1,k1]*InfoMatrix[i2,k2]) * (sigma_0^2/ctrSS[max(k1,k2)])
+
+    }else
+    {
+      'Error in covZ'
+    }
   }
 }
 
-#####Computation of  Z-scale Covariance Matrix #############
-#ctrSS : look-wise cumulative samples on control arm
-#sigma : list containing Arm-wise planned standard deviation for endpoints
+#####Computation of Covariance Matrix #############
+#EpType : endpoint type
+#SS_Cum : look-wise arm-wise cumulative samples
+#sigma : list containing Arm-wise planned standard deviation for Continuous endpoints
+#prop.ctr : list containing control proportion for Binary endpoints
 #allocRatio : allocation ratio for the arms
 #------------------------------------------------ -
 #' @export
-getSigma <- function(SS_Cum, sigma, allocRatio)
+getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio)
 {
   ctrSS <- SS_Cum[,1]
   trtSS <- t(SS_Cum[,-1]) #Column represents looks
 
   SigmaZ <- list() #Z-Scale sigma
   SigmaS <- list() #Score Scale sigma
-  InfoMat <-list() #Information Matrix
+  InfoMat <- list() #Information Matrix
 
-  nHypothesisEp <- length(sigma[[1]])-1 #Two equal dimension sigma matrix for two endpoints
-  nLooksEp <- length(ctrSS)
+  if(EpType == "Continuous"){
+    nEps <- length(sigma)
+    nHypothesisEp <- length(sigma[[1]])-1 #Two equal dimension sigma matrix for two endpoints
+    nLooksEp <- length(ctrSS)
 
-  for (i in 1:length(sigma)) {
-    epSig <- sigma[[i]]
-    sigma_0 <- epSig[1]
-    sigma_trt <- epSig[-1]
-    capLambda <- (sigma_0^2 + sigma_trt^2/allocRatio[-1])^(-1)
+  }else if(EpType == "Binary"){
+    nEps <- length(prop.ctr)
+    nHypothesisEp <- length(allocRatio)-1 #Two equal dimension sigma matrix for two endpoints
+    nLooksEp <- length(ctrSS)
+  }
+
+  for (i in 1:nEps) {
+    if(EpType == "Continuous"){
+      epSig <- sigma[[i]]
+      sigma_0 <- epSig[1]
+      sigma_trt <- epSig[-1]
+
+      capLambda <- (sigma_0^2 + sigma_trt^2/allocRatio[-1])^(-1)
+
+    }else if(EpType == "Binary"){
+      pi_c <- prop.ctr[[i]]
+      capLambda <- (1/(pi_c*(1-pi_c)))*(allocRatio[-1]/(1+allocRatio[-1]))
+    }
+
+
     InfoMatrix <- sapply(ctrSS, function(x){x*capLambda}) #row=hypothesis, col=looks
     InfoMat[[paste('EP',i,sep = '')]] <- InfoMatrix
 
@@ -72,10 +116,20 @@ getSigma <- function(SS_Cum, sigma, allocRatio)
     for(l in 1:length(hIDX))
     {
       for (m in l:length(hIDX)) {
-        sigmaZ[l,m] <- sigmaZ[m,l] <- varCovZ(i1 = hIDX[l], k1 = lIDX[l],
-                                              i2 = hIDX[m], k2 = lIDX[m],
-                                              sigma_0 = sigma_0,sigma_trt = sigma_trt,
-                                              ctrSS = ctrSS,trtSS = trtSS,InfoMatrix = InfoMatrix)
+        if(EpType == "Continuous"){
+          sigmaZ[l,m] <- sigmaZ[m,l] <- varCovZ(EpType = EpType,
+                                                i1 = hIDX[l], k1 = lIDX[l],
+                                                i2 = hIDX[m], k2 = lIDX[m],
+                                                sigma_0 = sigma_0,sigma_trt = sigma_trt,
+                                                ctrSS = ctrSS,trtSS = trtSS,InfoMatrix = InfoMatrix)
+        }else if(EpType == "Binary"){
+          sigmaZ[l,m] <- sigmaZ[m,l] <- varCovZ(EpType = EpType,
+                                                i1 = hIDX[l], k1 = lIDX[l],
+                                                i2 = hIDX[m], k2 = lIDX[m],
+                                                ctrProp = prop.ctr[[i]],
+                                                ctrSS = ctrSS,trtSS = trtSS,InfoMatrix = InfoMatrix)
+        }
+
       }
     }
     rownames(sigmaZ) <- colnames(sigmaZ) <- paste('Z',hIDX,lIDX,sep = '')
@@ -111,8 +165,8 @@ getSigma <- function(SS_Cum, sigma, allocRatio)
 
 
 #####Covariance Matrix for CER & Stage-2 boundary computations#############
-getStage2Sigma <- function(nHypothesis,nLooks,Sigma,
-                           AllocSampleSize,allocRatio,sigma,
+getStage2Sigma <- function(nHypothesis,EpType,nLooks,Sigma,
+                           AllocSampleSize,allocRatio,sigma,prop.ctr,
                            Stage2AllocSampleSize,Stage2allocRatio,Stage2sigma)
 {
   SigmaZIncr <- list() #Z-Scale Incremental sigma
@@ -130,9 +184,15 @@ getStage2Sigma <- function(nHypothesis,nLooks,Sigma,
     # SigmaZIncr[[names(Sigma$SigmaZ)[i]]] <- A %*% Sigma$SigmaZ[[i]] %*% t(A)
     # SigmaSIncr[[names(Sigma$SigmaS)[i]]] <- A %*% Sigma$SigmaS[[i]] %*% t(A)
 
-    sigma_0 <- sigma[[i]][1]
-    sigma_trt <- sigma[[i]][-1]
-    capLambda <- (sigma_0^2 + sigma_trt^2/allocRatio[-1])^(-1)
+    if(EpType == "Continuous"){
+      sigma_0 <- sigma[[i]][1]
+      sigma_trt <- sigma[[i]][-1]
+      capLambda <- (sigma_0^2 + sigma_trt^2/allocRatio[-1])^(-1)
+
+    }else if(EpType == "Binary"){
+      pi_c <- prop.ctr[[i]]
+      capLambda <- (1/(pi_c*(1-pi_c)))*(allocRatio[-1]/(1+allocRatio[-1]))
+    }
 
     #The following adjustment is due to change in distribution(as the sample size modified)
     SSIncr <-  as.numeric(AllocSampleSize[2,]) - as.numeric(AllocSampleSize[1,])
@@ -147,11 +207,17 @@ getStage2Sigma <- function(nHypothesis,nLooks,Sigma,
     for(l in 1:k)
     {
       for (m in l:k) {
-        sigmaZ[l,m] <- sigmaZ[m,l] <-
-          varCovZ(i1 = l, k1 = 1,i2 = m, k2 = 1,
-                  sigma_0 = sigma_0,sigma_trt = sigma_trt,
-                  ctrSS = ctrSS,trtSS = trtSS,
-                  InfoMatrix = InfoMatrix)
+        if(EpType == "Continuous"){
+          sigmaZ[l,m] <- sigmaZ[m,l] <- varCovZ(EpType = EpType,
+                                                i1 = l, k1 = 1,i2 = m, k2 = 1,
+                                                sigma_0 = sigma_0,sigma_trt = sigma_trt,
+                                                ctrSS = ctrSS,trtSS = trtSS,InfoMatrix = InfoMatrix)
+        }else if(EpType == "Binary"){
+          sigmaZ[l,m] <- sigmaZ[m,l] <- varCovZ(EpType = EpType,
+                                                i1 = l, k1 = 1,i2 = m, k2 = 1,
+                                                ctrProp = prop.ctr[[i]],
+                                                ctrSS = ctrSS,trtSS = trtSS,InfoMatrix = InfoMatrix)
+        }
       }
     }
     SigmaZIncr[[names(Sigma$SigmaZ)[i]]] <- sigmaZ
@@ -177,7 +243,14 @@ getStage2Sigma <- function(nHypothesis,nLooks,Sigma,
       if(is.na(Stage2SSCum[s])) Stage2SSCum[s] <- AllocSampleSize[1,s]
     }
     Stage2allocRatio <- as.numeric(Stage2SSCum)/as.numeric(Stage2SSCum[1])
-    Stage2capLambda <- (Stage2sigma_0^2 + Stage2sigma_trt^2/Stage2allocRatio[-1])^(-1)
+
+    if(EpType == "Continuous"){
+      Stage2capLambda <- (Stage2sigma_0^2 + Stage2sigma_trt^2/Stage2allocRatio[-1])^(-1)
+
+    }else if(EpType == "Binary"){
+      pi_c <- prop.ctr[[i]]
+      Stage2capLambda <- (1/(pi_c*(1-pi_c)))*(Stage2allocRatio[-1]/(1+Stage2allocRatio[-1]))
+    }
 
     #The following adjustment is due to change in distribution(as the sample size modified)
     Stage2SSIncr <-  as.numeric(Stage2AllocSampleSize[2,]) - as.numeric(Stage2AllocSampleSize[1,])
@@ -194,11 +267,19 @@ getStage2Sigma <- function(nHypothesis,nLooks,Sigma,
     for(l in 1:k)
     {
       for (m in l:k) {
-        Stage2sigmaZ[l,m] <- Stage2sigmaZ[m,l] <-
-          varCovZ(i1 = l, k1 = 1,i2 = m, k2 = 1,
-                  sigma_0 = Stage2sigma_0,sigma_trt = Stage2sigma_trt,
-                  ctrSS = Stage2ctrSS,trtSS = Stage2trtSS,
-                  InfoMatrix =Stage2InfoMatrix)
+        if(EpType == "Continuous"){
+          Stage2sigmaZ[l,m] <- Stage2sigmaZ[m,l] <- varCovZ(EpType = EpType,
+                                                i1 = l, k1 = 1,i2 = m, k2 = 1,
+                                                sigma_0 = Stage2sigma_0,sigma_trt = Stage2sigma_trt,
+                                                ctrSS = Stage2ctrSS,trtSS = Stage2trtSS,
+                                                InfoMatrix =Stage2InfoMatrix)
+        }else if(EpType == "Binary"){
+          Stage2sigmaZ[l,m] <- Stage2sigmaZ[m,l] <- varCovZ(EpType = EpType,
+                                                            i1 = l, k1 = 1,i2 = m, k2 = 1,
+                                                            ctrProp =  prop.ctr[[i]],
+                                                            ctrSS = Stage2ctrSS,trtSS = Stage2trtSS,
+                                                            InfoMatrix =Stage2InfoMatrix)
+        }
       }
     }
     Stage2SigmaZ[[names(Sigma$SigmaZ)[i]]] <- Stage2sigmaZ
@@ -237,10 +318,17 @@ getAmatrix <- function(nrow, ncol) {
 
 
 ########Correlation for Combining p-value dunnett test#############
-getPlanCorrelation <- function(nHypothesis, SS_Incr, Arms.std.dev, test.type)
+getPlanCorrelation <- function(nHypothesis,EpType, SS_Incr, Arms.std.dev,prop.ctr, test.type)
 {
-  nEps <-  length(Arms.std.dev) #is expected to be a list
-  nLooks <- nrow(SS_Incr)
+  if(EpType == "Continuous"){
+    nEps <- length(Arms.std.dev)
+    nLooks <- nrow(SS_Incr)
+
+  }else if(EpType == "Binary"){
+    nEps <- length(prop.ctr)
+    nLooks <- nrow(SS_Incr)
+  }
+
   Sigma <- list()
   for (lkIDX in 1:nLooks) {
     SigmaZ <- list() # ith look Z-Scale sigma
@@ -261,10 +349,17 @@ getPlanCorrelation <- function(nHypothesis, SS_Incr, Arms.std.dev, test.type)
 
       }else if(test.type == 'Dunnett' || test.type == 'Parametric' || test.type == 'Partly-Parametric' )
       {
-        epSig <- Arms.std.dev[[epIDX]]
-        sigma_0 <- epSig[1]
-        sigma_trt <- epSig[-1]
-        capLambda <- (sigma_0^2 + sigma_trt^2/allocRatio[-1])^(-1)
+        if(EpType == "Continuous"){
+          epSig <- Arms.std.dev[[epIDX]]
+          sigma_0 <- epSig[1]
+          sigma_trt <- epSig[-1]
+          capLambda <- (sigma_0^2 + sigma_trt^2/allocRatio[-1])^(-1)
+
+        }else if(EpType == "Binary"){
+          pi_c <- prop.ctr[[epIDX]]
+          capLambda <- (1/(pi_c*(1-pi_c)))*(allocRatio[-1]/(1+allocRatio[-1]))
+        }
+
         InfoMatrix <- sapply(ctrSS, function(x){x*capLambda}) #row=hypothesis, col=looks
 
         # Sigma/Corr for ith stage incremental data
@@ -273,10 +368,17 @@ getPlanCorrelation <- function(nHypothesis, SS_Incr, Arms.std.dev, test.type)
         for(l in 1:length(capLambda))
         {
           for (m in l:length(capLambda)) {
-            sigmaZ[l,m] <- sigmaZ[m,l] <- varCovZ(i1 = l, k1 = 1,
-                                                  i2 = m, k2 = 1,
-                                                  sigma_0 = sigma_0,sigma_trt = sigma_trt,
-                                                  ctrSS = ctrSS,trtSS = trtSS,InfoMatrix = InfoMatrix)
+            if(EpType == "Continuous"){
+              sigmaZ[l,m] <- sigmaZ[m,l] <- varCovZ(EpType = EpType, i1 = l, k1 = 1,
+                                                    i2 = m, k2 = 1,
+                                                    sigma_0 = sigma_0,sigma_trt = sigma_trt,
+                                                    ctrSS = ctrSS,trtSS = trtSS,InfoMatrix = InfoMatrix)
+            }else if(EpType == "Binary"){
+              sigmaZ[l,m] <- sigmaZ[m,l] <- varCovZ(EpType = EpType, i1 = l, k1 = 1,
+                                                    i2 = m, k2 = 1,
+                                                    ctrProp = ctrProp,
+                                                    ctrSS = ctrSS,trtSS = trtSS,InfoMatrix = InfoMatrix)
+            }
           }
         }
       }

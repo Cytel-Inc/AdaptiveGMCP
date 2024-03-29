@@ -1,0 +1,132 @@
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+starting worker pid=11552 on localhost:11241 at 13:11:42.106
+starting worker pid=12708 on localhost:11241 at 13:11:42.424
+starting worker pid=1112 on localhost:11241 at 13:11:42.719
+starting worker pid=11888 on localhost:11241 at 13:11:43.000
+starting worker pid=13096 on localhost:11241 at 13:11:43.283
+starting worker pid=11548 on localhost:11241 at 13:11:43.564
+starting worker pid=13632 on localhost:11241 at 13:11:43.827
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 1]
+ "Error in perLookTest"
+[1] "Error in perLookTest"
+No traceback available 
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+starting worker pid=15784 on localhost:11241 at 13:14:09.804
+starting worker pid=11952 on localhost:11241 at 13:14:10.094
+starting worker pid=5464 on localhost:11241 at 13:14:10.399
+starting worker pid=7784 on localhost:11241 at 13:14:10.655
+starting worker pid=11508 on localhost:11241 at 13:14:10.911
+starting worker pid=19236 on localhost:11241 at 13:14:11.184
+starting worker pid=17276 on localhost:11241 at 13:14:11.447
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+ze(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+starting worker pid=12156 on localhost:11241 at 14:21:38.131
+starting worker pid=16196 on localhost:11241 at 14:21:38.432
+starting worker pid=6996 on localhost:11241 at 14:21:38.736
+starting worker pid=15668 on localhost:11241 at 14:21:38.994
+starting worker pid=10800 on localhost:11241 at 14:21:39.255
+starting worker pid=10204 on localhost:11241 at 14:21:39.525
+starting worker pid=14724 on localhost:11241 at 14:21:39.811
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+[1]No traceback available"
+ 
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Execution halted
+starting worker pid=14512 on localhost:11241 at 14:22:16.196
+starting worker pid=3536 on localhost:11241 at 14:22:16.482
+starting worker pid=18184 on localhost:11241 at 14:22:16.785
+starting worker pid=15936 on localhost:11241 at 14:22:17.057
+starting worker pid=14596 on localhost:11241 at 14:22:17.341
+starting worker pid=20300 on localhost:11241 at 14:22:17.612
+starting worker pid=132 on localhost:11241 at 14:22:17.894
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 

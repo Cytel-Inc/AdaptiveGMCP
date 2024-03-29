@@ -2,15 +2,12 @@
 #' @param Method 'CombPValue': for combining p-values method, 'CER': for Conditional Error method.
 #' @param alpha Type-1 error
 #' @param SampleSize integer valued Sample Size(default: 500)
-#' @param TestStatCont Test Statistics for continuous endpoints; options: 't-equal' : for t statistics with equal variance, 't-unequal' : for t statistics with unequal variance, 'z' for z statistics
-#' @param TestStatBin Test Statistics for Binary endpoints; options: 'UnPooled', 'Pooled'
+#' @param TestStat 't-equal' : for t statistics with equal variance, 't-unequal' : for t statistics with unequal variance, 'z' for z statistics
 #' @param FWERControl applicable for CER method only, 'CombinationTest': combined two stage incremental test statistics, 'None': Cumulative test statistics.
 #' @param nArms integer value to specify the number of arms (default: 3)
 #' @param nEps integer value to specify the number of endpoints
-#' @param lEpType list with endpoint types
 #' @param Arms.Mean Numeric list to specify the arm-wise mean for each endpoint; Note: The first input is for control arm and the rest are for the treatments.
 #' @param Arms.std.dev Numeric list to specify the arm-wise standard deviation for each endpoint; Note: The first input is for control arm and the rest are for the treatments.
-#' @param Arms.Prop Numeric list to specify the arm-wise proportions for each endpoint; Note: The first input is for control arm and the rest are for the treatments.
 #' @param Arms.alloc.ratio Numeric Vector to specify the arm-wise allocation ratio; Note: The first input is for control arm and the rest are for the treatments.
 #' @param EP.Corr correlation matrix for the endpoints(Normal)
 #' @param WI Vector of Initial Weights for Global Null; Note: Hypotheses will follow the order of Endpoints and Treatments as given in 'Arms.Mean' and 'Arms.std.dev' inputs e.g.: If 'Arms.Mean' are given in the format list('EP1'=c(ctr_mean, trt1_mean, trt2_mean), 'EP2'=c(ctr_mean, trt1_mean, trt2_mean)) then the four hypotheses will be H1 = (Trt1 vs Ctr for EP1), H2 = (Trt2 vs Ctr for EP1), H3 = (Trt1 vs Ctr for EP2), H4 = (Trt2 vs Ctr for EP2), The initial weights and the transition matrix will follow the order of hypothesis accordingly as (H1,H2,H3,H4)
@@ -35,23 +32,17 @@
 #' @param Parallel Logical; TRUE: Parallel computations
 #' @example ./internalData/MAMSMEP_Simulation_Example.R
 #' @export
-simMAMSMEP <- function(
+simMAMSMEP_CONT <- function(
     Method = 'CombPValue',
     alpha = 0.025,
     SampleSize = 500,
-    TestStatCont = 't-equal',
-    TestStatBin = 'UnPooled',
-    FWERControl = 'None',
+    TestStat = 't-equal',
+    FWERControl = 'CombinationTest',
     nArms = 3,
     nEps  = 2,
-    lEpType = list('EP1'='Continuous',
-                   'EP2'='Binary'),
     Arms.Mean = list('EP1' = c(0,0.4,0.3),
-                     'EP2' = NA),
-    Arms.std.dev = list('EP1' = c(1,1,1),
-                        'EP2' = NA),
-    Arms.Prop = list('EP1' = NA,
-                     'EP2' = c(0.2,0.35,0.45)),
+                     'EP2' = c(0.1,0.45,0.25)),
+    Arms.std.dev = list('EP1' = c(1,1,1), 'EP2' = c(1,1,1)),
     Arms.alloc.ratio = c(1,1,1),
     EP.Corr = matrix(c(1,0.5,
                        0.5,1),
@@ -81,26 +72,25 @@ simMAMSMEP <- function(
     Parallel = TRUE
 )
 {
+  EpType <- "Continuous"
   Parallel <- Parallel
   TailType <- 'RightTail'       ##Default Right
   UpdateStrategy <- F           ##Not implemented yet
   des.type <- 'MAMSMEP'         ##Multi-Arm Multi-Stage Multi-EndPoints
 
-
   #Object to run Simulations
   gmcpSimObj <<- list(
     #Methodology
-    'Method' = Method,
+    'Method' = Method,                        'EpType'=EpType,
 
     #test parameters
-    'TestStatCont' = TestStatCont,             'alpha' = alpha,
+    'TestStat' = TestStat,                     'alpha' = alpha,
     'nArms'= nArms,                            'nLooks'= length(info_frac),
     'nEps'= nEps,                              'nHypothesis' = nEps*(nArms-1),
     'TailType' = TailType,                     'des.type' = des.type,
     'Max_SS' = SampleSize,                     'test.type' = test.type,
     'IntialWeights'=WI,                        'G' = G,
     'Correlation' = NA,                        'FWERControl' = FWERControl,
-    'lEpType'=lEpType,                         'TestStatBin' = TestStatBin,
 
     #Boundary
     'InfoFrac' = info_frac,                    'typeOfDesign'=typeOfDesign,
@@ -111,8 +101,7 @@ simMAMSMEP <- function(
     #Response Generation
     'Arms.Mean' = Arms.Mean,                   'Arms.std.dev' = Arms.std.dev,
     'Arms.alloc.ratio' = Arms.alloc.ratio,     'Arms.alloc.ratio' = Arms.alloc.ratio,
-    'EP.Corr' = EP.Corr,                       'Arms.Prop'=Arms.Prop,
-    'prop.ctr' = lapply(Arms.Prop, function(x){x[2]}),
+    'EP.Corr' = EP.Corr,
 
     #Selection
     'SelectEndPoint'= SelectEndPoint,         'Selection' = Selection,
@@ -141,7 +130,7 @@ simMAMSMEP <- function(
     return(FailedLogs)
     stop('Input Error')
   }
-  out <- MAMSMEP_sim2(gmcpSimObj)
+  out <- mnMAMSMEP_sim2(gmcpSimObj)
   if(plotGraphs){
     #out$iniGraph
     return(out$DetailOutTabs)
