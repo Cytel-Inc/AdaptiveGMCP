@@ -72,8 +72,7 @@ simMAMSMEP_CONT <- function(
     Parallel = TRUE
 )
 {
-  EpType <- "Continuous"
-  Parallel <- Parallel
+  EpType <- lapply(1:nEps, function(i){"Continuous"})
   TailType <- 'RightTail'       ##Default Right
   UpdateStrategy <- F           ##Not implemented yet
   des.type <- 'MAMSMEP'         ##Multi-Arm Multi-Stage Multi-EndPoints
@@ -130,7 +129,7 @@ simMAMSMEP_CONT <- function(
     return(FailedLogs)
     stop('Input Error')
   }
-  out <- mnMAMSMEP_sim2(gmcpSimObj)
+  out <- MAMSMEP_sim2(gmcpSimObj)
   if(plotGraphs){
     #out$iniGraph
     return(out$DetailOutTabs)

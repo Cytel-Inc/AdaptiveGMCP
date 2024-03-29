@@ -4,7 +4,7 @@
 #' @param nArms Number of Arms
 #' @param nEps Number of End points
 #' @param SampleSize Plan Sample Size
-#' @param sigma Arm-Wise sigma for each endpoint(for EpType = "Continuous")
+#' @param sigma Arm-Wise sigma for each endpoint
 #' @param allocRatio Arm-Wise allocation ratio
 #' @param WI Vector of Initial Weights for Global Null(default = \code{rep(1/4,4)})
 #' @param G  Transition Matrix (default = \code{matrix(c(0,1/3,1/3,1/3,  1/3,0,1/3,1/3, 1/3,1/3,0,1/3, 1/3,1/3,1/3,0),nrow = 4)})
@@ -41,7 +41,7 @@ adaptGMCP_CONT_CER <- function(
   # stopifnot('Number of End points must be >= 1',length(nEps) < 1)
 
   #############################
-  EpType <- "Continuous"
+  EpType <- lapply(1:nEps, function(i){"Continuous"})
   TailType <- 'RightTail'       ##Default Right
   Hypothesis <- 'CommonControl' ##Default CommonControl
 
@@ -83,7 +83,7 @@ adaptGMCP_CONT_CER <- function(
   #info to run per Stage-Wise analysis
   mcpObj <- list(
     'CurrentLook'= NA,
-    'EpType' = EpType,
+    'lEpType' = EpType,
     'IntialHypothesis'=GlobalIndexSet,
     'test.type' = test.type,
     'IndexSet'= GlobalIndexSet,

@@ -17,14 +17,12 @@ perLookTest <- function(Arms.SS.Incr,SummStat,mcpObj)
         if(!all(PlanSSLk == CurrSSLk,na.rm = T))
         {
           #if the sample size is altered the correlation needs to be recomputed
-          if(mcpObj$EpType == 'Continuous'){
-            mcpObj$Correlation <- getPlanCorrelation(nHypothesis = mcpObj$nHypothesis,
-                                                     SS_Incr = CurrSSLk,
-                                                     Arms.std.dev = mcpObj$Arms.std.dev,
-                                                     test.type = mcpObj$test.type,EpType = mcpObj$EpType)[[1]]
-          }else if(mcpObj$mcpObj$EpType == 'Binary'){
-            stop("WIP")
-          }
+          mcpObj$Correlation <-getPlanCorrelation(nHypothesis = mcpObj$nHypothesis,
+                                                  SS_Incr =  CurrSSLk,
+                                                  Arms.std.dev = mcpObj$Arms.std.dev,
+                                                  test.type = mcpObj$test.type,
+                                                  EpType = mcpObj$lEpType,
+                                                  prop.ctr = mcpObj$prop.ctr)[[1]]
 
         }else
         {

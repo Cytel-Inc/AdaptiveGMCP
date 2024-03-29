@@ -5,7 +5,7 @@
 #------------------ -
 #Perform iterative simulation for Multi-Arm designs
 #------------------ -
-mnMAMSMEP_sim2 <- function(gmcpSimObj)
+MAMSMEP_sim2 <- function(gmcpSimObj)
 {
   # library(foreach)
   # library(doParallel)
@@ -184,14 +184,20 @@ getPreSimObjs <- function(gmcpSimObj)
 
   #----------------------------------------------------------------------------
   ################### Arms-EPs-Hypotheses Mapping #####################################
-  HypoMap <- getHypoMap(des.type = gmcpSimObj$des.type,
+  HypoMap <- getHypoMap2(des.type = gmcpSimObj$des.type,
              nHypothesis = gmcpSimObj$nHypothesis,
              nEps = gmcpSimObj$nEps,
-             nArms = gmcpSimObj$nArms)
+             nArms = gmcpSimObj$nArms,
+             lEpType = gmcpSimObj$lEpType)
+
 
   #------------------------------------------------------------------------------
   #################### Identify True Null based on given Response #######################
-  TrueNull <- checkTrueNull2(HypoMap = HypoMap, Arms.Mean = gmcpSimObj$Arms.Mean)
+  #TrueNull <- checkTrueNull2(HypoMap = HypoMap, Arms.Mean = gmcpSimObj$Arms.Mean)
+  TrueNull <- checkTrueNull3(HypoMap = HypoMap,
+                             Arms.Mean = gmcpSimObj$Arms.Mean,
+                             Arms.Prop = gmcpSimObj$Arms.Prop)
+
 
   #---------------------------------------------------------------------------------------
   #################### Weights for all intersection hypothesis ##########################
@@ -233,16 +239,12 @@ getPreSimObjs <- function(gmcpSimObj)
 
     #----------------------------------------------------------------------------------
     ######################Get the stage-wise incremental Correlation####################
-    if(gmcpSimObj$EpType == "Continuous"){
-      PlanCorrelation <- getPlanCorrelation(nHypothesis = gmcpSimObj$nHypothesis,
-                                            SS_Incr = planSSIncr,
-                                            Arms.std.dev = gmcpSimObj$Arms.std.dev,
-                                            test.type = gmcpSimObj$test.type,
-                                            EpType = gmcpSimObj$EpType)
-    }else if(gmcpSimObj$EpType == "Binary")
-    {
-      stop("WIP")
-    }
+    PlanCorrelation <- getPlanCorrelation(nHypothesis = gmcpSimObj$nHypothesis,
+                                          SS_Incr = planSSIncr,
+                                          Arms.std.dev = gmcpSimObj$Arms.std.dev,
+                                          test.type = gmcpSimObj$test.type,
+                                          EpType = gmcpSimObj$lEpType,
+                                          prop.ctr = gmcpSimObj$prop.ctr)
 
     #----------------------------------------------------------------------------------
     PreSimObj <- list(
@@ -261,15 +263,11 @@ getPreSimObjs <- function(gmcpSimObj)
     ########Computation of covariance matrix##############
     if(gmcpSimObj$test.type == 'Partly-Parametric' || gmcpSimObj$test.type == 'Parametric')
     {
-      if(gmcpSimObj$EpType == "Continuous"){
-        Sigma <- getSigma(SS_Cum = planSS$CumulativeSamples,
-                          sigma = gmcpSimObj$Arms.std.dev,
-                          allocRatio = gmcpSimObj$Arms.alloc.ratio,
-                          EpType = gmcpSimObj$EpType)
-
-      }else if(gmcpSimObj$EpType == "Binary"){
-        stop("WIP")
-      }
+      Sigma <- getSigma(SS_Cum = planSS$CumulativeSamples,
+                        sigma = gmcpSimObj$Arms.std.dev,
+                        allocRatio = gmcpSimObj$Arms.alloc.ratio,
+                        EpType = gmcpSimObj$lEpType,
+                        prop.ctr = gmcpSimObj$prop.ctr)
 
     }else
     {

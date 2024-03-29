@@ -130,3 +130,207 @@ No traceback available
 No traceback available 
 [1] "Error in perLookTest"
 No traceback available 
+starting worker pid=4652 on localhost:11776 at 18:15:10.732
+starting worker pid=13440 on localhost:11776 at 18:15:11.465
+starting worker pid=15076 on localhost:11776 at 18:15:11.977
+starting worker pid=18116 on localhost:11776 at 18:15:12.458
+starting worker pid=4688 on localhost:11776 at 18:15:13.057
+starting worker pid=13784 on localhost:11776 at 18:15:13.611
+starting worker pid=2560 on localhost:11776 at 18:15:14.381
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1][1] "Error in perLookTest" "Error in perLookTest"
+No traceback available 
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+ze(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+starting worker pid=15724 on localhost:11112 at 11:32:52.194
+starting worker pid=4632 on localhost:11112 at 11:32:52.433
+starting worker pid=2484 on localhost:11112 at 11:32:52.676
+starting worker pid=7124 on localhost:11112 at 11:32:52.929
+starting worker pid=18004 on localhost:11112 at 11:32:53.151
+starting worker pid=15072 on localhost:11112 at 11:32:53.371
+starting worker pid=10324 on localhost:11112 at 11:32:53.592
+[1] "Error in getPerLookTestStatDOM"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Execution halted
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Execution halted
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+starting worker pid=12348 on localhost:11112 at 11:33:37.917
+starting worker pid=18768 on localhost:11112 at 11:33:38.143
+starting worker pid=17908 on localhost:11112 at 11:33:38.375
+starting worker pid=6140 on localhost:11112 at 11:33:38.606
+starting worker pid=11100 on localhost:11112 at 11:33:38.828
+starting worker pid=14040 on localhost:11112 at 11:33:39.057
+starting worker pid=2988 on localhost:11112 at 11:33:39.281
+[1] "Error in getPerLookTestStatDOM"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Execution halted
+ze(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Execution halted
+starting worker pid=4248 on localhost:11521 at 16:39:53.720
+starting worker pid=11840 on localhost:11521 at 16:39:53.973
+starting worker pid=2604 on localhost:11521 at 16:39:54.205
+starting worker pid=15456 on localhost:11521 at 16:39:54.427
+starting worker pid=18600 on localhost:11521 at 16:39:54.648
+starting worker pid=18744 on localhost:11521 at 16:39:54.866
+starting worker pid=4284 on localhost:11521 at 16:39:55.086
+[1][1] "Error in genIncrLookSummaryDOM" "Error in genIncrLookSummaryDOM"
+No traceback available 
+[1] "Error in genIncrLookSummaryDOM"
+] "Error in genIncrLookSummaryDOM"
+[1] "Error in genIncrLookSummaryDOM"
+No traceback available 
+No traceback available 
+No traceback available 
+[1] "Error in getPerLookTestStatDOM" "Error in getPerLookTestStatDOM"
+
+No traceback available 
+[1] "Error in getPerLookTestStatDOM"
+[1][1] "Error in getPerLookTestStatDOM"
+Error in getPerLookTestStatDOM"No traceback available [1][1]rror in perLookTest"No traceback available "Error in perLookTest" 
+
+No traceback available 
+ traceback available 
+
+[1] "Error in genIncrLookSummaryDOM"
+[1] "Error in perLookTest"
+No traceback available No traceback available 
+
+] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in getPerLookTestStatDOM"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+ze(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+starting worker pid=17412 on localhost:11521 at 18:04:42.524
+starting worker pid=15200 on localhost:11521 at 18:04:42.771
+starting worker pid=1880 on localhost:11521 at 18:04:43.033
+starting worker pid=9788 on localhost:11521 at 18:04:43.297
+starting worker pid=11096 on localhost:11521 at 18:04:43.530
+starting worker pid=13228 on localhost:11521 at 18:04:43.781
+starting worker pid=7188 on localhost:11521 at 18:04:44.026
+[1] "Error in genIncrLookSummaryDOM"
+[1] "Error in genIncrLookSummaryDOM"
+No traceback available 
+No traceback available 
+[1] "Error in genIncrLookSummaryDOM"
+No traceback available 
+[1] "Error in getPerLookTestStatDOM"
+No traceback available 
+[1] "Error in getPerLookTestStatDOM"
+No traceback available 
+[1] "Error in getPerLookTestStatDOM"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 1]
+[1] "Error in genIncrLookSummaryDOM"
+ "Error in perLookTest"
+No traceback availableNo traceback available
+ 
+ "Error in genIncrLookSummaryDOM"
+[1] "Error in perLookTest"
+No traceback available 
+No traceback available 
+[1] "Error in genIncrLookSummaryDOM"
+No traceback available 
+[1] "Error in getPerLookTestStatDOM"
+No traceback available 
+[1] "Error in getPerLookTestStatDOM"
+No traceback available 
+[1] "Error in getPerLookTestStatDOM"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 
+[1] "Error in genIncrLookSummaryDOM"
+No traceback available 
+[1] "Error in getPerLookTestStatDOM"
+No traceback available 
+[1] "Error in perLookTest"
+No traceback available 

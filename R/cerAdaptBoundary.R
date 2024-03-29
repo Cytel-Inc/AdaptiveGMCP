@@ -19,7 +19,7 @@ adaptBdryCER <- function(mcpObj)
   if(mcpObj$test.type == 'Partly-Parametric' || mcpObj$test.type == 'Parametric')
   {
     Stage2Sigma <- getStage2Sigma(nHypothesis = nHypothesis,
-                                  EpType = mcpObj$EpType,
+                                  EpType = mcpObj$lEpType,
                                   nLooks = nLooks,
                                   Sigma = mcpObj$Stage1Obj$Sigma,
                                   AllocSampleSize = mcpObj$AllocSampleSize,
@@ -208,6 +208,10 @@ getAdaptBdry <- function(J,w1,w2,a2,a1,p1,test.type,HypoMap,
           SingleParmOut <- getStage2CondNParamBdry(a1=a1[pGrpMod],p1=p1[pGrpMod],
                                               v=w2[pGrpMod],BJ=cerParam,SS1=SS1Mod, SS2=SS2Mod)
 
+          # Alternative approch to compute the boundary
+          # alternative <- getStage2CondNParamBdry1Hypo(p1=p1[pGrpMod],v=w2[pGrpMod],BJ=cerParam,
+          #                                             SS1=SS1Mod, SS2=SS2Mod)
+
           Stage2AdjBdry[pGrpMod] <- SingleParmOut$Stage2AdjBdry
           ScaleWeights <- c(ScaleWeights, SingleParmOut$adjWeights)
 
@@ -248,6 +252,14 @@ getAdaptBdry <- function(J,w1,w2,a2,a1,p1,test.type,HypoMap,
                                           BJ=cerNParam,
                                           SS1=SS1Mod,
                                           SS2=SS2Mod)
+      # Alternative approch to compute the boundary
+      # if(length(NPGrpsMod)==1){
+      #   alternative <- getStage2CondNParamBdry1Hypo(p1=p1[NPGrpsMod],
+      #                                               v=w2[NPGrpsMod],
+      #                                               BJ=cerNParam,
+      #                                               SS1=SS1Mod,
+      #                                               SS2=SS2Mod)
+      # }
 
       Stage2AdjBdry[NPGrpsMod] <- nParmOut$Stage2AdjBdry
       ScaleWeights <- c(ScaleWeights, nParmOut$adjWeights)
@@ -306,7 +318,7 @@ getHypoSS <- function(SS, HypoMap)
   SS_H <- lapply(1:nrow(SS), function(j)
     {
     unlist(lapply(1:nrow(HypoMap), function(i){
-      sum(SS[j,][as.numeric(HypoMap[i, 3:4])],na.rm = T)
+      sum(SS[j,][as.numeric(HypoMap[i, c('Control','Treatment')])],na.rm = T)
     }))
   })
   SS_H
