@@ -1,7 +1,3 @@
-
-
-
-test_sigma <- function(sigma)
-{
+test_sigma <- function(sigma) {
   len
 }

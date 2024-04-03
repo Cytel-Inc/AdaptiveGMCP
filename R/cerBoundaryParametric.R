@@ -1,4 +1,3 @@
-
 ########### Boundary Computation Parametric Method ###########
 #------------------------------------------------------------------------- -
 ########### probability of crossing the boundary at stage 1##############
@@ -9,11 +8,12 @@
 # Returns: The Probability of rejecting in atleast one primary hypothesis at stage1
 #------------------------------------------------------------------------- -
 #' @export
-exitProbStage1 <- function(gIDX, hIDX, cJ1, wJ, Sigma, Scale, underNull=TRUE)
-{
-  #Make Seed restricted to local##
+exitProbStage1 <- function(gIDX, hIDX, cJ1, wJ, Sigma, Scale, underNull = TRUE) {
+  # Make Seed restricted to local##
   old <- .Random.seed
-  on.exit( { .Random.seed <<- old } )
+  on.exit({
+    .Random.seed <<- old
+  })
   set.seed(200295)
   #################################
 
@@ -25,38 +25,32 @@ exitProbStage1 <- function(gIDX, hIDX, cJ1, wJ, Sigma, Scale, underNull=TRUE)
   sigmaS <- SigmaS[[gIDX]]
   infoMatrix <- InfoMatrix[[gIDX]]
 
-  nhyp <- length(wJ); #Number of hypothesis
-  ngrps <- length(SigmaZ) #number of parametric groups
+  nhyp <- length(wJ) # Number of hypothesis
+  ngrps <- length(SigmaZ) # number of parametric groups
 
-  sIDX <- rep(1:(nhyp/ngrps),ngrps)[hIDX] #stage-1 sigma index
+  sIDX <- rep(1:(nhyp / ngrps), ngrps)[hIDX] # stage-1 sigma index
 
-  if(Scale=='Z')
-  {
-    if(underNull)
-    {
+  if (Scale == "Z") {
+    if (underNull) {
       mu_z <- rep(0, length(sIDX))
     }
-    sigma <- sigmaZ[sIDX,sIDX]
-    upper <- qnorm(1-wJ[hIDX]*cJ1)
+    sigma <- sigmaZ[sIDX, sIDX]
+    upper <- qnorm(1 - wJ[hIDX] * cJ1)
     lower <- -Inf
-    1- mvtnorm::pmvnorm(
-      lower = lower,upper = upper,mean = mu_z,sigma = sigma
+    1 - mvtnorm::pmvnorm(
+      lower = lower, upper = upper, mean = mu_z, sigma = sigma
     )[1]
-
-  }else if(Scale =='Score')
-  {
-    if(underNull)
-    {
+  } else if (Scale == "Score") {
+    if (underNull) {
       mu_s <- rep(0, length(sIDX))
     }
-    sigma <- sigmaS[sIDX,sIDX]
-    upper <- qnorm(1-wJ[hIDX]*cJ1)*sqrt(infoMatrix[sIDX,1])
+    sigma <- sigmaS[sIDX, sIDX]
+    upper <- qnorm(1 - wJ[hIDX] * cJ1) * sqrt(infoMatrix[sIDX, 1])
     lower <- -Inf
-    1- mvtnorm::pmvnorm(
-      lower = lower,upper = upper,mean = mu_s,sigma = sigma
+    1 - mvtnorm::pmvnorm(
+      lower = lower, upper = upper, mean = mu_s, sigma = sigma
     )[1]
   }
-
 }
 
 #------------------------------------------------------------------------- -
@@ -67,13 +61,12 @@ exitProbStage1 <- function(gIDX, hIDX, cJ1, wJ, Sigma, Scale, underNull=TRUE)
 # Returns: The critical point cJ1 for testing HJ at stage1
 #------------------------------------------------------------------------- -
 #' @export
-getBdryStage1 <- function(gIDX, hIDX, alpha1, wJ, Sigma, Scale)
-{
-  minbdry <- 0; maxbdry <- 1/max(wJ[wJ != 0])
-  bdry1 <-function(x)
-  {
-    extProb <- exitProbStage1(gIDX=gIDX, hIDX=hIDX, cJ1 = x, wJ = wJ, Sigma = Sigma, Scale=Scale, underNull=TRUE)
-    #cat('cJ1 :',x,'extProb:',extProb,'\n')
+getBdryStage1 <- function(gIDX, hIDX, alpha1, wJ, Sigma, Scale) {
+  minbdry <-  0.0000001
+  maxbdry <- 1 / max(wJ[wJ != 0])
+  bdry1 <- function(x) {
+    extProb <- exitProbStage1(gIDX = gIDX, hIDX = hIDX, cJ1 = x, wJ = wJ, Sigma = Sigma, Scale = Scale, underNull = TRUE)
+    # cat('cJ1 :',x,'extProb:',extProb,'\n')
     extProb - alpha1
   }
   uniroot(f = bdry1, interval = c(minbdry, maxbdry), tol = 1E-16)$root
@@ -88,11 +81,12 @@ getBdryStage1 <- function(gIDX, hIDX, alpha1, wJ, Sigma, Scale)
 # Returns: The Probability of rejecting in atleast one primary hypothesis at stage1
 #------------------------------------------------------------------------- -
 #' @export
-exitProbStage2 <- function(gIDX, hIDX,cJ2, cJ1, wJ, Sigma, Scale, underNull=TRUE)
-{
-  #Make Seed restricted to local##
+exitProbStage2 <- function(gIDX, hIDX, cJ2, cJ1, wJ, Sigma, Scale, underNull = TRUE) {
+  # Make Seed restricted to local##
   old <- .Random.seed
-  on.exit( { .Random.seed <<- old } )
+  on.exit({
+    .Random.seed <<- old
+  })
   set.seed(200295)
   #################################
 
@@ -104,21 +98,19 @@ exitProbStage2 <- function(gIDX, hIDX,cJ2, cJ1, wJ, Sigma, Scale, underNull=TRUE
   sigmaS <- SigmaS[[gIDX]]
   infoMatrix <- InfoMatrix[[gIDX]]
 
-  nhyp <- length(wJ); #Number of hypothesis
-  ngrps <- length(SigmaZ) #number of parametric groups
+  nhyp <- length(wJ) # Number of hypothesis
+  ngrps <- length(SigmaZ) # number of parametric groups
 
-  sIDX <- rep(1:(nhyp/ngrps),ngrps)[hIDX] #stage-1 sigma index
+  sIDX <- rep(1:(nhyp / ngrps), ngrps)[hIDX] # stage-1 sigma index
 
-  if(Scale=='Z')
-  {
-    #stage-2 index
-    sigmaIDX <- c(sIDX, sIDX+(ncol(sigmaZ)/2))
-    if(underNull)
-    {
+  if (Scale == "Z") {
+    # stage-2 index
+    sigmaIDX <- c(sIDX, sIDX + (ncol(sigmaZ) / 2))
+    if (underNull) {
       mu_z <- rep(0, length(hIDX))
     }
-    sigma <- sigmaZ[sigmaIDX,sigmaIDX]
-    upper <- c(qnorm(1-wJ[hIDX]*cJ1),qnorm(1-wJ[hIDX]*cJ2))
+    sigma <- sigmaZ[sigmaIDX, sigmaIDX]
+    upper <- c(qnorm(1 - wJ[hIDX] * cJ1), qnorm(1 - wJ[hIDX] * cJ2))
     lower <- -Inf
     prob <- mvtnorm::pmvnorm(
       lower = lower,
@@ -127,20 +119,19 @@ exitProbStage2 <- function(gIDX, hIDX,cJ2, cJ1, wJ, Sigma, Scale, underNull=TRUE
       sigma = sigma,
       Seed = 200295
     )[1]
-    (1-prob) #Under null this should be cummulative alpha for that look
+    (1 - prob) # Under null this should be cummulative alpha for that look
+  } else if (Scale == "Score") {
+    # stage-2 index
+    sigmaIDX <- c(sIDX, sIDX + (ncol(sigmaS) / 2))
 
-  }else if(Scale == 'Score')
-  {
-    #stage-2 index
-    sigmaIDX <- c(sIDX, sIDX+(ncol(sigmaS)/2))
-
-    if(underNull)
-    {
+    if (underNull) {
       mu_s <- rep(0, length(hIDX))
     }
-    sigma <- sigmaS[sigmaIDX,sigmaIDX]
-    upper <- c(qnorm(1-wJ[hIDX]*cJ1)*sqrt(infoMatrix[sIDX,1]),
-               qnorm(1-wJ[hIDX]*cJ2)*sqrt(infoMatrix[sIDX,2]))
+    sigma <- sigmaS[sigmaIDX, sigmaIDX]
+    upper <- c(
+      qnorm(1 - wJ[hIDX] * cJ1) * sqrt(infoMatrix[sIDX, 1]),
+      qnorm(1 - wJ[hIDX] * cJ2) * sqrt(infoMatrix[sIDX, 2])
+    )
     lower <- -Inf
     prob <- mvtnorm::pmvnorm(
       lower = lower,
@@ -148,9 +139,8 @@ exitProbStage2 <- function(gIDX, hIDX,cJ2, cJ1, wJ, Sigma, Scale, underNull=TRUE
       mean = mu_s,
       sigma = sigma
     )[1]
-    (1-prob) #Under null this should be cummulative alpha for that look
+    (1 - prob) # Under null this should be cummulative alpha for that look
   }
-
 }
 
 #------------------------------------------------------------------------- -
@@ -163,14 +153,13 @@ exitProbStage2 <- function(gIDX, hIDX,cJ2, cJ1, wJ, Sigma, Scale, underNull=TRUE
 # Returns: The critical point cJ2 for testing HJ at stage2
 #------------------------------------------------------------------------- -
 #' @export
-getBdryStage2 <- function(gIDX, hIDX,alpha, cJ1, wJ, Sigma,Scale=Scale)
-{
-  minbdry <- 0; maxbdry <- 1/max(wJ[wJ != 0])
-  bdry2 <-function(x)
-  {
-    extProb <- exitProbStage2(gIDX = gIDX, hIDX = hIDX, cJ2 = x, cJ1 = cJ1, wJ = wJ, Sigma = Sigma,Scale = Scale, underNull=TRUE)
-    #cat('cJ2 :',x,'extProb:',extProb,'\n')
-    extProb- alpha
+getBdryStage2 <- function(gIDX, hIDX, alpha, cJ1, wJ, Sigma, Scale = Scale) {
+  minbdry <-  0.0000001
+  maxbdry <- 1 / max(wJ[wJ != 0])
+  bdry2 <- function(x) {
+    extProb <- exitProbStage2(gIDX = gIDX, hIDX = hIDX, cJ2 = x, cJ1 = cJ1, wJ = wJ, Sigma = Sigma, Scale = Scale, underNull = TRUE)
+    # cat('cJ2 :',x,'extProb:',extProb,'\n')
+    extProb - alpha
   }
   uniroot(f = bdry2, interval = c(minbdry, maxbdry), tol = 1E-16)$root
 }
@@ -184,27 +173,23 @@ getBdryStage2 <- function(gIDX, hIDX,alpha, cJ1, wJ, Sigma,Scale=Scale)
 # sigmaZ : The co-variance matrix of cummulative z-statistics (2 stages combined)
 # Returns: The critical point cJ2 for testing HJ at stage2
 #------------------------------------------------------------------------- -
-getPlanParmBdry <- function(gIDX, hIDX, alpha, nLooks, info_frac, wJ, Sigma, typeOfDesign,Scale)
-{
+getPlanParmBdry <- function(gIDX, hIDX, alpha, nLooks, info_frac, wJ, Sigma, typeOfDesign, Scale) {
   alpha1 <- rpact::getDesignGroupSequential(
-    kMax = nLooks, alpha = alpha, informationRates = info_frac, typeOfDesign = typeOfDesign)$alphaSpent[1]
+    kMax = nLooks, alpha = alpha, informationRates = info_frac, typeOfDesign = typeOfDesign
+  )$alphaSpent[1]
 
-  if(nLooks ==1)
-  {
-    #Stage-1 boundary
-    cJ1 <- getBdryStage1(gIDX=gIDX, hIDX=hIDX, alpha1=alpha1, wJ=wJ, Sigma=Sigma,Scale=Scale)
-    list('Stage1Bdry' = cJ1*wJ, 'Stage2Bdry'=NA)
-
-  }else if(nLooks == 2)
-  {
-    #Stage-1 boundary
-    cJ1 <- getBdryStage1(gIDX=gIDX, hIDX=hIDX, alpha1=alpha1, wJ=wJ, Sigma=Sigma,Scale=Scale)
-    #Stage-2 boundary
-    cJ2 <- getBdryStage2(gIDX=gIDX, hIDX=hIDX, alpha = alpha,cJ1 = cJ1,wJ=wJ,Sigma=Sigma,Scale=Scale)
-    list('Stage1Bdry' = cJ1*wJ, 'Stage2Bdry' = cJ2*wJ)
-  }else
-  {
-    print('Error in getPlanParmBdry: Boundary Computation is not available for Stages > 2')
+  if (nLooks == 1) {
+    # Stage-1 boundary
+    cJ1 <- getBdryStage1(gIDX = gIDX, hIDX = hIDX, alpha1 = alpha1, wJ = wJ, Sigma = Sigma, Scale = Scale)
+    list("Stage1Bdry" = cJ1 * wJ, "Stage2Bdry" = NA)
+  } else if (nLooks == 2) {
+    # Stage-1 boundary
+    cJ1 <- getBdryStage1(gIDX = gIDX, hIDX = hIDX, alpha1 = alpha1, wJ = wJ, Sigma = Sigma, Scale = Scale)
+    # Stage-2 boundary
+    cJ2 <- getBdryStage2(gIDX = gIDX, hIDX = hIDX, alpha = alpha, cJ1 = cJ1, wJ = wJ, Sigma = Sigma, Scale = Scale)
+    list("Stage1Bdry" = cJ1 * wJ, "Stage2Bdry" = cJ2 * wJ)
+  } else {
+    print("Error in getPlanParmBdry: Boundary Computation is not available for Stages > 2")
   }
 }
 
@@ -221,24 +206,24 @@ getPlanParmBdry <- function(gIDX, hIDX, alpha, nLooks, info_frac, wJ, Sigma, typ
 #------------------------------------------------------------------------- -
 
 
-exitProbStage2Cond <- function(cJ2, p1, w,InfoMatrix,stage2sigmaS,Conditional=TRUE)
-{
-  #Make Seed restricted to local##
+exitProbStage2Cond <- function(cJ2, p1, w, InfoMatrix, stage2sigmaS, Conditional = TRUE) {
+  # Make Seed restricted to local##
   old <- .Random.seed
-  on.exit( { .Random.seed <<- old } )
+  on.exit({
+    .Random.seed <<- old
+  })
   set.seed(200295)
   #################################
 
-  if(Conditional)
-  {
-    upper <-sqrt(InfoMatrix[,2])*qnorm(1-w*cJ2)-sqrt(InfoMatrix[,1])*qnorm(1-p1)
-  }else
-  {
-    upper <-sqrt(InfoMatrix[,2])*qnorm(1-w*cJ2)
+  if (Conditional) {
+    upper <- sqrt(InfoMatrix[, 2]) * qnorm(1 - w * cJ2) - sqrt(InfoMatrix[, 1]) * qnorm(1 - p1)
+  } else {
+    upper <- sqrt(InfoMatrix[, 2]) * qnorm(1 - w * cJ2)
   }
   lower <- -Inf
-  1- mvtnorm::pmvnorm(
-    lower = lower,upper = upper,sigma = stage2sigmaS)[1]
+  1 - mvtnorm::pmvnorm(
+    lower = lower, upper = upper, sigma = stage2sigmaS
+  )[1]
 }
 
 
@@ -250,25 +235,15 @@ exitProbStage2Cond <- function(cJ2, p1, w,InfoMatrix,stage2sigmaS,Conditional=TR
 # Returns: The critical point cJ1 for testing HJ at stage1
 #------------------------------------------------------------------------- -
 #' @export
-getStage2CondParamBdry <- function(cer, p1, w,InfoMatrix,stage2sigmaS,Conditional)
-{
-  minbdry <- 0; maxbdry <- 1/max(w[w != 0])
-  bdryCond <-function(x)
-  {
-
-    exitProb <- exitProbStage2Cond(cJ2 = x, p1 = p1, w = w,InfoMatrix = InfoMatrix
-                                   ,stage2sigmaS=stage2sigmaS,Conditional=Conditional)
+getStage2CondParamBdry <- function(cer, p1, w, InfoMatrix, stage2sigmaS, Conditional) {
+  minbdry <- 0.0000001
+  maxbdry <- 1 / max(w[w != 0])
+  bdryCond <- function(x) {
+    exitProb <- exitProbStage2Cond(
+      cJ2 = x, p1 = p1, w = w, InfoMatrix = InfoMatrix,
+      stage2sigmaS = stage2sigmaS, Conditional = Conditional
+    )
     exitProb - cer
   }
   uniroot(f = bdryCond, interval = c(minbdry, maxbdry), tol = 1E-16)$root
 }
-
-
-
-
-
-
-
-
-
-

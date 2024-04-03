@@ -13,125 +13,129 @@
 #' @example ./internalData/AdaptGMCP_Analysis_Example.R
 #' @export
 adaptGMCP_PC <- function(
-    WI = c(0.5,0.5,0,0),
-    G = matrix(c(0,0.5,0.5,0,
-                 0.5,0,0,0.5,
-                 0,1,0,0,
-                 1,0,0,0),byrow = T, nrow = 4),
-    test.type = 'Partly-Parametric',
+    WI = c(0.5, 0.5, 0, 0),
+    G = matrix(c(
+      0, 0.5, 0.5, 0,
+      0.5, 0, 0, 0.5,
+      0, 1, 0, 0,
+      1, 0, 0, 0
+    ), byrow = T, nrow = 4),
+    test.type = "Partly-Parametric",
     alpha = 0.025,
-    info_frac = c(1/2,1),
+    info_frac = c(1 / 2, 1),
     typeOfDesign = "asOF",
-    Correlation = matrix(c(1,0.5,NA,NA,  0.5,1,NA,NA,  NA,NA,1,0.5, NA,NA,0.5,1),nrow = 4),
+    Correlation = matrix(c(1, 0.5, NA, NA, 0.5, 1, NA, NA, NA, NA, 1, 0.5, NA, NA, 0.5, 1), nrow = 4),
     MultipleWinners = TRUE,
-    Selection=TRUE,
-    UpdateStrategy=TRUE,
-    plotGraphs = TRUE
-)
-{
+    Selection = TRUE,
+    UpdateStrategy = TRUE,
+    plotGraphs = TRUE) {
   D <- length(WI)
   K <- length(info_frac)
-  GlobalIndexSet <- paste("H",1:D, sep ='')
+  GlobalIndexSet <- paste("H", 1:D, sep = "")
 
-  #####################Get the stage-wise p-value boundaries############################
+  ##################### Get the stage-wise p-value boundaries############################
   UseExternal <- T
-  if(UseExternal) #this part of the code can be replaced later with the internal R-codes
-  {
-    des <- rpact::getDesignInverseNormal(kMax = K,alpha = alpha,
-                                         informationRates = info_frac, typeOfDesign = typeOfDesign)
-    Threshold <- des$stageLevels
-    incr_alpha <- c(des$alphaSpent[1], diff(des$alphaSpent))
-    #BdryTab
-    bdryTab <- data.frame('Look'=1:K, 'Information_Fraction'= info_frac,
-                          'Incr_alpha_spent'=incr_alpha,
-                          'ZScale_Eff_Bbry'=des$criticalValues,'PValue_Eff_Bbry'= Threshold)
-  }
+  if (UseExternal) # this part of the code can be replaced later with the internal R-codes
+    {
+      des <- rpact::getDesignInverseNormal(
+        kMax = K, alpha = alpha,
+        informationRates = info_frac, typeOfDesign = typeOfDesign
+      )
+      Threshold <- des$stageLevels
+      incr_alpha <- c(des$alphaSpent[1], diff(des$alphaSpent))
+      # BdryTab
+      bdryTab <- data.frame(
+        "Look" = 1:K, "Information_Fraction" = info_frac,
+        "Incr_alpha_spent" = incr_alpha,
+        "ZScale_Eff_Bbry" = des$criticalValues,
+        "PValue_Eff_Bbry" = Threshold,
+        row.names = NULL
+      )
+    }
   ######################################################################################
 
   ############# Weights for all intersection hypothesis#########################
-  allGraphs <- genWeights(w = WI, g = G, HypothesisName=GlobalIndexSet)
+  allGraphs <- genWeights(w = WI, g = G, HypothesisName = GlobalIndexSet)
   WH <- allGraphs$IntersectionWeights
 
-  #Plot the initial Graph
-  if(plotGraphs)
-  {
-    plotGraph(HypothesisName = GlobalIndexSet,w = WI, G = G, Titel = 'Initial Graph')
+  # Plot the initial Graph
+  if (plotGraphs) {
+    plotGraph(HypothesisName = GlobalIndexSet, w = WI, G = G, Titel = "Initial Graph")
   }
 
   rej_flag_Prev <- rej_flag_Curr <- DropedFlag <- rep(FALSE, D)
-  names(rej_flag_Prev) <- names(rej_flag_Curr) <- names(DropedFlag) <-paste("H",1:D, sep = '')
+  names(rej_flag_Prev) <- names(rej_flag_Curr) <- names(DropedFlag) <- paste("H", 1:D, sep = "")
 
-  if(test.type == 'Bonf') #Using the partly parametric function to perform Bonferroni test
-  {
-    Correlation <- diag(length(WI))
-    Correlation[Correlation==0] = NA
-  }else if(test.type == 'Sidak'||test.type == 'Simes')
-  {
+  if (test.type == "Bonf") # Using the partly parametric function to perform Bonferroni test
+    {
+      Correlation <- diag(length(WI))
+      Correlation[Correlation == 0] <- NA
+    } else if (test.type == "Sidak" || test.type == "Simes") {
     Correlation <- NA
-
-  }else if(test.type == "Dunnett" || test.type == "Partly-Parametric"){
-
+  } else if (test.type == "Dunnett" || test.type == "Partly-Parametric") {
     rownames(Correlation) <- colnames(Correlation) <- GlobalIndexSet
   }
 
 
-  ##############Computation of Inverse normal weights from information fraction########
+  ############## Computation of Inverse normal weights from information fraction########
   info_frac_incr <- c(info_frac[1], diff(info_frac))
 
   W_Norm <- matrix(NA, nrow = K, ncol = K)
-  for(i in 1:nrow(W_Norm))
+  for (i in 1:nrow(W_Norm))
   {
-    for (j in 1:i)W_Norm[i,j] <- sqrt(info_frac_incr[j]/info_frac[i])
+    for (j in 1:i) W_Norm[i, j] <- sqrt(info_frac_incr[j] / info_frac[i])
   }
 
   InvNormWeights <- W_Norm
-  colnames(InvNormWeights) <- paste('W',1:K,sep='')
-  rownames(InvNormWeights) <- paste('Look',1:K,sep='')
+  colnames(InvNormWeights) <- paste("W", 1:K, sep = "")
+  rownames(InvNormWeights) <- paste("Look", 1:K, sep = "")
 
-  W_Norm <- W_Norm[-1,] #Removing the first row
+  W_Norm <- W_Norm[-1, ] # Removing the first row
 
 
-  #info to run per look analysis
-  mcpObj <- list('CurrentLook'= NA,
-                 'IntialWeights'=WI,
-                 'IntialHypothesis'=GlobalIndexSet,
-                 'test.type' = test.type,
-                 'IndexSet'= GlobalIndexSet,
-                 'p_raw' = NA,
-                 'WH_Prev' = WH,
-                 'WH'= WH,
-                 'Correlation' = Correlation,
-                 'WeightTable' = NA,
-                 'AdjPValues' = NA,
-                 'AdjPValueTable' = NA,
-                 'CombinedPValuesTable' = NA,
-                 'W_Norm' = W_Norm,
-                 'CutOff' = NA,
-                 'MultipleWinners'= MultipleWinners,
-                 'rej_flag_Prev'= rej_flag_Prev ,
-                 'rej_flag_Curr'= rej_flag_Curr,
-                 'SelectionLook'= c(),
-                 'SelectedIndex'=NA,
-                 'DropedFlag'=DropedFlag,
-                 'LastLook'=K,
-                 'Modify'=F,
-                 'ModificationLook'=c(),
-                 'newWeights' =NA,
-                 'newG' = NA,
-                 'bdryTab'=bdryTab,
-                 'InvNormWeights'=InvNormWeights,
-                 'allGraphsPrev'=allGraphs,
-                 'allGraphs'=allGraphs
-                 )
+  # info to run per look analysis
+  mcpObj <- list(
+    "CurrentLook" = NA,
+    "IntialWeights" = WI,
+    "IntialHypothesis" = GlobalIndexSet,
+    "test.type" = test.type,
+    "IndexSet" = GlobalIndexSet,
+    "p_raw" = NA,
+    "WH_Prev" = WH,
+    "WH" = WH,
+    "Correlation" = Correlation,
+    "WeightTable" = NA,
+    "AdjPValues" = NA,
+    "AdjPValueTable" = NA,
+    "CombinedPValuesTable" = NA,
+    "W_Norm" = W_Norm,
+    "CutOff" = NA,
+    "MultipleWinners" = MultipleWinners,
+    "rej_flag_Prev" = rej_flag_Prev,
+    "rej_flag_Curr" = rej_flag_Curr,
+    "SelectionLook" = c(),
+    "SelectedIndex" = NA,
+    "DropedFlag" = DropedFlag,
+    "LastLook" = K,
+    "Modify" = F,
+    "ModificationLook" = c(),
+    "newWeights" = NA,
+    "newG" = NA,
+    "bdryTab" = bdryTab,
+    "InvNormWeights" = InvNormWeights,
+    "allGraphsPrev" = allGraphs,
+    "allGraphs" = allGraphs
+  )
 
-  #to Store all look info
+  # to Store all look info
   allInfo <- list()
 
-  look = 1; ContTrial = T
+  look <- 1
+  ContTrial <- T
 
-  while(ContTrial) ## Loop for each Interim Analysis
+  while (ContTrial) ## Loop for each Interim Analysis
   {
-    Prev_mcpObj <- mcpObj #to store inputs before modification
+    Prev_mcpObj <- mcpObj # to store inputs before modification
 
     mcpObj$CurrentLook <- look
     p_raw <- getRawPValues(mcpObj) ## User Input raw p-values
@@ -140,88 +144,89 @@ adaptGMCP_PC <- function(
     mcpObj$CutOff <- Threshold[look]
     mcpObj <- PerLookMCPAnalysis(mcpObj)
 
-    #Pre-computation for the next look
+    # Pre-computation for the next look
     mcpObj$rej_flag_Prev <- mcpObj$rej_flag_Curr
 
-    #Print Look-wise results in the console
+    # Print Look-wise results in the console
     ShowResults(mcpObj)
 
     mcpObj$WH_Prev <- mcpObj$WH
 
-    if(plotGraphs) #Plot after Stage-wise analysis
-    {
-      HypothesisName <- mcpObj$allGraphs$HypothesisName
-      HypoIDX <- get_numeric_part(HypothesisName)
-      activeStatus <- !unlist(mcpObj$rej_flag_Curr[HypoIDX])
-      graphIDX <- which(mcpObj$allGraphs$IntersectIDX == paste(as.integer(activeStatus),collapse = ''))
+    if (plotGraphs) # Plot after Stage-wise analysis
+      {
+        HypothesisName <- mcpObj$allGraphs$HypothesisName
+        HypoIDX <- get_numeric_part(HypothesisName)
+        activeStatus <- !unlist(mcpObj$rej_flag_Curr[HypoIDX])
+        graphIDX <- which(mcpObj$allGraphs$IntersectIDX == paste(as.integer(activeStatus), collapse = ""))
 
-      if(length(graphIDX)==0)
-      {
-        nodes <- edges <- NULL
-      }else
-      {
-        nodes <- mcpObj$allGraphs$IntersectionWeights[graphIDX,
-                                                      grep('Weight', names(mcpObj$allGraphs$IntersectionWeights))]
-        edges <- mcpObj$allGraphs$Edges[[graphIDX]]
+        if (length(graphIDX) == 0) {
+          nodes <- edges <- NULL
+        } else {
+          nodes <- mcpObj$allGraphs$IntersectionWeights[
+            graphIDX,
+            grep("Weight", names(mcpObj$allGraphs$IntersectionWeights))
+          ]
+          edges <- mcpObj$allGraphs$Edges[[graphIDX]]
+        }
+        plotGraph(
+          HypothesisName = HypothesisName,
+          w = unlist(nodes),
+          G = edges,
+          activeStatus = activeStatus,
+          Titel = paste("Graph After Stage ", mcpObj$CurrentLook, " analysis")
+        )
       }
-      plotGraph(HypothesisName = HypothesisName,
-                w = unlist(nodes),
-                G = edges,
-                activeStatus = activeStatus,
-                Titel = paste('Graph After Stage ', mcpObj$CurrentLook,' analysis'))
-    }
 
     # Choice to proceed to next look or start over
     trialTermUserInput <- terminateTrial(mcpObj)
 
-    if(trialTermUserInput == 'y') #proceed to next look
-    {
-      # Selection for next look
-      if(Selection & (look< K))
+    if (trialTermUserInput == "y") # proceed to next look
       {
-        mcpObj <- do_Selection(mcpObj)
+        # Selection for next look
+        if (Selection & (look < K)) {
+          mcpObj <- do_Selection(mcpObj)
 
-        if(plotGraphs) #Plot after selection
-        {
-          HypothesisName <- mcpObj$allGraphs$HypothesisName
-          HypoIDX <- get_numeric_part(HypothesisName)
-          ActiveIDX <-  get_numeric_part(mcpObj$IndexSet)
-          activeStatus <- rep(F,length(HypothesisName))
-          activeStatus[which(HypoIDX %in% ActiveIDX)] <- T
-          graphIDX <- which(mcpObj$allGraphs$IntersectIDX == paste(as.integer(activeStatus),collapse = ''))
+          if (plotGraphs) # Plot after selection
+            {
+              HypothesisName <- mcpObj$allGraphs$HypothesisName
+              HypoIDX <- get_numeric_part(HypothesisName)
+              ActiveIDX <- get_numeric_part(mcpObj$IndexSet)
+              activeStatus <- rep(F, length(HypothesisName))
+              activeStatus[which(HypoIDX %in% ActiveIDX)] <- T
+              graphIDX <- which(mcpObj$allGraphs$IntersectIDX == paste(as.integer(activeStatus), collapse = ""))
 
-          nodes <- mcpObj$allGraphs$IntersectionWeights[graphIDX,
-                                                        grep('Weight', names(mcpObj$allGraphs$IntersectionWeights))]
-          edges <- mcpObj$allGraphs$Edges[[graphIDX]]
-          plotGraph(HypothesisName = HypothesisName,
-                    w = unlist(nodes),
-                    G = edges,
-                    activeStatus = activeStatus,
-                    Titel = paste('Graph After Selection'))
+              nodes <- mcpObj$allGraphs$IntersectionWeights[
+                graphIDX,
+                grep("Weight", names(mcpObj$allGraphs$IntersectionWeights))
+              ]
+              edges <- mcpObj$allGraphs$Edges[[graphIDX]]
+              plotGraph(
+                HypothesisName = HypothesisName,
+                w = unlist(nodes),
+                G = edges,
+                activeStatus = activeStatus,
+                Titel = paste("Graph After Selection")
+              )
+            }
         }
-      }
 
-      #Modify the weights and testing strategy
-      if(UpdateStrategy & (look< K) & (length(mcpObj$IndexSet)>1))
+        # Modify the weights and testing strategy
+        if (UpdateStrategy & (look < K) & (length(mcpObj$IndexSet) > 1)) {
+          mcpObj <- do_modifyStrategy(mcpObj, showExistingStrategy = F)
+        }
+
+        # Modify the correlation for parametric tests
+        if (test.type == "Dunnett" || test.type == "Partly-Parametric") {
+          mcpObj <- do_modifyCorrelation(mcpObj)
+        }
+        look <- look + 1
+      } else if (trialTermUserInput == "n") # terminate the trial
       {
-        mcpObj <- do_modifyStrategy(mcpObj,showExistingStrategy = F)
-      }
-
-      #Modify the correlation for parametric tests
-      if(test.type == "Dunnett" || test.type == "Partly-Parametric")
+        break
+      } else if (trialTermUserInput == "s") # Start over from the last look inputs
       {
-        mcpObj <- do_modifyCorrelation(mcpObj)
+        mcpObj <- Prev_mcpObj
       }
-      look <- look + 1
-
-    }else if(trialTermUserInput == 'n') #terminate the trial
-    {
-      break
-
-    }else if(trialTermUserInput == 's') #Start over from the last look inputs
-    {
-      mcpObj <- Prev_mcpObj
-    }
     #------------------End of the while loop------------------------#
   }
 }
