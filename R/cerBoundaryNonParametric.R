@@ -1,5 +1,4 @@
 # Function to compute the Stage-wise planned boundaries for all intersection
-#' @export
 getPlanNonParmBdry <- function(nLooks, sig_level, info_frac, typeOfDesign = "asOF") {
   if (sig_level != 0) {
     des <- rpact::getDesignGroupSequential(

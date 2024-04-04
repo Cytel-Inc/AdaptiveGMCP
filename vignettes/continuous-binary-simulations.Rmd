@@ -1,0 +1,85 @@
+---
+title: "Normal Binary Simulations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Normal Binary Simulations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Notations
+
+$i = 0$ denote the control arm and $i = 1,2,...,k$ are representing the k treatment arms.
+
+$j = 1,2$ is the index for the two stages.
+
+$e = 1,2,...,m$ is the index for the endpoints.
+
+$\mu_{i}^{e^c}$, $\sigma_{i}^e$ are the mean and standard deviations for the $i^{th}$ arm in $e^c$ th continuous endpoint.
+
+$\pi_{i}^{e^d}$ are the proportion for the $i^{th}$ arm in $e^d$ th discrete endpoint.
+
+$n_{i,(j)}$ : Incremental sample size for the $i^{th}$ arm in $j^{th}$ stage. for all $i=0,1,...k$ and $j=1,2$
+
+$\bar{x}_{i,(j)}^{e^c}$ : Sample mean for the $i^{th}$ arm based $j^{th}$ stage responses for the $e^c$ th continuous endpoint.
+
+$\bar{\pi}_{i,(j)}^{e^d}$ : Sample proportion for the $i^{th}$ arm based $j^{th}$ stage responses for the $e^d$ th discrete endpoint.
+
+## Summary Statistics
+
+### Estimate of Treatment Difference $\delta$
+
+**For Continuous difference of means** $$\delta_{i,(j)}^{e^c} = \bar{x}_{i,(j)}^{e^c} - \bar{x}_{0,(j)}^{e^c}$$
+
+**For Binary difference of proportion** $$\delta_{i,(j)}^{e^d} = \bar{\pi}_{i,(j)}^{e^d} - \bar{\pi}_{0,(j)}^{e^d}$$
+
+### Estimate of arm-wise standard deviation $\sigma$
+
+**For Continuous difference of means**
+
+$$ s_{i,(j)}^{e^c} = \sqrt{\frac{1}{n_{i,(j)-1}} \sum_{l=1}^{n_{i,(j)}}{(x_{i,l}^{e^c} - \bar{x}_{i,(j)}^{e^c})}}$$
+
+Arm-Wise Pooled Standard Deviation
+
+$$s_{p,(j)}^{e^c} = \sqrt{\frac{\sum_{i=0}^k (n_{i,(j)}-1) s_{i,(j)}^{{e^c}^2}}{\sum_{i=0}^k (n_{i,(j)}-1)}}$$
+
+**For Binary difference of proportion** $$ s_{i,(j)}^{e^d} = \sqrt{\frac{\bar{\pi}_{i,(j)}^{e^d}*(1-\bar{\pi}_{i,(j)}^{e^d})}{n_{i,(j)}}}$$
+
+Pooled proportion between control and $i^{th}$ treatment arm
+
+$$\pi_{p,(j)} = \frac{\pi_{i,(j)}^{e^d}*n_{i,(j)} + \pi_{0,(j)}^{e^d}*n_{0,(j)}}{n_{i,(j)} + n_{0,(j)}}$$
+
+### Computations of Raw p-value
+
+**For Continuous difference of means**
+
+The following table describes the process of computing the raw p-value to test the $i^{th}$ treatment arm ( for any $i=1,2,...,k$) against the control arm belonging the continuous endpoint $e^c$ based on the $j^{th}$ stage responses.
+
+|                        | Z                                                                                        | t-unequal                                                                              | t-equal                                                          |
+|:-----------------------|:-----------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------|:-----------------------------------------------------------------|
+| $delta$                | $\delta_{i,(j)}^{e^c}$                                                                   | $\delta_{i,(j)}^{e^c}$                                                                 | $\delta_{i,(j)}^{e^c}$                                           |
+| Standard Error(SE)     | $\sqrt{\frac{\sigma_{i}^{{e^c}^2}}{n_{i,(j)}} + \frac{\sigma_{0}^{{e^c}^2}}{n_{0,(j)}}}$ | $\sqrt{\frac{s_{i,(j)}^{{e^c}^2}}{n_{i,(j)}} + \frac{s_{0,(j)}^{{e^c}^2}}{n_{0,(j)}}}$ | $s_{p}^{{e^c}} \sqrt{\frac{1}{n_{i,(j)}} + \frac{1}{n_{0,(j)}}}$ |
+| Degrees of Freedom(df) | NA                                                                                       | Satterthwaite approximation                                                            | $\sum_{i=0}^k(n_{i,(j)}-1)$                                      |
+| Test Statistics        | $\frac{\delta_{i,(j)}^{e^c}}{SE_z}$                                                      | $\frac{\delta_{i,(j)}^{e^c}}{SE_{t-unequal}}$                                          | $\frac{\delta_{i,(j)}^{e^c}}{SE_{t-equal}}$                      |
+| Raw p-value            | $1-\Phi(Test Stat)$                                                                      | $1-T_{df}(Test Stat)$                                                                  | $1-T_{df}(Test Stat)$                                            |
+
+**Satterthwaite approximation**
+
+The degrees of freedom for t-unequal scenario is calculated using Satterthwaite approximation as described below
+
+$v = \frac{\sigma_{i}^{{e^c}^2}}{n_{i,(j)}} + \frac{\sigma_{0}^{{e^c}^2}}{n_{0,(j)}}$
+
+$b = \frac{(\frac{\sigma_{i}^{{e^c}^2}}{n_{i,(j)}})^2}{n_{i,(j)}-1} + \frac{(\frac{\sigma_{0}^{e^2}}{n_{0,(j)}})^2}{n_{0,(j)}-1}$
+
+degree's of freedom = $round(v^2/b)$
+
+The similar process can be followed to compute the cumulative raw p-values by using cumulative stage-wise data.
+
+**For Binary difference of proportion**
+
+|                    | Z Un-Pooled                                                                                                                                             | Z Pooled                                                                        |
+|:-------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------|
+| $delta$            | $\delta_{i,(j)}^{e^d}$                                                                                                                                  | $\delta_{i,(j)}^{e^d}$                                                          |
+| Standard Error(SE) | $\sqrt{\frac{\bar{\pi}_{i,(j)}^{e^d}*(1-\bar{\pi}_{i,(j)}^{e^d})}{n_{i,(j)}} + \frac{\bar{\pi}_{0,(j)}^{e^d}*(1-\bar{\pi}_{0,(j)}^{e^d})}{n_{0,(j)}} }$ | $\sqrt{\pi_{p,(j)}*(1-\pi_{p,(j)}) *(\frac{1}{n_{i,(j)}}+\frac{1}{n_{0,(j)}})}$ |
+| Test Statistics    | $\frac{\delta_{i,(j)}^{e^d}}{SE}$                                                                                                                       | $\frac{\delta_{i,(j)}^{e^d}}{SE}$                                               |
+| Raw p-value        | $1-\Phi(Test Stat)$                                                                                                                                     | $1-\Phi(Test Stat)$                                                             |

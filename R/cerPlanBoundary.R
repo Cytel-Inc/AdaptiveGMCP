@@ -1,5 +1,4 @@
 #### Compute plan boundary for parametric, non-parametric and mixed case
-#' @export
 planBdryCER <- function(nHypothesis, nEps, nLooks, alpha, info_frac, typeOfDesign, test.type, Sigma, WH, HypoMap, Scale) {
   Method <- c()
   SubSets <- c()

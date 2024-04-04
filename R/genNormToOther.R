@@ -35,6 +35,7 @@ genNormToOther <- function(nSubject = 100,
 
 
 #------------------------------------------------- -
+#' This function generate single arm(having multiple endpoint) responses given the normal scale correlation matrix
 #' @param nArmID Arm Index
 #' @param nSubject number of response to generate
 #' @param vEPs Endpoints associated with the Arm Index(Existing)

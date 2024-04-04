@@ -31,7 +31,6 @@
 #' @param plotGraphs Logical; TRUE: plot the initial graph
 #' @param Parallel Logical; TRUE: Parallel computations
 #' @example ./internalData/MAMSMEP_Simulation_Example.R
-#' @export
 simMAMSMEP_BIN <- function(
     Method = "CombPValue",
     alpha = 0.025,

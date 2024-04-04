@@ -1,4 +1,4 @@
-# Generate weights for all intersection hypothesis
+#' Generate weights for all intersection hypothesis
 #' @param w Initial Weights
 #' @param g Initial Transition Matrix
 #' @param HypothesisName Hypotheses Name

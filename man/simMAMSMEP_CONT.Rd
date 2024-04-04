@@ -106,52 +106,77 @@ Function to perform Adaptive GMCP simulation for Multi-Arm Multi-Stage Multi-End
 }
 \examples{
 
+#######################################################################
+###############  Script to Run Adapt GMCP Simulations #################
+#######################################################################
 
-rm(list = ls())
 library(AdaptGMCP)
-library(rstudioapi)
-
 ########################## Inputs ##############################
 #------------------Test Method----------------------------------
 #options- 'CombPValue': Combining p-values, 'CER': Conditional Error
-Method <- 'CER' #CombPValue/CER
+Method <- 'CER'
 
 #-----------------------Total Sample Size------------------------
-SampleSize <- 324
+SampleSize <- 400
+
 #-----------------------Design Alpha-----------------------------
 alpha <- 0.025
 
-#----------------------Test Statistics---------------------------
-#options : 'z' :- Z Statistics, 't-equal' :- t Statistics with equal variance, 't-unequal' :- t Statistics with unequal variance
-TestStat <- 't-equal'
-
-#---------FWER Control Method(Applicable for CER Method only)------
-#options: 'CombinationTest' : combined incremental p-values for stage-2 testing, 'None': Cumulative classical test statistics.
-FWERControl <- 'None'
-
 #-----------------------Number of Arms--------------------------
-nArms <- 3
+#Note: Including Control Arm
+nArms <- 4
 
 #-------------------Number of Endpoints-------------------------
 nEps  <- 2
+
+#-----------------------Endpoint Type----------------------------
+# List containing the endpoint types
+# Options : "Continuous", "Binary"
+EpType <- list("EP1" = "Continuous",
+               "EP2" = "Binary")
+
+#----------------------Test Statistics(Continuous)---------------------------
+#options : "z" :- Z Statistics, "t-equal" :- t Statistics with equal variance, "t-unequal" :- t Statistics with unequal variance
+TestStatCon <- "t-equal"
+
+#----------------------Test Statistics(Binary)---------------------------
+#options : "Pooled" :- Z Statistics with equal variances, "UnPooled" :- Z Statistics with un-equal variances
+TestStatBin <- "UnPooled"
+
+#---------FWER Control Method(Applicable for CER Method only)------
+#options: 'CombinationTest' : combined incremental p-values for stage-2 testing, 'None': Cumulative classical test statistics.
+FWERControl <- "None"
+
+
 #-------------Arm-Wise mean for each endpoints-----------------
+# List containing the arm-wise(continuous) means
 #Note: The first input is for control arm and the rest are for the treatments
-Arms.Mean <- list('EP1' = c(0,0.4,0.3),
-                 'EP2' = c(0.1,0.45,0.25))
+Arms.Mean <- list('EP1' = c(0, 0.4, 0.4, 0.4),
+                  'EP2' = NA)
 
 #-------------Arm-Wise planned Std. Dev. for each endpoints-----
-#Note: The first input is for control arm and the rest are for the treatments
-Arms.std.dev <- list('EP1' = c(1.1,1.2,1.3),
-                     'EP2' = c(1.5,1.6,1.7))
+# List containing the arm-wise(continuous) standard deviations
+# Note: The first input is for control arm and the rest are for the treatments
+Arms.std.dev <- list('EP1' = c(1, 1, 1, 1),
+                     'EP2' = NA)
+
+
+#-------------Arm-Wise proportion for each endpoints-----------------
+# List containing the arm-wise(Binary) proportions
+# Note: The first input is for control arm and the rest are for the treatments
+Arms.Prop <- list('EP1'=NA,
+                  'EP2' =c(0.1, 0.4, 0.4, 0.4))
 
 #-------------Arm-Wise planned allocation Ratio----------------
-#Note: The first input is for control arm and the rest are for the treatments
-Arms.alloc.ratio <- c(1,1,1)
+# Vector containing the arm-wise allocation ratios
+# Note: The first input is for control arm and the rest are for the treatments
+Arms.alloc.ratio <- c(1, 1, 1, 1)
 
 #-------------Correlation between End points -------------------
-EP.Corr <- matrix(c(1,0.5,
-                   0.5,1),
-                 nrow = 2)
+# Note: For composite endpoints this correlation is assumed to be normal scale correlations
+EP.Corr <- matrix(c(1, 0.5,
+                    0.5, 1),
+                  nrow = 2)
 
 #----------------Initial Weights---------------------
 #Note: Hypotheses will follow the order of Endpoints and Treatments as given in 'Arms.Mean' and 'Arms.std.dev' inputs
@@ -159,14 +184,18 @@ EP.Corr <- matrix(c(1,0.5,
 # H1 = (Trt1 vs Ctr for EP1), H2 = (Trt2 vs Ctr for EP1), H3 = (Trt1 vs Ctr for EP2), H4 = (Trt2 vs Ctr for EP2)
 #The initial weights and the transition matrix will follow the order accordingly as (H1,H2,H3,H4)
 
-WI <-  c(0.5,0.5,0,0)
+WI <-  c(1/3, 1/3, 1/3, 0, 0, 0)
 
 #---------------Transition Matrix--------------------
-G <- matrix(c(0,0.5,0.5,0,
-             0.5,0,0,0.5,
-             0,1,0,0,
-             1,0,0,0),
-           nrow = nEps*(nArms-1), byrow = TRUE)
+G <- matrix(c(0,0,0,     1,0,0,
+              0,0,0,     0,1,0,
+              0,0,0,     0,0,1,
+              0,1/2,1/2, 0,0,0,
+              1/2,0,1/2, 0,0,0,
+              1/2,1/2,0, 0,0,0),
+            nrow = nEps*(nArms-1), byrow = T)
+
+
 
 #-------------------Test Type------------------------
 # Testing Procedure
@@ -204,15 +233,15 @@ SelectEndPoint <- 1
 
 #-----------------Selection Based on----------------------
 #Options- 'delta': delta, 'teststat': Test Statistics, 'stderror' : Standard Error of the test stat,  'pvalue': p-value(un-adj)
-SelectionScale <- 'pvalue'
+SelectionScale <- 'teststat'
 
 #-----------------Selection Criteria----------------------
 #Options- 'best': best r, 'threshold': threshold for selection, 'epsilon': for epsilon neighborhood
-SelectionCriterion <- 'best'
+SelectionCriterion <- 'threshold'
 
 #-----------------Selection Criteria Parameter----------------------
 # r for best, threshold value for threshold and epsilon distance for criteria 'epsilon'
-SelectionParmeter <- 1
+SelectionParmeter <- 0.6745
 
 #----------------Keep associated Hypothesis-------------------------
 #TRUE: keep all the associated hypothesis for the selected arms, FALSE otherwise
@@ -237,20 +266,23 @@ SummaryStat <- FALSE
 plotGraphs <- TRUE
 
 #--------------Parallel Logical; TRUE: Parallel computations--------
-Parallel <- TRUE
+Parallel <- T
 
 #-----------------------Run Simulation--------------------------------------
 #Please uncomment the following code to run the simulation(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
 #
-# out <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps, TestStat=TestStat, FWERControl = FWERControl,
-#            Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, Arms.alloc.ratio = Arms.alloc.ratio,
-#            EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,info_frac = info_frac,
-#            typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
-#            Selection = Selection,SelectionLook = SelectionLook,SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
-#            SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
-#            ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
-#            Method = Method, plotGraphs = plotGraphs, Parallel = Parallel)
-# out
+out <- simMAMSMEP(
+  alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType=EpType,
+  TestStatCon = TestStatCon, TestStatBin = TestStatBin, FWERControl = FWERControl,
+  Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev,Arms.Prop = Arms.Prop, Arms.alloc.ratio = Arms.alloc.ratio,
+  EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type, info_frac = info_frac,
+  typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
+  Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
+  SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
+  ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
+  Method = Method, plotGraphs = plotGraphs, Parallel = Parallel
+)
+out
 
 
 }

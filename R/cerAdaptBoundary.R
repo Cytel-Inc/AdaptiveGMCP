@@ -1,4 +1,4 @@
-#' @export
+#' Boundary computation based on the mcpObj
 adaptBdryCER <- function(mcpObj) {
   nHypothesis <- length(mcpObj$IntialHypothesis)
   nLooks <- length(mcpObj$Stage1Obj$info_frac)

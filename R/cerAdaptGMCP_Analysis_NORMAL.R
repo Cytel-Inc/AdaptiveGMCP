@@ -13,7 +13,6 @@
 #' @param AdaptStage2 TRUE: Adaptation option will be given for stage-2, FALSE : proceed as planned.
 #' @param plotGraphs TRUE: plot intermediate graphs
 #' @example ./internalData/AdaptGMCP_CER_Analysis_Example.R
-#' @export
 adaptGMCP_CONT_CER <- function(
     nArms = 3,
     nEps = 2,

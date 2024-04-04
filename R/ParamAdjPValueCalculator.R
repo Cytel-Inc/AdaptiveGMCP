@@ -3,7 +3,6 @@
 #' @param a1 stage-1 boundary for the intersection hypothesis
 #' @param w2 stage-2 weights for the intersection hypothesis
 #' @param SigmaZ variance covariance matrix on Z scale for the intersection hypothesis
-#' @export
 getParamAdjPValue <- function(
     p2 = c(0.02, 0.1),
     a1 = c(0.000782, 0.000782),

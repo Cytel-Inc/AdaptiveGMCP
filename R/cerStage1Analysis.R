@@ -1,5 +1,4 @@
 # Perform Stage-1 Test -------------------------- -
-#' @export
 PerformStage1Test <- function(
     nArms = 3,
     nEps = 2,

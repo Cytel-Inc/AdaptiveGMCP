@@ -6,7 +6,6 @@ testInter <- function(pValues, b) {
 
 
 # Closed testing
-#' @export
 checkRejection <- function(pValues, boundary) {
   if (is.null(nrow(boundary))) {
     return(testInter(pValues = pValues, b = boundary))
@@ -17,7 +16,7 @@ checkRejection <- function(pValues, boundary) {
   }
 }
 
-#' @export
+#' Overall decision
 getRejStatus <- function(pValues, IntTestDF, Stage1RejStatus) {
   length(pValues)
   rej_flag <- rep(NA, length(pValues))
@@ -38,7 +37,7 @@ getRejStatus <- function(pValues, IntTestDF, Stage1RejStatus) {
   RejStatus
 }
 
-#' @export
+#' Closed Test
 closedTest <- function(WH, boundary, pValues, Stage1RejStatus) {
   AnalysisTable <- data.frame(WH[, 1:(ncol(WH) / 2)],
     "Rejected" = checkRejection(

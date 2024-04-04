@@ -241,3 +241,17 @@ Execution halted
  a2), mean = r * qnorm(1 - p1), sd = sqrt(1 -  :
   NaNs produced
 Execution halted
+starting worker pid=17104 on localhost:11836 at 14:54:00.521
+starting worker pid=20360 on localhost:11836 at 14:54:00.769
+starting worker pid=1164 on localhost:11836 at 14:54:01.021
+starting worker pid=21320 on localhost:11836 at 14:54:01.251
+starting worker pid=9504 on localhost:11836 at 14:54:01.492
+starting worker pid=20536 on localhost:11836 at 14:54:01.715
+starting worker pid=16580 on localhost:11836 at 14:54:01.939
+starting worker pid=11100 on localhost:11836 at 14:54:29.608
+starting worker pid=16988 on localhost:11836 at 14:54:29.851
+starting worker pid=9920 on localhost:11836 at 14:54:30.086
+starting worker pid=6820 on localhost:11836 at 14:54:30.310
+starting worker pid=18496 on localhost:11836 at 14:54:30.538
+starting worker pid=11856 on localhost:11836 at 14:54:30.761
+starting worker pid=2440 on localhost:11836 at 14:54:30.997

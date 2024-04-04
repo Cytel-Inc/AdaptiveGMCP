@@ -7,7 +7,6 @@
 # underNull : TRUE if the probability is under null
 # Returns: The Probability of rejecting in atleast one primary hypothesis at stage1
 #------------------------------------------------------------------------- -
-#' @export
 exitProbStage1 <- function(gIDX, hIDX, cJ1, wJ, Sigma, Scale, underNull = TRUE) {
   # Make Seed restricted to local##
   old <- .Random.seed
@@ -60,7 +59,6 @@ exitProbStage1 <- function(gIDX, hIDX, cJ1, wJ, Sigma, Scale, underNull = TRUE) 
 # sigmaZ : The co-variance matrix of cummulative z-statistics (2 stages combined)
 # Returns: The critical point cJ1 for testing HJ at stage1
 #------------------------------------------------------------------------- -
-#' @export
 getBdryStage1 <- function(gIDX, hIDX, alpha1, wJ, Sigma, Scale) {
   minbdry <-  0.0000001
   maxbdry <- 1 / max(wJ[wJ != 0])
@@ -80,7 +78,6 @@ getBdryStage1 <- function(gIDX, hIDX, alpha1, wJ, Sigma, Scale) {
 # underNull : TRUE if the probability is under null
 # Returns: The Probability of rejecting in atleast one primary hypothesis at stage1
 #------------------------------------------------------------------------- -
-#' @export
 exitProbStage2 <- function(gIDX, hIDX, cJ2, cJ1, wJ, Sigma, Scale, underNull = TRUE) {
   # Make Seed restricted to local##
   old <- .Random.seed
@@ -152,7 +149,6 @@ exitProbStage2 <- function(gIDX, hIDX, cJ2, cJ1, wJ, Sigma, Scale, underNull = T
 # sigmaZ : The co-variance matrix of cummulative z-statistics (2 stages combined)
 # Returns: The critical point cJ2 for testing HJ at stage2
 #------------------------------------------------------------------------- -
-#' @export
 getBdryStage2 <- function(gIDX, hIDX, alpha, cJ1, wJ, Sigma, Scale = Scale) {
   minbdry <-  0.0000001
   maxbdry <- 1 / max(wJ[wJ != 0])
@@ -234,7 +230,6 @@ exitProbStage2Cond <- function(cJ2, p1, w, InfoMatrix, stage2sigmaS, Conditional
 # sigmaZ : The co-variance matrix of cummulative z-statistics (2 stages combined)
 # Returns: The critical point cJ1 for testing HJ at stage1
 #------------------------------------------------------------------------- -
-#' @export
 getStage2CondParamBdry <- function(cer, p1, w, InfoMatrix, stage2sigmaS, Conditional) {
   minbdry <- 0.0000001
   maxbdry <- 1 / max(w[w != 0])

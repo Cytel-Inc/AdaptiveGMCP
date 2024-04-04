@@ -11,7 +11,6 @@
 # InfoMatrix : Fisher information matrix
 # Returns: The Probability of rejecting in atleast one primary hypothesis at stage1
 #------------------------------------------------------------------------- -
-#' @export
 varCovZ <- function(EpType, i1, k1, i2, k2, sigma_0, sigma_trt, ctrProp, ctrSS, trtSS, InfoMatrix) {
   if (EpType == "Binary") {
     sigma_0 <- sigma_trt <- sqrt(ctrProp * (1 - ctrProp))
@@ -56,7 +55,6 @@ varCovZ <- function(EpType, i1, k1, i2, k2, sigma_0, sigma_trt, ctrProp, ctrSS, 
 # prop.ctr : list containing control proportion for Binary endpoints
 # allocRatio : allocation ratio for the arms
 #------------------------------------------------ -
-#' @export
 getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio) {
   ctrSS <- SS_Cum[, 1]
   trtSS <- t(SS_Cum[, -1]) # Column represents looks

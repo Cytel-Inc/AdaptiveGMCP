@@ -2,7 +2,9 @@
 #' @param nArms Number of Arms
 #' @param nEps Number of End points
 #' @param SampleSize Plan Sample Size
-#' @param sigma Arm-Wise sigma for each endpoint
+#' @param EpType list of endpoint types (options : "Continuous","Binary")
+#' @param sigma Arm-Wise sigma for each endpoint(for EpType = "Continuous")
+#' @param prop.ctr proportion for control arm for each endpoint(for EpType = "Binary")
 #' @param allocRatio Arm-Wise allocation ratio
 #' @param WI Vector of Initial Weights for Global Null(default = \code{rep(1/4,4)})
 #' @param G  Transition Matrix (default = \code{matrix(c(0,1/3,1/3,1/3,  1/3,0,1/3,1/3, 1/3,1/3,0,1/3, 1/3,1/3,1/3,0),nrow = 4)})
@@ -12,13 +14,15 @@
 #' @param typeOfDesign The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), default is "OF".
 #' @param AdaptStage2 TRUE: Adaptation option will be given for stage-2, FALSE : proceed as planned.
 #' @param plotGraphs TRUE: plot intermediate graphs
-#' @example ./internalData/AdaptGMCP_CER_Analysis_Example.R
+#' @example ./internalData/AdaptGMCP_CER_Analysis_NormBin_Example.R
 #' @export
 adaptGMCP_CER <- function(
     nArms = 3,
     nEps = 2,
     SampleSize = 500,
-    sigma = list("Group1" = c(1, 1, 1), "Group1" = c(1, 1, 1)),
+    EpType = list("EP1" = "Continuous", "EP2" = "Binary"),
+    sigma = list("EP1" = c(1, 1, 1), "EP2" = NA),
+    prop.ctr = list("EP1" = NA, "EP2" = 0.2),
     allocRatio = c(1, 1, 1),
     WI = c(0.5, 0.5, 0, 0),
     G = matrix(
@@ -36,12 +40,12 @@ adaptGMCP_CER <- function(
     typeOfDesign = "asOF",
     AdaptStage2 = TRUE,
     plotGraphs = TRUE) {
+
   ###### Input Validation #####
   # stopifnot('Number of Arms must be > 2',length(nArms) <= 2)
   # stopifnot('Number of End points must be >= 1',length(nEps) < 1)
 
   #############################
-
   TailType <- "RightTail" ## Default Right
   Hypothesis <- "CommonControl" ## Default CommonControl
 
@@ -59,9 +63,9 @@ adaptGMCP_CER <- function(
   ArmsPresent <- 1:nArms
 
   # Map for arms and hypothesis
-  HypoMap <- getHypoMap(
+  HypoMap <- getHypoMap2(
     des.type = des.type, nHypothesis = nHypothesis,
-    nEps = nEps, nArms = nArms
+    nEps = nEps, nArms = nArms,lEpType = EpType
   )
 
   # Computation of Intersection weights
@@ -86,11 +90,13 @@ adaptGMCP_CER <- function(
   # info to run per Stage-Wise analysis
   mcpObj <- list(
     "CurrentLook" = NA,
+    "lEpType" = EpType,
     "IntialHypothesis" = GlobalIndexSet,
     "test.type" = test.type,
     "IndexSet" = GlobalIndexSet,
     "ArmsPresent" = ArmsPresent,
     "sigma" = sigma,
+    "prop.ctr" = prop.ctr,
     "allocRatio" = allocRatio,
     "Stage2allocRatio" = allocRatio,
     "p_raw" = NA,
@@ -131,8 +137,8 @@ adaptGMCP_CER <- function(
 
     if (mcpObj$CurrentLook == 1) {
       Stage1Test <- PerformStage1Test(
-        nArms = nArms, nEps = nEps, nLooks = nLooks,
-        nHypothesis = nHypothesis, sigma = sigma,
+        nArms = nArms, nEps = nEps, EpType = EpType, nLooks = nLooks,
+        nHypothesis = nHypothesis, sigma = sigma, prop.ctr = prop.ctr,
         allocRatio = allocRatio, SampleSize = SampleSize,
         alpha = alpha, info_frac = info_frac,
         typeOfDesign = typeOfDesign, des.type = des.type,

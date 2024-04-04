@@ -1,4 +1,4 @@
-# Perform Single Simulation for combining p-values method
+#' Perform Single Simulation for combining p-values method
 #' @param simID Simulation ID
 #' @param gmcpSimObj obj with simulation inputs
 #' @param preSimObjs obj with intermediate inputs
@@ -108,7 +108,7 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
 }
 
 
-# Perform Single Simulation for CER method
+#' Perform Single Simulation for CER method
 #' @param simID Simulation ID
 #' @param gmcpSimObj obj with simulation inputs
 #' @param preSimObjs obj with intermediate inputs
