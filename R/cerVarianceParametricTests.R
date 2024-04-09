@@ -56,6 +56,16 @@ varCovZ <- function(EpType, i1, k1, i2, k2, sigma_0, sigma_trt, ctrProp, ctrSS, 
 # allocRatio : allocation ratio for the arms
 #------------------------------------------------ -
 getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio) {
+
+  #Treatment standard Deviation is same is control
+  #CommonStdDev flag is global variable set from simMAMSMEP(.), adaptGMCP_CER(.) function call
+  if(CommonStdDev == T){
+    for(sigIDX in 1:length(sigma))
+      if(all(!is.na(sigma[[sigIDX]]))){
+        sigma[[sigIDX]] <- sapply(sigma[[sigIDX]], function(x)sigma[[sigIDX]][1])
+      }
+  }
+
   ctrSS <- SS_Cum[, 1]
   trtSS <- t(SS_Cum[, -1]) # Column represents looks
 
@@ -149,6 +159,16 @@ getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio) {
 getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
                            AllocSampleSize, allocRatio, sigma, prop.ctr,
                            Stage2AllocSampleSize, Stage2allocRatio, Stage2sigma) {
+  #Treatment standard Deviation is same is control
+  #CommonStdDev flag is global variable set from simMAMSMEP(.), adaptGMCP_CER(.) function call
+  if(CommonStdDev == T){
+    for(sigIDX in 1:length(sigma))
+      if(all(!is.na(sigma[[sigIDX]]))){
+        sigma[[sigIDX]] <- sapply(sigma[[sigIDX]], function(x)sigma[[sigIDX]][1])
+      }
+  }
+  ############################################
+
   SigmaZIncr <- list() # Z-Scale Incremental sigma
   SigmaSIncr <- list() # Score Incremental Scale sigma
   Stage2SigmaZ <- list() # Z-Scale Modified sigma
@@ -306,6 +326,16 @@ getAmatrix <- function(nrow, ncol) {
 
 ######## Correlation for Combining p-value dunnett test#############
 getPlanCorrelation <- function(nHypothesis, EpType, SS_Incr, Arms.std.dev, prop.ctr, test.type) {
+  #Treatment standard Deviation is same is control
+  #CommonStdDev flag is global variable set from simMAMSMEP(.), adaptGMCP_CER(.) function call
+  if(CommonStdDev == T){
+    for(sigIDX in 1:length(Arms.std.dev))
+      if(all(!is.na(Arms.std.dev[[sigIDX]]))){
+        Arms.std.dev[[sigIDX]] <- sapply(Arms.std.dev[[sigIDX]], function(x)Arms.std.dev[[sigIDX]][1])
+      }
+  }
+  ############################################
+
   nEps <- length(EpType)
   nLooks <- nrow(SS_Incr)
 

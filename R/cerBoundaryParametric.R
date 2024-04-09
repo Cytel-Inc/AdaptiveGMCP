@@ -60,7 +60,7 @@ exitProbStage1 <- function(gIDX, hIDX, cJ1, wJ, Sigma, Scale, underNull = TRUE) 
 # Returns: The critical point cJ1 for testing HJ at stage1
 #------------------------------------------------------------------------- -
 getBdryStage1 <- function(gIDX, hIDX, alpha1, wJ, Sigma, Scale) {
-  minbdry <-  0.0000001
+  minbdry <- 0#  0.00000000001
   maxbdry <- 1 / max(wJ[wJ != 0])
   bdry1 <- function(x) {
     extProb <- exitProbStage1(gIDX = gIDX, hIDX = hIDX, cJ1 = x, wJ = wJ, Sigma = Sigma, Scale = Scale, underNull = TRUE)
@@ -150,7 +150,7 @@ exitProbStage2 <- function(gIDX, hIDX, cJ2, cJ1, wJ, Sigma, Scale, underNull = T
 # Returns: The critical point cJ2 for testing HJ at stage2
 #------------------------------------------------------------------------- -
 getBdryStage2 <- function(gIDX, hIDX, alpha, cJ1, wJ, Sigma, Scale = Scale) {
-  minbdry <-  0.0000001
+  minbdry <-  0.00000000001
   maxbdry <- 1 / max(wJ[wJ != 0])
   bdry2 <- function(x) {
     extProb <- exitProbStage2(gIDX = gIDX, hIDX = hIDX, cJ2 = x, cJ1 = cJ1, wJ = wJ, Sigma = Sigma, Scale = Scale, underNull = TRUE)

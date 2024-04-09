@@ -4,6 +4,7 @@
 #' @param SampleSize Plan Sample Size
 #' @param EpType list of endpoint types (options : "Continuous","Binary")
 #' @param sigma Arm-Wise sigma for each endpoint(for EpType = "Continuous")
+#' @param CommonStdDev TRUE = the treatment standard deviations assumed to be same as the control, FALSE = the treatment standard deviations assumed to be same as given in sigma.
 #' @param prop.ctr proportion for control arm for each endpoint(for EpType = "Binary")
 #' @param allocRatio Arm-Wise allocation ratio
 #' @param WI Vector of Initial Weights for Global Null(default = \code{rep(1/4,4)})
@@ -21,7 +22,8 @@ adaptGMCP_CER <- function(
     nEps = 2,
     SampleSize = 500,
     EpType = list("EP1" = "Continuous", "EP2" = "Binary"),
-    sigma = list("EP1" = c(1, 1, 1), "EP2" = NA),
+    sigma = list("EP1" = c(1, 1.1, 1.2), "EP2" = NA),
+    CommonStdDev = FALSE,
     prop.ctr = list("EP1" = NA, "EP2" = 0.2),
     allocRatio = c(1, 1, 1),
     WI = c(0.5, 0.5, 0, 0),
@@ -41,6 +43,7 @@ adaptGMCP_CER <- function(
     AdaptStage2 = TRUE,
     plotGraphs = TRUE) {
 
+  CommonStdDev <<- CommonStdDev
   ###### Input Validation #####
   # stopifnot('Number of Arms must be > 2',length(nArms) <= 2)
   # stopifnot('Number of End points must be >= 1',length(nEps) < 1)

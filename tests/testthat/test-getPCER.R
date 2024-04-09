@@ -23,7 +23,9 @@ test_that("Test PCER computations", {
   ss2 <- 219
   p1 <- c(0, 1)
   benchmark <- c(1, 0)
-  out <- getPCER(a2 = a2, p1 = p1, ss1 = ss1, ss2 = ss2)
+  out <- sapply(p1, function(x){
+    getPCER(a2 = a2, p1 = x, ss1 = ss1, ss2 = ss2)
+  })
   expect_equal(object = out, expected = benchmark)
 
   # Test Case4: expect error if ss1 = 0 or ss2 = 0

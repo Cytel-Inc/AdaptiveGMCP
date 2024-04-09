@@ -5,6 +5,7 @@ test_that("Test Computations of per-look Summary Statistics Computations", {
   lookID <- 1
   Arms.Mean <- list("EP1" = c(0, 0.1, 0.4))
   Arms.std.dev <- list("EP1" = c(1, 1, 1))
+  Arms.Prop <- NA
   Arms.alloc.ratio <- c(1, 1, 1)
   Arms.SS <- c(56, 56, 56)
   ArmsPresent <- c(T, T, T)
@@ -12,30 +13,35 @@ test_that("Test Computations of per-look Summary Statistics Computations", {
   HypoMap <- data.frame(
     "Hypothesis" = c("H1", "H2"),
     "Groups" = 1,
+    "EpType" = "Continuous",
     "Control" = 1,
     "Treatment" = c(2, 3)
   )
+  EPCorr <- matrix(c(1,0.5, 0.5,1), nrow = 2)
   Cumulative <- F
 
-  Stage1Response <- genIncrLookSummaryDOM(
+  Stage1Response <- genIncrLookSummary(
     SimSeed = SimSeed,
     simID = simID,
     lookID = lookID,
     Arms.Mean = Arms.Mean,
     Arms.std.dev = Arms.std.dev,
+    Arms.Prop = Arms.Prop,
     Arms.alloc.ratio = Arms.alloc.ratio,
     Arms.SS = Arms.SS,
+    EPCorr = EPCorr,
     ArmsPresent = ArmsPresent,
     HypoPresent = HypoPresent,
     HypoMap = HypoMap
   )
 
-  SummStat1 <- getPerLookTestStatDOM(
+  SummStat1 <- getPerLookTestStat(
     simID = simID,
     lookID = lookID,
-    TestStat = "t-unequal",
+    TestStatCont = "t-unequal",
+    TestStatBin = NA,
     Arms.std.dev = Arms.std.dev,
-    IncrLookSummaryDOM = Stage1Response,
+    IncrLookSummary= Stage1Response,
     Cumulative = Cumulative,
     HypoMap = HypoMap
   )
@@ -63,25 +69,30 @@ test_that("Test Computations of per-look Summary Statistics Computations", {
   ArmsPresent <- c(T, T, T)
   HypoPresent <- c(T, T)
   Cumulative <- F
-  Stage2Response <- genIncrLookSummaryDOM(
+
+  Stage2Response <- genIncrLookSummary(
     SimSeed = SimSeed,
     simID = simID,
     lookID = lookID,
     Arms.Mean = Arms.Mean,
     Arms.std.dev = Arms.std.dev,
+    Arms.Prop = Arms.Prop,
     Arms.alloc.ratio = Arms.alloc.ratio,
     Arms.SS = Arms.SS,
+    EPCorr = EPCorr,
     ArmsPresent = ArmsPresent,
     HypoPresent = HypoPresent,
     HypoMap = HypoMap
   )
 
-  SummStat2Incr <- getPerLookTestStatDOM(
+
+  SummStat2Incr <- getPerLookTestStat(
     simID = simID,
     lookID = lookID,
-    TestStat = "t-unequal",
-    IncrLookSummaryDOM = Stage2Response,
+    TestStatCont = "t-unequal",
+    TestStatBin = NA,
     Arms.std.dev = Arms.std.dev,
+    IncrLookSummary= Stage2Response,
     Cumulative = Cumulative,
     HypoMap = HypoMap
   )
@@ -106,12 +117,15 @@ test_that("Test Computations of per-look Summary Statistics Computations", {
 
   # Test Case3: Verify Look2 summary statistics(Cum.) with Excel Benchmarks(from the subject data)
   Cumulative <- T
-  SummStat2Cum <- getPerLookTestStatDOM(
+
+  SummStat2Cum <- getPerLookTestStat(
     simID = simID,
     lookID = lookID,
-    TestStat = "t-unequal",
-    IncrLookSummaryDOM = Stage2Response,
-    IncrLookSummaryDOMPrev = Stage1Response,
+    TestStatCont = "t-unequal",
+    TestStatBin = NA,
+    Arms.std.dev = Arms.std.dev,
+    IncrLookSummary= Stage2Response,
+    IncrLookSummaryPrev = Stage1Response,
     Cumulative = Cumulative,
     HypoMap = HypoMap
   )
