@@ -1,13 +1,6 @@
 ---
 title: "Normal Binary Simulations"
-output:
-  pdf_document:
-    toc: yes
-    toc_depth: '4'
-  html_document:
-    code_folding: hide
-    toc: yes
-    toc_depth: 4
+output: rmarkdown::html_vignette
 vignette: "%\\VignetteIndexEntry{Normal Binary Simulations} %\\VignetteEngine{knitr::rmarkdown}
   %\\VignetteEncoding{UTF-8}"
 ---
@@ -67,7 +60,7 @@ $$\pi_{p,(j)} = \frac{\pi_{i,(j)}^{e^d}*n_{i,(j)} + \pi_{0,(j)}^{e^d}*n_{0,(j)}}
 The following table describes the process of computing the raw p-value to test the $i^{th}$ treatment arm ( for any $i=1,2,...,k$) against the control arm belonging the continuous endpoint $e^c$ based on the $j^{th}$ stage responses.
 
 |                        | Z                                                                                        | t-unequal                                                                              | t-equal                                                          |
-|:----------------|:------------------|:------------------|:----------------|
+|:-----------------|:-----------------|:-----------------|:-----------------|
 | $delta$                | $\delta_{i,(j)}^{e^c}$                                                                   | $\delta_{i,(j)}^{e^c}$                                                                 | $\delta_{i,(j)}^{e^c}$                                           |
 | Standard Error(SE)     | $\sqrt{\frac{\sigma_{i}^{{e^c}^2}}{n_{i,(j)}} + \frac{\sigma_{0}^{{e^c}^2}}{n_{0,(j)}}}$ | $\sqrt{\frac{s_{i,(j)}^{{e^c}^2}}{n_{i,(j)}} + \frac{s_{0,(j)}^{{e^c}^2}}{n_{0,(j)}}}$ | $s_{p}^{{e^c}} \sqrt{\frac{1}{n_{i,(j)}} + \frac{1}{n_{0,(j)}}}$ |
 | Degrees of Freedom(df) | NA                                                                                       | Satterthwaite approximation                                                            | $\sum_{i=0}^k(n_{i,(j)}-1)$                                      |
@@ -89,7 +82,7 @@ Note: The similar process can be followed to compute the cumulative raw p-values
 #### For Binary difference of proportion
 
 |                    | Z Un-Pooled                                                                                                                                             | Z Pooled                                                                        |
-|:-----------------|:-----------------------------------|:-----------------|
+|:-------------------|:--------------------------------|:-------------------|
 | $delta$            | $\delta_{i,(j)}^{e^d}$                                                                                                                                  | $\delta_{i,(j)}^{e^d}$                                                          |
 | Standard Error(SE) | $\sqrt{\frac{\bar{\pi}_{i,(j)}^{e^d}*(1-\bar{\pi}_{i,(j)}^{e^d})}{n_{i,(j)}} + \frac{\bar{\pi}_{0,(j)}^{e^d}*(1-\bar{\pi}_{0,(j)}^{e^d})}{n_{0,(j)}} }$ | $\sqrt{\pi_{p,(j)}*(1-\pi_{p,(j)}) *(\frac{1}{n_{i,(j)}}+\frac{1}{n_{0,(j)}})}$ |
 | Test Statistics    | $\frac{\delta_{i,(j)}^{e^d}}{SE}$                                                                                                                       | $\frac{\delta_{i,(j)}^{e^d}}{SE}$                                               |
@@ -254,13 +247,40 @@ Under Null, $\mu_z = 0$ and $\Sigma_z$ can be obtained from the above variance c
 Note:
 
 -   The boundary computation for parameric CER method have the same distributional structure as in MAMS-GS design, however here we used the weighted Dunnett type test and the search for the critical value(C) happens on p-value scale, hence the boundaries obtain by this procedure may not be consistent with the MAMS-GS design.
-
-```{=html}
-<!-- -->
-```
 -   For Combining p-values Dunnett/Partly-Parametric methods the variance covariance matrix will be computed on the incremental scale and the plan boundaries are the standard group sequential boundaries in p-value scale.
-
-```{=html}
-<!-- -->
-```
 -   With the common standard deviation option selected in the simulation function the the treatment arms standard deviations will be same as the control arm.
+
+### Stage-2 Adaptive Boundary Computation(CER Method)
+
+##### Parametric Tests
+Conditional Error Rate for the intersection hypothesis $J \subseteq I_2$
+
+$B_J^{param}(\alpha | \chi_1) = P_{H_J}[\cup_{j \in J} \{ P_{j,2} \leq w_{j,J}*C_{J,2} | p_{j,1} \}]$
+
+$\implies B_J^{param}(\alpha | \chi_1) = P_{H_J}[\cup_{j \in J} \{ Z_{j,2} \geq \Phi^{-1}(1- w_{j,J}*C_{J,2}) | Z_{j,1} = \Phi^{-1}(1-p_{j,1}) \}]$
+
+In Score Scale
+
+$\tilde{S} = (S_{1,1},S_{2,1},...,S_{D,1},S_{1,2},S_{2,2},...,S_{D,2})'$
+
+$or,\tilde{S}= (Z_{1,1}\sqrt{I_{1,1}},Z_{2,1}\sqrt{I_{2,1}},...,Z_{D,1}\sqrt{I_{D,1}},Z_{1,2}\sqrt{I_{1,2}},Z_{2,2}\sqrt{I_{2,2}},...,Z_{D,2}\sqrt{I_{D,2}})'$
+
+Hence
+
+$B_J^{param}(\alpha | \chi_1) = 1 - P_{H_J}[\cap_{j \in J} \{\sqrt{I_{j,2}}Z_{j,2} \leq \sqrt{I_{j,2}}\Phi^{-1}(1- w_{j,J}*C_{J,2}) | \sqrt{I_{j,1}}Z_{j,1} = \sqrt{I_{j,1}}*(1-\Phi^{-1}(1-p_{j,1}))\}$
+
+$\implies B_J^{param}(\alpha | \chi_1) = 1 - P_{H_J}[\cap_{j \in J} \{S_{j,2}-S_{j,1} \leq \sqrt{I_{j,2}}\Phi^{-1}(1- w_{j,J}*C_{J,2})-\sqrt{I_{j,1}}*(1-\Phi^{-1}(1-p_{j,1}))\}]$
+
+$v_{j,J}$ : The modified weight for the primary hypothesis $H_j$ as a part of the intersection hypothesis $H_J; J \subseteq I_2$
+
+Then the stage-2 adjusted critical point $C_{J,2}$ can be obtain by
+
+$P_{H_J} [\cup_{j \in J} P_{j,2} \leq v_{j,J}*C_{J,2} | p_{j,1}] = B_J^{param}(\alpha | \chi_1)$
+
+
+
+##### Non-Parametric Tests
+
+[In Progress]
+
+

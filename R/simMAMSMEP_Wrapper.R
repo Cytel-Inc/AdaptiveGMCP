@@ -75,6 +75,7 @@ run1TestCase <- function(InputDF) {
   info_frac <- eval(parse(text = InputDF$info_frac))
   typeOfDesign <- InputDF$typeOfDesign
   MultipleWinners <- InputDF$MultipleWinners
+  Selection <- InputDF$Selection
   CommonStdDev <- InputDF$CommonStdDev
   SelectionLook <- InputDF$SelectionLook
   SelectEndPoint <- InputDF$SelectEndPoint
@@ -98,7 +99,7 @@ run1TestCase <- function(InputDF) {
     Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
     SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
     ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
-    Method = Method, plotGraphs = plotGraphs, Parallel = Parallel
+    Method = Method, plotGraphs = plotGraphs, Parallel = Parallel,CommonStdDev = CommonStdDev
   )
   out
 }
