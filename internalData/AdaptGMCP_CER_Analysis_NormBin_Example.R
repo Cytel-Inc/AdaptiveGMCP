@@ -87,10 +87,10 @@ plotGraphs <- TRUE
 ###For Interim-look inputs follow the R console#####
 #Please uncomment the following code to run the Analysis(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
 #
-
-adaptGMCP_CER(nArms = nArms, nEps = nEps, EpType = EpType,
-              sigma = sigma, prop.ctr = prop.ctr, allocRatio = allocRatio,
-              SampleSize = SampleSize, alpha = alpha, WI = WI,
-              G = G, info_frac = info_frac, typeOfDesign = typeOfDesign,
-              test.type = test.type, AdaptStage2 = AdaptStage2,
-              plotGraphs = plotGraphs)
+#
+# adaptGMCP_CER(nArms = nArms, nEps = nEps, EpType = EpType,
+#               sigma = sigma, prop.ctr = prop.ctr, allocRatio = allocRatio,
+#               SampleSize = SampleSize, alpha = alpha, WI = WI,
+#               G = G, info_frac = info_frac, typeOfDesign = typeOfDesign,
+#               test.type = test.type, AdaptStage2 = AdaptStage2,
+#               plotGraphs = plotGraphs)

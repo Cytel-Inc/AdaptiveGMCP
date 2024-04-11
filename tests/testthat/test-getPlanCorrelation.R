@@ -2,6 +2,7 @@ test_that("Test Correlation Computation for Combining p-values(Dunnett)", {
   # Test Case-1: Consistency with getSigma results
   # Arms: 3, Eps: 1, Hypothesis: 2
   # getSigma Results
+  CommonStdDev <<- FALSE
   EpType <- list('EP1'='Continuous')
   sigma <- list("EP1" = c(1.5, 1.4, 1.6))
   prop.ctr <- NA

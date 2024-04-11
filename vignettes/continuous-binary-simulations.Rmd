@@ -1,10 +1,15 @@
 ---
 title: "Normal Binary Simulations"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Normal Binary Simulations}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+  html_document:
+    code_folding: hide
+    toc: yes
+    toc_depth: 4
+vignette: "%\\VignetteIndexEntry{Normal Binary Simulations} %\\VignetteEngine{knitr::rmarkdown}
+  %\\VignetteEncoding{UTF-8}"
 ---
 
 ## Notations
@@ -29,34 +34,40 @@ $\bar{\pi}_{i,(j)}^{e^d}$ : Sample proportion for the $i^{th}$ arm based $j^{th}
 
 ### Estimate of Treatment Difference $\delta$
 
-**For Continuous difference of means** $$\delta_{i,(j)}^{e^c} = \bar{x}_{i,(j)}^{e^c} - \bar{x}_{0,(j)}^{e^c}$$
+#### For Continuous difference of means
 
-**For Binary difference of proportion** $$\delta_{i,(j)}^{e^d} = \bar{\pi}_{i,(j)}^{e^d} - \bar{\pi}_{0,(j)}^{e^d}$$
+$$\delta_{i,(j)}^{e^c} = \bar{x}_{i,(j)}^{e^c} - \bar{x}_{0,(j)}^{e^c}$$
+
+#### For Binary difference of proportion
+
+$$\delta_{i,(j)}^{e^d} = \bar{\pi}_{i,(j)}^{e^d} - \bar{\pi}_{0,(j)}^{e^d}$$
 
 ### Estimate of arm-wise standard deviation $\sigma$
 
-**For Continuous difference of means**
+#### For Continuous difference of means
 
-$$ s_{i,(j)}^{e^c} = \sqrt{\frac{1}{n_{i,(j)-1}} \sum_{l=1}^{n_{i,(j)}}{(x_{i,l}^{e^c} - \bar{x}_{i,(j)}^{e^c})}}$$
+Pair-wise Standard Deviation. $$ s_{i,(j)}^{e^c} = \sqrt{\frac{1}{n_{i,(j)-1}} \sum_{l=1}^{n_{i,(j)}}{(x_{i,l}^{e^c} - \bar{x}_{i,(j)}^{e^c})}}$$
 
-Arm-Wise Pooled Standard Deviation
+Pooled Standard Deviation across all arms.
 
 $$s_{p,(j)}^{e^c} = \sqrt{\frac{\sum_{i=0}^k (n_{i,(j)}-1) s_{i,(j)}^{{e^c}^2}}{\sum_{i=0}^k (n_{i,(j)}-1)}}$$
 
-**For Binary difference of proportion** $$ s_{i,(j)}^{e^d} = \sqrt{\frac{\bar{\pi}_{i,(j)}^{e^d}*(1-\bar{\pi}_{i,(j)}^{e^d})}{n_{i,(j)}}}$$
+#### For Binary difference of proportion
 
-Pooled proportion between control and $i^{th}$ treatment arm
+Pair-wise Standard Deviation $$ s_{i,(j)}^{e^d} = \sqrt{\frac{\bar{\pi}_{i,(j)}^{e^d}*(1-\bar{\pi}_{i,(j)}^{e^d})}{n_{i,(j)}}}$$
+
+Pooled proportion between control and $i^{th}$ treatment arm.
 
 $$\pi_{p,(j)} = \frac{\pi_{i,(j)}^{e^d}*n_{i,(j)} + \pi_{0,(j)}^{e^d}*n_{0,(j)}}{n_{i,(j)} + n_{0,(j)}}$$
 
 ### Computations of Raw p-value
 
-**For Continuous difference of means**
+#### For Continuous difference of means
 
 The following table describes the process of computing the raw p-value to test the $i^{th}$ treatment arm ( for any $i=1,2,...,k$) against the control arm belonging the continuous endpoint $e^c$ based on the $j^{th}$ stage responses.
 
 |                        | Z                                                                                        | t-unequal                                                                              | t-equal                                                          |
-|:-----------------------|:-----------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------|:-----------------------------------------------------------------|
+|:----------------|:------------------|:------------------|:----------------|
 | $delta$                | $\delta_{i,(j)}^{e^c}$                                                                   | $\delta_{i,(j)}^{e^c}$                                                                 | $\delta_{i,(j)}^{e^c}$                                           |
 | Standard Error(SE)     | $\sqrt{\frac{\sigma_{i}^{{e^c}^2}}{n_{i,(j)}} + \frac{\sigma_{0}^{{e^c}^2}}{n_{0,(j)}}}$ | $\sqrt{\frac{s_{i,(j)}^{{e^c}^2}}{n_{i,(j)}} + \frac{s_{0,(j)}^{{e^c}^2}}{n_{0,(j)}}}$ | $s_{p}^{{e^c}} \sqrt{\frac{1}{n_{i,(j)}} + \frac{1}{n_{0,(j)}}}$ |
 | Degrees of Freedom(df) | NA                                                                                       | Satterthwaite approximation                                                            | $\sum_{i=0}^k(n_{i,(j)}-1)$                                      |
@@ -73,13 +84,183 @@ $b = \frac{(\frac{\sigma_{i}^{{e^c}^2}}{n_{i,(j)}})^2}{n_{i,(j)}-1} + \frac{(\fr
 
 degree's of freedom = $round(v^2/b)$
 
-The similar process can be followed to compute the cumulative raw p-values by using cumulative stage-wise data.
+Note: The similar process can be followed to compute the cumulative raw p-values by using cumulative stage-wise data.
 
-**For Binary difference of proportion**
+#### For Binary difference of proportion
 
 |                    | Z Un-Pooled                                                                                                                                             | Z Pooled                                                                        |
-|:-------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------|
+|:-----------------|:-----------------------------------|:-----------------|
 | $delta$            | $\delta_{i,(j)}^{e^d}$                                                                                                                                  | $\delta_{i,(j)}^{e^d}$                                                          |
 | Standard Error(SE) | $\sqrt{\frac{\bar{\pi}_{i,(j)}^{e^d}*(1-\bar{\pi}_{i,(j)}^{e^d})}{n_{i,(j)}} + \frac{\bar{\pi}_{0,(j)}^{e^d}*(1-\bar{\pi}_{0,(j)}^{e^d})}{n_{0,(j)}} }$ | $\sqrt{\pi_{p,(j)}*(1-\pi_{p,(j)}) *(\frac{1}{n_{i,(j)}}+\frac{1}{n_{0,(j)}})}$ |
 | Test Statistics    | $\frac{\delta_{i,(j)}^{e^d}}{SE}$                                                                                                                       | $\frac{\delta_{i,(j)}^{e^d}}{SE}$                                               |
 | Raw p-value        | $1-\Phi(Test Stat)$                                                                                                                                     | $1-\Phi(Test Stat)$                                                             |
+
+Note: The similar process can be followed to compute the cumulative raw p-values by using cumulative stage-wise data.
+
+## Bondary Computation
+
+### Distribution of the test statistics
+
+#### For Continuous difference of means
+
+$\bar{X}_{i,k}$ denotes the sample mean for the $i^{th} \space (i=0,1,2,..,D)$ arm based on the cumulative sample size $n_{i,k} \space (k=1,2)$
+
+Under Null, $\bar{X}_{i,k} \sim N(0, \frac{\sigma_i}{\sqrt{n}})$
+
+**Variance Covariance Structure of** $\bar{X}_{i,k}$
+
+$Cov(\bar{X}_{i_1,k} , \bar{X}_{i_2,k}) = 0 \space ; i_1 \neq i_2$
+
+$Cov(\bar{X}_{i,k_1} , \bar{X}_{i,k_2}) = Cov(\bar{X}_{i,k_1}, \frac{n_{i,k_1}}{n_{i,k_2}}*\bar{X}_{i,k_1} + \frac{1}{n_{i,k_2}} \sum_{m=(n_{i,k_1}+1)}^{n_{i,k_2}} X_{i,m})$
+
+$\implies Cov(\bar{X}_{i,k_1} , \bar{X}_{i,k_2})=\frac{n_{i,k_1}}{n_{i,k_2}} *var(\bar{X}_{i,k_1})$
+
+$\implies Cov(\bar{X}_{i,k_1} , \bar{X}_{i,k_2}) = \frac{\sigma_i^2}{n_{i,k_2}} ; \space \forall \space k_2 >k_1$
+
+**Z Statistics**
+
+$Z_{i,k} = \frac{\delta_{i,k}}{\sqrt{Var(\delta_{i,k})}}$
+
+where
+
+$\delta_{i,k} = (\bar{X}_{i,k} - \bar{X}_{0,k})$
+
+$Var(\delta_{i,k})^{-1} = I_{i,k} = n_{0,k}*(\sigma_0^2 + \frac{\sigma_i^2}{\lambda_i})^{-1} = n_{0,k}*\Lambda_i$
+
+where $\lambda_i$ = allocation ratio for the $i^{th}$ treatment arm.
+
+**Variance Covariance Structure of** $Z_{i,k}$
+
+**Case-1**
+
+$Var(Z_{i,k}) = 1 \space \forall \space i, k$
+
+**Case-2**
+
+$Cov(Z_{i_1,k} , Z_{i_2,k}) = Cov(\sqrt{I_{i_1,k}}*(\bar{X}_{i_1,k} - \bar{X}_{0,k}) ,\sqrt{I_{i_2,k}}*(\bar{X}_{i_2,k} - \bar{X}_{0,k}))$
+
+$\implies Cov(Z_{i_1,k} , Z_{i_2,k}) = \sqrt{I_{i_1,k} I_{i_2,k}} * Var(\bar{X}_{0,k})$
+
+$\implies Cov(Z_{i_1,k} , Z_{i_2,k}) = \sqrt{I_{i_1,k} I_{i_2,k}}*\frac{\sigma_0^2}{n_{0,k}} \space \forall \space i_2 \neq i_1$
+
+**Case-3**
+
+$Cov(Z_{i,k_1} , Z_{i,k_2}) = Cov(\sqrt{I_{i,k_1}}*(\bar{X}_{i,k_1} - \bar{X}_{0,k_1}) ,\sqrt{I_{i,k_2}}*(\bar{X}_{i,k_2} - \bar{X}_{0,k_2}))$
+
+$\implies Cov(Z_{i,k_1} , Z_{i,k_2}) = \sqrt{I_{i,k_1} I_{i,k_2}} * [ Cov(\bar{X}_{i,k_1} , \bar{X}_{i,k_2}) + Cov(\bar{X}_{0,k_1} , \bar{X}_{0,k_2})]$
+
+$\implies Cov(Z_{i,k_1} , Z_{i,k_2}) = \sqrt{I_{i,k_1} I_{i,k_2}}* [ \frac{\sigma_i^2}{n_{i,k_2}} + \frac{\sigma_0^2}{n_{0,k_2}} ] \space \forall \space k_2 > k_1$
+
+**Case-4**
+
+$Cov(Z_{i_1,k_1} , Z_{i_2,k_2}) = Cov(\sqrt{I_{i_1,k_1}}*(\bar{X}_{i_1,k_1} - \bar{X}_{0,k_1}) ,\sqrt{I_{i_2,k_2}}*(\bar{X}_{i_2,k_2} - \bar{X}_{0,k_2}))$
+
+$\implies Cov(Z_{i_1,k_1} , Z_{i_2,k_2}) = \sqrt{I_{i_1,k_1} I_{i_2,k_2}} * Cov(\bar{X}_{0,k_1} , \bar{X}_{0,k_2})$
+
+$\implies Cov(Z_{i_1,k_1} , Z_{i_2,k_2}) = \sqrt{I_{i_1,k_1} I_{i_2,k_2}} * \frac{\sigma_0^2}{n_{i,k_2}}\space \forall \space i_1 \neq i_2, \space k_1 \neq k_2 \space \& \space k_2 > k_1$
+
+#### For Binary difference of proportions
+
+$\bar{\pi}_{i,(k)}$ : The sample proportion for the $i^{th} \space (i=0,1,2,..,D)$ arm based on the kth stage incremental sample size $Z_{i,k}$ : The cumulative Z-statistic for the ith arm in kth stage $k=1,2$
+
+**Under Null**
+
+$E(\pi_{0,k}) = E(\pi_{1,k}) =... = E(\pi_{D,k}) = \pi_c$ i.e. the treatment arm proportion is same as the control arm.
+
+$\bar{\pi}_{i,k} \sim N(\pi_c, \sqrt{\frac{\pi_c*(1-\pi_c)}{n_{i,k}}})$
+
+**Variance Covariance Structure of** $\bar{\pi}_{i,k}$ **(Cumulative)**
+
+$Cov(\bar{\pi}_{i_1,k} , \bar{\pi}_{i_2,k}) = 0 \space ; i_1 \neq i_2$
+
+$Cov(\bar{\pi}_{i,k_1} , \bar{\pi}_{i,k_2}) = Cov(\bar{\pi}_{i,k_1}, \frac{n_{i,k_1}}{n_{i,k_2}}*\bar{\pi}_{i,k_1} + \frac{1}{n_{i,k_2}} \sum_{m=(n_{i,k_1}+1)}^{n_{i,k_2}} \pi_{i,m})$
+
+$\implies Cov(\bar{\pi}_{i,k_1} , \bar{\pi}_{i,k_2})=\frac{n_{i,k_1}}{n_{i,k_2}} *var(\bar{\pi}_{i,k_1})$
+
+$\implies Cov(\bar{\pi}_{i,k_1} , \bar{\pi}_{i,k_2}) = \frac{\pi_c*(1-\pi_c)}{n_{i,k_2}} ; \space \forall \space k_2 >k_1$
+
+**Variance Covariance Structure of** $Z_{i,k}$ **(Cumulative)**
+
+Note: The Covariance for cumulative Z Statistic will be used in CER methodology
+
+$Z_{i,k} = \frac{\delta_{i,k}}{\sqrt{Var(\delta_{i,k})}}$
+
+where
+
+$\delta_{i,k} = (\bar{\pi}_{i,k} - \bar{\pi}_{0,k})$
+
+$Var(\delta_{i,k})^{-1} = I_{i,k} = n_{0,k}*(\pi_c*(1-\pi_c) + \frac{\pi_c*(1-\pi_c)}{\lambda_i})^{-1} = n_{0,k}*\Lambda_i$
+
+where $\lambda_i$ = allocation ratio for the $i^{th}$ treatment arm.
+
+**Case-1**
+
+$Var(Z_{i,k}) = 1 \space \forall \space i, k$
+
+**Case-2**
+
+$Cov(Z_{i_1,k} , Z_{i_2,k}) = Cov(\sqrt{I_{i_1,k}}*(\bar{\pi}_{i_1,k} - \bar{\pi}_{0,k}) ,\sqrt{I_{i_2,k}}*(\bar{\pi}_{i_2,k} - \bar{\pi}_{0,k}))$
+
+$\implies Cov(Z_{i_1,k} , Z_{i_2,k}) = \sqrt{I_{i_1,k} I_{i_2,k}} * Var(\bar{\pi}_{0,k})$
+
+$\implies Cov(Z_{i_1,k} , Z_{i_2,k}) = \sqrt{I_{i_1,k} I_{i_2,k}}*\frac{\pi_c*(1-\pi_c)}{n_{0,k}} \space \forall \space i_2 \neq i_1$
+
+**Case-3**
+
+$Cov(Z_{i,k_1} , Z_{i,k_2}) = Cov(\sqrt{I_{i,k_1}}*(\bar{\pi}_{i,k_1} - \bar{\pi}_{0,k_1}) ,\sqrt{I_{i,k_2}}*(\bar{\pi}_{i,k_2} - \bar{\pi}_{0,k_2}))$
+
+$\implies Cov(Z_{i,k_1} , Z_{i,k_2}) = \sqrt{I_{i,k_1} I_{i,k_2}} * [ Cov(\bar{\pi}_{i,k_1} , \bar{\pi}_{i,k_2}) + Cov(\bar{\pi}_{0,k_1} , \bar{\pi}_{0,k_2})]$
+
+$\implies Cov(Z_{i,k_1} , Z_{i,k_2}) = \sqrt{I_{i,k_1} I_{i,k_2}}* [ \frac{\pi_c*(1-\pi_c)}{n_{i,k_2}} + \frac{\pi_c*(1-\pi_c)}{n_{0,k_2}} ] \space \forall \space k_2 > k_1$
+
+**Case-4**
+
+$Cov(Z_{i_1,k_1} , Z_{i_2,k_2}) = Cov(\sqrt{I_{i_1,k_1}}*(\bar{\pi}_{i_1,k_1} - \bar{\pi}_{0,k_1}) ,\sqrt{I_{i_2,k_2}}*(\bar{\pi}_{i_2,k_2} - \bar{\pi}_{0,k_2}))$
+
+$\implies Cov(Z_{i_1,k_1} , Z_{i_2,k_2}) = \sqrt{I_{i_1,k_1} I_{i_2,k_2}} * Cov(\bar{\pi}_{0,k_1} , \bar{\pi}_{0,k_2})$
+
+$\implies Cov(Z_{i_1,k_1} , Z_{i_2,k_2}) = \sqrt{I_{i_1,k_1} I_{i_2,k_2}} * \frac{\pi_c*(1-\pi_c)}{n_{i,k_2}}\space \forall \space i_1 \neq i_2, \space k_1 \neq k_2 \space \& \space k_2 > k_1$
+
+### Stage-Wise Planned Boundary Computation
+
+Consider testing any intersection hypothesis $J$ ($\forall J \subseteq I_1$), Let $\alpha_{J,1}$, denoting the amount of type-1 error to be spent at stage one of a two stage level-$\alpha$ test, can be obtain by using a spending function or otherwise.
+
+Then the two stage critical boundaries($C_{J,1}, C_{J,2}$) can be computed by solving the following equations.
+
+**Stage-1 boundary**
+
+$P_{H_J} [\cup_{j \in J} P_{j,1} \leq w_{j,J}*C_{J,1}] = \alpha_{J,1}$
+
+$\implies P_{H_J} [ \cap_{j \in J} \{Z_{j,1} \leq \Phi^{-1}(1-w_{j,J}*C_{J,1})\}] = 1 - \alpha_{J,1}$
+
+**Stage-2 boundary**
+
+$P_{H_J} [\cap_{j \in J} \{P_{j,1} \geq w_{j,J}*C_{J,1}\} \space \& \space \cup_{j \in J} \{P_{j,2} \leq w_{j,J}*C_{J,2}\} ] = \alpha - \alpha_{J,1}$
+
+$\implies P_{H_J} [\cap_{j \in J} \{Z_{j,1} \leq \Phi^{-1}(1-w_{j,J}*C_{J,1})\} \space \cap \space \cup_{j \in J} \{Z_{j,2} \geq \Phi^{-1}(1-w_{j,J}*C_{J,2})\} ] = \alpha - \alpha_{J,1}$
+
+$\implies P_{H_J} [\cap_{j \in J} \{Z_{j,1} \leq \Phi^{-1}(1-w_{j,J}*C_{J,1})\}] - P_{H_J} [\cap_{j \in J} \{Z_{j,1} \leq \Phi^{-1}(1-w_{j,J}*C_{J,1})\} \space \cap \space \cap_{j \in J} \{Z_{j,2} \leq \Phi^{-1}(1-w_{j,J}*C_{J,2})\} ] = \alpha - \alpha_{J,1}$
+
+$\implies 1-\alpha_{J,1} - P_{H_J} [\cap_{j \in J} \{Z_{j,1} \leq \Phi^{-1}(1-w_{j,J}*C_{J,1})\} \space \cap \space \cap_{j \in J} \{Z_{j,2} \leq \Phi^{-1}(1-w_{j,J}*C_{J,2})\} ] = \alpha - \alpha_{J,1}$
+
+$\implies P_{H_J} [\cap_{j \in J} \{Z_{j,1} \leq \Phi^{-1}(1-w_{j,J}*C_{J,1})\} \space \cap \space \cap_{j \in J} \{Z_{j,2} \leq \Phi^{-1}(1-w_{j,J}*C_{J,2})\} ] = 1- \alpha$
+
+Where the distribution of Z is
+
+$\tilde{Z} =(Z_{1,1},Z_{2,1},...,Z_{D,1},Z_{1,2},Z_{2,2},...,Z_{D,2})' \sim N(\mu_z, \Sigma_z)$
+
+Under Null, $\mu_z = 0$ and $\Sigma_z$ can be obtained from the above variance co-variance structure.
+
+Note:
+
+-   The boundary computation for parameric CER method have the same distributional structure as in MAMS-GS design, however here we used the weighted Dunnett type test and the search for the critical value(C) happens on p-value scale, hence the boundaries obtain by this procedure may not be consistent with the MAMS-GS design.
+
+```{=html}
+<!-- -->
+```
+-   For Combining p-values Dunnett/Partly-Parametric methods the variance covariance matrix will be computed on the incremental scale and the plan boundaries are the standard group sequential boundaries in p-value scale.
+
+```{=html}
+<!-- -->
+```
+-   With the common standard deviation option selected in the simulation function the the treatment arms standard deviations will be same as the control arm.

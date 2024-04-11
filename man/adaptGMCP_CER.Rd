@@ -9,7 +9,8 @@ adaptGMCP_CER(
   nEps = 2,
   SampleSize = 500,
   EpType = list(EP1 = "Continuous", EP2 = "Binary"),
-  sigma = list(EP1 = c(1, 1, 1), EP2 = NA),
+  sigma = list(EP1 = c(1, 1.1, 1.2), EP2 = NA),
+  CommonStdDev = FALSE,
   prop.ctr = list(EP1 = NA, EP2 = 0.2),
   allocRatio = c(1, 1, 1),
   WI = c(0.5, 0.5, 0, 0),
@@ -33,6 +34,8 @@ adaptGMCP_CER(
 \item{EpType}{list of endpoint types (options : "Continuous","Binary")}
 
 \item{sigma}{Arm-Wise sigma for each endpoint(for EpType = "Continuous")}
+
+\item{CommonStdDev}{TRUE = the treatment standard deviations assumed to be same as the control, FALSE = the treatment standard deviations assumed to be same as given in sigma.}
 
 \item{prop.ctr}{proportion for control arm for each endpoint(for EpType = "Binary")}
 
@@ -147,11 +150,11 @@ plotGraphs <- TRUE
 ###For Interim-look inputs follow the R console#####
 #Please uncomment the following code to run the Analysis(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
 #
-
-adaptGMCP_CER(nArms = nArms, nEps = nEps, EpType = EpType,
-              sigma = sigma, prop.ctr = prop.ctr, allocRatio = allocRatio,
-              SampleSize = SampleSize, alpha = alpha, WI = WI,
-              G = G, info_frac = info_frac, typeOfDesign = typeOfDesign,
-              test.type = test.type, AdaptStage2 = AdaptStage2,
-              plotGraphs = plotGraphs)
+#
+# adaptGMCP_CER(nArms = nArms, nEps = nEps, EpType = EpType,
+#               sigma = sigma, prop.ctr = prop.ctr, allocRatio = allocRatio,
+#               SampleSize = SampleSize, alpha = alpha, WI = WI,
+#               G = G, info_frac = info_frac, typeOfDesign = typeOfDesign,
+#               test.type = test.type, AdaptStage2 = AdaptStage2,
+#               plotGraphs = plotGraphs)
 }

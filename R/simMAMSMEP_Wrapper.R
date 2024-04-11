@@ -75,7 +75,7 @@ run1TestCase <- function(InputDF) {
   info_frac <- eval(parse(text = InputDF$info_frac))
   typeOfDesign <- InputDF$typeOfDesign
   MultipleWinners <- InputDF$MultipleWinners
-  Selection <- InputDF$Selection
+  CommonStdDev <- InputDF$CommonStdDev
   SelectionLook <- InputDF$SelectionLook
   SelectEndPoint <- InputDF$SelectEndPoint
   SelectionScale <- InputDF$SelectionScale

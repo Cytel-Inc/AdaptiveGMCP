@@ -69,7 +69,7 @@ Arms.alloc.ratio <- c(1, 1, 1, 1)
 # Note: For composite endpoints this correlation is assumed to be normal scale correlations
 EP.Corr <- matrix(c(1, 0.5,
                     0.5, 1),
-                  nrow = 2)
+                  nrow = nEps)
 
 #----------------Initial Weights---------------------
 #Note: Hypotheses will follow the order of Endpoints and Treatments as given in 'Arms.Mean' and 'Arms.std.dev' inputs
@@ -86,7 +86,7 @@ G <- matrix(c(0,0,0,     1,0,0,
               0,1/2,1/2, 0,0,0,
               1/2,0,1/2, 0,0,0,
               1/2,1/2,0, 0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)
+            nrow = nEps*(nArms-1), byrow = TRUE)
 
 
 
@@ -159,22 +159,22 @@ SummaryStat <- FALSE
 plotGraphs <- TRUE
 
 #--------------Parallel Logical; TRUE: Parallel computations--------
-Parallel <- T
+Parallel <- TRUE
 
 #-----------------------Run Simulation--------------------------------------
 #Please uncomment the following code to run the simulation(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
 #
-out <- simMAMSMEP(
-  alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType=EpType,
-  TestStatCon = TestStatCon, TestStatBin = TestStatBin, FWERControl = FWERControl,
-  Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev,Arms.Prop = Arms.Prop, Arms.alloc.ratio = Arms.alloc.ratio,
-  EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type, info_frac = info_frac,
-  typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
-  Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
-  SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
-  ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
-  Method = Method, plotGraphs = plotGraphs, Parallel = Parallel
-)
-out
+# out <- simMAMSMEP(
+#   alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType=EpType,
+#   TestStatCon = TestStatCon, TestStatBin = TestStatBin, FWERControl = FWERControl,
+#   Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev,Arms.Prop = Arms.Prop, Arms.alloc.ratio = Arms.alloc.ratio,
+#   EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type, info_frac = info_frac,
+#   typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
+#   Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
+#   SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
+#   ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
+#   Method = Method, plotGraphs = plotGraphs, Parallel = Parallel
+# )
+# out
 
 

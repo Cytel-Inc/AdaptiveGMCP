@@ -1,6 +1,7 @@
 test_that("Test Plan Parametric Boundary(CER Method)", {
   # Test Case1: Validate with East MAMS-GS boundary
   # Arms : 3, Looks: 2, Hypothesis: 2
+  CommonStdDev <<- FALSE
   EpType <- list('EP1'='Continuous')
   alpha <- 0.025
   nLooks <- 2
@@ -37,6 +38,7 @@ test_that("Test Plan Parametric Boundary(CER Method)", {
   #--------------------------------------------------------------------------------
   # Test Case2: Validate with East MAMS-GS boundary unbalanced design
   # Arms : 3, Looks: 2, Hypothesis: 2
+  CommonStdDev <<- FALSE
   EpType <- list('EP1'='Continuous')
   alpha <- 0.025
   nLooks <- 2
@@ -72,6 +74,7 @@ test_that("Test Plan Parametric Boundary(CER Method)", {
   #----------------------------------------------------------------------
   # Test Case3: Consistency with multiple endpoints
   # Arms : 3, Looks: 2, Endpoints: 3
+  CommonStdDev <- FALSE
   EpType <- list('EP1'='Continuous',
                  'EP2'='Continuous',
                  'EP3'='Continuous')
@@ -127,6 +130,7 @@ test_that("Test Plan Parametric Boundary(CER Method)", {
   #-----------------------------------------------------------------------------
   # Test Case4: Validate with East MAMS-GS boundary
   # Arms : 3, Looks: 2, Hypothesis: 2
+  CommonStdDev <<- FALSE
   EpType <- list('EP1'='Continuous')
   alpha <- 0.025
   nLooks <- 2

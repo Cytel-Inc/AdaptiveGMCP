@@ -1,6 +1,7 @@
 test_that("Test the Sigma Matrix Computation for MAMSMEP(Parametric) designs", {
   # Test Case:1 Two-Stage Multi-Arm with one Endpoint
   # Arms: 3, Eps: 1, Hypothesis: 2
+  CommonStdDev <<- FALSE
   EpType <- list("EP1" = "Continuous")
   sigma <- list("EP1" = c(1, 1, 1))
   prop.ctr <- NA
