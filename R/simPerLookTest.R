@@ -19,7 +19,8 @@ perLookTest <- function(Arms.SS.Incr, SummStat, mcpObj) {
               Arms.std.dev = mcpObj$Arms.std.dev,
               test.type = mcpObj$test.type,
               EpType = mcpObj$lEpType,
-              prop.ctr = mcpObj$prop.ctr
+              prop.ctr = mcpObj$prop.ctr,
+              CommonStdDev = mcpObj$CommonStdDev
             )[[1]]
           } else {
             mcpObj$Correlation <- mcpObj$PlanCorrelation[[mcpObj$CurrentLook]]

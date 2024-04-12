@@ -1,7 +1,7 @@
-#' Generate weights for all intersection hypothesis
-#' @param w Initial Weights
-#' @param g Initial Transition Matrix
-#' @param HypothesisName Hypotheses Name
+# Generate weights for all intersection hypothesis
+# w Initial Weights
+# g Initial Transition Matrix
+# HypothesisName Hypotheses Name
 genWeights <- function(w, g, HypothesisName) {
   # Input Validation
   if (length(w) != nrow(g) || length(w) != ncol(g)) stop("Error: length(w), nrow(g) and ncol(g) are not same | function: genWeights")

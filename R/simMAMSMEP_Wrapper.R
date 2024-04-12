@@ -1,5 +1,6 @@
 #' Wrapper function that takes all inputs through a single R dataframe
 #' @param InputDF R Dataframe: This is the csv/excel input data in the R dataframe format
+#' @example ./internalData/RunBatches12-04-24.R
 #' @export
 simMAMSMEP_Wrapper <- function(InputDF) {
   # Update the dataframe column names in the following mapping in case
@@ -75,7 +76,9 @@ run1TestCase <- function(InputDF) {
   info_frac <- eval(parse(text = InputDF$info_frac))
   typeOfDesign <- InputDF$typeOfDesign
   MultipleWinners <- InputDF$MultipleWinners
+  MultipleWinners <- ifelse(is.na(MultipleWinners),FALSE,MultipleWinners)
   Selection <- InputDF$Selection
+  Selection <- ifelse(is.na(Selection),FALSE, Selection)
   CommonStdDev <- InputDF$CommonStdDev
   SelectionLook <- InputDF$SelectionLook
   SelectEndPoint <- InputDF$SelectEndPoint
@@ -84,6 +87,7 @@ run1TestCase <- function(InputDF) {
   SelectionParmeter <- InputDF$SelectionParmeter
   KeepAssosiatedEps <- InputDF$KeepAssosiatedEps
   ImplicitSSR <- InputDF$ImplicitSSR
+  ImplicitSSR <- ifelse(is.na(ImplicitSSR),FALSE,ImplicitSSR)
   nSimulation <- InputDF$nSimulation
   Seed <- InputDF$Seed
   SummaryStat <- InputDF$SummaryStat
@@ -126,25 +130,10 @@ genPowerTablePlots <- function(PowerType, dfOut, TableTemDF) {
   scenarios <- unique(tab1$Level1)
   plots <- list()
 
-  # for(s in 1:length(scenarios)){
-  #   tab2 <- tab1[tab1$Level1 == scenarios[s], ]
-  #   tab2[PowerType][is.na(tab2[PowerType])] = 0
-  #   plots[[s]] <- ggplot(tab2, aes(x = Level2)) +
-  #     geom_bar(aes(y = Global.Power, fill = Method), stat = "identity", position = "dodge") +
-  #     ggtitle(scenarios[s])+
-  #     theme(plot.title = element_text(hjust = 0.5),
-  #           axis.title.x = element_blank())
-  #
-  # }
-  # plt <- grid.arrange(grobs=plots,ncol=2)
   tab3 <- reshape(
     data = tab1, idvar = c("Level1", "Level2"),
     v.names = PowerType, timevar = "Method", direction = "wide"
   )
-
-
-
-
   tab3$Difference <- tab3[, 4] - tab3[, 3]
 
   colnames(tab3) <- c(

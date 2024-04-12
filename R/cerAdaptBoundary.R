@@ -1,4 +1,4 @@
-#' Boundary computation based on the mcpObj
+#Boundary computation based on the mcpObj
 adaptBdryCER <- function(mcpObj) {
   nHypothesis <- length(mcpObj$IntialHypothesis)
   nLooks <- length(mcpObj$Stage1Obj$info_frac)
@@ -31,7 +31,8 @@ adaptBdryCER <- function(mcpObj) {
       prop.ctr = mcpObj$prop.ctr,
       Stage2AllocSampleSize = mcpObj$Stage2AllocSampleSize,
       Stage2allocRatio = mcpObj$Stage2allocRatio,
-      Stage2sigma = mcpObj$sigma
+      Stage2sigma = mcpObj$sigma,
+      CommonStdDev = mcpObj$CommonStdDev
     )
   } else {
     Stage2Sigma <- NA

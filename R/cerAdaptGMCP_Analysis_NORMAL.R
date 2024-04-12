@@ -1,18 +1,17 @@
-#' Function to perform Adaptive GMCP Analysis following Combined P-Value(Inverse Normal) method
-#' @param nArms Number of Arms
-#' @param nEps Number of End points
-#' @param SampleSize Plan Sample Size
-#' @param sigma Arm-Wise sigma for each endpoint
-#' @param allocRatio Arm-Wise allocation ratio
-#' @param WI Vector of Initial Weights for Global Null(default = \code{rep(1/4,4)})
-#' @param G  Transition Matrix (default = \code{matrix(c(0,1/3,1/3,1/3,  1/3,0,1/3,1/3, 1/3,1/3,0,1/3, 1/3,1/3,1/3,0),nrow = 4)})
-#' @param test.type Character to specify the type of test want to perform; "Parametric": Weighted Dunnett , "Non-Parametric": Weighted Bonferroni and  'Partly-Parametric': Mixed type Tests.
-#' @param alpha Type-1 error
-#' @param info_frac Vector of information fraction
-#' @param typeOfDesign The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), default is "OF".
-#' @param AdaptStage2 TRUE: Adaptation option will be given for stage-2, FALSE : proceed as planned.
-#' @param plotGraphs TRUE: plot intermediate graphs
-#' @example ./internalData/AdaptGMCP_CER_Analysis_Example.R
+# Function to perform Adaptive GMCP Analysis following Combined P-Value(Inverse Normal) method
+# nArms Number of Arms
+# nEps Number of End points
+# SampleSize Plan Sample Size
+# sigma Arm-Wise sigma for each endpoint
+# allocRatio Arm-Wise allocation ratio
+# WI Vector of Initial Weights for Global Null(default = \code{rep(1/4,4)})
+# G  Transition Matrix (default = \code{matrix(c(0,1/3,1/3,1/3,  1/3,0,1/3,1/3, 1/3,1/3,0,1/3, 1/3,1/3,1/3,0),nrow = 4)})
+# test.type Character to specify the type of test want to perform; "Parametric": Weighted Dunnett , "Non-Parametric": Weighted Bonferroni and  'Partly-Parametric': Mixed type Tests.
+# alpha Type-1 error
+# info_frac Vector of information fraction
+# typeOfDesign The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), default is "OF".
+# AdaptStage2 TRUE: Adaptation option will be given for stage-2, FALSE : proceed as planned.
+# plotGraphs TRUE: plot intermediate graphs
 adaptGMCP_CONT_CER <- function(
     nArms = 3,
     nEps = 2,
@@ -76,7 +75,7 @@ adaptGMCP_CONT_CER <- function(
       HypothesisName = GlobalIndexSet,
       w = WI,
       G = G,
-      Titel = "Initial Graph",
+      Title = "Initial Graph",
       Text = SubText
     )
   }
@@ -193,7 +192,7 @@ adaptGMCP_CONT_CER <- function(
             w = unlist(nodes),
             G = edges,
             activeStatus = activeStatus,
-            Titel = paste("Graph After Stage ", mcpObj$CurrentLook, " analysis"),
+            Title = paste("Graph After Stage ", mcpObj$CurrentLook, " analysis"),
             Text = mcpObj$SubText
           )
         }
@@ -229,7 +228,7 @@ adaptGMCP_CONT_CER <- function(
             w = unlist(nodes),
             G = edges,
             activeStatus = activeStatus,
-            Titel = paste("Graph After Stage ", mcpObj$CurrentLook, " analysis"),
+            Title = paste("Graph After Stage ", mcpObj$CurrentLook, " analysis"),
             Text = mcpObj$SubText
           )
         }
@@ -269,7 +268,7 @@ adaptGMCP_CONT_CER <- function(
                       w = unlist(nodes),
                       G = edges,
                       activeStatus = activeStatus,
-                      Titel = paste("Graph After Selection"),
+                      Title = paste("Graph After Selection"),
                       Text = mcpObj$SubText
                     )
                   }

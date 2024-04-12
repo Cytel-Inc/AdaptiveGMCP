@@ -3,7 +3,7 @@
 # test.type : planned test type
 # HypoMap : dataframe to identify the endpoint specific hypothesis
 #------------------------------------------------------- -
-#' Connected Subsets
+# Connected Subsets
 connSets <- function(J, w, test.type, HypoMap) {
   if (test.type == "Partly-Parametric" || test.type == "Parametric") {
     df1 <- HypoMap[which(J == 1), ]
@@ -31,7 +31,7 @@ connSets <- function(J, w, test.type, HypoMap) {
 }
 #------------------------------------------------------------- -
 
-#' Connected parametric subsets
+# Connected parametric subsets
 connParamNParmSets <- function(conn_Sets) {
   lSets <- lapply(conn_Sets, length)
   Param_grp <- conn_Sets[which(lSets > 1)]

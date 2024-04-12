@@ -316,7 +316,7 @@ do_modifyStrategy <- function(mcpObj, showExistingStrategy = T) {
         HypothesisName = mcpObj$IndexSet,
         w = mcpObj_new$newWeights,
         G = mcpObj_new$newG,
-        Titel = "Modified Graph"
+        Title = "Modified Graph"
       )
 
 

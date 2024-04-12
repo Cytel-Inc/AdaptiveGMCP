@@ -1,4 +1,5 @@
 # To test the input arguments of simMAMSMEP
+# Note : The error text must contain the word "Invalid" so that later they can be processed appropriately
 valInpsimMAMSMEP <- function(inps) {
   logs <- list()
 
@@ -56,22 +57,30 @@ valInpsimMAMSMEP <- function(inps) {
     0, "Invalid argument in 'EP.Corr'"
   )
 
-  logs[[15]] <- ifelse(inps$SelectionScale == "delta" || inps$SelectionScale == "teststat" || inps$SelectionScale == "stderror" || inps$SelectionScale == "pvalue",
-    0, "Invalid argument in 'SelectionScale'"
-  )
+  if(length(inps$InfoFrac) > 1){
+    logs[[15]] <- ifelse(inps$SelectionScale == "delta" || inps$SelectionScale == "teststat" || inps$SelectionScale == "stderror" || inps$SelectionScale == "pvalue",
+                         0, "Invalid argument in 'SelectionScale'"
+    )
 
-  logs[[16]] <- ifelse(inps$SelectionCriterion == "best" || inps$SelectionCriterion == "threshold" || inps$SelectionCriterion == "epsilon",
-    0, "Invalid argument in 'SelectionCriterion'"
-  )
+    logs[[16]] <- ifelse(inps$SelectionCriterion == "best" || inps$SelectionCriterion == "threshold" || inps$SelectionCriterion == "epsilon",
+                         0, "Invalid argument in 'SelectionCriterion'"
+    )
 
+    logs[[18]] <- ifelse(inps$ImplicitSSR == "Selection" || inps$ImplicitSSR == "All" || inps$ImplicitSSR == "None",
+                         0, "Invalid argument in 'ImplicitSSR'"
+    )
+  }else{
+    # Fixed sample
+    logs[[15]] <- 0
+    logs[[16]] <- 0
+    logs[[18]] <- 0
+  }
 
   logs[[17]] <- ifelse(inps$Seed == "Random" || is.numeric(inps$Seed),
     0, "Invalid argument in 'Seed'"
   )
 
-  logs[[18]] <- ifelse(inps$ImplicitSSR == "Selection" || inps$ImplicitSSR == "All" || inps$ImplicitSSR == "None",
-    0, "Invalid argument in 'ImplicitSSR'"
-  )
+
 
   logs[[19]] <- ifelse(length(inps$lEpType) == inps$nEps,
     0, "Invalid argument in 'lEpType'"
@@ -89,6 +98,12 @@ valInpsimMAMSMEP <- function(inps) {
   logs[[21]] <- ifelse(inps$TestStatBin == "UnPooled" || inps$TestStatBin == "Pooled",
     0, "Invalid argument in 'TestStatBin'"
   )
+
+  if(inps$nEps > 1){
+    logs[[22]] <- ifelse(matrixcalc::is.positive.semi.definite(inps$EP.Corr),
+                         0, "Invalid argument in 'EP.Corr', the matrix is not positive semi-definite")
+  }
+
 
 
   return(logs)

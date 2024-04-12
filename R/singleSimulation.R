@@ -1,7 +1,7 @@
-#' Perform Single Simulation for combining p-values method
-#' @param simID Simulation ID
-#' @param gmcpSimObj obj with simulation inputs
-#' @param preSimObjs obj with intermediate inputs
+# Perform Single Simulation for combining p-values method
+# simID Simulation ID
+# gmcpSimObj obj with simulation inputs
+# preSimObjs obj with intermediate inputs
 SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
   # Initialize Intermediate Inputs
   mcpObj <- initialize_mcpObj(gmcpSimObj = gmcpSimObj, preSimObjs = preSimObjs)
@@ -108,10 +108,10 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
 }
 
 
-#' Perform Single Simulation for CER method
-#' @param simID Simulation ID
-#' @param gmcpSimObj obj with simulation inputs
-#' @param preSimObjs obj with intermediate inputs
+# Perform Single Simulation for CER method
+# simID Simulation ID
+# gmcpSimObj obj with simulation inputs
+# preSimObjs obj with intermediate inputs
 SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
   # Initialize Intermediate Inputs
   mcpObj <- initialize_mcpObj(gmcpSimObj = gmcpSimObj, preSimObjs = preSimObjs)

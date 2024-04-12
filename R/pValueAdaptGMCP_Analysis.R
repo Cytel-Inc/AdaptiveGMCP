@@ -60,7 +60,7 @@ adaptGMCP_PC <- function(
 
   # Plot the initial Graph
   if (plotGraphs) {
-    plotGraph(HypothesisName = GlobalIndexSet, w = WI, G = G, Titel = "Initial Graph")
+    plotGraph(HypothesisName = GlobalIndexSet, w = WI, G = G, Title = "Initial Graph")
   }
 
   rej_flag_Prev <- rej_flag_Curr <- DropedFlag <- rep(FALSE, D)
@@ -173,7 +173,7 @@ adaptGMCP_PC <- function(
           w = unlist(nodes),
           G = edges,
           activeStatus = activeStatus,
-          Titel = paste("Graph After Stage ", mcpObj$CurrentLook, " analysis")
+          Title = paste("Graph After Stage ", mcpObj$CurrentLook, " analysis")
         )
       }
 
@@ -205,7 +205,7 @@ adaptGMCP_PC <- function(
                 w = unlist(nodes),
                 G = edges,
                 activeStatus = activeStatus,
-                Titel = paste("Graph After Selection")
+                Title = paste("Graph After Selection")
               )
             }
         }

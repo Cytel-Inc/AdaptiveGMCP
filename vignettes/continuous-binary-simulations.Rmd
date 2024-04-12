@@ -1,8 +1,14 @@
 ---
 title: "Normal Binary Simulations"
-output: rmarkdown::html_vignette
-vignette: "%\\VignetteIndexEntry{Normal Binary Simulations} %\\VignetteEngine{knitr::rmarkdown}
-  %\\VignetteEncoding{UTF-8}"
+output:
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 4
+vignette: >
+  %\VignetteIndexEntry{Normal Binary Simulations} 
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}"
 ---
 
 ## Notations

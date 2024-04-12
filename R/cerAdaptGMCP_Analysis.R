@@ -4,7 +4,7 @@
 #' @param SampleSize Plan Sample Size
 #' @param EpType list of endpoint types (options : "Continuous","Binary")
 #' @param sigma Arm-Wise sigma for each endpoint(for EpType = "Continuous")
-#' @param CommonStdDev TRUE = the treatment standard deviations assumed to be same as the control, FALSE = the treatment standard deviations assumed to be same as given in sigma.
+#' @param CommonStdDev TRUE = the treatment standard deviations assumed to be same as the control for boundary computations for continuous endpoints, FALSE = the treatment standard deviations assumed to be same as given in Arms.std.dev.
 #' @param prop.ctr proportion for control arm for each endpoint(for EpType = "Binary")
 #' @param allocRatio Arm-Wise allocation ratio
 #' @param WI Vector of Initial Weights for Global Null(default = \code{rep(1/4,4)})
@@ -43,7 +43,6 @@ adaptGMCP_CER <- function(
     AdaptStage2 = TRUE,
     plotGraphs = TRUE) {
 
-  CommonStdDev <<- CommonStdDev
   ###### Input Validation #####
   # stopifnot('Number of Arms must be > 2',length(nArms) <= 2)
   # stopifnot('Number of End points must be >= 1',length(nEps) < 1)
@@ -82,7 +81,7 @@ adaptGMCP_CER <- function(
       HypothesisName = GlobalIndexSet,
       w = WI,
       G = G,
-      Titel = "Initial Graph",
+      Title = "Initial Graph",
       Text = SubText
     )
   }
@@ -99,6 +98,7 @@ adaptGMCP_CER <- function(
     "IndexSet" = GlobalIndexSet,
     "ArmsPresent" = ArmsPresent,
     "sigma" = sigma,
+    "CommonStdDev" = CommonStdDev,
     "prop.ctr" = prop.ctr,
     "allocRatio" = allocRatio,
     "Stage2allocRatio" = allocRatio,
@@ -146,7 +146,8 @@ adaptGMCP_CER <- function(
         alpha = alpha, info_frac = info_frac,
         typeOfDesign = typeOfDesign, des.type = des.type,
         test.type = test.type, Stage1Pvalues = mcpObj$p_raw,
-        HypoMap = mcpObj$HypoMap, WH = mcpObj$WH
+        HypoMap = mcpObj$HypoMap,CommonStdDev = mcpObj$CommonStdDev,
+        WH = mcpObj$WH
       )
       cat("Planned Variance Covariance Matrix \n")
       print(Stage1Test$Stage1Obj$Sigma)
@@ -200,7 +201,7 @@ adaptGMCP_CER <- function(
             w = unlist(nodes),
             G = edges,
             activeStatus = activeStatus,
-            Titel = paste("Graph After Stage ", mcpObj$CurrentLook, " analysis"),
+            Title = paste("Graph After Stage ", mcpObj$CurrentLook, " analysis"),
             Text = mcpObj$SubText
           )
         }
@@ -236,7 +237,7 @@ adaptGMCP_CER <- function(
             w = unlist(nodes),
             G = edges,
             activeStatus = activeStatus,
-            Titel = paste("Graph After Stage ", mcpObj$CurrentLook, " analysis"),
+            Title = paste("Graph After Stage ", mcpObj$CurrentLook, " analysis"),
             Text = mcpObj$SubText
           )
         }
@@ -276,7 +277,7 @@ adaptGMCP_CER <- function(
                       w = unlist(nodes),
                       G = edges,
                       activeStatus = activeStatus,
-                      Titel = paste("Graph After Selection"),
+                      Title = paste("Graph After Selection"),
                       Text = mcpObj$SubText
                     )
                   }

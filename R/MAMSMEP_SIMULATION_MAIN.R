@@ -10,7 +10,7 @@
 #' @param lEpType list with endpoint types
 #' @param Arms.Mean Numeric list to specify the arm-wise mean for each endpoint; Note: The first input is for control arm and the rest are for the treatments.
 #' @param Arms.std.dev Numeric list to specify the arm-wise standard deviation for each endpoint; Note: The first input is for control arm and the rest are for the treatments.
-#' @param CommonStdDev TRUE = the treatment standard deviations assumed to be same as the control, FALSE = the treatment standard deviations assumed to be same as given in Arms.std.dev.
+#' @param CommonStdDev TRUE = the treatment standard deviations assumed to be same as the control for boundary computations for continuous endpoints, FALSE = the treatment standard deviations assumed to be same as given in Arms.std.dev.
 #' @param Arms.Prop Numeric list to specify the arm-wise proportions for each endpoint; Note: The first input is for control arm and the rest are for the treatments.
 #' @param Arms.alloc.ratio Numeric Vector to specify the arm-wise allocation ratio; Note: The first input is for control arm and the rest are for the treatments.
 #' @param EP.Corr correlation matrix for the endpoints(Normal)
@@ -97,8 +97,6 @@ simMAMSMEP <- function(
     SummaryStat = FALSE,
     plotGraphs = TRUE,
     Parallel = TRUE) {
-
-  CommonStdDev <<- CommonStdDev
   Parallel <- Parallel
   TailType <- "RightTail" ## Default Right
   UpdateStrategy <- F ## Not implemented yet
@@ -122,6 +120,7 @@ simMAMSMEP <- function(
 
     # Boundary
     "InfoFrac" = info_frac, "typeOfDesign" = typeOfDesign,
+    "CommonStdDev" = CommonStdDev,
 
     # Multiple Winners
     "MultipleWinners" = MultipleWinners,

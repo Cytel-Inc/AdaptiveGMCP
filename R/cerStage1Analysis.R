@@ -16,6 +16,7 @@ PerformStage1Test <- function(
     test.type = "Partly-Parametric",
     Stage1Pvalues = c(0.00045, 0.0952, 0.0225, 0.1104),
     HypoMap,
+    CommonStdDev,
     WH) {
   # Stage-Wise Cumulative Sample Size
   SS_alloc <- getPlanAllocatedSamples(SS = SampleSize, allocRatio = allocRatio, info_frac = info_frac)
@@ -25,7 +26,8 @@ PerformStage1Test <- function(
   if (test.type == "Partly-Parametric" || test.type == "Parametric") {
     Sigma <- getSigma(
       SS_Cum = SS_Cum, EpType = EpType, sigma = sigma,
-      prop.ctr = prop.ctr, allocRatio = allocRatio
+      prop.ctr = prop.ctr, allocRatio = allocRatio,
+      CommonStdDev = CommonStdDev
     )
   } else {
     Sigma <- NA

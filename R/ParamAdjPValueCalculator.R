@@ -1,8 +1,8 @@
-#' Compute adjusted p-value for a parametric test
-#' @param p2 stage-2 p-values for the intersection hypothesis
-#' @param a1 stage-1 boundary for the intersection hypothesis
-#' @param w2 stage-2 weights for the intersection hypothesis
-#' @param SigmaZ variance covariance matrix on Z scale for the intersection hypothesis
+# Compute adjusted p-value for a parametric test
+# p2 stage-2 p-values for the intersection hypothesis
+# stage-1 boundary for the intersection hypothesis
+# w2 stage-2 weights for the intersection hypothesis
+# SigmaZ variance covariance matrix on Z scale for the intersection hypothesis
 getParamAdjPValue <- function(
     p2 = c(0.02, 0.1),
     a1 = c(0.000782, 0.000782),

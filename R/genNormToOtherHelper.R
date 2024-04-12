@@ -1,5 +1,5 @@
 #-------------------------------------------------- -
-#' all endpoints normal
+# all endpoints normal
 getMVNorm <- function(nSubject = 100,
                       vNormMean = c(0.1, 0.4),
                       mNormSigma = matrix(c(1, 0.5, 0.5, 1), nrow = 2),
@@ -14,7 +14,7 @@ getMVNorm <- function(nSubject = 100,
 
 
 #------------------------------------------------- -
-#' all endpoints binary
+# all endpoints binary
 getMVBinom <- function(nSubject = 100,
                        vProp = c(0.1, 0.2),
                        mNormCorr = matrix(c(1, 0.5, 0.5, 1), nrow = 2),
@@ -32,7 +32,7 @@ getMVBinom <- function(nSubject = 100,
 }
 
 #------------------------------------------------- -
-#' endpoints either normal or binary
+# endpoints either normal or binary
 getMVNormBinom <- function(nSubject = 100000,
                            vProp = c(0.1, 0.2),
                            mNormCorr = matrix(c(1, 0.5, 0.5, 1), nrow = 2),

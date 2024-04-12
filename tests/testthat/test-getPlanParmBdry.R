@@ -1,7 +1,7 @@
 test_that("Test Plan Parametric Boundary(CER Method)", {
   # Test Case1: Validate with East MAMS-GS boundary
   # Arms : 3, Looks: 2, Hypothesis: 2
-  CommonStdDev <<- FALSE
+  CommonStdDev <- FALSE
   EpType <- list('EP1'='Continuous')
   alpha <- 0.025
   nLooks <- 2
@@ -19,7 +19,8 @@ test_that("Test Plan Parametric Boundary(CER Method)", {
                     SS_Cum = SS_Cum,
                     sigma = sigma,
                     prop.ctr = prop.ctr,
-                    allocRatio = allocRatio)
+                    allocRatio = allocRatio,
+                    CommonStdDev = CommonStdDev)
   gIDX <- 1
   hIDX <- c(1, 2)
   typeOfDesign <- "asOF"
@@ -38,7 +39,7 @@ test_that("Test Plan Parametric Boundary(CER Method)", {
   #--------------------------------------------------------------------------------
   # Test Case2: Validate with East MAMS-GS boundary unbalanced design
   # Arms : 3, Looks: 2, Hypothesis: 2
-  CommonStdDev <<- FALSE
+  CommonStdDev <- FALSE
   EpType <- list('EP1'='Continuous')
   alpha <- 0.025
   nLooks <- 2
@@ -54,7 +55,8 @@ test_that("Test Plan Parametric Boundary(CER Method)", {
   Sigma <- getSigma(EpType = EpType,
                     SS_Cum = SS_Cum,
                     sigma = sigma,
-                    allocRatio = allocRatio)
+                    allocRatio = allocRatio,
+                    CommonStdDev = CommonStdDev)
   gIDX <- 1
   hIDX <- c(1, 2)
   typeOfDesign <- "asOF"
@@ -96,7 +98,8 @@ test_that("Test Plan Parametric Boundary(CER Method)", {
   Sigma <- getSigma(EpType = EpType,
                     SS_Cum = SS_Cum,
                     sigma = sigma,
-                    allocRatio = allocRatio)
+                    allocRatio = allocRatio,
+                    CommonStdDev = CommonStdDev)
 
   # EP-1
   gIDX <- 1
@@ -130,7 +133,7 @@ test_that("Test Plan Parametric Boundary(CER Method)", {
   #-----------------------------------------------------------------------------
   # Test Case4: Validate with East MAMS-GS boundary
   # Arms : 3, Looks: 2, Hypothesis: 2
-  CommonStdDev <<- FALSE
+  CommonStdDev <- FALSE
   EpType <- list('EP1'='Continuous')
   alpha <- 0.025
   nLooks <- 2
@@ -147,7 +150,8 @@ test_that("Test Plan Parametric Boundary(CER Method)", {
                     SS_Cum = SS_Cum,
                     sigma = sigma,
                     prop.ctr =  prop.ctr,
-                    allocRatio = allocRatio)
+                    allocRatio = allocRatio,
+                    CommonStdDev = CommonStdDev)
   gIDX <- 1
   hIDX <- c(1, 2)
   typeOfDesign <- "noEarlyEfficacy"

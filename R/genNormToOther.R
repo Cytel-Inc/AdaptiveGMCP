@@ -1,12 +1,12 @@
-#' This function generate single arm(having multiple endpoint) responses given the normal scale correlation matrix
-#' @param nSubject number of response to generate
-#' @param lEpType list with endpoint types
-#' @param mNormCorr correlation matrix in normal scale(when marginals are not normal)
-#' @param mNormSigma covariance matrix in normal scale(when marginals are all normal)
-#' @param vNormMean vector of normal means(when marginals are all normal)
-#' @param vProp vector of proportions(when marginals are all binary)
-#' @param nSeed seed
-#' @return array of responses(columns = endpoints, Rows = subject)
+# This function generate single arm(having multiple endpoint) responses given the normal scale correlation matrix
+# nSubject number of response to generate
+# lEpType list with endpoint types
+# mNormCorr correlation matrix in normal scale(when marginals are not normal)
+# mNormSigma covariance matrix in normal scale(when marginals are all normal)
+# vNormMean vector of normal means(when marginals are all normal)
+# vProp vector of proportions(when marginals are all binary)
+# nSeed seed
+# return: array of responses(columns = endpoints, Rows = subject)
 genNormToOther <- function(nSubject = 100,
                            lEpType = list("Continuous", "Continuous"),
                            mNormCorr = matrix(c(1, 0.5, 0.5, 1), nrow = 2),
@@ -35,16 +35,16 @@ genNormToOther <- function(nSubject = 100,
 
 
 #------------------------------------------------- -
-#' This function generate single arm(having multiple endpoint) responses given the normal scale correlation matrix
-#' @param nArmID Arm Index
-#' @param nSubject number of response to generate
-#' @param vEPs Endpoints associated with the Arm Index(Existing)
-#' @param vEPType Endpoints type(Note Same length as vEPs)
-#' @param lNormMean User input continuous arm means
-#' @param lNormStdDev User input continuous arm Standard Deviation
-#' @param lProp User input binary arm proportions
-#' @param mNormCorr User input correlation matrix(normal scale)
-#' @param nSeed seed
+# This function generate single arm(having multiple endpoint) responses given the normal scale correlation matrix
+# nArmID Arm Index
+# nSubject number of response to generate
+# vEPs Endpoints associated with the Arm Index(Existing)
+# vEPType Endpoints type(Note Same length as vEPs)
+# lNormMean User input continuous arm means
+# lNormStdDev User input continuous arm Standard Deviation
+# lProp User input binary arm proportions
+# mNormCorr User input correlation matrix(normal scale)
+# nSeed seed
 genNormToOther2 <- function(nArmID = 3,
                             nSubject = 100,
                             vEPs = c(1, 4),

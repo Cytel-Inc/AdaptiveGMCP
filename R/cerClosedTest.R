@@ -16,7 +16,7 @@ checkRejection <- function(pValues, boundary) {
   }
 }
 
-#' Overall decision
+# Overall decision
 getRejStatus <- function(pValues, IntTestDF, Stage1RejStatus) {
   length(pValues)
   rej_flag <- rep(NA, length(pValues))
@@ -37,7 +37,7 @@ getRejStatus <- function(pValues, IntTestDF, Stage1RejStatus) {
   RejStatus
 }
 
-#' Closed Test
+# Closed Test
 closedTest <- function(WH, boundary, pValues, Stage1RejStatus) {
   AnalysisTable <- data.frame(WH[, 1:(ncol(WH) / 2)],
     "Rejected" = checkRejection(

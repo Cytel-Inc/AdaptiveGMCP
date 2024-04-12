@@ -50,8 +50,13 @@ Arms.Mean <- list('EP1' = c(0, 0.4, 0.4, 0.4),
 #-------------Arm-Wise planned Std. Dev. for each endpoints-----
 # List containing the arm-wise(continuous) standard deviations
 # Note: The first input is for control arm and the rest are for the treatments
-Arms.std.dev <- list('EP1' = c(1, 1, 1, 1),
+Arms.std.dev <- list('EP1' = c(1.1, 1.2, 1.3, 1.4),
                      'EP2' = NA)
+
+#--------Use Common standard deviations for boundary computation-----
+#TRUE = the treatment standard deviations assumed to be same as the control for boundary computations for continuous endpoints
+#FALSE = the treatment standard deviations assumed to be same as given in Arms.std.dev.
+CommonStdDev <- FALSE
 
 
 #-------------Arm-Wise proportion for each endpoints-----------------
@@ -162,12 +167,13 @@ plotGraphs <- TRUE
 Parallel <- TRUE
 
 #-----------------------Run Simulation--------------------------------------
-#Please uncomment the following code to run the simulation(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
+# Uncomment the following code to run simulation;
+# short cut: 1) select all the following lines 2) ctrl+shift+c]
 #
 # out <- simMAMSMEP(
 #   alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType=EpType,
 #   TestStatCon = TestStatCon, TestStatBin = TestStatBin, FWERControl = FWERControl,
-#   Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev,Arms.Prop = Arms.Prop, Arms.alloc.ratio = Arms.alloc.ratio,
+#   Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, CommonStdDev = CommonStdDev, Arms.Prop = Arms.Prop, Arms.alloc.ratio = Arms.alloc.ratio,
 #   EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type, info_frac = info_frac,
 #   typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
 #   Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,

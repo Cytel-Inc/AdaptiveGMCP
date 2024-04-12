@@ -55,7 +55,7 @@ varCovZ <- function(EpType, i1, k1, i2, k2, sigma_0, sigma_trt, ctrProp, ctrSS, 
 # prop.ctr : list containing control proportion for Binary endpoints
 # allocRatio : allocation ratio for the arms
 #------------------------------------------------ -
-getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio) {
+getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio, CommonStdDev) {
 
   #Treatment standard Deviation is same is control
   #CommonStdDev flag is global variable set from simMAMSMEP(.), adaptGMCP_CER(.) function call
@@ -158,7 +158,7 @@ getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio) {
 ##### Covariance Matrix for CER & Stage-2 boundary computations#############
 getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
                            AllocSampleSize, allocRatio, sigma, prop.ctr,
-                           Stage2AllocSampleSize, Stage2allocRatio, Stage2sigma) {
+                           Stage2AllocSampleSize, Stage2allocRatio, Stage2sigma,CommonStdDev) {
   #Treatment standard Deviation is same is control
   #CommonStdDev flag is global variable set from simMAMSMEP(.), adaptGMCP_CER(.) function call
   if(CommonStdDev == T){
@@ -325,7 +325,7 @@ getAmatrix <- function(nrow, ncol) {
 
 
 ######## Correlation for Combining p-value dunnett test#############
-getPlanCorrelation <- function(nHypothesis, EpType, SS_Incr, Arms.std.dev, prop.ctr, test.type) {
+getPlanCorrelation <- function(nHypothesis, EpType, SS_Incr, Arms.std.dev, prop.ctr, test.type, CommonStdDev) {
   #Treatment standard Deviation is same is control
   #CommonStdDev flag is global variable set from simMAMSMEP(.), adaptGMCP_CER(.) function call
   if(CommonStdDev == T){

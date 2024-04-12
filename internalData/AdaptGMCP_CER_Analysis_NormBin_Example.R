@@ -31,6 +31,11 @@ EpType <- list("EP1" = "Continuous",
 sigma <- list("EP1" = c(1, 1, 1),
               "EP2" = NA)
 
+#--------Use Common standard deviations for boundary computation-----
+#TRUE = the treatment standard deviations assumed to be same as the control for boundary computations for continuous endpoints
+#FALSE = the treatment standard deviations assumed to be same as given in Arms.std.dev.
+CommonStdDev <- FALSE
+
 #-------------proportion for control arm-------------------
 # List containing the Control Arm(Binary) Proportions
 # Not required for test.type = 'Non-Parametric' or endpoint type as "Continuous"
@@ -89,7 +94,8 @@ plotGraphs <- TRUE
 #
 #
 # adaptGMCP_CER(nArms = nArms, nEps = nEps, EpType = EpType,
-#               sigma = sigma, prop.ctr = prop.ctr, allocRatio = allocRatio,
+#               sigma = sigma, CommonStdDev = CommonStdDev,
+#               prop.ctr = prop.ctr, allocRatio = allocRatio,
 #               SampleSize = SampleSize, alpha = alpha, WI = WI,
 #               G = G, info_frac = info_frac, typeOfDesign = typeOfDesign,
 #               test.type = test.type, AdaptStage2 = AdaptStage2,

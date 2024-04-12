@@ -1,5 +1,13 @@
+
+#' Interactive plot for the graph
+#' @param HypothesisName Hypothesis Name
+#' @param w  Initial weights
+#' @param G Initial Transition Matrix
+#' @param activeStatus Logical; False: greyed out the unvalid hypothes
+#' @param Title Title of the plot
+#' @param Text Additional information to be added in the plot
 #' @export
-plotGraph <- function(HypothesisName, w, G, activeStatus, Titel, Text) {
+plotGraph <- function(HypothesisName, w, G, activeStatus, Title, Text) {
   # Libraries
   library(visNetwork)
   library(reshape2)
@@ -17,7 +25,7 @@ plotGraph <- function(HypothesisName, w, G, activeStatus, Titel, Text) {
       physics = FALSE,
       row.names = NULL
     )
-    visN <- visNetwork(nodes, main = Titel) %>%
+    visN <- visNetwork(nodes, main = Title) %>%
       visNodes(font = list(size = 16))
   } else {
     n <- length(w)
@@ -73,21 +81,21 @@ plotGraph <- function(HypothesisName, w, G, activeStatus, Titel, Text) {
     }
 
 
-    Titel <- ifelse(missing(Titel), "Graph", Titel)
+    Title <- ifelse(missing(Title), "Graph", Title)
 
     if (missing(Text)) {
       if (length(edges) == 0) {
-        visN <- visNetwork(nodes, main = Titel) %>%
+        visN <- visNetwork(nodes, main = Title) %>%
           visNodes(font = list(size = 16))
       } else {
-        visN <- visNetwork(nodes, edges, main = Titel) %>%
+        visN <- visNetwork(nodes, edges, main = Title) %>%
           visNodes(font = list(size = 16)) %>%
           visEdges(font = list(size = 20))
       }
     } else {
       if (length(edges) == 0) {
         visN <- visNetwork(nodes,
-          main = Titel,
+          main = Title,
           submain = list(
             text = Text,
             style = "font-family:Times New Roman;font-size:14px;text-align:center;"
@@ -96,7 +104,7 @@ plotGraph <- function(HypothesisName, w, G, activeStatus, Titel, Text) {
           visNodes(font = list(size = 16))
       } else {
         visN <- visNetwork(nodes, edges,
-          main = Titel,
+          main = Title,
           submain = list(
             text = Text,
             style = "font-family:Times New Roman;font-size:14px;text-align:center;"

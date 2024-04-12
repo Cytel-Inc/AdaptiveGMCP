@@ -259,7 +259,8 @@ getPreSimObjs <- function(gmcpSimObj) {
         Arms.std.dev = gmcpSimObj$Arms.std.dev,
         test.type = gmcpSimObj$test.type,
         EpType = gmcpSimObj$lEpType,
-        prop.ctr = gmcpSimObj$prop.ctr
+        prop.ctr = gmcpSimObj$prop.ctr,
+        CommonStdDev = gmcpSimObj$CommonStdDev
       )
 
       #----------------------------------------------------------------------------------
@@ -282,7 +283,8 @@ getPreSimObjs <- function(gmcpSimObj) {
           sigma = gmcpSimObj$Arms.std.dev,
           allocRatio = gmcpSimObj$Arms.alloc.ratio,
           EpType = gmcpSimObj$lEpType,
-          prop.ctr = gmcpSimObj$prop.ctr
+          prop.ctr = gmcpSimObj$prop.ctr,
+          CommonStdDev = gmcpSimObj$CommonStdDev
         )
       } else {
         Sigma <- NA
@@ -324,7 +326,7 @@ getPreSimObjs <- function(gmcpSimObj) {
       HypothesisName = HypoMap$Hypothesis,
       w = gmcpSimObj$IntialWeights,
       G = gmcpSimObj$G,
-      Titel = "Initial Graph",
+      Title = "Initial Graph",
       Text = SubText
     )
     PreSimObj$iniGraph <- iniGraph
