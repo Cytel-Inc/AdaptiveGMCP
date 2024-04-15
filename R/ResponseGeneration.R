@@ -612,7 +612,7 @@ getPerLookTestStat <- function(simID,
       sumstatdf
     },
     error = function(err) {
-      print("Error in getPerLookTestStatDOM")
+      print("Error in getPerLookTestStat")
       traceback()
     }
   )

@@ -5,9 +5,14 @@ valInpsimMAMSMEP <- function(inps) {
 
   logs[[1]] <- ifelse(inps$Method == "CombPValue" || inps$Method == "CER", 0, "Invalid argument in 'Method'")
 
-  logs[[2]] <- ifelse(inps$TestStatCont == "z" || inps$TestStatCont == "t-equal" || inps$TestStatCont == "t-unequal",
-    0, "Invalid argument in 'TestStatCont'"
-  )
+  if(all(inps$lEpType == 'Continuous')){
+    logs[[2]] <- ifelse(inps$TestStatCont == "z" || inps$TestStatCont == "t-equal" || inps$TestStatCont == "t-unequal",
+                        0, "Invalid argument in 'TestStatCont'"
+    )
+  }else{
+    logs[[2]] <- 0
+  }
+
   logs[[3]] <- ifelse(inps$nArms >= 2, 0, "Invalid argument in 'nArms'")
 
   logs[[4]] <- ifelse(ifelse(inps$Method == "CER", length(inps$InfoFrac) <= 2 & length(inps$InfoFrac) >= 1, length(inps$InfoFrac) >= 1),
@@ -94,10 +99,14 @@ valInpsimMAMSMEP <- function(inps) {
     logs[[20]] <- 0
   }
 
+  if(all(inps$lEpType == 'Binary')){
+    logs[[21]] <- ifelse(inps$TestStatBin == "UnPooled" || inps$TestStatBin == "Pooled",
+                         0, "Invalid argument in 'TestStatBin'"
+    )
+  }else{
+    logs[[21]] <- 0
+  }
 
-  logs[[21]] <- ifelse(inps$TestStatBin == "UnPooled" || inps$TestStatBin == "Pooled",
-    0, "Invalid argument in 'TestStatBin'"
-  )
 
   if(inps$nEps > 1){
     logs[[22]] <- ifelse(matrixcalc::is.positive.semi.definite(inps$EP.Corr),

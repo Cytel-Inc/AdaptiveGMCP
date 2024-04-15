@@ -87,20 +87,26 @@ genNormToOther2 <- function(nArmID = 3,
   })
 
   #--------------------------------------------------------
-  # Covariance Matrix for the ArmID
-  # Continuous: covarince = sx*sy*rxy, Varince = sx*sx
-  # Binary : covariance = rxy, Variance = 1
-  mArmSigma <- matrix(NA, nrow = length(vEPs), ncol = length(vEPs))
-  for (rowIDX in 1:length(vEPs)) {
-    for (colIDX in rowIDX:length(vEPs)) {
-      if (all(c(vEPType[rowIDX], vEPType[colIDX]) == "Continuous")) {
-        mArmSigma[colIDX, rowIDX] <- mArmSigma[rowIDX, colIDX] <-
-          mNormCorr[vEPs[rowIDX], vEPs[colIDX]] *
+  if(length(vEPs) == 1){
+    #Single endpoint case
+    mArmSigma <- lNormStdDev[[vEPs]][nArmID]
+  }else{
+    #Multiple endpoint case
+    # Covariance Matrix for the ArmID
+    # Continuous: covarince = sx*sy*rxy, Varince = sx*sx
+    # Binary : covariance = rxy, Variance = 1
+    mArmSigma <- matrix(NA, nrow = length(vEPs), ncol = length(vEPs))
+    for (rowIDX in 1:length(vEPs)) {
+      for (colIDX in rowIDX:length(vEPs)) {
+        if (all(c(vEPType[rowIDX], vEPType[colIDX]) == "Continuous")) {
+          mArmSigma[colIDX, rowIDX] <- mArmSigma[rowIDX, colIDX] <-
+            mNormCorr[vEPs[rowIDX], vEPs[colIDX]] *
             lNormStdDev[[vEPs[rowIDX]]][nArmID] *
             lNormStdDev[[vEPs[colIDX]]][nArmID]
-      } else {
-        mArmSigma[colIDX, rowIDX] <- mArmSigma[rowIDX, colIDX] <-
-          mNormCorr[vEPs[rowIDX], vEPs[colIDX]]
+        } else {
+          mArmSigma[colIDX, rowIDX] <- mArmSigma[rowIDX, colIDX] <-
+            mNormCorr[vEPs[rowIDX], vEPs[colIDX]]
+        }
       }
     }
   }
