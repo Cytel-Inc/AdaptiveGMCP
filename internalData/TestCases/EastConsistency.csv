@@ -138,24 +138,49 @@
               1/3,0,1/3,1/3,
 			  1/3,1/3,0,1/3,
 			  1/3,1/3,1/3,0),
-            nrow = nEps*(nArms-1), byrow = TRUE)",Bonf,"c(0.5,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+            nrow = nEps*(nArms-1), byrow = TRUE)",Bonf,"c(0.5,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,1000,100,FALSE,FALSE,TRUE
 17,2StageCombPValue(NORM),CombPValue,200,0.025,t-equal,FALSE,,None,5,1,"list(""EP1"" = ""Continuous"")","list('EP1' = c(0,5,5,5,5))","list('EP1' = c(10,10,10,10,10))",NA,"c(1,1,1,1,1)",NA,"c(1/4, 1/4, 1/4, 1/4)","matrix(c(0,1/3,1/3,1/3,
               1/3,0,1/3,1/3,
 			  1/3,1/3,0,1/3,
 			  1/3,1/3,1/3,0),
-            nrow = nEps*(nArms-1), byrow = TRUE)",Dunnett,"c(0.5,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+            nrow = nEps*(nArms-1), byrow = TRUE)",Dunnett,"c(0.5,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,1000,100,FALSE,FALSE,TRUE
 18,2StageCombPValue(NORM),CombPValue,200,0.025,t-unequal,FALSE,,None,5,1,"list(""EP1"" = ""Continuous"")","list('EP1' = c(0,5,5,5,5))","list('EP1' = c(10,10,10,10,10))",NA,"c(1,1,1,1,1)",NA,"c(1/4, 1/4, 1/4, 1/4)","matrix(c(0,1/3,1/3,1/3,
               1/3,0,1/3,1/3,
 			  1/3,1/3,0,1/3,
 			  1/3,1/3,1/3,0),
-            nrow = nEps*(nArms-1), byrow = TRUE)",Dunnett,"c(0.5,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
-19,2StageCombPValue(BINOM),CombPValue,200,0.025,z,FALSE,UnPooled,None,5,1,"list(""EP1"" = ""Binomial"")",NA,NA,"list('EP1' = c(0.1, 0.4,0.4,0.4,0.4))","c(1,1,1,1,1)",NA,"c(1/4, 1/4, 1/4, 1/4)","matrix(c(0,1/3,1/3,1/3,
+            nrow = nEps*(nArms-1), byrow = TRUE)",Dunnett,"c(0.5,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,1000,100,FALSE,FALSE,TRUE
+19,2StageCombPValue(BINOM),CombPValue,200,0.025,z,FALSE,UnPooled,None,5,1,"list(""EP1"" = ""Binary"")",NA,NA,"list('EP1' = c(0.1, 0.4,0.4,0.4,0.4))","c(1,1,1,1,1)",NA,"c(1/4, 1/4, 1/4, 1/4)","matrix(c(0,1/3,1/3,1/3,
               1/3,0,1/3,1/3,
 			  1/3,1/3,0,1/3,
 			  1/3,1/3,1/3,0),
-            nrow = nEps*(nArms-1), byrow = TRUE)",Bonf,"c(0.5,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
-20,2StageCombPValue(BINOM),CombPValue,200,0.025,z,FALSE,Pooled,None,5,1,"list(""EP1"" = ""Binomial"")",NA,NA,"list('EP1' = c(0.1, 0.4,0.4,0.4,0.4))","c(1,1,1,1,1)",NA,"c(1/4, 1/4, 1/4, 1/4)","matrix(c(0,1/3,1/3,1/3,
+            nrow = nEps*(nArms-1), byrow = TRUE)",Bonf,"c(0.5,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,1000,100,FALSE,FALSE,TRUE
+20,2StageCombPValue(BINOM),CombPValue,200,0.025,z,FALSE,Pooled,None,5,1,"list(""EP1"" = ""Binary"")",NA,NA,"list('EP1' = c(0.1, 0.4,0.4,0.4,0.4))","c(1,1,1,1,1)",NA,"c(1/4, 1/4, 1/4, 1/4)","matrix(c(0,1/3,1/3,1/3,
               1/3,0,1/3,1/3,
 			  1/3,1/3,0,1/3,
 			  1/3,1/3,1/3,0),
-            nrow = nEps*(nArms-1), byrow = TRUE)",Bonf,"c(0.5,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+            nrow = nEps*(nArms-1), byrow = TRUE)",Bonf,"c(0.5,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,1000,100,FALSE,FALSE,TRUE
+21,MAMSGS(NORM),CER,316,0.025,z,FALSE,,None,5,1,"list(""EP1"" = ""Continuous"")","list('EP1' = c(0,0.4,0.4,0.4,0.4))","list('EP1' = c(1,1,1,1,1))",NA,"c(1,1,1,1,1)",NA,"c(1/4, 1/4, 1/4, 1/4)","matrix(c(0,1/3,1/3,1/3,
+              1/3,0,1/3,1/3,
+			  1/3,1/3,0,1/3,
+			  1/3,1/3,1/3,0),
+            nrow = nEps*(nArms-1), byrow = TRUE)",Parametric,"c(0.5,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,1000,100,FALSE,FALSE,TRUE
+22,MAMSGS(NORM),CER,316,0.025,t-equal,FALSE,,None,5,1,"list(""EP1"" = ""Continuous"")","list('EP1' = c(0,0.4,0.4,0.4,0.4))","list('EP1' = c(1,1,1,1,1))",NA,"c(1,1,1,1,1)",NA,"c(1/4, 1/4, 1/4, 1/4)","matrix(c(0,1/3,1/3,1/3,
+              1/3,0,1/3,1/3,
+			  1/3,1/3,0,1/3,
+			  1/3,1/3,1/3,0),
+            nrow = nEps*(nArms-1), byrow = TRUE)",Parametric,"c(0.5,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,1000,100,FALSE,FALSE,TRUE
+23,MAMSGS(NORM),CER,316,0.025,t-unequal,FALSE,,None,5,1,"list(""EP1"" = ""Continuous"")","list('EP1' = c(0,0.4,0.4,0.4,0.4))","list('EP1' = c(1,1,1,1,1))",NA,"c(1,1,1,1,1)",NA,"c(1/4, 1/4, 1/4, 1/4)","matrix(c(0,1/3,1/3,1/3,
+              1/3,0,1/3,1/3,
+			  1/3,1/3,0,1/3,
+			  1/3,1/3,1/3,0),
+            nrow = nEps*(nArms-1), byrow = TRUE)",Parametric,"c(0.5,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,1000,100,FALSE,FALSE,TRUE
+24,MAMSGS(BINOM),CER,95,0.025,z,FALSE,UnPooled,None,5,1,"list(""EP1"" = ""Binary"")",NA,NA,"list('EP1' = c(0.1, 0.4,0.4,0.4,0.4))","c(1,1,1,1,1)",NA,"c(1/4, 1/4, 1/4, 1/4)","matrix(c(0,1/3,1/3,1/3,
+              1/3,0,1/3,1/3,
+			  1/3,1/3,0,1/3,
+			  1/3,1/3,1/3,0),
+            nrow = nEps*(nArms-1), byrow = TRUE)",Parametric,"c(0.5,1)",asOF,TRUE,FALSE,NA,NA,NA,NA,NA,NA,None,5000,100,FALSE,FALSE,TRUE
+24,MAMSGS(BINOM),CER,95,0.025,z,FALSE,Pooled,None,5,1,"list(""EP1"" = ""Binary"")",NA,NA,"list('EP1' = c(0.1, 0.4,0.4,0.4,0.4))","c(1,1,1,1,1)",NA,"c(1/4, 1/4, 1/4, 1/4)","matrix(c(0,1/3,1/3,1/3,
+              1/3,0,1/3,1/3,
+			  1/3,1/3,0,1/3,
+			  1/3,1/3,1/3,0),
+            nrow = nEps*(nArms-1), byrow = TRUE)",Parametric,"c(0.5,1)",asOF,TRUE,FALSE,NA,NA,NA,NA,NA,NA,None,5000,100,FALSE,FALSE,TRUE

@@ -98,7 +98,7 @@ genNormToOther2 <- function(nArmID = 3,
     #Multiple endpoint case
     # Covariance Matrix for the ArmID
     # Continuous: covarince = sx*sy*rxy, Varince = sx*sx
-    # Binary : covariance = rxy, Variance = 1
+    # Binary or composite : covariance = rxy, Variance = 1
     mArmSigma <- matrix(NA, nrow = length(vEPs), ncol = length(vEPs))
     for (rowIDX in 1:length(vEPs)) {
       for (colIDX in rowIDX:length(vEPs)) {
@@ -108,7 +108,7 @@ genNormToOther2 <- function(nArmID = 3,
             mNormCorr[vEPs[rowIDX], vEPs[colIDX]] *
             lNormStdDev[[vEPs[rowIDX]]][nArmID] *
             lNormStdDev[[vEPs[colIDX]]][nArmID]
-        } else if (all(c(vEPType[rowIDX], vEPType[colIDX]) == "Binary")) {
+        } else{
           mArmSigma[colIDX, rowIDX] <- mArmSigma[rowIDX, colIDX] <-
             mNormCorr[vEPs[rowIDX], vEPs[colIDX]]
         }

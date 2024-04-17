@@ -29,12 +29,13 @@ do_SelectionSim <- function(mcpObj, gmcpSimObj, PreSimObj) {
 #------------ -
 # Selection for a specific simulation
 #------------ -
-do_SelectionSim2 <- function(mcpObj) {
+do_SelectionSim2 <- function(simID, mcpObj) {
   SelectFlag <- any(mcpObj$CurrentLook == mcpObj$SelectionLook)
 
   if (SelectFlag) {
     # Selection
-    mcpObj <- getSelectedHypo2(mcpObj = mcpObj)
+    mcpObj <- getSelectedHypo2(simID=simID,
+                               mcpObj = mcpObj)
   }
   mcpObj
 }
@@ -42,7 +43,7 @@ do_SelectionSim2 <- function(mcpObj) {
 #------------ -
 # Identify Hypothesis based on selection rule
 #------------- -
-getSelectedHypo2 <- function(mcpObj) {
+getSelectedHypo2 <- function(simID, mcpObj) {
   # The following script is applicable for Right Tail tests only#
 
   ############### Step-1: get the available hypothesis to select#################
@@ -77,10 +78,16 @@ getSelectedHypo2 <- function(mcpObj) {
       grep("StdError", names(mcpObj$SummStatDF))
     ]
   }
-  ScaleVar <- as.numeric(ScaleVar[get_numeric_part(contHypo$Hypothesis)])
 
   #-----------------------------------------------------------------------------
   ####################### Step-3: apply the selection rule ######################
+
+  if(mcpObj$SelectionCriterion == "random"){
+    ScaleVar <- NULL
+  }else{
+    ScaleVar <- as.numeric(ScaleVar[get_numeric_part(contHypo$Hypothesis)])
+
+  }
   if (mcpObj$SelectionCriterion == "best") {
     # Best r
     if (mcpObj$SelectionScale == "stderror" || mcpObj$SelectionScale == "pvalue") {
@@ -112,6 +119,20 @@ getSelectedHypo2 <- function(mcpObj) {
     bestScale <- ScaleVar[which(ranks == 1)]
     selectedH <- contHypo$Hypothesis[ScaleVar <= bestScale + mcpObj$SelectionParmeter &
       ScaleVar >= bestScale - mcpObj$SelectionParmeter]
+
+  } else if (mcpObj$SelectionCriterion == "random"){
+    # Random Selection
+    Seed <- getRunSeed(SimSeed = mcpObj$SimSeed,
+                      simID = simID,
+                      lookID = mcpObj$SelectionLook,
+                      armIndex = 0)
+    set.seed(seed = Seed)
+    nSelecHyp <- sample(0:nrow(contHypo),size = 1)
+    if(nSelecHyp == 0){
+      selectedH <- c()
+    }else{
+      selectedH <- sample(contHypo$Hypothesis, nSelecHyp)
+    }
   }
 
   #--------------------------------------------------------------------------------

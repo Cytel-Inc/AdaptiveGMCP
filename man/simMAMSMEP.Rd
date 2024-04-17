@@ -93,7 +93,7 @@ simMAMSMEP(
 
 \item{SelectionScale}{Character: Scale parameter on which selection will be based on, options 'delta': delta, 'teststat': Test Statistics, 'stderror' : Standard Error of the test stat,  'pvalue': p-value(un-adj) based selection}
 
-\item{SelectionCriterion}{Character: 'best': best r, 'threshold': threshold for selection, 'epsilon': for epsilon neighborhood}
+\item{SelectionCriterion}{Character: 'best': best r, 'threshold': threshold for selection, 'epsilon': for epsilon neighborhood, 'random': for random selection}
 
 \item{SelectionParmeter}{r for best, threshold value for threshold or epsilon distance}
 

@@ -238,8 +238,6 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
   ################ With modified Samples for Stage-2 boundary computations ######
   for (epIDX in 1:nGrps)
   {
-    Stage2sigma_0 <- Stage2sigma[[epIDX]][1]
-    Stage2sigma_trt <- Stage2sigma[[epIDX]][-1]
     # The Cumulative InfoMatrix is needed for transformation(z to score)
     Stage2SSCum <- (Stage2AllocSampleSize[2, ])
     for (s in 1:length(Stage2SSCum)) {
@@ -248,6 +246,8 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
     Stage2allocRatio <- as.numeric(Stage2SSCum) / as.numeric(Stage2SSCum[1])
 
     if (EpType[[epIDX]] == "Continuous") {
+      Stage2sigma_0 <- Stage2sigma[[epIDX]][1]
+      Stage2sigma_trt <- Stage2sigma[[epIDX]][-1]
       Stage2capLambda <- (Stage2sigma_0^2 + Stage2sigma_trt^2 / Stage2allocRatio[-1])^(-1)
     } else if (EpType[[epIDX]] == "Binary") {
       pi_c <- prop.ctr[[epIDX]]

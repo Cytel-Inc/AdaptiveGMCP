@@ -77,7 +77,8 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
     {
       # Selection for next look
       if (mcpObj$Selection & (mcpObj$CurrentLook < mcpObj$LastLook)) {
-        mcpObj <- do_SelectionSim2(mcpObj)
+        mcpObj <- do_SelectionSim2(simID = simID,
+                                   mcpObj = mcpObj)
       }
     }
     mcpObj$CurrentLook <- mcpObj$CurrentLook + 1
@@ -286,7 +287,8 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
     {
       # Selection for next look
       if (mcpObj$Selection & (mcpObj$CurrentLook < mcpObj$LastLook)) {
-        mcpObj <- do_SelectionSim2(mcpObj)
+        mcpObj <- do_SelectionSim2(simID = simID,
+                                   mcpObj = mcpObj)
       }
     }
     # move to next look

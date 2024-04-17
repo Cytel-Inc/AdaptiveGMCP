@@ -62,22 +62,26 @@ valInpsimMAMSMEP <- function(inps) {
     0, "Invalid argument in 'EP.Corr'"
   )
 
-  if(length(inps$InfoFrac) > 1){
-    logs[[15]] <- ifelse(inps$SelectionScale == "delta" || inps$SelectionScale == "teststat" || inps$SelectionScale == "stderror" || inps$SelectionScale == "pvalue",
+  if(length(inps$InfoFrac) > 1 & inps$Selection){
+    logs[[15]] <- ifelse(inps$SelectionScale == "delta" || inps$SelectionScale == "teststat" ||
+                           inps$SelectionScale == "stderror" || inps$SelectionScale == "pvalue" || inps$SelectionCriterion == "random",
                          0, "Invalid argument in 'SelectionScale'"
     )
 
-    logs[[16]] <- ifelse(inps$SelectionCriterion == "best" || inps$SelectionCriterion == "threshold" || inps$SelectionCriterion == "epsilon",
+    logs[[16]] <- ifelse(inps$SelectionCriterion == "best" || inps$SelectionCriterion == "threshold" ||
+                           inps$SelectionCriterion == "epsilon" || inps$SelectionCriterion == "random",
                          0, "Invalid argument in 'SelectionCriterion'"
-    )
-
-    logs[[18]] <- ifelse(inps$ImplicitSSR == "Selection" || inps$ImplicitSSR == "All" || inps$ImplicitSSR == "None",
-                         0, "Invalid argument in 'ImplicitSSR'"
     )
   }else{
     # Fixed sample
     logs[[15]] <- 0
     logs[[16]] <- 0
+  }
+  if(length(inps$InfoFrac) > 1){
+    logs[[18]] <- ifelse(inps$ImplicitSSR == "Selection" || inps$ImplicitSSR == "All" || inps$ImplicitSSR == "None",
+                         0, "Invalid argument in 'ImplicitSSR'"
+    )
+  }else{
     logs[[18]] <- 0
   }
 
