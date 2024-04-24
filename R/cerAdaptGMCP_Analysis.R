@@ -1,4 +1,4 @@
-#' Function to perform Adaptive GMCP Analysis following Combined P-Value(Inverse Normal) method
+#' Function to perform Adaptive GMCP Analysis following Conditional Error Rate method
 #' @param nArms Number of Arms
 #' @param nEps Number of End points
 #' @param SampleSize Plan Sample Size

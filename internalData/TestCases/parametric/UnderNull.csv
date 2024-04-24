@@ -1,0 +1,201 @@
+﻿ModelID,Scenario,SelectionRule,Method,SampleSize,alpha,TestStatCont,CommonStdDev,TestStatBin,FWERControl,nArms,nEps,lEpType,Arms.Mean,Arms.std.dev,Arms.Prop,Arms.alloc.ratio,EP.Corr,WI,G,test.type,info_frac,typeOfDesign,MultipleWinners,Selection,SelectionLook,SelectEndPoint,SelectionScale,SelectionCriterion,SelectionParmeter,KeepAssosiatedEps,ImplicitSSR,nSimulation,Seed,SummaryStat,plotGraphs,Parallel
+1,"Normal,CombPValue,t-equal",Conservative,CombPValue,500,0.025,t-equal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-1.011735,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+2,"Normal,CombPValue,t-equal",Normal,CombPValue,500,0.025,t-equal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+3,"Normal,CombPValue,t-equal",Aggressive,CombPValue,500,0.025,t-equal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,1.011735,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+4,"Normal,CombPValue,t-equal",Utra-Aggressive,CombPValue,500,0.025,t-equal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+5,"Normal,CER,t-equal",Conservative,CER,500,0.025,t-equal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-1.011735,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+6,"Normal,CER,t-equal",Normal,CER,500,0.025,t-equal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+7,"Normal,CER,t-equal",Aggressive,CER,500,0.025,t-equal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,1.011735,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+8,"Normal,CER,t-equal",Utra-Aggressive,CER,500,0.025,t-equal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+9,"Normal,CombPValue,t-unequal",Conservative,CombPValue,500,0.025,t-unequal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-1.011735,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+10,"Normal,CombPValue,t-unequal",Normal,CombPValue,500,0.025,t-unequal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+11,"Normal,CombPValue,t-unequal",Aggressive,CombPValue,500,0.025,t-unequal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,1.011735,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+12,"Normal,CombPValue,t-unequal",Utra-Aggressive,CombPValue,500,0.025,t-unequal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+13,"Normal,CER,t-unequal",Conservative,CER,500,0.025,t-unequal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-1.011735,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+14,"Normal,CER,t-unequal",Normal,CER,500,0.025,t-unequal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+15,"Normal,CER,t-unequal",Aggressive,CER,500,0.025,t-unequal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,1.011735,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+16,"Normal,CER,t-unequal",Utra-Aggressive,CER,500,0.025,t-unequal,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+17,"Normal,CombPValue,z",Conservative,CombPValue,500,0.025,z,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-1.011735,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+18,"Normal,CombPValue,z",Normal,CombPValue,500,0.025,z,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+19,"Normal,CombPValue,z",Aggressive,CombPValue,500,0.025,z,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,1.011735,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+20,"Normal,CombPValue,z",Utra-Aggressive,CombPValue,500,0.025,z,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+21,"Normal,CER,z",Conservative,CER,500,0.025,z,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-1.011735,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+22,"Normal,CER,z",Normal,CER,500,0.025,z,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+23,"Normal,CER,z",Aggressive,CER,500,0.025,z,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,1.011735,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+24,"Normal,CER,z",Utra-Aggressive,CER,500,0.025,z,FALSE,,None,5,1,"list(EP1=""Continuous"")","list('EP1' = c(0,0,0,0,0))","list('EP1' = c(1.1,1.2,1.3, 1.4, 1.5))",NA,"c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+25,"Binary,CombPValue,UnPooled",Conservative,CombPValue,500,0.025,,FALSE,UnPooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+26,"Binary,CombPValue,UnPooled",Normal,CombPValue,500,0.025,,FALSE,UnPooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+27,"Binary,CombPValue,UnPooled",Aggressive,CombPValue,500,0.025,,FALSE,UnPooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+28,"Binary,CombPValue,UnPooled",Utra-Aggressive,CombPValue,500,0.025,,FALSE,UnPooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+29,"Binary,CER,UnPooled",Conservative,CER,300,0.025,,FALSE,UnPooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+30,"Binary,CER,UnPooled",Normal,CER,300,0.025,,FALSE,UnPooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+31,"Binary,CER,UnPooled",Aggressive,CER,300,0.025,,FALSE,UnPooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+32,"Binary,CER,UnPooled",Utra-Aggressive,CER,300,0.025,,FALSE,UnPooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+33,"Binary,CombPValue,Pooled",Conservative,CombPValue,300,0.025,,FALSE,Pooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+34,"Binary,CombPValue,Pooled",Normal,CombPValue,300,0.025,,FALSE,Pooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+35,"Binary,CombPValue,Pooled",Aggressive,CombPValue,300,0.025,,FALSE,Pooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+36,"Binary,CombPValue,Pooled",Utra-Aggressive,CombPValue,300,0.025,,FALSE,Pooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+37,"Binary,CER,Pooled",Conservative,CER,300,0.025,,FALSE,Pooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+38,"Binary,CER,Pooled",Normal,CER,300,0.025,,FALSE,Pooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+39,"Binary,CER,Pooled",Aggressive,CER,300,0.025,,FALSE,Pooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,10000,100,FALSE,FALSE,TRUE
+40,"Binary,CER,Pooled",Utra-Aggressive,CER,300,0.025,,FALSE,Pooled,None,5,1,"list(EP1=""Binary"")",NA,NA,"list('EP1' = c(0.1,0.1,0.1,0.1,0.1))","c(1,1,1,1,1)",NA,"c(0.25,0.25,0.25,0.25)","matrix(c(0,1/3,1/3,1/3,
+         1/3,0,1/3,1/3,
+         1/3,1/3,0,1/3,
+         1/3,1/3,1/3,0),
+         nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,10000,100,FALSE,FALSE,TRUE

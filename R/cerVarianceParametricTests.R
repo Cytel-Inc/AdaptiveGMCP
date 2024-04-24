@@ -167,6 +167,7 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
         sigma[[sigIDX]] <- sapply(sigma[[sigIDX]], function(x)sigma[[sigIDX]][1])
       }
   }
+  Stage2sigma <- sigma
   ############################################
 
   SigmaZIncr <- list() # Z-Scale Incremental sigma
