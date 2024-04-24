@@ -88,7 +88,7 @@ Note: The similar process can be followed to compute the cumulative raw p-values
 #### For Binary difference of proportion
 
 |                    | Z Un-Pooled                                                                                                                                             | Z Pooled                                                                        |
-|:-------------------|:--------------------------------|:-------------------|
+|:-------------------|:-------------------------------|:-------------------|
 | $delta$            | $\delta_{i,(j)}^{e^d}$                                                                                                                                  | $\delta_{i,(j)}^{e^d}$                                                          |
 | Standard Error(SE) | $\sqrt{\frac{\bar{\pi}_{i,(j)}^{e^d}*(1-\bar{\pi}_{i,(j)}^{e^d})}{n_{i,(j)}} + \frac{\bar{\pi}_{0,(j)}^{e^d}*(1-\bar{\pi}_{0,(j)}^{e^d})}{n_{0,(j)}} }$ | $\sqrt{\pi_{p,(j)}*(1-\pi_{p,(j)}) *(\frac{1}{n_{i,(j)}}+\frac{1}{n_{0,(j)}})}$ |
 | Test Statistics    | $\frac{\delta_{i,(j)}^{e^d}}{SE}$                                                                                                                       | $\frac{\delta_{i,(j)}^{e^d}}{SE}$                                               |
@@ -250,15 +250,19 @@ $\tilde{Z} =(Z_{1,1},Z_{2,1},...,Z_{D,1},Z_{1,2},Z_{2,2},...,Z_{D,2})' \sim N(\m
 
 Under Null, $\mu_z = 0$ and $\Sigma_z$ can be obtained from the above variance co-variance structure.
 
-Note:
+### Continuous Endpoint Special Case: Common Standard Deviation
+
+The under null distribution of the test statistics does not depends on the arm-wise standard deviations as long as the standard deviation is assumed to be same for all the arms. Hence it is recommenced to use CommonStdDev = TRUE when the user has no information on the arm-wise standard deviations.
+
+**Note:**
 
 -   The boundary computation for parameric CER method have the same distributional structure as in MAMS-GS design, however here we used the weighted Dunnett type test and the search for the critical value(C) happens on p-value scale, hence the boundaries obtain by this procedure may not be consistent with the MAMS-GS design.
 -   For Combining p-values Dunnett/Partly-Parametric methods the variance covariance matrix will be computed on the incremental scale and the plan boundaries are the standard group sequential boundaries in p-value scale.
--   With the common standard deviation option selected in the simulation function the the treatment arms standard deviations will be same as the control arm.
 
 ### Stage-2 Adaptive Boundary Computation(CER Method)
 
 ##### Parametric Tests
+
 Conditional Error Rate for the intersection hypothesis $J \subseteq I_2$
 
 $B_J^{param}(\alpha | \chi_1) = P_{H_J}[\cup_{j \in J} \{ P_{j,2} \leq w_{j,J}*C_{J,2} | p_{j,1} \}]$
@@ -283,10 +287,6 @@ Then the stage-2 adjusted critical point $C_{J,2}$ can be obtain by
 
 $P_{H_J} [\cup_{j \in J} P_{j,2} \leq v_{j,J}*C_{J,2} | p_{j,1}] = B_J^{param}(\alpha | \chi_1)$
 
-
-
 ##### Non-Parametric Tests
 
 [In Progress]
-
-

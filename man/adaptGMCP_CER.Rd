@@ -2,7 +2,7 @@
 % Please edit documentation in R/cerAdaptGMCP_Analysis.R
 \name{adaptGMCP_CER}
 \alias{adaptGMCP_CER}
-\title{Function to perform Adaptive GMCP Analysis following Combined P-Value(Inverse Normal) method}
+\title{Function to perform Adaptive GMCP Analysis following Conditional Error Rate method}
 \usage{
 adaptGMCP_CER(
   nArms = 3,
@@ -58,7 +58,7 @@ adaptGMCP_CER(
 \item{plotGraphs}{TRUE: plot intermediate graphs}
 }
 \description{
-Function to perform Adaptive GMCP Analysis following Combined P-Value(Inverse Normal) method
+Function to perform Adaptive GMCP Analysis following Conditional Error Rate method
 }
 \examples{
 #######################################################################
