@@ -31,13 +31,13 @@ MAMSMEP_sim2 <- function(gmcpSimObj) {
       parallel::clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
 
       out <- parallel::parLapply(cl = cl, 1:gmcpSimObj$nSimulation, function(x) {
-        out_SingleSim <- SingleSimCER(x, gmcpSimObj, preSimObjs)
+        out_SingleSim <- SingleSimCER2(x, gmcpSimObj, preSimObjs)
         return(out_SingleSim)
       })
       parallel::stopCluster(cl)
     } else {
       out <- lapply(1:gmcpSimObj$nSimulation, function(x) {
-        SingleSimCER(x, gmcpSimObj, preSimObjs)
+        SingleSimCER2(x, gmcpSimObj, preSimObjs)
       })
     }
   } else {
@@ -52,27 +52,36 @@ MAMSMEP_sim2 <- function(gmcpSimObj) {
       out <- parallel::parLapply(
         cl = cl, 1:gmcpSimObj$nSimulation,
         function(x) {
-          out_SingleSim <- SingleSimCombPValue(x, gmcpSimObj, preSimObjs)
+          out_SingleSim <- SingleSimCombPValue2(x, gmcpSimObj, preSimObjs)
           return(out_SingleSim)
         }
       )
       parallel::stopCluster(cl)
     } else {
       out <- lapply(1:gmcpSimObj$nSimulation, function(x) {
-        SingleSimCombPValue(x, gmcpSimObj, preSimObjs)
+        SingleSimCombPValue2(x, gmcpSimObj, preSimObjs)
       })
     }
   }
   #------------------------------------------------------------------------------
 
   ########################## Preparing detailed output Tables ####################
+  #Simulation that did not crashed
+  SuccessedSims <- 0
   for (i in 1:length(out))
   {
-    SummaryStatFile <- rbind(SummaryStatFile, out[[i]]$SummStatDF)
-    ArmWiseSummary <- rbind(ArmWiseSummary, out[[i]]$ArmWiseDF)
-    PowerTab <- rbind(PowerTab, out[[i]]$powerCountDF)
-    EfficacyTable <- plyr::rbind.fill(EfficacyTable, out[[i]]$EfficacyTable)
-    SelectionTab <- rbind(SelectionTab, out[[i]]$SelectionDF)
+    if(length(out[[i]])==1){
+      if(grepl(pattern = "Error", x = out[[i]])){
+        sprintf("Error Simulation %d ", i)
+      }
+    }else{
+      SummaryStatFile <- rbind(SummaryStatFile, out[[i]]$SummStatDF)
+      ArmWiseSummary <- rbind(ArmWiseSummary, out[[i]]$ArmWiseDF)
+      PowerTab <- rbind(PowerTab, out[[i]]$powerCountDF)
+      EfficacyTable <- plyr::rbind.fill(EfficacyTable, out[[i]]$EfficacyTable)
+      SelectionTab <- rbind(SelectionTab, out[[i]]$SelectionDF)
+      SuccessedSims <- SuccessedSims+1
+    }
   }
 
   # Overall Powers
@@ -86,7 +95,7 @@ MAMSMEP_sim2 <- function(gmcpSimObj) {
   EffTab <- data.frame(
     "Hypothesis" = names(eff_count),
     "Count" = eff_count,
-    "Percentage" = 100 * (eff_count / nrow(EfficacyTable)),
+    "Percentage" = 100 * (eff_count / SuccessedSims),
     row.names = NULL
   )
   rownames(EffTab) <- NULL
@@ -95,7 +104,7 @@ MAMSMEP_sim2 <- function(gmcpSimObj) {
   if (gmcpSimObj$Selection) {
     # Selection Table
     SelcCount <- table(SelectionTab$SelectedHypothesis)
-    SelcPerc <- 100 * (SelcCount / gmcpSimObj$nSimulation)
+    SelcPerc <- 100 * (SelcCount / SuccessedSims)
     SelecTab <- data.frame(
       "Hypothesis" = names(SelcCount),
       "Count" = as.vector(SelcCount),
@@ -127,6 +136,7 @@ MAMSMEP_sim2 <- function(gmcpSimObj) {
         "Summary_Stat" = SummaryStatFile,
         "ArmWiseSummary" = ArmWiseSummary,
         "Seed" = preSimObjs$SimSeed,
+        "SuccessedSims" = SuccessedSims,
         "elapsedTime" = elapsedTime
       ),
       list(
@@ -138,6 +148,7 @@ MAMSMEP_sim2 <- function(gmcpSimObj) {
         "EfficacyTable" = EffTab,
         "SelectionTable" = SelecTab,
         "Seed" = preSimObjs$SimSeed,
+        "SuccessedSims" = SuccessedSims,
         "elapsedTime" = elapsedTime
       )
     )
@@ -156,6 +167,7 @@ MAMSMEP_sim2 <- function(gmcpSimObj) {
         "Summary_Stat" = SummaryStatFile,
         "ArmWiseSummary" = ArmWiseSummary,
         "Seed" = preSimObjs$SimSeed,
+        "SuccessedSims" = SuccessedSims,
         "elapsedTime" = elapsedTime
       ),
       list(
@@ -168,6 +180,7 @@ MAMSMEP_sim2 <- function(gmcpSimObj) {
         "EfficacyTable" = EffTab,
         "SelectionTable" = SelecTab,
         "Seed" = preSimObjs$SimSeed,
+        "SuccessedSims" = SuccessedSims,
         "elapsedTime" = elapsedTime
       )
     )

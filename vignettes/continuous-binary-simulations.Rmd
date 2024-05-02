@@ -66,7 +66,7 @@ $$\pi_{p,(j)} = \frac{\pi_{i,(j)}^{e^d}*n_{i,(j)} + \pi_{0,(j)}^{e^d}*n_{0,(j)}}
 The following table describes the process of computing the raw p-value to test the $i^{th}$ treatment arm ( for any $i=1,2,...,k$) against the control arm belonging the continuous endpoint $e^c$ based on the $j^{th}$ stage responses.
 
 |                        | Z                                                                                        | t-unequal                                                                              | t-equal                                                          |
-|:-----------------|:-----------------|:-----------------|:-----------------|
+|:-----------------------|:-----------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------|:-----------------------------------------------------------------|
 | $delta$                | $\delta_{i,(j)}^{e^c}$                                                                   | $\delta_{i,(j)}^{e^c}$                                                                 | $\delta_{i,(j)}^{e^c}$                                           |
 | Standard Error(SE)     | $\sqrt{\frac{\sigma_{i}^{{e^c}^2}}{n_{i,(j)}} + \frac{\sigma_{0}^{{e^c}^2}}{n_{0,(j)}}}$ | $\sqrt{\frac{s_{i,(j)}^{{e^c}^2}}{n_{i,(j)}} + \frac{s_{0,(j)}^{{e^c}^2}}{n_{0,(j)}}}$ | $s_{p}^{{e^c}} \sqrt{\frac{1}{n_{i,(j)}} + \frac{1}{n_{0,(j)}}}$ |
 | Degrees of Freedom(df) | NA                                                                                       | Satterthwaite approximation                                                            | $\sum_{i=0}^k(n_{i,(j)}-1)$                                      |
@@ -88,7 +88,7 @@ Note: The similar process can be followed to compute the cumulative raw p-values
 #### For Binary difference of proportion
 
 |                    | Z Un-Pooled                                                                                                                                             | Z Pooled                                                                        |
-|:-------------------|:-------------------------------|:-------------------|
+|:-------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------|
 | $delta$            | $\delta_{i,(j)}^{e^d}$                                                                                                                                  | $\delta_{i,(j)}^{e^d}$                                                          |
 | Standard Error(SE) | $\sqrt{\frac{\bar{\pi}_{i,(j)}^{e^d}*(1-\bar{\pi}_{i,(j)}^{e^d})}{n_{i,(j)}} + \frac{\bar{\pi}_{0,(j)}^{e^d}*(1-\bar{\pi}_{0,(j)}^{e^d})}{n_{0,(j)}} }$ | $\sqrt{\pi_{p,(j)}*(1-\pi_{p,(j)}) *(\frac{1}{n_{i,(j)}}+\frac{1}{n_{0,(j)}})}$ |
 | Test Statistics    | $\frac{\delta_{i,(j)}^{e^d}}{SE}$                                                                                                                       | $\frac{\delta_{i,(j)}^{e^d}}{SE}$                                               |

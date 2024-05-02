@@ -212,6 +212,7 @@ exitProbStage2Cond <- function(cJ2, p1, w, InfoMatrix, stage2sigmaS, Conditional
   #################################
 
   if (Conditional) {
+    p1[p1==1] = 0.999999
     upper <- sqrt(InfoMatrix[, 2]) * qnorm(1 - w * cJ2) - sqrt(InfoMatrix[, 1]) * qnorm(1 - p1)
   } else {
     upper <- sqrt(InfoMatrix[, 2]) * qnorm(1 - w * cJ2)

@@ -48,7 +48,7 @@ adaptBdryCER <- function(mcpObj) {
   ScaleWeights <- rep(NA, nrow(WH_modified))
 
   for (i in seq_len(nrow(WH_modified))) {
-    # print(i)
+    #print(i)
     p1 <- as.numeric(mcpObj$p_raw)
 
     # Intersection hypothesis to test
