@@ -102,6 +102,20 @@ simMAMSMEP <- function(
   UpdateStrategy <- F ## Not implemented yet
   des.type <- "MAMSMEP" ## Multi-Arm Multi-Stage Multi-EndPoints
 
+  if(nArms == 2){
+    # For two arms only non-parametric tests are applicable
+    if(Method == "CombPValue"){
+      if(test.type == "Dunnett" || test.type == "Partly-Parametric"){
+        print("As parametric tests are not applicable 'test.type' converted to 'Bonf'")
+        test.type <- "Bonf"
+      }
+    }else if(Method == "CER"){
+      print("As parametric tests are not applicable 'test.type' converted to 'Non-Parametric'")
+      if(test.type == "Parametric" || test.type == "Partly-Parametric"){
+        test.type <- "Non-Parametric"
+      }
+    }
+  }
 
   # Object to run Simulations
   gmcpSimObj <<- list(

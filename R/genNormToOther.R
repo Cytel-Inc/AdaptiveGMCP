@@ -89,11 +89,20 @@ genNormToOther2 <- function(nArmID = 3,
   #--------------------------------------------------------
   if(length(vEPs) == 1){
     #Single endpoint case
-    if(vEPType[vEPs] == "Continuous"){
-      mArmSigma <- lNormStdDev[[vEPs]][nArmID]^2
-    }else if(vEPType[vEPs] == "Binary"){
-      mArmSigma <- 1
+    if(length(vEPType)>1){
+      if(vEPType[vEPs] == "Continuous"){
+        mArmSigma <- lNormStdDev[[vEPs]][nArmID]^2
+      }else if(vEPType[vEPs] == "Binary"){
+        mArmSigma <- 1
+      }
+    }else{
+      if(vEPType == "Continuous"){
+        mArmSigma <- lNormStdDev[[vEPs]][nArmID]^2
+      }else if(vEPType == "Binary"){
+        mArmSigma <- 1
+      }
     }
+
   }else{
     #Multiple endpoint case
     # Covariance Matrix for the ArmID

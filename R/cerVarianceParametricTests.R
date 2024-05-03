@@ -348,15 +348,9 @@ getPlanCorrelation <- function(nHypothesis, EpType, SS_Incr, Arms.std.dev, prop.
     trtSS <- SS_lk[-1] # Column represents looks
     allocRatio <- c(1, round(trtSS / ctrSS))
 
-    for (epIDX in 1:nEps)
-    {
-      if (test.type == "Bonf") # Using the partly parametric function to perform Bonferroni test
-        {
-          sigmaZ <- diag(nHypothesis)
-          sigmaZ[sigmaZ == 0] <- NA
-        } else if (test.type == "Sidak" || test.type == "Simes") {
-        sigmaZ <- NA
-      } else if (test.type == "Dunnett" || test.type == "Parametric" || test.type == "Partly-Parametric") {
+    #Expected Output : SS_lk(the correlation between test statistics of dimension nHypothesisxnHypothesis)
+    if(test.type == "Dunnett" || test.type == "Parametric" || test.type == "Partly-Parametric"){
+      for (epIDX in 1:nEps){
         if (EpType[[epIDX]] == "Continuous") {
           epSig <- Arms.std.dev[[epIDX]]
           sigma_0 <- epSig[1]
@@ -394,15 +388,19 @@ getPlanCorrelation <- function(nHypothesis, EpType, SS_Incr, Arms.std.dev, prop.
             }
           }
         }
+        SigmaZ[[paste("EP", epIDX, sep = "")]] <- sigmaZ
       }
-      SigmaZ[[paste("EP", epIDX, sep = "")]] <- sigmaZ
-    }
-    Sigmalk <- as.matrix(Matrix::bdiag(SigmaZ))
-    Sigmalk[Sigmalk == 0] <- NA
-    rownames(Sigmalk) <- colnames(Sigmalk) <- paste("Z", 1:nrow(Sigmalk), sep = "")
-
+       Sigmalk <- as.matrix(Matrix::bdiag(SigmaZ))
+       Sigmalk[Sigmalk == 0] <- NA
+       rownames(Sigmalk) <- colnames(Sigmalk) <- paste("Z", 1:nrow(Sigmalk), sep = "")
+      }else if(test.type == "Bonf"){
+        Sigmalk <- matrix(NA, nrow = nHypothesis, ncol = nHypothesis)
+        diag(Sigmalk) <- 1
+        rownames(Sigmalk) <- colnames(Sigmalk) <- paste("Z", 1:nrow(Sigmalk), sep = "")
+      }else if(test.type == "Sidak" || test.type == "Simes"){
+        Sigmalk <- NA
+      }
     Sigma[[paste("Stage", lkIDX, sep = "")]] <- Sigmalk
-    ############### Computation of Z scale Sigma Matrix ################
   }
   Sigma
 }

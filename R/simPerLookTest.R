@@ -11,7 +11,7 @@ perLookTest <- function(Arms.SS.Incr, SummStat, mcpObj) {
           PlanSSLk <- mcpObj$planSS$IncrementalSamples[mcpObj$CurrentLook, ]
           CurrSSLk <- Arms.SS.Incr
 
-          if (!all(PlanSSLk == CurrSSLk, na.rm = T)) {
+          if (!all(PlanSSLk == CurrSSLk, na.rm = T) & mcpObj$test.type == 'Dunnett') {
             # if the sample size is altered the correlation needs to be recomputed
             mcpObj$Correlation <- getPlanCorrelation(
               nHypothesis = mcpObj$nHypothesis,
