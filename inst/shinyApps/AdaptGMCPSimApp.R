@@ -5,11 +5,13 @@ library(AdaptGMCP)
 library(rhandsontable)
 library(future)
 library(promises)
+library(dplyr)
 
 source("tabularModule.R")
 source("correlationMatrixModule.R")
 source("transitionMatrixModule.R")
 source("IAModule.R")
+source("helper_inputDataCsv.R")
 
 ui <- fluidPage(
   titlePanel("Adapt GMCP"),
@@ -47,7 +49,6 @@ ui <- fluidPage(
       rhandsontableUI("HypWeights"),
       h5(tags$b("Transition matrix")),
       transitionMatrixInputUI("transitionMatrix"),
-      # h5(tags$b("Arm-wise planned allocation ratio")),
       uiOutput("testTypeSelect"),
       numericInput("nLooks", "Number of Looks", value = 1),
       h5(tags$b("Information Fraction")),
@@ -74,22 +75,22 @@ ui <- fluidPage(
                               "Allocate all the planned samples(for the look) to the available arms" = "All",
                               "No Re-allocation" = "None"),
                   selected = "Selection"),
-      # Complex inputs like Arms.Mean, Arms.std.dev might require custom UI solutions
       numericInput("nSimulation", "Number of Simulations", value = 1000),
       numericInput("seed", "Simulation Seed", value = 100),
       checkboxInput("summaryStat", "Print Summary Statistics File", value = FALSE),
       checkboxInput("plotGraphs", "Plot Initial Graphs", value = TRUE),
       checkboxInput("parallel", "Parallel Computations", value = TRUE),
+      checkboxInput("saveFile", "Do you want to save inputs to a CSV?", value = FALSE),
+      conditionalPanel(
+        condition = "input.saveFile == true",
+        textInput("csvDir", "Enter Directory to Save CSV", ""),
+        textInput("fileName", "Enter file name", ""),
+      ),
       actionButton("simulate", "Simulate", class = "btn-primary"),
-      # Continue adding inputs as necessary
     ),
     mainPanel(
       # verbatimTextOutput("listOutput"),
-      # verbatimTextOutput("simulatedOutput"),
       verbatimTextOutput("result")
-      # verbatimTextOutput("listOutput2")
-      # textOutput("simOutput")
-      # Additional outputs as required
     )
   )
 )
@@ -299,8 +300,56 @@ server <- function(input, output, session) {
         str(Method)
         str(plotGraphs)
         str(Parallel)
-
       })
+      dfInputData <- data.frame(Method = Method,
+                                SampleSize = SampleSize,
+                                alpha = alpha,
+                                TestStatCont = TestStatCont,
+                                CommonStdDev = CommonStdDev,
+                                TestStatBin = TestStatBin,
+                                FWERControl = FWERControl,
+                                nArms = nArms,
+                                nEps = nEps,
+                                lEpType = convertToString(lEpType),
+                                Arms.Mean = convertToString(Arms.Mean),
+                                Arms.std.dev = convertToString(Arms.std.dev),
+                                Arms.Prop = convertToString(Arms.Prop),
+                                Arms.alloc.ratio = convertToString(Arms.alloc.ratio),
+                                EP.Corr = convertToString(EP.Corr),
+                                WI = convertToString(WI),
+                                G = convertToString(G),
+                                test.type = test.type,
+                                info_frac = convertToString(info_frac),
+                                typeOfDesign = typeOfDesign,
+                                MultipleWinners = MultipleWinners,
+                                Selection = Selection,
+                                SelectionLook = ifelse(is.null(SelectionLook),"", SelectionLook),
+                                SelectEndPoint = ifelse(is.null(SelectEndPoint),"", SelectEndPoint),
+                                SelectionScale = ifelse(is.null(SelectionScale),"", SelectionScale),
+                                SelectionCriterion = ifelse(is.null(SelectionCriterion),"", SelectionCriterion),
+                                SelectionParmeter = ifelse(is.null(SelectionParmeter),"", SelectionParmeter),
+                                KeepAssosiatedEps = ifelse(is.null(KeepAssosiatedEps),"", KeepAssosiatedEps),
+                                ImplicitSSR = ImplicitSSR,
+                                nSimulation = nSimulation,
+                                Seed = Seed,
+                                SummaryStat = SummaryStat,
+                                plotGraphs = plotGraphs,
+                                Parallel = Parallel)
+      dfInputData <- dfInputData %>%
+        mutate(ModelID = row_number()) %>%
+        select(ModelID, everything())
+
+      csvFileName <- paste0(input$csvDir, "\\", input$fileName,".csv")
+
+      if (file.exists(csvFileName)) {
+        existingData <- read.csv(csvFileName)
+        combinedData <- rbind(existingData, dfInputData) %>%
+          mutate(ModelID = row_number()) %>%
+          select(ModelID, everything())
+        write.csv(combinedData, csvFileName, row.names = FALSE)
+      } else {
+        write.csv(dfInputData, csvFileName, row.names = FALSE)
+      }
 
       future({
         result <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType = lEpType,
@@ -321,49 +370,7 @@ server <- function(input, output, session) {
             print(result)
           })
         })
-
-      # simResult <- reactive({
-      #   req(input$simulate)  # Ensure this reactive expression only runs after `input$simulate` is triggered
-      #   simMAMSMEP(alpha = input$alpha, SampleSize = input$sampleSize,nArms = input$nArms, nEps = input$nEps, TestStat = input$testStat,
-      #              FWERControl = input$fwerControl, Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, Arms.alloc.ratio = Arms.alloc.ratio,
-      #              EP.Corr = EP.Corr,WI = WI, G = G, test.type = input$testType, info_frac = info_frac,
-      #              typeOfDesign = input$typeOfDesign, MultipleWinners = input$MultipleWinners,
-      #              Selection = input$selection, SelectionLook = input$selectionLook, SelectEndPoint = input$selectionEndPoint,
-      #              SelectionScale = input$selectionScale, SelectionCriterion = input$selectionCriterion,
-      #              SelectionParmeter = input$selectionParameter, KeepAssosiatedEps = input$keepAssociatedEps,
-      #              ImplicitSSR = input$implicitSSR, nSimulation = input$nSimulation, Seed = input$seed, SummaryStat = input$summaryStat,
-      #              Method = input$method, plotGraphs = input$plotGraphs, Parallel = input$parallel)
-      # })
-
-      # output$simulatedOutput <- renderPrint({
-      #   req(simResult())  # This waits for simResult to have a value before rendering
-      #   simResult()  # Display the result
-      # })
-    # }
-      # print(simResult())
   })
-  # ---------------- start: to run the simulation engine ---------------------
-  # simulateEvent <- eventReactive(input$simulate, {
-  #   # Prepare inputs for simMAMSMEP, consider using reactive values for complex structures
-  #   # Example for a simple call, expand with all parameters
-  #   out <- simMAMSMEP(alpha = input$alpha, SampleSize = input$sampleSize, nArms = input$nArms, nEps = input$nEps, TestStat = input$testStat,
-  #                     FWERControl = input$fwerControl, nSimulation = input$nSimulation, Seed = input$seed, SummaryStat = input$summaryStat,
-  #                     Method = input$method, plotGraphs = input$plotGraphs, Parallel = input$parallel
-  #                     # Include all other parameters, adjusting for lists and matrices
-  #   )
-  #   return(out)
-  # }, ignoreNULL = TRUE)
-  #
-  # output$simOutput <- renderText({
-  #   # Assuming the result can be represented as text; adjust based on actual output structure
-  #   result <- simulateEvent()
-  #   if(is.list(result)) {
-  #     # Process list result into a string if necessary
-  #   } else {
-  #     as.character(result)
-  #   }
-  # })
-  # ------------------end : to run the simulation engine ---------------------
 }
 
 shinyApp(ui = ui, server = server)
