@@ -110,8 +110,8 @@ simMAMSMEP <- function(
         test.type <- "Bonf"
       }
     }else if(Method == "CER"){
-      print("As parametric tests are not applicable 'test.type' converted to 'Non-Parametric'")
       if(test.type == "Parametric" || test.type == "Partly-Parametric"){
+        print("As parametric tests are not applicable 'test.type' converted to 'Non-Parametric'")
         test.type <- "Non-Parametric"
       }
     }
