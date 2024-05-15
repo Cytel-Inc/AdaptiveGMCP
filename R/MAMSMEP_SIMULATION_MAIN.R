@@ -33,6 +33,7 @@
 #' @param Seed 'Random' for randomly generating seed else any integer value(default = 'Random')
 #' @param SummaryStat Logical; TRUE if simulation level data is required(default = FALSE)
 #' @param plotGraphs Logical; TRUE: plot the initial graph
+#' @param EastSumStat East Summary Statistics file, Only applicable for single look designs with CombPValue method
 #' @param Parallel Logical; TRUE: Parallel computations
 #' @example ./internalData/MAMSMEP_Simulation_Example.R
 #' @export
@@ -96,8 +97,9 @@ simMAMSMEP <- function(
     Seed = 100,
     SummaryStat = FALSE,
     plotGraphs = TRUE,
+    EastSumStat = NULL,
     Parallel = TRUE) {
-  Parallel <- Parallel
+
   TailType <- "RightTail" ## Default Right
   UpdateStrategy <- F ## Not implemented yet
   des.type <- "MAMSMEP" ## Multi-Arm Multi-Stage Multi-EndPoints
@@ -164,7 +166,11 @@ simMAMSMEP <- function(
     "UpdateStrategy" = UpdateStrategy,
 
     # Graph Plot
-    "plotGraphs" = plotGraphs
+    "plotGraphs" = plotGraphs,
+
+    #EastSumStat
+    "EastSumStat" = EastSumStat
+
   )
 
   logs <- valInpsimMAMSMEP(inps = gmcpSimObj)

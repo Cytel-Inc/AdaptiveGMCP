@@ -20,34 +20,43 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
       ImplicitSSR = mcpObj$ImplicitSSR
     )
 
-    # Get incremental summary
-    currLookDataIncr <- genIncrLookSummary(
-      SimSeed = mcpObj$SimSeed,
-      simID = simID,
-      lookID = mcpObj$CurrentLook,
-      Arms.Mean = mcpObj$Arms.Mean,
-      Arms.std.dev = mcpObj$Arms.std.dev,
-      Arms.Prop = mcpObj$Arms.Prop,
-      Arms.alloc.ratio = mcpObj$Arms.alloc.ratio,
-      Arms.SS = Arms.SS.Incr,
-      EPCorr = mcpObj$EP.Corr,
-      ArmsPresent = mcpObj$ArmsPresent,
-      HypoPresent = mcpObj$HypoPresent,
-      HypoMap = mcpObj$HypoMap
-    )
-    ArmData <- currLookDataIncr$ArmData
+    if(!is.null(mcpObj$EastSumStat)){
+      #Use East Summary Statistics File
+      ArmData <- mcpObj$ArmWiseDataBlank
+      SummStat <- useEastSumStat(SimID = simID,
+                                 mcpObj$EastSumStat)
+    }else{
+      #Use R Data Generation
+      # Get incremental summary
+      currLookDataIncr <- genIncrLookSummary(
+        SimSeed = mcpObj$SimSeed,
+        simID = simID,
+        lookID = mcpObj$CurrentLook,
+        Arms.Mean = mcpObj$Arms.Mean,
+        Arms.std.dev = mcpObj$Arms.std.dev,
+        Arms.Prop = mcpObj$Arms.Prop,
+        Arms.alloc.ratio = mcpObj$Arms.alloc.ratio,
+        Arms.SS = Arms.SS.Incr,
+        EPCorr = mcpObj$EP.Corr,
+        ArmsPresent = mcpObj$ArmsPresent,
+        HypoPresent = mcpObj$HypoPresent,
+        HypoMap = mcpObj$HypoMap
+      )
+      ArmData <- currLookDataIncr$ArmData
 
-    # Compute Test Stat(Incr.) and p-values(Incr.)
-    SummStat <- getPerLookTestStat(
-      simID = simID,
-      lookID = mcpObj$CurrentLook,
-      TestStatCont = mcpObj$TestStatCont,
-      TestStatBin = mcpObj$TestStatBin,
-      Arms.std.dev = mcpObj$Arms.std.dev,
-      IncrLookSummary = currLookDataIncr,
-      HypoMap = mcpObj$HypoMap,
-      Cumulative = FALSE
-    )
+      # Compute Test Stat(Incr.) and p-values(Incr.)
+      SummStat <- getPerLookTestStat(
+        simID = simID,
+        lookID = mcpObj$CurrentLook,
+        TestStatCont = mcpObj$TestStatCont,
+        TestStatBin = mcpObj$TestStatBin,
+        Arms.std.dev = mcpObj$Arms.std.dev,
+        IncrLookSummary = currLookDataIncr,
+        HypoMap = mcpObj$HypoMap,
+        Cumulative = FALSE
+      )
+    }
+
     # Perform per look Test
     mcpObj <- perLookTest(Arms.SS.Incr = Arms.SS.Incr, SummStat = SummStat, mcpObj = mcpObj)
 

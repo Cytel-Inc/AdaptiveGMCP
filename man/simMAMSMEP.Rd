@@ -39,6 +39,7 @@ simMAMSMEP(
   Seed = 100,
   SummaryStat = FALSE,
   plotGraphs = TRUE,
+  EastSumStat = NULL,
   Parallel = TRUE
 )
 }
@@ -108,6 +109,8 @@ simMAMSMEP(
 \item{SummaryStat}{Logical; TRUE if simulation level data is required(default = FALSE)}
 
 \item{plotGraphs}{Logical; TRUE: plot the initial graph}
+
+\item{EastSumStat}{East Summary Statistics file, Only applicable for single look designs with CombPValue method}
 
 \item{Parallel}{Logical; TRUE: Parallel computations}
 
