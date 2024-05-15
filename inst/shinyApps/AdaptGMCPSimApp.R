@@ -301,54 +301,56 @@ server <- function(input, output, session) {
         str(plotGraphs)
         str(Parallel)
       })
-      dfInputData <- data.frame(Method = Method,
-                                SampleSize = SampleSize,
-                                alpha = alpha,
-                                TestStatCont = TestStatCont,
-                                CommonStdDev = CommonStdDev,
-                                TestStatBin = TestStatBin,
-                                FWERControl = FWERControl,
-                                nArms = nArms,
-                                nEps = nEps,
-                                lEpType = convertToString(lEpType),
-                                Arms.Mean = convertToString(Arms.Mean),
-                                Arms.std.dev = convertToString(Arms.std.dev),
-                                Arms.Prop = convertToString(Arms.Prop),
-                                Arms.alloc.ratio = convertToString(Arms.alloc.ratio),
-                                EP.Corr = convertToString(EP.Corr),
-                                WI = convertToString(WI),
-                                G = convertToString(G),
-                                test.type = test.type,
-                                info_frac = convertToString(info_frac),
-                                typeOfDesign = typeOfDesign,
-                                MultipleWinners = MultipleWinners,
-                                Selection = Selection,
-                                SelectionLook = ifelse(is.null(SelectionLook),"", SelectionLook),
-                                SelectEndPoint = ifelse(is.null(SelectEndPoint),"", SelectEndPoint),
-                                SelectionScale = ifelse(is.null(SelectionScale),"", SelectionScale),
-                                SelectionCriterion = ifelse(is.null(SelectionCriterion),"", SelectionCriterion),
-                                SelectionParmeter = ifelse(is.null(SelectionParmeter),"", SelectionParmeter),
-                                KeepAssosiatedEps = ifelse(is.null(KeepAssosiatedEps),"", KeepAssosiatedEps),
-                                ImplicitSSR = ImplicitSSR,
-                                nSimulation = nSimulation,
-                                Seed = Seed,
-                                SummaryStat = SummaryStat,
-                                plotGraphs = plotGraphs,
-                                Parallel = Parallel)
-      dfInputData <- dfInputData %>%
-        mutate(ModelID = row_number()) %>%
-        select(ModelID, everything())
-
-      csvFileName <- paste0(input$csvDir, "\\", input$fileName,".csv")
-
-      if (file.exists(csvFileName)) {
-        existingData <- read.csv(csvFileName)
-        combinedData <- rbind(existingData, dfInputData) %>%
+      if(input$saveFile){
+        dfInputData <- data.frame(Method = Method,
+                                  SampleSize = SampleSize,
+                                  alpha = alpha,
+                                  TestStatCont = TestStatCont,
+                                  CommonStdDev = CommonStdDev,
+                                  TestStatBin = TestStatBin,
+                                  FWERControl = FWERControl,
+                                  nArms = nArms,
+                                  nEps = nEps,
+                                  lEpType = convertToString(lEpType),
+                                  Arms.Mean = convertToString(Arms.Mean),
+                                  Arms.std.dev = convertToString(Arms.std.dev),
+                                  Arms.Prop = convertToString(Arms.Prop),
+                                  Arms.alloc.ratio = convertToString(Arms.alloc.ratio),
+                                  EP.Corr = convertToString(EP.Corr),
+                                  WI = convertToString(WI),
+                                  G = convertToString(G),
+                                  test.type = test.type,
+                                  info_frac = convertToString(info_frac),
+                                  typeOfDesign = typeOfDesign,
+                                  MultipleWinners = MultipleWinners,
+                                  Selection = Selection,
+                                  SelectionLook = ifelse(is.null(SelectionLook),"", SelectionLook),
+                                  SelectEndPoint = ifelse(is.null(SelectEndPoint),"", SelectEndPoint),
+                                  SelectionScale = ifelse(is.null(SelectionScale),"", SelectionScale),
+                                  SelectionCriterion = ifelse(is.null(SelectionCriterion),"", SelectionCriterion),
+                                  SelectionParmeter = ifelse(is.null(SelectionParmeter),"", SelectionParmeter),
+                                  KeepAssosiatedEps = ifelse(is.null(KeepAssosiatedEps),"", KeepAssosiatedEps),
+                                  ImplicitSSR = ImplicitSSR,
+                                  nSimulation = nSimulation,
+                                  Seed = Seed,
+                                  SummaryStat = SummaryStat,
+                                  plotGraphs = plotGraphs,
+                                  Parallel = Parallel)
+        dfInputData <- dfInputData %>%
           mutate(ModelID = row_number()) %>%
           select(ModelID, everything())
-        write.csv(combinedData, csvFileName, row.names = FALSE)
-      } else {
-        write.csv(dfInputData, csvFileName, row.names = FALSE)
+
+        csvFileName <- paste0(input$csvDir, "\\", input$fileName,".csv")
+
+        if (file.exists(csvFileName)) {
+          existingData <- read.csv(csvFileName)
+          combinedData <- rbind(existingData, dfInputData) %>%
+            mutate(ModelID = row_number()) %>%
+            select(ModelID, everything())
+          write.csv(combinedData, csvFileName, row.names = FALSE)
+        } else {
+          write.csv(dfInputData, csvFileName, row.names = FALSE)
+        }
       }
 
       future({
