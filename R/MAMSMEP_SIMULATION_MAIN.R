@@ -18,7 +18,11 @@
 #' @param G  Numeric Matrix to specify the Transition Matrix.
 #' @param test.type Character to specify the type of test want to perform; Available tests for Combining P-values Method :- 'Bonf': Bonferroni, 'Sidak': Sidak, 'Simes': Simes, 'Dunnett': Dunnett and  'Partly-Parametric': Mixed type Tests. Available tests for CER Method :- "Parametric": Weighted Dunnett , "Non-Parametric": Weighted Bonferroni and  'Partly-Parametric': Mixed type Tests.
 #' @param info_frac Numeric Vector to specify look position as fraction of sample size.(for one look can be specified as 1)
-#' @param typeOfDesign The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), default is "OF".
+#' @param typeOfDesign The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), user specified alpha("asUser") default is "asOF".
+#' @param deltaWT Parameter for alpha spending function for typeOfDesign = "WT"
+#' @param deltaPT1 Parameter for alpha spending function for typeOfDesign = "PT"
+#' @param gammaA 	Parameter for alpha spending function for typeOfDesign = "asHSD" or "asKD"
+#' @param userAlphaSpending Parameter for alpha spending function for typeOfDesign = "asUser"; applicable for CombPValue methods only
 #' @param MultipleWinners Logical; TRUE: Stop the trial only no more efficacy is possible, FALSE: Stop if at-least one efficacy is observed
 #' @param Selection Logical: TRUE if selection required at interim(default = FALSE)
 #' @param SelectionLook Numeric Vector to specify the selection looks
@@ -84,6 +88,12 @@ simMAMSMEP <- function(
     test.type = "Partly-Parametric",
     info_frac = c(0.5, 1),
     typeOfDesign = "asOF",
+    deltaWT = 0,
+    deltaPT1 = 0,
+    gammaA = 2,
+    userAlphaSpending = rpact::getDesignGroupSequential(
+      sided = 1, alpha = alpha,informationRates =info_frac,
+      typeOfDesign = "asOF")$alphaSpent,
     MultipleWinners = TRUE,
     Selection = TRUE,
     SelectionLook = 1,
@@ -136,7 +146,9 @@ simMAMSMEP <- function(
 
     # Boundary
     "InfoFrac" = info_frac, "typeOfDesign" = typeOfDesign,
-    "CommonStdDev" = CommonStdDev,
+    "CommonStdDev" = CommonStdDev, "deltaWT"= deltaWT,
+    "deltaPT1" = deltaPT1, "gammaA" = gammaA,
+    "userAlphaSpending" = userAlphaSpending,
 
     # Multiple Winners
     "MultipleWinners" = MultipleWinners,

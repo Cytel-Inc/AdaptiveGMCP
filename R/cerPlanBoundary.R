@@ -1,5 +1,19 @@
 #### Compute plan boundary for parametric, non-parametric and mixed case
-planBdryCER <- function(nHypothesis, nEps, nLooks, alpha, info_frac, typeOfDesign, test.type, Sigma, WH, HypoMap, Scale) {
+planBdryCER <- function(nHypothesis,
+                        nEps,
+                        nLooks,
+                        alpha,
+                        info_frac,
+                        typeOfDesign,
+                        deltaWT,
+                        deltaPT1,
+                        gammaA,
+                        userAlphaSpending,
+                        test.type,
+                        Sigma,
+                        WH,
+                        HypoMap,
+                        Scale) {
   Method <- c()
   SubSets <- c()
   SignfLevel <- c()
@@ -37,7 +51,9 @@ planBdryCER <- function(nHypothesis, nEps, nLooks, alpha, info_frac, typeOfDesig
         plan_parm_bdry <- getPlanParmBdry(
           gIDX = gIDX, hIDX = edx, alpha = sig_level, nLooks = nLooks,
           info_frac = info_frac, wJ = wJ,
-          Sigma = Sigma, typeOfDesign = typeOfDesign, Scale = Scale
+          Sigma = Sigma, typeOfDesign = typeOfDesign,deltaWT= deltaWT,
+          deltaPT1 = deltaPT1, gammaA = gammaA,
+          userAlphaSpending = userAlphaSpending, Scale = Scale
         )
         Stage1Bdry[i, edx] <- plan_parm_bdry$Stage1Bdry[edx]
         Stage2Bdry[i, edx] <- plan_parm_bdry$Stage2Bdry[edx]
@@ -46,7 +62,9 @@ planBdryCER <- function(nHypothesis, nEps, nLooks, alpha, info_frac, typeOfDesig
         sig_level <- alpha * sum(w[edx])
         plan_nparm_bdry <- getPlanNonParmBdry(
           nLooks = nLooks, sig_level = sig_level,
-          info_frac = info_frac, typeOfDesign = typeOfDesign
+          info_frac = info_frac, typeOfDesign = typeOfDesign, deltaWT= deltaWT,
+          deltaPT1 = deltaPT1, gammaA = gammaA,
+          userAlphaSpending = userAlphaSpending
         )
         Stage1Bdry[i, edx] <- plan_nparm_bdry$Stage1Bdry
         Stage2Bdry[i, edx] <- plan_nparm_bdry$Stage2Bdry

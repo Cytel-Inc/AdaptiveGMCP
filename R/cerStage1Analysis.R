@@ -12,6 +12,9 @@ PerformStage1Test <- function(
     alpha = 0.025,
     info_frac = c(0.5, 1),
     typeOfDesign = "asOF",
+    deltaWT = 0,
+    deltaPT1 = 0,
+    gammaA = 2,
     des.type = "MAMSMEP",
     test.type = "Partly-Parametric",
     Stage1Pvalues = c(0.00045, 0.0952, 0.0225, 0.1104),
@@ -36,7 +39,9 @@ PerformStage1Test <- function(
   # Planned Boundaries
   plan_Bdry <- planBdryCER(
     nHypothesis = nHypothesis, nEps = nEps, nLooks = nLooks,
-    alpha = alpha, info_frac = info_frac, typeOfDesign = typeOfDesign, test.type = test.type,
+    alpha = alpha, info_frac = info_frac, typeOfDesign = typeOfDesign,
+    deltaWT = deltaWT, deltaPT1 = deltaPT1, gammaA = gammaA, userAlphaSpending = userAlphaSpending,
+    test.type = test.type,
     Sigma = Sigma, WH = WH, HypoMap = HypoMap, Scale = "Score"
   )
 

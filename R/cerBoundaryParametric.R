@@ -169,10 +169,49 @@ getBdryStage2 <- function(gIDX, hIDX, alpha, cJ1, wJ, Sigma, Scale = Scale) {
 # sigmaZ : The co-variance matrix of cummulative z-statistics (2 stages combined)
 # Returns: The critical point cJ2 for testing HJ at stage2
 #------------------------------------------------------------------------- -
-getPlanParmBdry <- function(gIDX, hIDX, alpha, nLooks, info_frac, wJ, Sigma, typeOfDesign, Scale) {
-  alpha1 <- rpact::getDesignGroupSequential(
-    kMax = nLooks, alpha = alpha, informationRates = info_frac, typeOfDesign = typeOfDesign
-  )$alphaSpent[1]
+getPlanParmBdry <- function(gIDX,
+                            hIDX,
+                            alpha,
+                            nLooks,
+                            info_frac,
+                            wJ,
+                            Sigma,
+                            typeOfDesign,
+                            deltaWT,
+                            deltaPT1,
+                            gammaA,
+                            userAlphaSpending,
+                            Scale) {
+
+  if(typeOfDesign == "WT"){
+    alpha1 <- rpact::getDesignGroupSequential(
+      kMax = nLooks, alpha = alpha,
+      informationRates = info_frac,
+      typeOfDesign = typeOfDesign,
+      deltaWT = deltaWT
+    )$alphaSpent[1]
+  }else if(typeOfDesign == "PT"){
+    alpha1 <- rpact::getDesignGroupSequential(
+      kMax = nLooks, alpha = alpha,
+      informationRates = info_frac,
+      typeOfDesign = typeOfDesign,
+      deltaPT1 = deltaPT1
+    )$alphaSpent[1]
+  }else if(typeOfDesign == "asHSD" || typeOfDesign == "asKD"){
+    alpha1 <- rpact::getDesignGroupSequential(
+      kMax = nLooks, alpha = alpha,
+      informationRates = info_frac,
+      typeOfDesign = typeOfDesign,
+      gammaA = gammaA
+    )$alphaSpent[1]
+  }else{
+    alpha1 <- rpact::getDesignGroupSequential(
+      kMax = nLooks, alpha = alpha,
+      informationRates = info_frac,
+      typeOfDesign = typeOfDesign
+    )$alphaSpent[1]
+  }
+
 
   if (nLooks == 1) {
     # Stage-1 boundary

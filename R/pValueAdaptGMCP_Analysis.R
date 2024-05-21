@@ -4,7 +4,11 @@
 #' @param test.type Character to specify the type of test want to perform; 'Bonf': Bonferroni, 'Sidak': Sidak, 'Simes': Simes, 'Dunnett': Dunnett and  'Partly-Parametric': Partly Parametric Tests
 #' @param alpha Type-1 error
 #' @param info_frac Vector of information fraction
-#' @param typeOfDesign The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), default is "OF".
+#' @param typeOfDesign The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), user specified alpha("asUser") default is "asOF".
+#' @param deltaWT Parameter for alpha spending function for typeOfDesign = "WT"
+#' @param deltaPT1 Parameter for alpha spending function for typeOfDesign = "PT"
+#' @param gammaA 	Parameter for alpha spending function for typeOfDesign = "asHSD" & "asKD"
+#' @param userAlphaSpending Parameter for alpha spending function for typeOfDesign = "asUser"
 #' @param Correlation Matrix of correlation between test statistics, NA if the correlation is unknown
 #' @param MultipleWinners Logical: TRUE if multiple winners over the looks is required.
 #' @param Selection Logical: TRUE if selection required at interim(default = FALSE)
@@ -24,11 +28,18 @@ adaptGMCP_PC <- function(
     alpha = 0.025,
     info_frac = c(1 / 2, 1),
     typeOfDesign = "asOF",
+    deltaWT = 0,
+    deltaPT1 = 0,
+    gammaA = 2,
+    userAlphaSpending = rpact::getDesignGroupSequential(
+      sided = 1, alpha = alpha,informationRates =info_frac,
+      typeOfDesign = "asOF")$alphaSpent,
     Correlation = matrix(c(1, 0.5, NA, NA, 0.5, 1, NA, NA, NA, NA, 1, 0.5, NA, NA, 0.5, 1), nrow = 4),
     MultipleWinners = TRUE,
     Selection = TRUE,
     UpdateStrategy = TRUE,
     plotGraphs = TRUE) {
+
   D <- length(WI)
   K <- length(info_frac)
   GlobalIndexSet <- paste("H", 1:D, sep = "")
@@ -37,14 +48,45 @@ adaptGMCP_PC <- function(
   UseExternal <- T
   if (UseExternal) # this part of the code can be replaced later with the internal R-codes
     {
-      des <- rpact::getDesignInverseNormal(
-        kMax = K, alpha = alpha,
-        informationRates = info_frac, typeOfDesign = typeOfDesign
+    if(typeOfDesign == "WT"){
+      des <- rpact::getDesignGroupSequential(
+        kMax = nLooks, alpha = alpha,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign,
+        deltaWT = deltaWT
       )
-      Threshold <- des$stageLevels
-      incr_alpha <- c(des$alphaSpent[1], diff(des$alphaSpent))
-      # BdryTab
-      bdryTab <- data.frame(
+    }else if(typeOfDesign == "PT"){
+      des <- rpact::getDesignGroupSequential(
+        kMax = K, alpha = alpha,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign,
+        deltaPT1 = deltaPT1
+      )
+    }else if(typeOfDesign == "asHSD" || typeOfDesign == "asKD"){
+      des <- rpact::getDesignGroupSequential(
+        kMax = K, alpha = alpha,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign,
+        gammaA = gammaA
+      )
+    }else if(typeOfDesign == "asUser"){
+      des <- rpact::getDesignGroupSequential(
+        kMax = K, alpha = alpha,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign,
+        userAlphaSpending = userAlphaSpending
+      )
+    }else{
+      des <- rpact::getDesignGroupSequential(
+        kMax = K, alpha = alpha,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign
+      )
+    }
+    Threshold <- des$stageLevels
+    incr_alpha <- c(des$alphaSpent[1], diff(des$alphaSpent))
+    # BdryTab
+    bdryTab <- data.frame(
         "Look" = 1:K, "Information_Fraction" = info_frac,
         "Incr_alpha_spent" = incr_alpha,
         "ZScale_Eff_Bbry" = des$criticalValues,
@@ -156,7 +198,8 @@ adaptGMCP_PC <- function(
       {
         HypothesisName <- mcpObj$allGraphs$HypothesisName
         HypoIDX <- get_numeric_part(HypothesisName)
-        activeStatus <- !unlist(mcpObj$rej_flag_Curr[HypoIDX])
+        #Active => not rejected and not droped
+        activeStatus <- (!unlist(mcpObj$rej_flag_Curr[HypoIDX])) &(!mcpObj$DropedFlag)
         graphIDX <- which(mcpObj$allGraphs$IntersectIDX == paste(as.integer(activeStatus), collapse = ""))
 
         if (length(graphIDX) == 0) {

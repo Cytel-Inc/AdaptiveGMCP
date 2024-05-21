@@ -33,21 +33,53 @@ mnMAMSMEP_sim <- function(gmcpSimObj) {
   UseExternal <- T
   if (UseExternal) # this part of the code can be replaced later with the internal R-codes
     {
-      des <- rpact::getDesignInverseNormal(
+    if(typeOfDesign == "WT"){
+      des <- rpact::getDesignGroupSequential(
         kMax = K, alpha = gmcpSimObj$alpha,
-        informationRates = info_frac, typeOfDesign = typeOfDesign
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign,
+        deltaWT = deltaWT
       )
-      Threshold <- des$stageLevels
-      incr_alpha <- c(des$alphaSpent[1], diff(des$alphaSpent))
-      # BdryTab
-      bdryTab <- data.frame(
-        "Look" = 1:K, "Information_Fraction" = info_frac,
-        "Incr_alpha_spent" = incr_alpha,
-        "ZScale_Eff_Bbry" = des$criticalValues,
-        "PValue_Eff_Bbry" = Threshold,
-        row.names = NULL
+    }else if(typeOfDesign == "PT"){
+      des <- rpact::getDesignGroupSequential(
+        kMax = K, alpha = gmcpSimObj$alpha,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign,
+        deltaPT1 = deltaPT1
+      )
+    }else if(typeOfDesign == "asHSD" || typeOfDesign == "asKD"){
+      des <- rpact::getDesignGroupSequential(
+        kMax = K, alpha = gmcpSimObj$alpha,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign,
+        gammaA = gammaA
+      )
+    }else if(typeOfDesign == "asUser"){
+      des <- rpact::getDesignGroupSequential(
+        kMax = K, alpha = gmcpSimObj$alpha,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign,
+        userAlphaSpending = userAlphaSpending
+      )
+    }else{
+      des <- rpact::getDesignGroupSequential(
+        kMax = K, alpha = gmcpSimObj$alpha,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign
       )
     }
+
+    Threshold <- des$stageLevels
+    incr_alpha <- c(des$alphaSpent[1], diff(des$alphaSpent))
+    # BdryTab
+    bdryTab <- data.frame(
+      "Look" = 1:K, "Information_Fraction" = info_frac,
+      "Incr_alpha_spent" = incr_alpha,
+      "ZScale_Eff_Bbry" = des$criticalValues,
+      "PValue_Eff_Bbry" = Threshold,
+      row.names = NULL
+    )
+  }
   gmcpSimObj$EffCutOff <- Threshold
 
   ###############################################################################
@@ -495,21 +527,61 @@ getInvNormWeights <- function(planSSIncr) {
 #-------------- -
 # boundaries for combining p-values method
 #-------------- -
-getPvalBdry <- function(alpha, nLooks, info_frac, typeOfDesign) {
+getPvalBdry <- function(alpha = 0.025,
+                        nLooks = 3,
+                        info_frac = c(1/3,2/3,1),
+                        typeOfDesign = "asOF",
+                        deltaWT = 0,
+                        deltaPT1 = 0,
+                        gammaA = 2,
+                        userAlphaSpending = rpact::getDesignGroupSequential(
+                          sided = 1, alpha = alpha,informationRates =info_frac,
+                          typeOfDesign = "asOF")$alphaSpent)
+  {
   UseExternal <- T
   if (UseExternal) # this part of the code can be replaced later with the internal R-codes
     {
-      des <- rpact::getDesignInverseNormal(
-        kMax = nLooks,
-        alpha = alpha,
+    if(typeOfDesign == "WT"){
+      des <- rpact::getDesignGroupSequential(
+        kMax = nLooks, alpha = alpha,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign,
+        deltaWT = deltaWT
+      )
+    }else if(typeOfDesign == "PT"){
+      des <- rpact::getDesignGroupSequential(
+        kMax = nLooks, alpha = alpha,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign,
+        deltaPT1 = deltaPT1
+      )
+    }else if(typeOfDesign == "asHSD" || typeOfDesign == "asKD"){
+      des <- rpact::getDesignGroupSequential(
+        kMax = nLooks, alpha = alpha,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign,
+        gammaA = gammaA
+      )
+    }else if(typeOfDesign == "asUser"){
+      des <- rpact::getDesignGroupSequential(
+        kMax = nLooks, alpha = alpha,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign,
+        userAlphaSpending = userAlphaSpending
+      )
+    }else{
+      des <- rpact::getDesignGroupSequential(
+        kMax = nLooks, alpha = alpha,
         informationRates = info_frac,
         typeOfDesign = typeOfDesign
       )
-      Threshold <- des$stageLevels
-      incr_alpha <- c(des$alphaSpent[1], diff(des$alphaSpent))
+    }
 
-      # Boundary table
-      bdryTab <- data.frame(
+    Threshold <- des$stageLevels
+    incr_alpha <- c(des$alphaSpent[1], diff(des$alphaSpent))
+
+    # Boundary table
+    bdryTab <- data.frame(
         "Look" = 1:nLooks,
         "Information_Fraction" = info_frac,
         "Incr_alpha_spent" = incr_alpha,
@@ -517,7 +589,7 @@ getPvalBdry <- function(alpha, nLooks, info_frac, typeOfDesign) {
         "PValue_Eff_Bbry" = Threshold
       )
 
-      colnames(bdryTab) <- c(
+    colnames(bdryTab) <- c(
         "Looks", "InfoFrac", "Alpha(Incr.)",
         "Boundary(Z)", "Boundary(P-Value)"
       )

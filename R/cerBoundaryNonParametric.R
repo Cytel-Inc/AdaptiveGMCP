@@ -1,11 +1,36 @@
 # Function to compute the Stage-wise planned boundaries for all intersection
-getPlanNonParmBdry <- function(nLooks, sig_level, info_frac, typeOfDesign = "asOF") {
+getPlanNonParmBdry <- function(nLooks, sig_level, info_frac, typeOfDesign = "asOF",
+                               deltaWT,deltaPT1, gammaA,userAlphaSpending) {
   if (sig_level != 0) {
-    des <- rpact::getDesignGroupSequential(
-      kMax = nLooks, alpha = sig_level,
-      informationRates = info_frac,
-      typeOfDesign = typeOfDesign
-    )
+    if(typeOfDesign == "WT"){
+      des <- rpact::getDesignGroupSequential(
+        kMax = nLooks, alpha = sig_level,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign,
+        deltaWT = deltaWT
+      )
+    }else if(typeOfDesign == "PT"){
+      des <- rpact::getDesignGroupSequential(
+        kMax = nLooks, alpha = sig_level,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign,
+        deltaPT1 = deltaPT1
+      )
+    }else if(typeOfDesign == "asHSD" || typeOfDesign == "asKD"){
+      des <- rpact::getDesignGroupSequential(
+        kMax = nLooks, alpha = sig_level,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign,
+        gammaA = gammaA
+      )
+    }else{
+      des <- rpact::getDesignGroupSequential(
+        kMax = nLooks, alpha = sig_level,
+        informationRates = info_frac,
+        typeOfDesign = typeOfDesign
+      )
+    }
+
     if (nLooks == 2) {
       return(list("Stage1Bdry" = des$stageLevels[1], "Stage2Bdry" = des$stageLevels[2]))
     } else if (nLooks == 1) {

@@ -21,9 +21,15 @@ ui <- fluidPage(
       selectInput("method", "Test Method", choices = c("CombPValue" = "CombPValue", "CER" = "CER"), selected = "CER"),
       numericInput("sampleSize", "Total Sample Size", value = 324),
       numericInput("alpha", "Design Alpha", value = 0.025),
-      numericInput("nArms", "Number of Arms", value = 3),
-      numericInput("nEps", "Number of Endpoints", value = 2),
-      selectInput("testStatCont", "Test Statistics(Cont. Endpoints)", choices = c("z" = "z", "t-equal" = "t-equal", "t-unequal" = "t-unequal"), selected = 't-unequal'),
+      selectInput("nArms", "Number of Arms",
+                  choices = 2:10,
+                  selected = 3),
+      selectInput("nEps", "Number of Endpoints",
+                  choices = 1:10,
+                  selected = 2),
+      selectInput("testStatCont", "Test Statistics(Cont. Endpoints)",
+                  choices = c("z" = "z", "t-equal" = "t-equal", "t-unequal" = "t-unequal"),
+                  selected = 't-unequal'),
       selectInput("testStatBin", "Test Statistics(Binary Endpoints)", choices = c("Pooled" = "Pooled", "UnPooled" = "UnPooled"), selected = 'UnPooled'),
       selectInput("fwerControl", "FWER Control Method", choices = c("CombinationTest" = "CombinationTest", "None" = "None"), selected = 'None'),
       h6(tags$b("Endpoint Type(Continuous/Binary")),
@@ -98,7 +104,7 @@ ui <- fluidPage(
 server <- function(input, output, session) {
 
   initialData_EPs <- reactive({
-    numRows <- input$nEps
+    numRows <- as.numeric(input$nEps)
     numCols <- 1
     colNames <- "Endpoint Type"
 
@@ -113,8 +119,8 @@ server <- function(input, output, session) {
   })
 
   initialData_EPsxArms <- reactive({
-    numRows <- input$nEps
-    numCols <- input$nArms
+    numRows <- as.numeric(input$nEps)
+    numCols <- as.numeric(input$nArms)
     colNames <- c("Control", paste0("Treatment", seq_len(numCols - 1)))
 
     # Create a matrix with 0s for numeric data and fill the first column after converting to a data frame
@@ -134,7 +140,7 @@ server <- function(input, output, session) {
   })
 
   initialData_Arms <- reactive({
-    numRows <- input$nArms
+    numRows <- as.numeric(input$nArms)
     numCols <- 1
     colNames <- c("AllocationRatio")
     rowNames <- c("Control", paste0("Treatment", seq_len(numRows - 1)))
@@ -148,7 +154,7 @@ server <- function(input, output, session) {
   })
 
   initialData_Hyp <- reactive({
-    numRows <- input$nEps * (input$nArms - 1)
+    numRows <- as.numeric(input$nEps) * (as.numeric(input$nArms) - 1)
     numCols <- 1
     colNames <- c("Weights")
     rowNames <- c(paste0("H", seq_len(numRows)))
@@ -165,10 +171,10 @@ server <- function(input, output, session) {
   rhandsontableServer("sdTable", initialData = initialData_EPsxArms)
   rhandsontableServer("propTable", initialData = initialData_EPsxArms)
   rhandsontableServer("ARTable", initialData = initialData_Arms)
-  callModule(matrixInput, "matrix1", dimension = reactive({input$nEps}), simulateTrigger = reactive({input$simulate}))
+  callModule(matrixInput, "matrix1", dimension = reactive({as.numeric(input$nEps)}), simulateTrigger = reactive({input$simulate}))
 
   rhandsontableServer("HypWeights", initialData = initialData_Hyp)
-  callModule(transitionMatrixInput, "transitionMatrix", dimension = reactive({input$nEps * (input$nArms - 1)}))
+  callModule(transitionMatrixInput, "transitionMatrix", dimension = reactive({as.numeric(input$nEps) * (as.numeric(input$nArms) - 1)}))
 
   output$testTypeSelect <- renderUI({
     if (input$method == "CombPValue") {

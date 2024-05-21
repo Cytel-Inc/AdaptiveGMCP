@@ -261,7 +261,11 @@ getPreSimObjs <- function(gmcpSimObj) {
         alpha = gmcpSimObj$alpha,
         nLooks = gmcpSimObj$nLooks,
         info_frac = gmcpSimObj$InfoFrac,
-        typeOfDesign = gmcpSimObj$typeOfDesign
+        typeOfDesign = gmcpSimObj$typeOfDesign,
+        deltaWT = gmcpSimObj$deltaWT,
+        deltaPT1 = gmcpSimObj$deltaPT1,
+        gammaA = gmcpSimObj$gammaA,
+        userAlphaSpending = gmcpSimObj$userAlphaSpending
       )
 
       #----------------------------------------------------------------------------------
@@ -312,6 +316,10 @@ getPreSimObjs <- function(gmcpSimObj) {
         alpha = gmcpSimObj$alpha,
         info_frac = gmcpSimObj$InfoFrac,
         typeOfDesign = gmcpSimObj$typeOfDesign,
+        deltaWT = gmcpSimObj$deltaWT,
+        deltaPT1 = gmcpSimObj$deltaPT1,
+        gammaA = gmcpSimObj$gammaA,
+        userAlphaSpending = gmcpSimObj$userAlphaSpending,
         test.type = gmcpSimObj$test.type,
         Sigma = Sigma,
         WH = WH,

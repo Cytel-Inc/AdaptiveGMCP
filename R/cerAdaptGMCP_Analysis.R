@@ -12,7 +12,10 @@
 #' @param test.type Character to specify the type of test want to perform; "Parametric": Weighted Dunnett , "Non-Parametric": Weighted Bonferroni and  'Partly-Parametric': Mixed type Tests.
 #' @param alpha Type-1 error
 #' @param info_frac Vector of information fraction
-#' @param typeOfDesign The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), default is "OF".
+#' @param typeOfDesign The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy") default is "asOF".
+#' @param deltaWT Parameter for alpha spending function for typeOfDesign = "WT"
+#' @param deltaPT1 Parameter for alpha spending function for typeOfDesign = "PT"
+#' @param gammaA 	Parameter for alpha spending function for typeOfDesign = "asHSD" & "asKD"
 #' @param AdaptStage2 TRUE: Adaptation option will be given for stage-2, FALSE : proceed as planned.
 #' @param plotGraphs TRUE: plot intermediate graphs
 #' @example ./internalData/AdaptGMCP_CER_Analysis_NormBin_Example.R
@@ -40,6 +43,9 @@ adaptGMCP_CER <- function(
     alpha = 0.025,
     info_frac = c(0.5, 1),
     typeOfDesign = "asOF",
+    deltaWT = 0,
+    deltaPT1 = 0,
+    gammaA = 2,
     AdaptStage2 = TRUE,
     plotGraphs = TRUE) {
 
@@ -144,7 +150,9 @@ adaptGMCP_CER <- function(
         nHypothesis = nHypothesis, sigma = sigma, prop.ctr = prop.ctr,
         allocRatio = allocRatio, SampleSize = SampleSize,
         alpha = alpha, info_frac = info_frac,
-        typeOfDesign = typeOfDesign, des.type = des.type,
+        typeOfDesign = typeOfDesign,deltaWT = deltaWT,deltaPT1 = deltaPT1,
+        gammaA = gammaA, userAlphaSpending = userAlphaSpending,
+        des.type = des.type,
         test.type = test.type, Stage1Pvalues = mcpObj$p_raw,
         HypoMap = mcpObj$HypoMap,CommonStdDev = mcpObj$CommonStdDev,
         WH = mcpObj$WH
@@ -183,7 +191,8 @@ adaptGMCP_CER <- function(
         {
           HypothesisName <- mcpObj$allGraphs$HypothesisName
           HypoIDX <- get_numeric_part(HypothesisName)
-          activeStatus <- !unlist(mcpObj$rej_flag_Curr[HypoIDX])
+          #Active => not rejected and not droped
+          activeStatus <- (!unlist(mcpObj$rej_flag_Curr[HypoIDX])) &(!mcpObj$DropedFlag)
           graphIDX <- which(mcpObj$allGraphs$IntersectIDX == paste(as.integer(activeStatus), collapse = ""))
 
           if (length(graphIDX) == 0) {
