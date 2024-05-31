@@ -10,20 +10,20 @@ transitionMatrixInputUI <- function(id) {
 transitionMatrixInput <- function(input, output, session, dimension) {
   observe({
     n <- as.numeric(dimension())
-    
+
     # Create an n x n matrix
-    MAT <- matrix(rep(0, n^2), nrow = n, ncol = n)
+    MAT <- matrix(1/(n-1), nrow = n, ncol = n)
     diag(MAT) <- 0
-    
+
     # Set row and column names
     row_names <- paste("H", 1:n) # Creates row names H, H2, ..., Hn
     col_names <- paste("H", 1:n) # Creates column names H1, H2, ..., Hn
     rownames(MAT) <- row_names
     colnames(MAT) <- col_names
-    
+
     output$transitionMatrix <- renderRHandsontable({
-      rh_table <- rhandsontable(MAT, readOnly = FALSE) 
-      
+      rh_table <- rhandsontable(MAT, readOnly = FALSE)
+
       # Apply conditional readOnly settings
       for (i in 1:nrow(MAT)) {
         for (j in 1:ncol(MAT)) {
@@ -32,7 +32,7 @@ transitionMatrixInput <- function(input, output, session, dimension) {
           }
         }
       }
-      
+
       rh_table %>%
         hot_cols(renderer = "
                   function (instance, td, row, col, prop, value, cellProperties) {
@@ -53,7 +53,7 @@ transitionMatrixInput <- function(input, output, session, dimension) {
 processData_transitionMatrix <- function(inputElement) {
   # Convert input from the Shiny UI to R object
   df <- hot_to_r(inputElement)
-  
+
   if (!is.null(df) && nrow(df) > 0) {
     # Generate the matrix
     myMat <- matrix(df, nrow(df), nrow(df))

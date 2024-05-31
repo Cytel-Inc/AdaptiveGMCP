@@ -58,7 +58,8 @@ ui <- fluidPage(
       uiOutput("testTypeSelect"),
       numericInput("nLooks", "Number of Looks", value = 1),
       h5(tags$b("Information Fraction")),
-      IADataInputUI("IAInput"),
+      rhandsontableUI("IAInputTable"),
+      #IADataInputUI("IAInput"),
       selectInput("typeOfDesign", "Boundary Type",
                   choices = list("O'Brien & Fleming" = 'OF',
                                  "Pocock" = 'P',
@@ -118,13 +119,15 @@ server <- function(input, output, session) {
     df
   })
 
-  initialData_EPsxArms <- reactive({
+  #Means default
+  initialData_EPsxArms_means <- reactive({
     numRows <- as.numeric(input$nEps)
     numCols <- as.numeric(input$nArms)
     colNames <- c("Control", paste0("Treatment", seq_len(numCols - 1)))
 
     # Create a matrix with 0s for numeric data and fill the first column after converting to a data frame
-    df <- matrix(0, nrow = numRows, ncol = numCols)
+    df <- matrix(0.4, nrow = numRows, ncol = numCols)
+    df[,1] <- 0
     df <- as.data.frame(df)
     names(df) <- colNames
 
@@ -139,6 +142,52 @@ server <- function(input, output, session) {
     df
   })
 
+  #sd default
+  initialData_EPsxArms_sd <- reactive({
+    numRows <- as.numeric(input$nEps)
+    numCols <- as.numeric(input$nArms)
+    colNames <- c("Control", paste0("Treatment", seq_len(numCols - 1)))
+
+    # Create a matrix with 0s for numeric data and fill the first column after converting to a data frame
+    df <- matrix(1, nrow = numRows, ncol = numCols)
+    df <- as.data.frame(df)
+    names(df) <- colNames
+
+    # Pre-fill the first column ("Control") with EP values
+    rownames(df) <- paste0("EP", seq_len(nrow(df)))
+
+    # Ensure the rest of the columns are numeric
+    for (i in 2:(numCols)) {
+      df[[i]] <- as.numeric(df[[i]])
+    }
+
+    df
+  })
+
+  #proportions default
+  initialData_EPsxArms_props <- reactive({
+    numRows <- as.numeric(input$nEps)
+    numCols <- as.numeric(input$nArms)
+    colNames <- c("Control", paste0("Treatment", seq_len(numCols - 1)))
+
+    # Create a matrix with 0s for numeric data and fill the first column after converting to a data frame
+    df <- matrix(0.4, nrow = numRows, ncol = numCols)
+    df[,1] <- 0.1
+    df <- as.data.frame(df)
+    names(df) <- colNames
+
+    # Pre-fill the first column ("Control") with EP values
+    rownames(df) <- paste0("EP", seq_len(nrow(df)))
+
+    # Ensure the rest of the columns are numeric
+    for (i in 2:(numCols)) {
+      df[[i]] <- as.numeric(df[[i]])
+    }
+
+    df
+  })
+
+  #allocation ratio default
   initialData_Arms <- reactive({
     numRows <- as.numeric(input$nArms)
     numCols <- 1
@@ -153,12 +202,29 @@ server <- function(input, output, session) {
     df
   })
 
+  #info fraction default
+  initialData_info_frac <- reactive({
+    numRows <- as.numeric(input$nLooks)
+    numCols <- 1
+    colNames <- c("Information Fraction")
+    rowNames <-  paste0("Look", seq_len(numRows))
+    df <- matrix(1:numRows/numRows, nrow = numRows, ncol = numCols )
+    colnames(df) <- colNames
+    rownames(df) <- rowNames
+    for (i in seq_len(1)) {
+      df[[i]] <- as.numeric(df[[i]])
+    }
+    df
+  })
+
+  #initial weights
   initialData_Hyp <- reactive({
     numRows <- as.numeric(input$nEps) * (as.numeric(input$nArms) - 1)
     numCols <- 1
     colNames <- c("Weights")
     rowNames <- c(paste0("H", seq_len(numRows)))
-    df <- matrix(1, nrow = numRows, ncol = numCols )
+    df <- matrix(1/numRows, nrow = numRows, ncol = numCols )
+    df[numRows, numCols] <- 1-sum(df[1:(numRows-1), numCols])
     colnames(df) <- colNames
     rownames(df) <- rowNames
     for (i in seq_len(1)) {
@@ -167,10 +233,12 @@ server <- function(input, output, session) {
     df
   })
   rhandsontableServer("epTypes", initialData = initialData_EPs)
-  rhandsontableServer("armTable", initialData = initialData_EPsxArms)
-  rhandsontableServer("sdTable", initialData = initialData_EPsxArms)
-  rhandsontableServer("propTable", initialData = initialData_EPsxArms)
+  rhandsontableServer("armTable", initialData = initialData_EPsxArms_means)
+  rhandsontableServer("sdTable", initialData = initialData_EPsxArms_sd)
+  rhandsontableServer("propTable", initialData = initialData_EPsxArms_props)
   rhandsontableServer("ARTable", initialData = initialData_Arms)
+  rhandsontableServer("IAInputTable", initialData = initialData_info_frac)
+
   callModule(matrixInput, "matrix1", dimension = reactive({as.numeric(input$nEps)}), simulateTrigger = reactive({input$simulate}))
 
   rhandsontableServer("HypWeights", initialData = initialData_Hyp)
@@ -189,7 +257,7 @@ server <- function(input, output, session) {
                   selected = "Partly-Parametric")
     }
   })
-  IADataInputServer("IAInput", reactive(input$nLooks))
+  #IADataInputServer("IAInput", reactive(input$nLooks))
 
   # dropdown creator for Select Endpoint
   endpointChoices <- reactive({
@@ -228,17 +296,22 @@ server <- function(input, output, session) {
       )
     }
   })
+
+  mID <<- 0
   observeEvent(input$simulate, {
+    mID <<- mID + 1
     # Assuming 'table1-armsTable' is the input ID generated by the module for the rhandsontable
     EpType <- processData_tabularInput(input[['epTypes-tabularInput']])
     Arms.Mean <- processData_tabularInput(input[['armTable-tabularInput']])
     Arms.std.dev <- processData_tabularInput(input[['sdTable-tabularInput']])
     Arms.Prop <- processData_tabularInput(input[['propTable-tabularInput']])
     Arms.alloc.ratio <- unlist(processData_tabularInput(input[['ARTable-tabularInput']]))
+    Info.Frac <- unlist(processData_tabularInput(input[['IAInputTable-tabularInput']]))
     EP.Corr <- processData_corrMatrix(input[['matrix1-corrMatrix']])
     WI <- unlist(processData_tabularInput(input[['HypWeights-tabularInput']]))
+    if(sum(WI) > 1) WI[length(WI)] <- 1-sum(WI[-length(WI)])
     G <- processData_transitionMatrix(input[['transitionMatrix-transitionMatrix']])
-    info_frac <- unlist(processData_IAInput(input[['IAInput-dataInput']]))
+    #info_frac <- unlist(processData_IAInput(input[['IAInput-dataInput']]))
 
       alpha = as.numeric(input$alpha)
       SampleSize = as.numeric(input$sampleSize)
@@ -256,7 +329,7 @@ server <- function(input, output, session) {
       WI = WI
       G = G
       test.type = input$testType
-      info_frac = info_frac
+      info_frac = Info.Frac
       typeOfDesign = input$typeOfDesign
       MultipleWinners = input$MultipleWinners
       CommonStdDev = input$CommonStdDev
@@ -370,6 +443,7 @@ server <- function(input, output, session) {
                    SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
                    ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
                    Method = Method, plotGraphs = plotGraphs, Parallel = Parallel)
+
         # paste(result)
       }, seed = TRUE) %>%
         # Use then() to handle the promise when it's resolved
@@ -377,6 +451,16 @@ server <- function(input, output, session) {
           output$result <- renderPrint({
             print(result)
           })
+          #Save results
+          if(input$saveFile){
+            timeNow <- format(Sys.time(), "%Y-%m-%d_%I-%M")
+            outFileName <- paste0(input$csvDir, "\\",
+                            input$fileName,'Out_Model',mID,'_',timeNow,'.txt')
+            sink(file = outFileName)
+            print(result)
+            sink()
+
+          }
         })
   })
 }

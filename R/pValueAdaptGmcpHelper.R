@@ -558,7 +558,7 @@ StopTrial <- function(mcpObj) {
 #---------------------- -
 
 #---------------------- -
-# Combination of parametric and non-parametric test(one sided) Modification made to p.dunnet function from gMCPLite
+# Combination of parametric and non-parametric test(one sided)
 comb.test <- function(p, cr, w) {
   if (length(cr) > 1) {
     conn <- conn.comp(cr)
