@@ -1,7 +1,7 @@
 Package: AdaptGMCP
 Type: Package
 Title: Adaptive Weighted Test using Graphs
-Version: 21.05.24
+Version: 03.06.24
 Author: Ajoy Mukhopadhyay
 Maintainer: Ajoy Mukhopadhyay <ajoy.mukhopadhyay@cytel.com>
 Description: (In Progress)This package provides tools to perform multiple testing based on user inputs. 
@@ -11,7 +11,7 @@ LazyData: true
 RoxygenNote: 7.2.3
 Imports: stats, plyr, dplyr,tidyr, rpact, gMCPLite, RColorBrewer, stringr, 
          visNetwork, reshape2, htmltools,gridExtra, parallel, rstudioapi, 
-         matrixcalc, shiny
+         matrixcalc, shiny, shinycssloaders, rhandsontable, future, promises
 Suggests: 
     knitr,
     rmarkdown,

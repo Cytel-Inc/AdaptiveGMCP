@@ -192,7 +192,7 @@ simMAMSMEP <- function(
     return(FailedLogs)
     stop("Input Error")
   }
-  out <- MAMSMEP_sim2(gmcpSimObj)
+  out <- modified_MAMSMEP_sim2(gmcpSimObj)
   if (plotGraphs) {
     # out$iniGraph
     return(out$DetailOutTabs)

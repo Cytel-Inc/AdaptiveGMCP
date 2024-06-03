@@ -1,6 +1,6 @@
-# FIXME number of looks only 1 and 2. multiple winners, selection and implicit ssr only available for number of looks = 2
 
 library(shiny)
+library(shinycssloaders)
 library(AdaptGMCP)
 library(rhandsontable)
 library(future)
@@ -56,23 +56,12 @@ ui <- fluidPage(
       h5(tags$b("Transition matrix")),
       transitionMatrixInputUI("transitionMatrix"),
       uiOutput("testTypeSelect"),
-      numericInput("nLooks", "Number of Looks", value = 1),
+      numericInput("nLooks", "Number of Looks", value = 2),
       h5(tags$b("Information Fraction")),
       rhandsontableUI("IAInputTable"),
       #IADataInputUI("IAInput"),
-      selectInput("typeOfDesign", "Boundary Type",
-                  choices = list("O'Brien & Fleming" = 'OF',
-                                 "Pocock" = 'P',
-                                 "Wang & Tsiatis Delta class" = 'WT',
-                                 "Pampallona & Tsiatis" = 'PT',
-                                 "Haybittle & Peto" = 'HP',
-                                 "Optimum design within Wang & Tsiatis class" = 'WToptimum',
-                                 "O'Brien & Fleming type alpha spending" = 'asOF',
-                                 "Pocock type alpha spending" = 'asP',
-                                 "Kim & DeMets alpha spending" = 'asKD',
-                                 "Hwang, Shi & DeCani alpha spending" = 'asHSD',
-                                 "No early efficacy stop" = 'noEarlyEfficacy'),
-                  selected = "asOF"),
+      uiOutput("typeOfDesign"),
+      uiOutput("SpParam"),
       checkboxInput("CommonStdDev", "Common Standard Deviation(efficacy boundary computation)", value = FALSE),
       checkboxInput("MultipleWinners", "Multiple Winners", value = TRUE),
       checkboxInput("selection", "Enable Treatment Selection", FALSE),
@@ -96,8 +85,14 @@ ui <- fluidPage(
       actionButton("simulate", "Simulate", class = "btn-primary"),
     ),
     mainPanel(
-      # verbatimTextOutput("listOutput"),
-      verbatimTextOutput("result")
+      conditionalPanel(
+        condition = "input.simulate",
+        withSpinner(verbatimTextOutput("result"), color = "#0dc5c1")
+      )
+
+      # # verbatimTextOutput("listOutput"),
+      # withSpinner(verbatimTextOutput("result") ,color = "#0dc5c1")
+
     )
   )
 )
@@ -259,6 +254,87 @@ server <- function(input, output, session) {
   })
   #IADataInputServer("IAInput", reactive(input$nLooks))
 
+  #Design type
+  output$typeOfDesign <-renderUI(
+    if(input$method == "CombPValue"){
+      selectInput("typeOfDesign", "Boundary Type",
+                  choices = list("O'Brien & Fleming" = 'OF',
+                                 "Pocock" = 'P',
+                                 "Wang & Tsiatis Delta class" = 'WT',
+                                 "Pampallona & Tsiatis" = 'PT',
+                                 "Haybittle & Peto" = 'HP',
+                                 "Optimum design within Wang & Tsiatis class" = 'WToptimum',
+                                 "O'Brien & Fleming type alpha spending" = 'asOF',
+                                 "Pocock type alpha spending" = 'asP',
+                                 "Kim & DeMets alpha spending" = 'asKD',
+                                 "Hwang, Shi & DeCani alpha spending" = 'asHSD',
+                                 "No early efficacy stop" = 'noEarlyEfficacy'),
+                  selected = "asOF")
+      #"User Specified" = 'asUser'
+
+    }else if(input$method == "CER"){
+      selectInput("typeOfDesign", "Boundary Type",
+                  choices = list("O'Brien & Fleming" = 'OF',
+                                 "Pocock" = 'P',
+                                 "Wang & Tsiatis Delta class" = 'WT',
+                                 "Pampallona & Tsiatis" = 'PT',
+                                 "Haybittle & Peto" = 'HP',
+                                 "Optimum design within Wang & Tsiatis class" = 'WToptimum',
+                                 "O'Brien & Fleming type alpha spending" = 'asOF',
+                                 "Pocock type alpha spending" = 'asP',
+                                 "Kim & DeMets alpha spending" = 'asKD',
+                                 "Hwang, Shi & DeCani alpha spending" = 'asHSD',
+                                 "No early efficacy stop" = 'noEarlyEfficacy'),
+                  selected = "asOF")
+    }
+  )
+
+  #info fraction default
+  initialData_alpha_sp <- reactive({
+    numRows <- as.numeric(input$nLooks)
+    numCols <- 1
+    colNames <- c("alpha spent")
+    rowNames <-  paste0("Look", seq_len(numRows))
+    info_frac <- unlist(processData_tabularInput(input[['IAInputTable-tabularInput']]))
+
+    alpha_sp <- rpact::getDesignGroupSequential(
+      sided = 1, alpha = as.numeric(input$alpha),
+      informationRates =info_frac,
+      typeOfDesign = "asOF")$alphaSpent
+
+    df <- matrix(alpha_sp, nrow = numRows, ncol = numCols )
+    colnames(df) <- colNames
+    rownames(df) <- rowNames
+    for (i in seq_len(1)) {
+      df[[i]] <- as.numeric(df[[i]])
+    }
+    df
+  })
+
+  output$SpParam <- renderUI(
+    if(input$typeOfDesign == "WT" ||
+       input$typeOfDesign == "PT" ||
+       input$typeOfDesign == "asHSD" ||
+       input$typeOfDesign == "asKD" ||
+       input$typeOfDesign == "asUser"
+    ){
+      if(input$typeOfDesign == "WT"){
+        numericInput("deltaWT","Delta WT",value = 0)
+      }else if(input$typeOfDesign == "PT"){
+        numericInput("deltaPT1","Delta PT",value = 0)
+      }else if(input$typeOfDesign %in% c("asHSD", "asKD")){
+        numericInput("gammaA", "Gamma", value = 2)
+      }else if(input$method == "CombPValue"){
+        if(input$typeOfDesign == "asUser"){
+          rhandsontableServer("userAlphaSpending",
+                              initialData = initialData_alpha_sp,
+                              digits = 5)
+        }
+      }
+      #End of SpParam
+    }
+  )
+
   # dropdown creator for Select Endpoint
   endpointChoices <- reactive({
     num <- as.integer(input$nEps)
@@ -331,6 +407,12 @@ server <- function(input, output, session) {
       test.type = input$testType
       info_frac = Info.Frac
       typeOfDesign = input$typeOfDesign
+      deltaWT = ifElse(typeOfDesign == "WT", as.numeric(input$deltaWT), NA)
+      deltaPT1 = ifElse(typeOfDesign == "PT", as.numeric(input$deltaPT1), NA)
+      gammaA = ifElse(typeOfDesign %in% c("asHSD","asKD"), as.numeric(input$gammaA), NA)
+      userAlphaSpending = ifElse(typeOfDesign == "asUser",
+                                 unlist(processData_tabularInput(input[['userAlphaSpending-tabularInput']])),
+                                 NA)
       MultipleWinners = input$MultipleWinners
       CommonStdDev = input$CommonStdDev
       Selection = input$selection
@@ -364,6 +446,10 @@ server <- function(input, output, session) {
         str(test.type)
         str(info_frac)
         str(typeOfDesign)
+        str(deltaWT)
+        str(deltaPT1)
+        str(gammaA)
+        str(userAlphaSpending)
         str(MultipleWinners)
         str(Selection)
         str(SelectionLook)
@@ -401,6 +487,10 @@ server <- function(input, output, session) {
                                   test.type = test.type,
                                   info_frac = convertToString(info_frac),
                                   typeOfDesign = typeOfDesign,
+                                  deltaWT = deltaWT,
+                                  deltaPT1 = deltaPT1,
+                                  gammaA = gammaA,
+                                  userAlphaSpending = userAlphaSpending,
                                   MultipleWinners = MultipleWinners,
                                   Selection = Selection,
                                   SelectionLook = ifelse(is.null(SelectionLook),"", SelectionLook),
@@ -437,7 +527,8 @@ server <- function(input, output, session) {
                    TestStatCont = TestStatCont, TestStatBin = TestStatBin,Arms.Prop = Arms.Prop,CommonStdDev = CommonStdDev,
                    FWERControl = FWERControl, Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, Arms.alloc.ratio = Arms.alloc.ratio,
                    EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type, info_frac = info_frac,
-                   typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
+                   typeOfDesign = typeOfDesign,deltaWT = deltaWT, deltaPT1 = deltaPT1,
+                   gammaA = gammaA,userAlphaSpending = userAlphaSpending,  MultipleWinners = MultipleWinners,
                    Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint,
                    SelectionScale = SelectionScale, SelectionCriterion = SelectionCriterion,
                    SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
@@ -449,6 +540,7 @@ server <- function(input, output, session) {
         # Use then() to handle the promise when it's resolved
         then(function(result) {
           output$result <- renderPrint({
+            print(paste0("Results for Model:", mID))
             print(result)
           })
           #Save results
