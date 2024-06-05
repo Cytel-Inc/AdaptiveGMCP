@@ -45,7 +45,7 @@ adaptBdryCER <- function(mcpObj) {
   SubSets <- c()
   ConditionalError <- c()
   Stage2AdjBdry <- c()
-  ScaleWeights <- rep(NA, nrow(WH_modified))
+  #ScaleWeights <- rep(NA, nrow(WH_modified))
 
   for (i in seq_len(nrow(WH_modified))) {
     #print(i)
@@ -83,7 +83,7 @@ adaptBdryCER <- function(mcpObj) {
     SubSets <- c(SubSets, adaptOut$SubSets)
     ConditionalError <- c(ConditionalError, adaptOut$ConditionalError)
     Stage2AdjBdry <- rbind(Stage2AdjBdry, adaptOut$Stage2AdjBdry)
-    ScaleWeights[i] <- adaptOut$ScaledWeights
+    #ScaleWeights[i] <- adaptOut$ScaledWeights
   }
 
   colnames(Stage2AdjBdry) <- paste("a", 1:nHypothesis, "2_adj", sep = "")
@@ -113,7 +113,7 @@ adaptBdryCER <- function(mcpObj) {
   TestProcedureTab1 <- knitr::kable(data.frame(
     "Hypotheses" = InterHyp,
     "Weights" = InterWeight,
-    "ScaleWeights" = ScaleWeights,
+    #"ScaleWeights" = ScaleWeights,
     "SubSets" = SubSets,
     "Conditional_Error" = ConditionalError,
     row.names = NULL
@@ -285,7 +285,7 @@ getAdaptBdry <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
         # }
 
         Stage2AdjBdry[NPGrpsMod] <- nParmOut$Stage2AdjBdry
-        ScaleWeights <- c(ScaleWeights, nParmOut$adjWeights)
+        #ScaleWeights <- c(ScaleWeights, nParmOut$adjWeights)
       } else {
       Stage2AdjBdry[NPGrpsMod] <- 0
     }
@@ -342,8 +342,8 @@ getAdaptBdry <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
   list(
     "SubSets" = SubSets,
     "ConditionalError" = ConditionalError,
-    "Stage2AdjBdry" = Stage2AdjBdry,
-    "ScaledWeights" = ScaleWeights2
+    "Stage2AdjBdry" = Stage2AdjBdry
+    #"ScaledWeights" = ScaleWeights2
   )
 }
 

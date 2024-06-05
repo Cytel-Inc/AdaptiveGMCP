@@ -174,7 +174,7 @@ getStage2CondNParamBdry <- function(a1, p1, v, BJ, SS1, SS2) {
   Stage2AdjBdry[Stage2AdjBdry >= 1] <- 1
 
 
-  list("gamma" = gOpt, "PCER_adj" = PCER_adj, "Stage2AdjBdry" = Stage2AdjBdry, "adjWeights" = Stage2AdjBdry / gOpt)
+  list("gamma" = gOpt, "PCER_adj" = PCER_adj, "Stage2AdjBdry" = Stage2AdjBdry, "alpha_star" =  gOpt)
 }
 
 

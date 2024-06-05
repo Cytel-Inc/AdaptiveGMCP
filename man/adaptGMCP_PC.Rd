@@ -12,6 +12,11 @@ adaptGMCP_PC(
   alpha = 0.025,
   info_frac = c(1/2, 1),
   typeOfDesign = "asOF",
+  deltaWT = 0,
+  deltaPT1 = 0,
+  gammaA = 2,
+  userAlphaSpending = rpact::getDesignGroupSequential(sided = 1, alpha = alpha,
+    informationRates = info_frac, typeOfDesign = "asOF")$alphaSpent,
   Correlation = matrix(c(1, 0.5, NA, NA, 0.5, 1, NA, NA, NA, NA, 1, 0.5, NA, NA, 0.5, 1),
     nrow = 4),
   MultipleWinners = TRUE,
@@ -31,7 +36,15 @@ adaptGMCP_PC(
 
 \item{info_frac}{Vector of information fraction}
 
-\item{typeOfDesign}{The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), default is "OF".}
+\item{typeOfDesign}{The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), user specified alpha("asUser") default is "asOF".}
+
+\item{deltaWT}{Parameter for alpha spending function for typeOfDesign = "WT"}
+
+\item{deltaPT1}{Parameter for alpha spending function for typeOfDesign = "PT"}
+
+\item{gammaA}{Parameter for alpha spending function for typeOfDesign = "asHSD" & "asKD"}
+
+\item{userAlphaSpending}{Parameter for alpha spending function for typeOfDesign = "asUser"}
 
 \item{Correlation}{Matrix of correlation between test statistics, NA if the correlation is unknown}
 

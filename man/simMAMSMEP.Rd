@@ -26,6 +26,11 @@ simMAMSMEP(
   test.type = "Partly-Parametric",
   info_frac = c(0.5, 1),
   typeOfDesign = "asOF",
+  deltaWT = 0,
+  deltaPT1 = 0,
+  gammaA = 2,
+  userAlphaSpending = rpact::getDesignGroupSequential(sided = 1, alpha = alpha,
+    informationRates = info_frac, typeOfDesign = "asOF")$alphaSpent,
   MultipleWinners = TRUE,
   Selection = TRUE,
   SelectionLook = 1,
@@ -82,7 +87,15 @@ simMAMSMEP(
 
 \item{info_frac}{Numeric Vector to specify look position as fraction of sample size.(for one look can be specified as 1)}
 
-\item{typeOfDesign}{The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), default is "OF".}
+\item{typeOfDesign}{The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), user specified alpha("asUser") default is "asOF".}
+
+\item{deltaWT}{Parameter for alpha spending function for typeOfDesign = "WT"}
+
+\item{deltaPT1}{Parameter for alpha spending function for typeOfDesign = "PT"}
+
+\item{gammaA}{Parameter for alpha spending function for typeOfDesign = "asHSD" or "asKD"}
+
+\item{userAlphaSpending}{Parameter for alpha spending function for typeOfDesign = "asUser"; applicable for CombPValue methods only}
 
 \item{MultipleWinners}{Logical; TRUE: Stop the trial only no more efficacy is possible, FALSE: Stop if at-least one efficacy is observed}
 

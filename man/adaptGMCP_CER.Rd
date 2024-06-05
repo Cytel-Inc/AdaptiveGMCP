@@ -20,6 +20,9 @@ adaptGMCP_CER(
   alpha = 0.025,
   info_frac = c(0.5, 1),
   typeOfDesign = "asOF",
+  deltaWT = 0,
+  deltaPT1 = 0,
+  gammaA = 2,
   AdaptStage2 = TRUE,
   plotGraphs = TRUE
 )
@@ -51,7 +54,13 @@ adaptGMCP_CER(
 
 \item{info_frac}{Vector of information fraction}
 
-\item{typeOfDesign}{The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), default is "OF".}
+\item{typeOfDesign}{The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy") default is "asOF".}
+
+\item{deltaWT}{Parameter for alpha spending function for typeOfDesign = "WT"}
+
+\item{deltaPT1}{Parameter for alpha spending function for typeOfDesign = "PT"}
+
+\item{gammaA}{Parameter for alpha spending function for typeOfDesign = "asHSD" & "asKD"}
 
 \item{AdaptStage2}{TRUE: Adaptation option will be given for stage-2, FALSE : proceed as planned.}
 

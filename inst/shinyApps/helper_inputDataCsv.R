@@ -23,3 +23,12 @@ convertToString <- function(x) {
   }
   return(result)
 }
+
+
+ifElse <- function(test, yes, no) {
+  if (test) {
+    yes
+  } else {
+    no
+  }
+}

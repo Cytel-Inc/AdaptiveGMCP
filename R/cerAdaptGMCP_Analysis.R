@@ -151,7 +151,7 @@ adaptGMCP_CER <- function(
         allocRatio = allocRatio, SampleSize = SampleSize,
         alpha = alpha, info_frac = info_frac,
         typeOfDesign = typeOfDesign,deltaWT = deltaWT,deltaPT1 = deltaPT1,
-        gammaA = gammaA, userAlphaSpending = userAlphaSpending,
+        gammaA = gammaA,
         des.type = des.type,
         test.type = test.type, Stage1Pvalues = mcpObj$p_raw,
         HypoMap = mcpObj$HypoMap,CommonStdDev = mcpObj$CommonStdDev,
