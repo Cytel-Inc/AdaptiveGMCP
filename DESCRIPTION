@@ -1,7 +1,7 @@
 Package: AdaptGMCP
 Type: Package
 Title: Adaptive Weighted Test using Graphs
-Version: 03.06.24
+Version: 05.06.24
 Author: Ajoy Mukhopadhyay
 Maintainer: Ajoy Mukhopadhyay <ajoy.mukhopadhyay@cytel.com>
 Description: (In Progress)This package provides tools to perform multiple testing based on user inputs. 
