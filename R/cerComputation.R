@@ -151,10 +151,11 @@ getCER <- function(b2,WH,p1,test.type,HypoMap,CommonStdDev,
     paste(w[J], collapse = ",")
   })
 
-  data.frame("Hypotheses" = InterHyp,
+  knitr::kable(data.frame("Hypotheses" = InterHyp,
              "Weights"=InterWeight,
              "SubSets"=SUBSETS,
-             "CER"=CONDERR)
+             "CER"=CONDERR),
+             align = "c")
 }
 
 
