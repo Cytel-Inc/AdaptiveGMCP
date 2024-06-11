@@ -194,7 +194,7 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
       capLambda <- (1 / (pi_c * (1 - pi_c))) * (allocRatio[-1] / (1 + allocRatio[-1]))
     }
 
-    # The following adjustment is due to change in distribution(as the sample size modified)
+    # AllocSampleSize : the planned sample size
     SSIncr <- as.numeric(AllocSampleSize[2, ]) - as.numeric(AllocSampleSize[1, ])
     ctrSS <- SSIncr[1]
     trtSS <- SSIncr[-1]

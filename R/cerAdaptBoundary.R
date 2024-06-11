@@ -112,7 +112,7 @@ adaptBdryCER <- function(mcpObj) {
   # TestProcedureTab <- cbind(WH_modified[1:nHypothesis],SubSets,ConditionalError)
   TestProcedureTab1 <- knitr::kable(data.frame(
     "Hypotheses" = InterHyp,
-    "Weights" = InterWeight,
+    #"Weights" = InterWeight,
     #"ScaleWeights" = ScaleWeights,
     "SubSets" = SubSets,
     "Conditional_Error" = ConditionalError,
@@ -133,6 +133,7 @@ adaptBdryCER <- function(mcpObj) {
   }
   AdjBdryTab1 <- knitr::kable(data.frame(
     "Hypotheses" = InterHyp,
+    "Weights" = InterWeight,
     "Adapt_Boundary" = stg2bdry,
     row.names = NULL
   ), align = "c")
