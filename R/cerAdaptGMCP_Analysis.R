@@ -163,22 +163,6 @@ adaptGMCP_CER <- function(
       cat("Stage-1 Output Tables \n")
       print(Stage1Test$Stage1Tables)
 
-      #Compute the CER & PCER for all intersection hypothesis after stage-1 test
-      CERTab <- getCER(b2 = Stage1Test$Stage1Obj$plan_Bdry$Stage2Bdry,
-                       WH = Stage1Test$Stage1Obj$WH,
-                       p1 = mcpObj$p_raw,
-                       test.type = mcpObj$test.type,
-                       HypoMap = mcpObj$HypoMap,
-                       CommonStdDev = mcpObj$CommonStdDev,
-                       allocRatio = mcpObj$allocRatio,
-                       sigma = mcpObj$sigma,
-                       Sigma = Stage1Test$Stage1Obj$Sigma,
-                       AllocSampleSize = Stage1Test$Stage1Obj$AllocSampleSize,
-                       EpType = mcpObj$lEpType,
-                       prop.ctr = mcpObj$prop.ctr)
-      cat("Conditional Error Table \n")
-      print(CERTab)
-
       mcpObj$rej_flag_Prev <- mcpObj$rej_flag_Curr <- Stage1Test$Stage1Obj$Stage1Analysis$PrimaryHypoTest
       mcpObj$IndexSet <- paste("H", which(!mcpObj$rej_flag_Curr), sep = "")
       mcpObj$AllocSampleSize <- mcpObj$Stage2AllocSampleSize <- Stage1Test$Stage1Obj$AllocSampleSize
@@ -202,6 +186,44 @@ adaptGMCP_CER <- function(
         ]
         row.names(mcpObj$WH) <- NULL
       }
+
+      #Compute the CER & PCER for the remaining intersection hypothesis after stage-1 test rejection
+      WH_modified_idx <- as.vector(apply(
+        mcpObj$WH[, grep("H", names(mcpObj$WH))], 1,
+        function(x) {
+          paste(x, collapse = "")
+        }
+      ))
+
+      WH_old_idx <- as.vector(apply(
+        mcpObj$WH_Prev[, grep("H", names(mcpObj$WH_Prev))], 1,
+        function(x) {
+          paste(x, collapse = "")
+        }
+      ))
+
+      oldIdx <- unlist(lapply(
+        1:nrow(mcpObj$WH),
+        function(i) {
+          which(WH_old_idx == WH_modified_idx[i])
+        }
+      ))
+
+      CERTab <- getCER(b2 = Stage1Test$Stage1Obj$plan_Bdry$Stage2Bdry[oldIdx, ],
+                       WH = mcpObj$WH,
+                       p1 = mcpObj$p_raw,
+                       test.type = mcpObj$test.type,
+                       HypoMap = mcpObj$HypoMap,
+                       CommonStdDev = mcpObj$CommonStdDev,
+                       allocRatio = mcpObj$allocRatio,
+                       sigma = mcpObj$sigma,
+                       Sigma = Stage1Test$Stage1Obj$Sigma,
+                       AllocSampleSize = Stage1Test$Stage1Obj$AllocSampleSize,
+                       EpType = mcpObj$lEpType,
+                       prop.ctr = mcpObj$prop.ctr)
+      cat("Table of CER and PCER values conditional on stage one p-values \n")
+      print(CERTab)
+      #--------------------------------------
 
       if (plotGraphs) # Plot after Stage-1 analysis
         {

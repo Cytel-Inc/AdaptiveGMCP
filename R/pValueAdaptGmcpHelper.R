@@ -341,7 +341,9 @@ do_modifyStrategy <- function(mcpObj, showExistingStrategy = T) {
 
 get_newGraph <- function(mcpObj) {
   # User input weights
-  cat("Enter the new weights for (", paste(mcpObj$IndexSet, collapse = ", "), ") as comma seperated values (e.g.- 0.5,0.5) :\n")
+  eg_text <- paste("(e.g.",
+                   paste(rep(round(1/length(mcpObj$IndexSet),3),length(mcpObj$IndexSet)),collapse = ","),")")
+  cat("Enter the new weights for (", paste(mcpObj$IndexSet, collapse = ", "), ") as comma seperated values",eg_text,":\n")
   inpWeight <- readline()
   inpWeight <- stringr::str_trim(unlist(strsplit(inpWeight, split = ",")), "both")
   inpWeight <- unlist(lapply(inpWeight, function(x) eval(parse(text = x))))

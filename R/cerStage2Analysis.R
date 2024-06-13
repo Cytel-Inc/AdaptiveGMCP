@@ -114,10 +114,11 @@ do_ModifyStage2Sample <- function(allocRatio, ArmsPresent, AllocSampleSize) {
     availArmsName <- names(AllocSampleSize)[ArmsPresent]
     cat("Planned Sample Size for reference: \n")
     print(AllocSampleSize)
-
+    eg_text <- paste("(e.g.",
+                     paste(100+1:length(availArmsName),collapse = ","),")")
     cat(
       "Enter Stage-2 sample size for ", paste(availArmsName, collapse = ", "),
-      "(e.g. 100,150)", "\n"
+      eg_text, "\n"
     )
     newSS <- readline()
 

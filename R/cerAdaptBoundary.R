@@ -45,6 +45,7 @@ adaptBdryCER <- function(mcpObj) {
   SubSets <- c()
   ConditionalError <- c()
   Stage2AdjBdry <- c()
+  InterWeight2 <- c()
   #ScaleWeights <- rep(NA, nrow(WH_modified))
 
   for (i in seq_len(nrow(WH_modified))) {
@@ -66,7 +67,7 @@ adaptBdryCER <- function(mcpObj) {
 
     modIdx <- which(WH_modified_idx == paste(J2, collapse = "")) # Index for the WH_old corresponding to J
     w2 <- as.numeric(WH_modified[modIdx, grep("Weight", names(WH_modified))])
-
+    InterWeight2 <- c(InterWeight2, paste(w2[which(w2 != 0)], collapse = ","))
 
 
     adaptOut <- getAdaptBdry(
@@ -133,7 +134,7 @@ adaptBdryCER <- function(mcpObj) {
   }
   AdjBdryTab1 <- knitr::kable(data.frame(
     "Hypotheses" = InterHyp,
-    "Weights" = InterWeight,
+    "Weights" = InterWeight2,
     "Adapt_Boundary" = stg2bdry,
     row.names = NULL
   ), align = "c")
