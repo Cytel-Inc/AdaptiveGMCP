@@ -58,8 +58,8 @@ allocRatio <- c(1, 1, 1) # Arm-Wise planned Allocation ratio
 sigma <- c(1, 1, 1) # Arm-wise planned standard deviation
 ```
 
-Planned Boundaries for Parametric Weighted Dunnett
-H12,H13
+Planned Boundaries for Parametric Weighted Dunnett H12,H13
+
 ```{r}
 ###############################  Inputs  #########################################
 alpha <- 0.025 # Design alpha
@@ -67,11 +67,3 @@ allocRatio <- c(1, 1, 1) # Arm-Wise planned Allocation ratio
 wJ <- c(0.5, 0.5) # Weights for the intersection hypothesis
 ######################### End of inputs #########################################
 ```
-
-
-
-
-
-
-
-

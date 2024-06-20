@@ -91,7 +91,7 @@ The group sequential boundaries for each primary hypothesis $(j)$ as a part of a
 
 $P_{H_J}[p_{j,1} \leq \alpha_{j,1}(w_{j,J} * \alpha)] = \alpha_{j,1}(w_{j,J} * \alpha)$
 
-$P_{H_J}[[p_{j,1} > \alpha_{j,1}(w_{j,J} * \alpha)] \cap [p_{j,2} \leq \alpha_{j,2}(w_{j,J} * \alpha)] ] = (w_{j,J} * \alpha) - \alpha_{j,1}(\gamma)$
+$P_{H_J}[[p_{j,1} > \alpha_{j,1}(w_{j,J} * \alpha)] \cap [p_{j,2} \leq \alpha_{j,2}(w_{j,J} * \alpha)] ] = (w_{j,J} * \alpha) - \alpha_{j,1}(w_{j,J} * \alpha)$
 
 The group-sequential boundaries can be computed by using rpact package as follows.
 
