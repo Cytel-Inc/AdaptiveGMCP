@@ -16,132 +16,147 @@ load_all()
 #### 1.1 Two Sample with Four Endpoints(Normal) (FSD-2S-4EP)
 
 ```{r, echo=FALSE}
-#Design Alpha
+# Design Alpha
 alpha <- 0.025
 
-#Plan Sample Size
+# Plan Sample Size
 SampleSize <- 500
 
-#Number of Arms(Including Control)
+# Number of Arms(Including Control)
 nArms <- 2
 
-#Number of Hypothesis
-nEps  <- 4
+# Number of Hypothesis
+nEps <- 4
 
-#Arm-wise Mean(The first enty is for Control arm)
-Arms.Mean <- list('EP1' = c(0.1,0.3), 
-                  'EP2' = c(0.2,0.4),
-                  'EP3' = c(0.2,0.4),
-                  'EP4' = c(0.3,0.5))
+# Arm-wise Mean(The first enty is for Control arm)
+Arms.Mean <- list(
+  "EP1" = c(0.1, 0.3),
+  "EP2" = c(0.2, 0.4),
+  "EP3" = c(0.2, 0.4),
+  "EP4" = c(0.3, 0.5)
+)
 
-#Arm-wise Standard Deviation(The first enty is for Control arm)
-Arms.std.dev <- list('EP1' = c(1,1), 
-                     'EP2' = c(1,1),
-                     'EP3' = c(1,1),
-                     'EP4' = c(1,1))
+# Arm-wise Standard Deviation(The first enty is for Control arm)
+Arms.std.dev <- list(
+  "EP1" = c(1, 1),
+  "EP2" = c(1, 1),
+  "EP3" = c(1, 1),
+  "EP4" = c(1, 1)
+)
 
-#Arm-wise Standard Deviation(The first enty is for Control arm)
-Arms.alloc.ratio <- c(1,1)
+# Arm-wise Standard Deviation(The first enty is for Control arm)
+Arms.alloc.ratio <- c(1, 1)
 
-#Correlation between end-points(for respose generation)
-EP.Corr <- matrix(c(1,0.5,0.5,0.5,
-                    0.5,1,0.5,0.5,
-                    0.5,0.5,1,0.5,
-                    0.5,0.5,0.5,1),
-                    nrow = 4)
+# Correlation between end-points(for respose generation)
+EP.Corr <- matrix(
+  c(
+    1, 0.5, 0.5, 0.5,
+    0.5, 1, 0.5, 0.5,
+    0.5, 0.5, 1, 0.5,
+    0.5, 0.5, 0.5, 1
+  ),
+  nrow = 4
+)
 
-#Initial Weights for the primary Hypothesis 
-WI <-  c(0.5,0.5,0,0)
+# Initial Weights for the primary Hypothesis
+WI <- c(0.5, 0.5, 0, 0)
 
-#Initial Transition Matrix
-G <- matrix(c(0,0.5,0.5,0,
-             0.5,0,0,0.5,
-             0,1,0,0,
-             1,0,0,0),
-             nrow = nEps*(nArms-1), byrow = T)
+# Initial Transition Matrix
+G <- matrix(
+  c(
+    0, 0.5, 0.5, 0,
+    0.5, 0, 0, 0.5,
+    0, 1, 0, 0,
+    1, 0, 0, 0
+  ),
+  nrow = nEps * (nArms - 1), byrow = T
+)
 
-#Test Procedure
-test.type <- 'Bonf'
+# Test Procedure
+test.type <- "Bonf"
 
-#Information Fraction
+# Information Fraction
 info_frac <- 1
 
-#Spending Function Type
+# Spending Function Type
 typeOfDesign <- "asOF"
 
-#Multiple Winner Choice
+# Multiple Winner Choice
 MultipleWinners <- T
 
-#Treatment Selection Choice
+# Treatment Selection Choice
 Selection <- T
 
-#Selection Look 
+# Selection Look
 SelectionLook <- 1
 
-#Selection Endpoint
+# Selection Endpoint
 SelectEndPoint <- 1
 
-#Selection Scale
-SelectionScale <- 'pvalue'
+# Selection Scale
+SelectionScale <- "pvalue"
 
-#Selection Criteria
-SelectionCriterion <- 'best'
+# Selection Criteria
+SelectionCriterion <- "best"
 
-#Selection Parameter for the Selection Criteria
+# Selection Parameter for the Selection Criteria
 SelectionParmeter <- 1
 
-#Keep all the associated hypothesis for the selected arm
+# Keep all the associated hypothesis for the selected arm
 KeepAssosiatedEps <- T
 
-#Re-allocation of the sample size 
-ImplicitSSR <- 'All'
+# Re-allocation of the sample size
+ImplicitSSR <- "All"
 
-#Number of simulations
+# Number of simulations
 nSimulation <- 100
 
-#Seed
+# Seed
 Seed <- 100
 
-#Print Summary Statistics
+# Print Summary Statistics
 SummaryStat <- F
 
-#Combining p-value or CER method
-Method <- 'CombPValue' #CombPValue/CER
+# Combining p-value or CER method
+Method <- "CombPValue" # CombPValue/CER
 
 
-fsd2S4Ep_pc <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,
-           nEps = nEps,
-           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
-           Arms.alloc.ratio = Arms.alloc.ratio,
-           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
-           info_frac = info_frac,
-           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
-           Selection = Selection,SelectionLook = SelectionLook,
-           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
-           SelectionCriterion = SelectionCriterion, 
-           SelectionParmeter = SelectionParmeter,
-           KeepAssosiatedEps=KeepAssosiatedEps,
-           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
-           Seed = Seed, SummaryStat = SummaryStat,
-           Method = Method,plotGraphs = FALSE)
+fsd2S4Ep_pc <- simMAMSMEP(
+  alpha = alpha, SampleSize = SampleSize, nArms = nArms,
+  nEps = nEps,
+  Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev,
+  Arms.alloc.ratio = Arms.alloc.ratio,
+  EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type,
+  info_frac = info_frac,
+  typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
+  Selection = Selection, SelectionLook = SelectionLook,
+  SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
+  SelectionCriterion = SelectionCriterion,
+  SelectionParmeter = SelectionParmeter,
+  KeepAssosiatedEps = KeepAssosiatedEps,
+  ImplicitSSR = ImplicitSSR, nSimulation = nSimulation,
+  Seed = Seed, SummaryStat = SummaryStat,
+  Method = Method, plotGraphs = FALSE
+)
 
-Method <- 'CER' #CombPValue/CER
-fsd2S4Ep_cer <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,
-           nEps = nEps,
-           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
-           Arms.alloc.ratio = Arms.alloc.ratio,
-           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
-           info_frac = info_frac,
-           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
-           Selection = Selection,SelectionLook = SelectionLook,
-           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
-           SelectionCriterion = SelectionCriterion, 
-           SelectionParmeter = SelectionParmeter,
-           KeepAssosiatedEps=KeepAssosiatedEps,
-           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
-           Seed = Seed, SummaryStat = SummaryStat,
-           Method = Method,plotGraphs = FALSE)
-
+Method <- "CER" # CombPValue/CER
+fsd2S4Ep_cer <- simMAMSMEP(
+  alpha = alpha, SampleSize = SampleSize, nArms = nArms,
+  nEps = nEps,
+  Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev,
+  Arms.alloc.ratio = Arms.alloc.ratio,
+  EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type,
+  info_frac = info_frac,
+  typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
+  Selection = Selection, SelectionLook = SelectionLook,
+  SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
+  SelectionCriterion = SelectionCriterion,
+  SelectionParmeter = SelectionParmeter,
+  KeepAssosiatedEps = KeepAssosiatedEps,
+  ImplicitSSR = ImplicitSSR, nSimulation = nSimulation,
+  Seed = Seed, SummaryStat = SummaryStat,
+  Method = Method, plotGraphs = FALSE
+)
 ```
 
 **Results**
@@ -170,56 +185,62 @@ fsd2S4Ep_cer$Overall_Powers
 **Under Null**
 
 ```{r,echo=FALSE}
-#Arm-wise Mean(The first enty is for Control arm)
-Arms.Mean <- list('EP1' = c(0.1,0.1), 
-                  'EP2' = c(0.2,0.2),
-                  'EP3' = c(0.2,0.2),
-                  'EP4' = c(0.3,0.3))
+# Arm-wise Mean(The first enty is for Control arm)
+Arms.Mean <- list(
+  "EP1" = c(0.1, 0.1),
+  "EP2" = c(0.2, 0.2),
+  "EP3" = c(0.2, 0.2),
+  "EP4" = c(0.3, 0.3)
+)
 
-#Arm-wise Standard Deviation(The first enty is for Control arm)
-Arms.std.dev <- list('EP1' = c(1,1), 
-                     'EP2' = c(1,1),
-                     'EP3' = c(1,1),
-                     'EP4' = c(1,1))
+# Arm-wise Standard Deviation(The first enty is for Control arm)
+Arms.std.dev <- list(
+  "EP1" = c(1, 1),
+  "EP2" = c(1, 1),
+  "EP3" = c(1, 1),
+  "EP4" = c(1, 1)
+)
 
-#Combining p-value or CER method
-Method <- 'CombPValue' #CombPValue/CER
-
-
-fsd2S4Ep_pc_Null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
-           nArms = nArms, nEps = nEps,
-           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
-           Arms.alloc.ratio = Arms.alloc.ratio,
-           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
-           info_frac = info_frac,
-           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
-           Selection = Selection,SelectionLook = SelectionLook,
-           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
-           SelectionCriterion = SelectionCriterion, 
-           SelectionParmeter = SelectionParmeter,
-           KeepAssosiatedEps=KeepAssosiatedEps,
-           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
-           Seed = Seed, SummaryStat = SummaryStat,
-           Method = Method,plotGraphs = FALSE)
-
-Method <- 'CER' #CombPValue/CER
-fsd2S4Ep_cer_Null <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
-           nArms = nArms,  nEps = nEps,
-           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
-           Arms.alloc.ratio = Arms.alloc.ratio,
-           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
-           info_frac = info_frac,
-           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
-           Selection = Selection,SelectionLook = SelectionLook,
-           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
-           SelectionCriterion = SelectionCriterion, 
-           SelectionParmeter = SelectionParmeter,
-           KeepAssosiatedEps=KeepAssosiatedEps,
-           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
-           Seed = Seed, SummaryStat = SummaryStat,
-           Method = Method,plotGraphs = FALSE)
+# Combining p-value or CER method
+Method <- "CombPValue" # CombPValue/CER
 
 
+fsd2S4Ep_pc_Null <- simMAMSMEP(
+  alpha = alpha, SampleSize = SampleSize,
+  nArms = nArms, nEps = nEps,
+  Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev,
+  Arms.alloc.ratio = Arms.alloc.ratio,
+  EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type,
+  info_frac = info_frac,
+  typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
+  Selection = Selection, SelectionLook = SelectionLook,
+  SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
+  SelectionCriterion = SelectionCriterion,
+  SelectionParmeter = SelectionParmeter,
+  KeepAssosiatedEps = KeepAssosiatedEps,
+  ImplicitSSR = ImplicitSSR, nSimulation = nSimulation,
+  Seed = Seed, SummaryStat = SummaryStat,
+  Method = Method, plotGraphs = FALSE
+)
+
+Method <- "CER" # CombPValue/CER
+fsd2S4Ep_cer_Null <- simMAMSMEP(
+  alpha = alpha, SampleSize = SampleSize,
+  nArms = nArms, nEps = nEps,
+  Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev,
+  Arms.alloc.ratio = Arms.alloc.ratio,
+  EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type,
+  info_frac = info_frac,
+  typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
+  Selection = Selection, SelectionLook = SelectionLook,
+  SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
+  SelectionCriterion = SelectionCriterion,
+  SelectionParmeter = SelectionParmeter,
+  KeepAssosiatedEps = KeepAssosiatedEps,
+  ImplicitSSR = ImplicitSSR, nSimulation = nSimulation,
+  Seed = Seed, SummaryStat = SummaryStat,
+  Method = Method, plotGraphs = FALSE
+)
 ```
 
 **Results**
@@ -248,112 +269,119 @@ fsd2S4Ep_cer_Null$Overall_Powers
 #### 1.3 Four Arm Single Look Single Endpoint - Weighted Bonferroni (FSD-4S-1EP-Bonf)
 
 ```{r,echo=FALSE}
-#Design Alpha
+# Design Alpha
 alpha <- 0.025
 
-#Plan Sample Size
+# Plan Sample Size
 SampleSize <- 400
 
-#Number of Arms(Including Control)
+# Number of Arms(Including Control)
 nArms <- 4
 
-#Number of Hypothesis
-nEps  <- 1
+# Number of Hypothesis
+nEps <- 1
 
-#Arm-wise Mean(The first enty is for Control arm)
-Arms.Mean <- list('EP1' = c(0,0.1,0.3,0.4))
+# Arm-wise Mean(The first enty is for Control arm)
+Arms.Mean <- list("EP1" = c(0, 0.1, 0.3, 0.4))
 
-#Arm-wise Standard Deviation(The first enty is for Control arm)
-Arms.std.dev <- list('EP1' = c(1,1,1,1))
+# Arm-wise Standard Deviation(The first enty is for Control arm)
+Arms.std.dev <- list("EP1" = c(1, 1, 1, 1))
 
-#Arm-wise Standard Deviation(The first enty is for Control arm)
-Arms.alloc.ratio <- c(1,1,1,1)
+# Arm-wise Standard Deviation(The first enty is for Control arm)
+Arms.alloc.ratio <- c(1, 1, 1, 1)
 
 
-#Initial Weights for the primary Hypothesis 
-WI <-  c(1/3,1/3,1/3)
+# Initial Weights for the primary Hypothesis
+WI <- c(1 / 3, 1 / 3, 1 / 3)
 
-#Initial Transition Matrix
-G <- matrix(c(0,1/2,1/2,
-              1/2,0,1/2,
-              1/2,1/2,0),
-              nrow = nEps*(nArms-1), byrow = T)
+# Initial Transition Matrix
+G <- matrix(
+  c(
+    0, 1 / 2, 1 / 2,
+    1 / 2, 0, 1 / 2,
+    1 / 2, 1 / 2, 0
+  ),
+  nrow = nEps * (nArms - 1), byrow = T
+)
 
-#Test Procedure
-test.type <- 'Bonf'
+# Test Procedure
+test.type <- "Bonf"
 
-#Information Fraction
+# Information Fraction
 info_frac <- 1
 
-#Spending Function Type
+# Spending Function Type
 typeOfDesign <- "asOF"
 
-#Multiple Winner Choice
+# Multiple Winner Choice
 MultipleWinners <- T
 
-#Treatment Selection Choice
+# Treatment Selection Choice
 Selection <- T
 
-#Selection Look 
+# Selection Look
 SelectionLook <- 1
 
-#Selection Endpoint
+# Selection Endpoint
 SelectEndPoint <- 1
 
-#Selection Scale
-SelectionScale <- 'pvalue'
+# Selection Scale
+SelectionScale <- "pvalue"
 
-#Selection Criteria
-SelectionCriterion <- 'best'
+# Selection Criteria
+SelectionCriterion <- "best"
 
-#Selection Parameter for the Selection Criteria
+# Selection Parameter for the Selection Criteria
 SelectionParmeter <- 1
 
-#Keep all the associated hypothesis for the selected arm
+# Keep all the associated hypothesis for the selected arm
 KeepAssosiatedEps <- T
 
-#Re-allocation of the sample size 
-ImplicitSSR <- 'All'
+# Re-allocation of the sample size
+ImplicitSSR <- "All"
 
-#Combining p-value or CER method
-Method <- 'CombPValue' #CombPValue/CER
+# Combining p-value or CER method
+Method <- "CombPValue" # CombPValue/CER
 
 
-fsd4S1EPBonf_pc <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
-          nArms = nArms,
-           nEps = nEps,
-           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
-           Arms.alloc.ratio = Arms.alloc.ratio,
-           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
-           info_frac = info_frac,
-           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
-           Selection = Selection,SelectionLook = SelectionLook,
-           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
-           SelectionCriterion = SelectionCriterion, 
-           SelectionParmeter = SelectionParmeter,
-           KeepAssosiatedEps=KeepAssosiatedEps,
-           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
-           Seed = Seed, SummaryStat = SummaryStat,
-           Method = Method,plotGraphs = FALSE)
+fsd4S1EPBonf_pc <- simMAMSMEP(
+  alpha = alpha, SampleSize = SampleSize,
+  nArms = nArms,
+  nEps = nEps,
+  Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev,
+  Arms.alloc.ratio = Arms.alloc.ratio,
+  EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type,
+  info_frac = info_frac,
+  typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
+  Selection = Selection, SelectionLook = SelectionLook,
+  SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
+  SelectionCriterion = SelectionCriterion,
+  SelectionParmeter = SelectionParmeter,
+  KeepAssosiatedEps = KeepAssosiatedEps,
+  ImplicitSSR = ImplicitSSR, nSimulation = nSimulation,
+  Seed = Seed, SummaryStat = SummaryStat,
+  Method = Method, plotGraphs = FALSE
+)
 
-Method <- 'CER' #CombPValue/CER
-fsd4S1EPBonf_cer <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
-           nArms = nArms,
-           nEps = nEps,
-           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
-           Arms.alloc.ratio = Arms.alloc.ratio,
-           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
-           info_frac = info_frac,
-           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
-           Selection = Selection,SelectionLook = SelectionLook,
-           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
-           SelectionCriterion = SelectionCriterion, 
-           SelectionParmeter = SelectionParmeter,
-           KeepAssosiatedEps=KeepAssosiatedEps,
-           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
-           Seed = Seed, SummaryStat = SummaryStat,
-           Method = Method,plotGraphs = FALSE)
-
+Method <- "CER" # CombPValue/CER
+fsd4S1EPBonf_cer <- simMAMSMEP(
+  alpha = alpha, SampleSize = SampleSize,
+  nArms = nArms,
+  nEps = nEps,
+  Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev,
+  Arms.alloc.ratio = Arms.alloc.ratio,
+  EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type,
+  info_frac = info_frac,
+  typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
+  Selection = Selection, SelectionLook = SelectionLook,
+  SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
+  SelectionCriterion = SelectionCriterion,
+  SelectionParmeter = SelectionParmeter,
+  KeepAssosiatedEps = KeepAssosiatedEps,
+  ImplicitSSR = ImplicitSSR, nSimulation = nSimulation,
+  Seed = Seed, SummaryStat = SummaryStat,
+  Method = Method, plotGraphs = FALSE
+)
 ```
 
 **Results**
@@ -393,51 +421,54 @@ fsd4S1EPBonf_cer$Overall_Powers
 #### 1.4 Four Arm Single Look Single Endpoint - Weighted Dunnett (FSD-4S-1EP-Dunnett)
 
 ```{r,echo=FALSE}
-#Test Procedure
-test.type <- 'Dunnett'
-#Combining p-value or CER method
-Method <- 'CombPValue' #CombPValue/CER
+# Test Procedure
+test.type <- "Dunnett"
+# Combining p-value or CER method
+Method <- "CombPValue" # CombPValue/CER
 
 
-fsd4S1EPDunnett_pc <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
-          nArms = nArms,
-           nEps = nEps,
-           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, 
-           Arms.alloc.ratio = Arms.alloc.ratio,
-           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
-           info_frac = info_frac,
-           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners, 
-           Selection = Selection,SelectionLook = SelectionLook,
-           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
-           SelectionCriterion = SelectionCriterion, 
-           SelectionParmeter = SelectionParmeter,
-           KeepAssosiatedEps=KeepAssosiatedEps,
-           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, 
-           Seed = Seed, SummaryStat = SummaryStat,
-           Method = Method,plotGraphs = FALSE)
+fsd4S1EPDunnett_pc <- simMAMSMEP(
+  alpha = alpha, SampleSize = SampleSize,
+  nArms = nArms,
+  nEps = nEps,
+  Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev,
+  Arms.alloc.ratio = Arms.alloc.ratio,
+  EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type,
+  info_frac = info_frac,
+  typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
+  Selection = Selection, SelectionLook = SelectionLook,
+  SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
+  SelectionCriterion = SelectionCriterion,
+  SelectionParmeter = SelectionParmeter,
+  KeepAssosiatedEps = KeepAssosiatedEps,
+  ImplicitSSR = ImplicitSSR, nSimulation = nSimulation,
+  Seed = Seed, SummaryStat = SummaryStat,
+  Method = Method, plotGraphs = FALSE
+)
 
-#Test Procedure
-test.type <- 'Parametric'
-#Combining p-value or CER method
-Method <- 'CER' #CombPValue/CER
+# Test Procedure
+test.type <- "Parametric"
+# Combining p-value or CER method
+Method <- "CER" # CombPValue/CER
 
-fsd4S1EPDunnett_cer <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,
-           nArms = nArms,
-           nEps = nEps,
-           Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev,
-           Arms.alloc.ratio = Arms.alloc.ratio,
-           EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,
-           info_frac = info_frac,
-           typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
-           Selection = Selection,SelectionLook = SelectionLook,
-           SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
-           SelectionCriterion = SelectionCriterion,
-           SelectionParmeter = SelectionParmeter,
-           KeepAssosiatedEps=KeepAssosiatedEps,
-           ImplicitSSR = ImplicitSSR, nSimulation = nSimulation,
-           Seed = Seed, SummaryStat = SummaryStat,
-           Method = Method,plotGraphs = FALSE)
-
+fsd4S1EPDunnett_cer <- simMAMSMEP(
+  alpha = alpha, SampleSize = SampleSize,
+  nArms = nArms,
+  nEps = nEps,
+  Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev,
+  Arms.alloc.ratio = Arms.alloc.ratio,
+  EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type,
+  info_frac = info_frac,
+  typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
+  Selection = Selection, SelectionLook = SelectionLook,
+  SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
+  SelectionCriterion = SelectionCriterion,
+  SelectionParmeter = SelectionParmeter,
+  KeepAssosiatedEps = KeepAssosiatedEps,
+  ImplicitSSR = ImplicitSSR, nSimulation = nSimulation,
+  Seed = Seed, SummaryStat = SummaryStat,
+  Method = Method, plotGraphs = FALSE
+)
 ```
 
 **Results**

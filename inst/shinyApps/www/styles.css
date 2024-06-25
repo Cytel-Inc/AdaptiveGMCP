@@ -1,0 +1,8 @@
+/* styles.css */
+  .highlighted-note {
+    padding: 10px;
+    background-color: #ffffcc; /* Light yellow background */
+      border-left: 6px solid #ffeb3b; /* Darker yellow border */
+    margin: 20px 0;
+    font-style: italic;
+  }

@@ -33,30 +33,34 @@ Let's consider a two-stage group sequential design with the given initial weight
 
 ```{r}
 ###############################  Inputs  #########################################
-#number of hypothesis
+# number of hypothesis
 nHypothesis <- 4
 
-#number of looks
+# number of looks
 nlooks <- 2
 
-#Initial Weights
-WI <-  c(0.5,0.5,0,0) 
+# Initial Weights
+WI <- c(0.5, 0.5, 0, 0)
 
-#Initial Transition matrix
-G <- matrix(c(0,0.5,0.5,0,
-              0.5,0,0,0.5,
-              0,1,0,0,
-              1,0,0,0),
-              nrow = nHypothesis, byrow = T)
+# Initial Transition matrix
+G <- matrix(
+  c(
+    0, 0.5, 0.5, 0,
+    0.5, 0, 0, 0.5,
+    0, 1, 0, 0,
+    1, 0, 0, 0
+  ),
+  nrow = nHypothesis, byrow = T
+)
 
 # alpha
 alpha <- 0.025
 
-#Information Fraction
-info_frac <- c(0.5,1)
+# Information Fraction
+info_frac <- c(0.5, 1)
 
-#Stage-1 Raw p-values
-Stage1Pvalues <- c(0.00045,0.0952,0.0225,0.1104)
+# Stage-1 Raw p-values
+Stage1Pvalues <- c(0.00045, 0.0952, 0.0225, 0.1104)
 
 ######################### End of inputs #########################################
 ```
@@ -66,16 +70,19 @@ Stage1Pvalues <- c(0.00045,0.0952,0.0225,0.1104)
 With the initial weight and transition matrix we can compute the weights for all the intersection hypothesis$(H_J \space where \space J \subseteq I_1)$ by using gmcpLite package as follows:
 
 ```{r}
+# Computation of Intersection weights
+WH <- as.data.frame(gMCPLite::generateWeights(g = G, w = WI))
 
-#Computation of Intersection weights
-WH <- as.data.frame(gMCPLite::generateWeights(g = G,w = WI))
+colnames(WH) <- c(
+  paste("H", 1:nHypothesis, sep = ""),
+  paste("W", 1:nHypothesis, sep = "")
+)
 
-colnames(WH) <- c(paste('H',1:nHypothesis,sep = ''), 
-                  paste('W',1:nHypothesis,sep = ''))
 
-
-knitr::kable(WH,caption = 'Table-1:Weights for Intersection hypothesis',
-             digits = 3, align = 'c',padding = 3)
+knitr::kable(WH,
+  caption = "Table-1:Weights for Intersection hypothesis",
+  digits = 3, align = "c", padding = 3
+)
 ```
 
 ### The Planned boundaries for each primary hypotheses $H_j$ as a part of intersection hypothesis $H_J$
@@ -84,56 +91,63 @@ The group sequential boundaries for each primary hypothesis $(j)$ as a part of a
 
 $P_{H_J}[p_{j,1} \leq \alpha_{j,1}(w_{j,J} * \alpha)] = \alpha_{j,1}(w_{j,J} * \alpha)$
 
-$P_{H_J}[[p_{j,1} > \alpha_{j,1}(w_{j,J} * \alpha)] \cap [p_{j,2} \leq \alpha_{j,2}(w_{j,J} * \alpha)] ] = (w_{j,J} * \alpha) - \alpha_{j,1}(\gamma)$
+$P_{H_J}[[p_{j,1} > \alpha_{j,1}(w_{j,J} * \alpha)] \cap [p_{j,2} \leq \alpha_{j,2}(w_{j,J} * \alpha)] ] = (w_{j,J} * \alpha) - \alpha_{j,1}(w_{j,J} * \alpha)$
 
 The group-sequential boundaries can be computed by using rpact package as follows.
 
 ```{r}
-#Function to compute the Stage-wise planned boundaries for all intersection #hypothesis
-getPlanBdry <- function(alpha, info_frac, WH, typeOfDesign = 'asOF')
-{
-  #Function to compute the Stage-wise planned boundaries for a primary hypothesis
-  #Hj as a part of intersection hypothesis(HJ)
-  PlanBdry <- function(sig_level, info_frac, typeOfDesign = 'asOF')
-  {
-    des <- getDesignGroupSequential(kMax = 2, alpha = sig_level, 
-                              informationRates =info_frac, 
-                              typeOfDesign = typeOfDesign)
+# Function to compute the Stage-wise planned boundaries for all intersection #hypothesis
+getPlanBdry <- function(alpha, info_frac, WH, typeOfDesign = "asOF") {
+  # Function to compute the Stage-wise planned boundaries for a primary hypothesis
+  # Hj as a part of intersection hypothesis(HJ)
+  PlanBdry <- function(sig_level, info_frac, typeOfDesign = "asOF") {
+    des <- getDesignGroupSequential(
+      kMax = 2, alpha = sig_level,
+      informationRates = info_frac,
+      typeOfDesign = typeOfDesign
+    )
     des$stageLevels
   }
-  
-  #Significance level for the primary hypothesis 
-  sig_level <- alpha*WH[,(ncol(WH)/2+1):ncol(WH)]
-  
-  Stage1Bdry <- Stage2Bdry <- matrix(0, nrow = nrow(WH),ncol = nHypothesis)
-  colnames(Stage1Bdry) <- paste('a', 1:nHypothesis,'1', sep='')
-  colnames(Stage2Bdry) <- paste('a', 1:nHypothesis,'2', sep='')
-  for(i in 1:nrow(WH))
+
+  # Significance level for the primary hypothesis
+  sig_level <- alpha * WH[, (ncol(WH) / 2 + 1):ncol(WH)]
+
+  Stage1Bdry <- Stage2Bdry <- matrix(0, nrow = nrow(WH), ncol = nHypothesis)
+  colnames(Stage1Bdry) <- paste("a", 1:nHypothesis, "1", sep = "")
+  colnames(Stage2Bdry) <- paste("a", 1:nHypothesis, "2", sep = "")
+  for (i in 1:nrow(WH))
   {
-    for(j in 1:length(WI))
+    for (j in 1:length(WI))
     {
-      if(sig_level[i,j] != 0)
-      {
-        bdry <- PlanBdry(sig_level = sig_level[i,j], info_frac=info_frac, 
-                         typeOfDesign =   typeOfDesign)
-        Stage1Bdry[i,j] <- bdry[1]
-        Stage2Bdry[i,j] <- bdry[2]
+      if (sig_level[i, j] != 0) {
+        bdry <- PlanBdry(
+          sig_level = sig_level[i, j], info_frac = info_frac,
+          typeOfDesign = typeOfDesign
+        )
+        Stage1Bdry[i, j] <- bdry[1]
+        Stage2Bdry[i, j] <- bdry[2]
       }
     }
   }
-  list('Stage1Bdry'=Stage1Bdry, 'Stage2Bdry'=Stage2Bdry)
+  list("Stage1Bdry" = Stage1Bdry, "Stage2Bdry" = Stage2Bdry)
 }
 
-planBdry <- getPlanBdry(alpha=alpha, info_frac = info_frac, WH = WH, 
-                        typeOfDesign = 'asOF')
+planBdry <- getPlanBdry(
+  alpha = alpha, info_frac = info_frac, WH = WH,
+  typeOfDesign = "asOF"
+)
 
-planBdry_df <- cbind(WH[,1:(ncol(WH)/2)],
-                     planBdry$Stage1Bdry,
-                     planBdry$Stage2Bdry)
+planBdry_df <- cbind(
+  WH[, 1:(ncol(WH) / 2)],
+  planBdry$Stage1Bdry,
+  planBdry$Stage2Bdry
+)
 
 
-knitr::kable(planBdry_df,caption = 'Stage-1 & Stage-2 planned boundaries',
-              digits = 6, align = 'c',padding = 12)
+knitr::kable(planBdry_df,
+  caption = "Stage-1 & Stage-2 planned boundaries",
+  digits = 6, align = "c", padding = 12
+)
 ```
 
 ### Stage-1 Analysis
@@ -145,20 +159,25 @@ $\varphi_J = 1$ if any $j \in J$; $p_{j,1} \leq \alpha_{j,1}(w_{j,J} * \alpha)$
 The primary hypothesis $H_j$ for any $j\in I_1$ can be rejected by a closed test if $\varphi_J = 1$ for all intersection hypotheses($H_J$) containing the primary hypothesis is rejected.
 
 ```{r}
-
-#function to check pjk < ajk
-checkRejection <- function(pValues, boundary)
-{
-  unlist(lapply(1:nrow(boundary), function(x){any(pValues <= boundary[x,])}))
+# function to check pjk < ajk
+checkRejection <- function(pValues, boundary) {
+  unlist(lapply(1:nrow(boundary), function(x) {
+    any(pValues <= boundary[x, ])
+  }))
 }
 
-Stage1AnalysisDF <- data.frame(cbind(WH[,1:(ncol(WH)/2)],planBdry$Stage1Bdry),
-                     'Rejected'=checkRejection(pValues=Stage1Pvalues, 
-                                               boundary=planBdry$Stage1Bdry))
+Stage1AnalysisDF <- data.frame(cbind(WH[, 1:(ncol(WH) / 2)], planBdry$Stage1Bdry),
+  "Rejected" = checkRejection(
+    pValues = Stage1Pvalues,
+    boundary = planBdry$Stage1Bdry
+  )
+)
 
 
-knitr::kable(Stage1AnalysisDF, digits = 6, align = 'c',padding = 3,
-             caption = 'Rejection Status for all intersection hypothesis')
+knitr::kable(Stage1AnalysisDF,
+  digits = 6, align = "c", padding = 3,
+  caption = "Rejection Status for all intersection hypothesis"
+)
 ```
 
 **Rejection Status for the primary hypothesis**
@@ -166,24 +185,26 @@ knitr::kable(Stage1AnalysisDF, digits = 6, align = 'c',padding = 3,
 Final analysis of the primary hypothesis based on the above table.
 
 ```{r}
-getRejStatus <- function(nHypothesis, Stage1AnalysisDF)
-{
+getRejStatus <- function(nHypothesis, Stage1AnalysisDF) {
   rej_flag <- rep(NA, nHypothesis)
-  namesHypo <- paste('H',1:nHypothesis,sep = '')
+  namesHypo <- paste("H", 1:nHypothesis, sep = "")
 
-  for(i in 1:nHypothesis)
+  for (i in 1:nHypothesis)
   {
-    rej_flag[i]<-all(Stage1AnalysisDF[Stage1AnalysisDF[namesHypo[i]]==1,]$Rejected
-                       , na.rm =T)
+    rej_flag[i] <- all(Stage1AnalysisDF[Stage1AnalysisDF[namesHypo[i]] == 1, ]$Rejected,
+      na.rm = T
+    )
   }
-  Stage1RejStatus <- as.data.frame(matrix(rej_flag,nrow = 1))
+  Stage1RejStatus <- as.data.frame(matrix(rej_flag, nrow = 1))
   colnames(Stage1RejStatus) <- namesHypo
   Stage1RejStatus
 }
 
 
-knitr::kable(getRejStatus(nHypothesis, Stage1AnalysisDF), align = 'c',padding = 8,
-             caption = "Stage-1 regection status(TRUE = Rejected)")
+knitr::kable(getRejStatus(nHypothesis, Stage1AnalysisDF),
+  align = "c", padding = 8,
+  caption = "Stage-1 regection status(TRUE = Rejected)"
+)
 ```
 
 ## Adaptation
@@ -215,39 +236,42 @@ $n_{j,1}, n_{j,2}$ are the stage-wise cumulative sample size to test the primary
 The CER for the intersection hypothesis is defined as $B_J = \sum_{j \in J} A_{j,J}(w_{j,J} * \alpha)$
 
 ```{r}
-#Component-wise PCER
-CERperPriHyp <- function(a2, p1, info_frac)
-{
-  r <- sqrt(info_frac[1]) #sqrt(n1/n2) = sqrt(t1)
-  1-pnorm(qnorm(1-a2),mean = r*qnorm(1-p1), sd = sqrt(1-r^2))
+# Component-wise PCER
+CERperPriHyp <- function(a2, p1, info_frac) {
+  r <- sqrt(info_frac[1]) # sqrt(n1/n2) = sqrt(t1)
+  1 - pnorm(qnorm(1 - a2), mean = r * qnorm(1 - p1), sd = sqrt(1 - r^2))
 }
 
-#Function to compute the component-wise PCER(Aj) 
-getPCER <- function(Stage2Bdry,Stage1Pvalues,info_frac)
-{
+# Function to compute the component-wise PCER(Aj)
+getPCER <- function(Stage2Bdry, Stage1Pvalues, info_frac) {
   A <- data.frame(matrix(0, nrow = nrow(WH), ncol = length(WI)))
-  for(i in 1:nrow(A))
+  for (i in 1:nrow(A))
   {
-    for(j in 1:ncol(A))
+    for (j in 1:ncol(A))
     {
-      if(Stage2Bdry[i,j] != 0)
-      {
-        A[i,j] <- CERperPriHyp(a2 = Stage2Bdry[i,j], p1 = Stage1Pvalues[j],
-                               info_frac=info_frac)
+      if (Stage2Bdry[i, j] != 0) {
+        A[i, j] <- CERperPriHyp(
+          a2 = Stage2Bdry[i, j], p1 = Stage1Pvalues[j],
+          info_frac = info_frac
+        )
       }
     }
   }
-  names(A) <- paste('A',1:length(WI),sep='')
-  PCER <- cbind(WH[,1:(length(WH)/2)],A)
+  names(A) <- paste("A", 1:length(WI), sep = "")
+  PCER <- cbind(WH[, 1:(length(WH) / 2)], A)
   PCER
 }
 
-PCER <- getPCER(Stage2Bdry = planBdry$Stage2Bdry, Stage1Pvalues = Stage1Pvalues, 
-                info_frac= info_frac)
-PCER$B <- rowSums(PCER[,grep('A',names(PCER))])
+PCER <- getPCER(
+  Stage2Bdry = planBdry$Stage2Bdry, Stage1Pvalues = Stage1Pvalues,
+  info_frac = info_frac
+)
+PCER$B <- rowSums(PCER[, grep("A", names(PCER))])
 
-knitr::kable(PCER, caption = 'PCER for Intersection Hypothesis',
-              digits = 6, align = 'c',padding = 12)
+knitr::kable(PCER,
+  caption = "PCER for Intersection Hypothesis",
+  digits = 6, align = "c", padding = 12
+)
 ```
 
 ### Boundaries for Stage-2 analysis
@@ -294,18 +318,22 @@ The following section is to provide the inputs for Stage-2 analysis.
 
 ```{r}
 ############### Stage-2 Inputs #####################
-#Index for the stage-2 hypothesis
-I2 <- c(1,2,3,4)
+# Index for the stage-2 hypothesis
+I2 <- c(1, 2, 3, 4)
 
-#Initial Weight for stage-2
-WI2 <- c(0.75,0.25,0,0)
+# Initial Weight for stage-2
+WI2 <- c(0.75, 0.25, 0, 0)
 
-#Transition Matrix for stage-2
-G2 <- matrix(c(0,0.75,0.25,0,
-              0.75,0,0,0.25,
-              0,1,0,0,
-              1,0,0,0),
-              nrow = length(I2), byrow = T)
+# Transition Matrix for stage-2
+G2 <- matrix(
+  c(
+    0, 0.75, 0.25, 0,
+    0.75, 0, 0, 0.25,
+    0, 1, 0, 0,
+    1, 0, 0, 0
+  ),
+  nrow = length(I2), byrow = T
+)
 ############ End of Stage-2 Inputs ################
 ```
 
@@ -314,15 +342,19 @@ G2 <- matrix(c(0,0.75,0.25,0,
 Based on the new weights and transition matrix the modified weights for the intersection hypothesis are
 
 ```{r}
-#Computation of Intersection weights
-WH2 <- as.data.frame(gMCPLite::generateWeights(g = G2,w = WI2))
+# Computation of Intersection weights
+WH2 <- as.data.frame(gMCPLite::generateWeights(g = G2, w = WI2))
 
-colnames(WH2) <- c(paste('H',I2,sep = ''), 
-                  paste('W',I2,sep = ''))
+colnames(WH2) <- c(
+  paste("H", I2, sep = ""),
+  paste("W", I2, sep = "")
+)
 
 
-knitr::kable(WH2,digits = 3, align = 'c',padding = 4,
-             caption = 'Modified Weights for Intersection hypothesis at Stage-2')
+knitr::kable(WH2,
+  digits = 3, align = "c", padding = 4,
+  caption = "Modified Weights for Intersection hypothesis at Stage-2"
+)
 ```
 
 ### Adjusted Boundary for Stage-2
@@ -330,99 +362,111 @@ knitr::kable(WH2,digits = 3, align = 'c',padding = 4,
 **Method 1**
 
 ```{r}
+nameHypo2 <- paste("H", I2, sep = "")
+nameStage1Bdry <- paste("a", I2, "1", sep = "")
 
-nameHypo2 <- paste('H',I2,sep = '')
-nameStage1Bdry <- paste('a',I2,'1',sep = '')
-
-getIndex <- function(dfL, dfR, nameHypo2)
-{
+getIndex <- function(dfL, dfR, nameHypo2) {
   idxL <- unlist(
-    lapply(1:nrow(dfL), function(i){ paste(dfL[i,nameHypo2], collapse = '')}))
-  
+    lapply(1:nrow(dfL), function(i) {
+      paste(dfL[i, nameHypo2], collapse = "")
+    })
+  )
+
   idxR <- unlist(
-    lapply(1:nrow(dfR), function(i){ paste(dfR[i,nameHypo2], collapse = '')}))
-  match(idxR,idxL,nomatch = 0)
+    lapply(1:nrow(dfR), function(i) {
+      paste(dfR[i, nameHypo2], collapse = "")
+    })
+  )
+  match(idxR, idxL, nomatch = 0)
 }
 
-#index for the stage-2 intersection hypothesis
-idx <- getIndex(dfL=PCER, dfR=WH2, nameHypo2=nameHypo2)
+# index for the stage-2 intersection hypothesis
+idx <- getIndex(dfL = PCER, dfR = WH2, nameHypo2 = nameHypo2)
 
-#CER for the stage-2 intersection hypothesis
+# CER for the stage-2 intersection hypothesis
 BJ <- PCER[idx, "B"]
 
-#Stage-1 boundary for the stage-2 intersection hypothesis
-a1 <- planBdry$Stage1Bdry[idx,nameStage1Bdry]
+# Stage-1 boundary for the stage-2 intersection hypothesis
+a1 <- planBdry$Stage1Bdry[idx, nameStage1Bdry]
 
-#Adjusted boundary by Method-1
-Stage2bdryAdjM1 <- WH2[,grep('W',names(WH2))]*BJ
-names(Stage2bdryAdjM1) <- paste('v',I2,'*B',sep = '')
+# Adjusted boundary by Method-1
+Stage2bdryAdjM1 <- WH2[, grep("W", names(WH2))] * BJ
+names(Stage2bdryAdjM1) <- paste("v", I2, "*B", sep = "")
 
-knitr::kable(cbind(WH2, Stage2bdryAdjM1), digits = 6, align = 'c',padding = 4,
-              caption = 'Stage-2 adjusted boundary(Method 1)')
+knitr::kable(cbind(WH2, Stage2bdryAdjM1),
+  digits = 6, align = "c", padding = 4,
+  caption = "Stage-2 adjusted boundary(Method 1)"
+)
 ```
 
 **Method-2**
 
 ```{r}
-#Function to compute the stage-2 boundary 
-getStage2Bdry <- function(e, a1, info_frac) #e: sig level, a1: stage-1 boundary
+# Function to compute the stage-2 boundary
+getStage2Bdry <- function(e, a1, info_frac) # e: sig level, a1: stage-1 boundary
 {
-  if((e-a1)>0 || e != 0) #compute boundary when the exit prob >0
-  {
-    exitProb<-function(x)
+  if ((e - a1) > 0 || e != 0) # compute boundary when the exit prob >0
     {
-      upper <- c(qnorm(1-a1), Inf)
-      lower <- c(-Inf, qnorm(1-x))
-      r <- sqrt(info_frac[1])
-      sigma <- matrix(c(1,r, r,1), nrow = 2)
-      pmvnorm(lower = lower, upper = upper, sigma = sigma)[1]-(e-a1)
-    }
-    return(uniroot(f = exitProb, interval = c(0,1), tol = 1E-8)$root)
-  }else # else the minimum possible boundary in p-value scale = 0
+      exitProb <- function(x) {
+        upper <- c(qnorm(1 - a1), Inf)
+        lower <- c(-Inf, qnorm(1 - x))
+        r <- sqrt(info_frac[1])
+        sigma <- matrix(c(1, r, r, 1), nrow = 2)
+        pmvnorm(lower = lower, upper = upper, sigma = sigma)[1] - (e - a1)
+      }
+      return(uniroot(f = exitProb, interval = c(0, 1), tol = 1E-8)$root)
+    } else # else the minimum possible boundary in p-value scale = 0
   {
     return(0)
   }
 }
 
-#Function to compute the Adj Boundary based on modified weights 
-getStage2BdryAdj <- function(a1,p1,w,BJ,info_frac)
-{
-  #Function to compute adjusted PCER for arbtrary g
-  getAdjPCER <- function(g,a1,p1, w,info_frac)
-  {
-    e <- w*g 
-    a2adj <- unlist(lapply(1:length(e),
-                           function(x){getStage2Bdry(e = e[x], a1 = a1[x],
-                                                     info_frac = info_frac)}
+# Function to compute the Adj Boundary based on modified weights
+getStage2BdryAdj <- function(a1, p1, w, BJ, info_frac) {
+  # Function to compute adjusted PCER for arbtrary g
+  getAdjPCER <- function(g, a1, p1, w, info_frac) {
+    e <- w * g
+    a2adj <- unlist(lapply(
+      1:length(e),
+      function(x) {
+        getStage2Bdry(
+          e = e[x], a1 = a1[x],
+          info_frac = info_frac
+        )
+      }
     ))
     A_adj <- CERperPriHyp(a2 = a2adj, p1 = p1, info_frac = info_frac)
     A_adj
   }
-  
-  #Function to search for optimum g
-  OptimGamma <- function(x)
-  {
-    sum(getAdjPCER(g = x,a1 = a1,p1 = p1, w = w,info_frac = info_frac))-BJ
+
+  # Function to search for optimum g
+  OptimGamma <- function(x) {
+    sum(getAdjPCER(g = x, a1 = a1, p1 = p1, w = w, info_frac = info_frac)) - BJ
   }
-  gOpt <- uniroot(OptimGamma,interval = c(0,1),tol = 1E-8)$root
-  PCER_adj <- getAdjPCER(g = gOpt,a1 = a1, p1 = p1, w = w, info_frac = info_frac)
-  
-  list('gamma'=gOpt, 'AdjBdry'=PCER_adj)
+  gOpt <- uniroot(OptimGamma, interval = c(0, 1), tol = 1E-8)$root
+  PCER_adj <- getAdjPCER(g = gOpt, a1 = a1, p1 = p1, w = w, info_frac = info_frac)
+
+  list("gamma" = gOpt, "AdjBdry" = PCER_adj)
 }
 
-#Gamma and adjusted stage-2 boundary(Method-2) for all intersection hypothesis
-gamma <- c(); Stage2bdryAdjM2 <-c()
-for(i in 1:nrow(WH2))
+# Gamma and adjusted stage-2 boundary(Method-2) for all intersection hypothesis
+gamma <- c()
+Stage2bdryAdjM2 <- c()
+for (i in 1:nrow(WH2))
 {
   n <- length(WH2)
-  out <- getStage2BdryAdj(a1 = as.numeric(a1[i,]), 
-                   p1 = as.numeric(Stage1Pvalues),
-                   w =as.numeric(WH2[i,(n/2+1):n]), 
-                   BJ = BJ[i],info_frac = info_frac)
+  out <- getStage2BdryAdj(
+    a1 = as.numeric(a1[i, ]),
+    p1 = as.numeric(Stage1Pvalues),
+    w = as.numeric(WH2[i, (n / 2 + 1):n]),
+    BJ = BJ[i], info_frac = info_frac
+  )
   gamma[i] <- out$gamma
   Stage2bdryAdjM2 <- rbind(Stage2bdryAdjM2, out$AdjBdry)
 }
-colnames(Stage2bdryAdjM2) <- paste('v',I2,'*B',sep = '')
-knitr::kable(cbind(WH2,gamma, Stage2bdryAdjM2), digits = 6, align = 'c',
-             padding = 4, caption = 'Stage-2 adjusted boundary(Method 2)')
+colnames(Stage2bdryAdjM2) <- paste("v", I2, "*B", sep = "")
+knitr::kable(cbind(WH2, gamma, Stage2bdryAdjM2),
+  digits = 6, align = "c",
+  padding = 4, caption = "Stage-2 adjusted boundary(Method 2)"
+)
 ```

@@ -1,69 +1,60 @@
-
-#test one intersection hypothesis
-testInter <- function(pValues, b)
-{
-  idx <- which(b!=0)
+# test one intersection hypothesis
+testInter <- function(pValues, b) {
+  idx <- which(b != 0)
   any(pValues[idx] <= b[idx])
 }
 
 
-#Closed testing
-#' @export
-checkRejection <- function(pValues, boundary)
-{
-  if(is.null(nrow(boundary)))
-  {
-    return(testInter(pValues=pValues,b=boundary))
-
-  }else
-  {
-    return(unlist(lapply(1:nrow(boundary), function(x){
-      testInter(pValues=pValues,b=boundary[x,])})))
+# Closed testing
+checkRejection <- function(pValues, boundary) {
+  if (is.null(nrow(boundary))) {
+    return(testInter(pValues = pValues, b = boundary))
+  } else {
+    return(unlist(lapply(1:nrow(boundary), function(x) {
+      testInter(pValues = pValues, b = boundary[x, ])
+    })))
   }
 }
 
-#' @export
-getRejStatus <- function(pValues, IntTestDF,Stage1RejStatus)
-{
+# Overall decision
+getRejStatus <- function(pValues, IntTestDF, Stage1RejStatus) {
   length(pValues)
   rej_flag <- rep(NA, length(pValues))
-  namesHypo <- paste('H',1:length(pValues),sep = '')
+  namesHypo <- paste("H", 1:length(pValues), sep = "")
 
-  for(i in 1:length(pValues))
+  for (i in 1:length(pValues))
   {
-    if(!is.na(pValues[i]))
-    {
-      rej_flag[i]<-all(IntTestDF[IntTestDF[namesHypo[i]]==1,]$Rejected
-                       , na.rm =T)
-    }else
-    {
+    if (!is.na(pValues[i])) {
+      rej_flag[i] <- all(IntTestDF[IntTestDF[namesHypo[i]] == 1, ]$Rejected,
+        na.rm = T
+      )
+    } else {
       rej_flag[i] <- Stage1RejStatus[i]
     }
-
   }
-  RejStatus <- as.data.frame(matrix(rej_flag,nrow = 1))
+  RejStatus <- as.data.frame(matrix(rej_flag, nrow = 1),row.names = NULL)
   colnames(RejStatus) <- namesHypo
   RejStatus
 }
 
-#' @export
-closedTest <- function(WH,boundary,pValues,Stage1RejStatus)
-{
+# Closed Test
+closedTest <- function(WH, boundary, pValues, Stage1RejStatus) {
+  AnalysisTable <- data.frame(WH[, 1:(ncol(WH) / 2)],
+    "Rejected" = checkRejection(
+      pValues = pValues,
+      boundary = boundary
+    ),row.names = NULL
+  )
 
-  AnalysisTable <- data.frame(WH[,1:(ncol(WH)/2)],
-                                 'Rejected'=checkRejection(pValues=pValues,
-                                                           boundary=boundary))
 
+  FinalAnalysis <- getRejStatus(
+    pValues = pValues,
+    IntTestDF = AnalysisTable,
+    Stage1RejStatus = Stage1RejStatus
+  )
 
-  FinalAnalysis <- getRejStatus(pValues=pValues,
-                                IntTestDF = AnalysisTable,
-                                Stage1RejStatus = Stage1RejStatus)
-
-  list('IntersectHypoTest'=AnalysisTable,
-       'PrimaryHypoTest'=FinalAnalysis)
+  list(
+    "IntersectHypoTest" = AnalysisTable,
+    "PrimaryHypoTest" = FinalAnalysis
+  )
 }
-
-
-
-
-

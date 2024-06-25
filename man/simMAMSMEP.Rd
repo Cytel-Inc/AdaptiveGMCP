@@ -8,12 +8,16 @@ simMAMSMEP(
   Method = "CombPValue",
   alpha = 0.025,
   SampleSize = 500,
-  TestStat = "t-equal",
-  FWERControl = "CombinationTest",
+  TestStatCont = "t-equal",
+  TestStatBin = "UnPooled",
+  FWERControl = "None",
   nArms = 3,
   nEps = 2,
-  Arms.Mean = list(EP1 = c(0, 0.4, 0.3), EP2 = c(0.1, 0.45, 0.25)),
-  Arms.std.dev = list(EP1 = c(1, 1, 1), EP2 = c(1, 1, 1)),
+  lEpType = list(EP1 = "Continuous", EP2 = "Binary"),
+  Arms.Mean = list(EP1 = c(0, 0.4, 0.3), EP2 = NA),
+  Arms.std.dev = list(EP1 = c(1.1, 1.2, 1.3), EP2 = NA),
+  CommonStdDev = FALSE,
+  Arms.Prop = list(EP1 = NA, EP2 = c(0.2, 0.35, 0.45)),
   Arms.alloc.ratio = c(1, 1, 1),
   EP.Corr = matrix(c(1, 0.5, 0.5, 1), nrow = 2),
   WI = c(0.5, 0.5, 0, 0),
@@ -22,6 +26,11 @@ simMAMSMEP(
   test.type = "Partly-Parametric",
   info_frac = c(0.5, 1),
   typeOfDesign = "asOF",
+  deltaWT = 0,
+  deltaPT1 = 0,
+  gammaA = 2,
+  userAlphaSpending = rpact::getDesignGroupSequential(sided = 1, alpha = alpha,
+    informationRates = info_frac, typeOfDesign = "asOF")$alphaSpent,
   MultipleWinners = TRUE,
   Selection = TRUE,
   SelectionLook = 1,
@@ -35,6 +44,7 @@ simMAMSMEP(
   Seed = 100,
   SummaryStat = FALSE,
   plotGraphs = TRUE,
+  EastSumStat = NULL,
   Parallel = TRUE
 )
 }
@@ -45,7 +55,9 @@ simMAMSMEP(
 
 \item{SampleSize}{integer valued Sample Size(default: 500)}
 
-\item{TestStat}{'t-equal' : for t statistics with equal variance, 't-unequal' : for t statistics with unequal variance, 'z' for z statistics}
+\item{TestStatCont}{Test Statistics for continuous endpoints; options: 't-equal' : for t statistics with equal variance, 't-unequal' : for t statistics with unequal variance, 'z' for z statistics}
+
+\item{TestStatBin}{Test Statistics for Binary endpoints; options: 'UnPooled', 'Pooled'}
 
 \item{FWERControl}{applicable for CER method only, 'CombinationTest': combined two stage incremental test statistics, 'None': Cumulative test statistics.}
 
@@ -53,9 +65,15 @@ simMAMSMEP(
 
 \item{nEps}{integer value to specify the number of endpoints}
 
+\item{lEpType}{list with endpoint types}
+
 \item{Arms.Mean}{Numeric list to specify the arm-wise mean for each endpoint; Note: The first input is for control arm and the rest are for the treatments.}
 
 \item{Arms.std.dev}{Numeric list to specify the arm-wise standard deviation for each endpoint; Note: The first input is for control arm and the rest are for the treatments.}
+
+\item{CommonStdDev}{TRUE = the treatment standard deviations assumed to be same as the control for boundary computations for continuous endpoints, FALSE = the treatment standard deviations assumed to be same as given in Arms.std.dev.}
+
+\item{Arms.Prop}{Numeric list to specify the arm-wise proportions for each endpoint; Note: The first input is for control arm and the rest are for the treatments.}
 
 \item{Arms.alloc.ratio}{Numeric Vector to specify the arm-wise allocation ratio; Note: The first input is for control arm and the rest are for the treatments.}
 
@@ -69,7 +87,15 @@ simMAMSMEP(
 
 \item{info_frac}{Numeric Vector to specify look position as fraction of sample size.(for one look can be specified as 1)}
 
-\item{typeOfDesign}{The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), default is "OF".}
+\item{typeOfDesign}{The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), user specified alpha("asUser") default is "asOF".}
+
+\item{deltaWT}{Parameter for alpha spending function for typeOfDesign = "WT"}
+
+\item{deltaPT1}{Parameter for alpha spending function for typeOfDesign = "PT"}
+
+\item{gammaA}{Parameter for alpha spending function for typeOfDesign = "asHSD" or "asKD"}
+
+\item{userAlphaSpending}{Parameter for alpha spending function for typeOfDesign = "asUser"; applicable for CombPValue methods only}
 
 \item{MultipleWinners}{Logical; TRUE: Stop the trial only no more efficacy is possible, FALSE: Stop if at-least one efficacy is observed}
 
@@ -81,7 +107,7 @@ simMAMSMEP(
 
 \item{SelectionScale}{Character: Scale parameter on which selection will be based on, options 'delta': delta, 'teststat': Test Statistics, 'stderror' : Standard Error of the test stat,  'pvalue': p-value(un-adj) based selection}
 
-\item{SelectionCriterion}{Character: 'best': best r, 'threshold': threshold for selection, 'epsilon': for epsilon neighborhood}
+\item{SelectionCriterion}{Character: 'best': best r, 'threshold': threshold for selection, 'epsilon': for epsilon neighborhood, 'random': for random selection}
 
 \item{SelectionParmeter}{r for best, threshold value for threshold or epsilon distance}
 
@@ -97,6 +123,8 @@ simMAMSMEP(
 
 \item{plotGraphs}{Logical; TRUE: plot the initial graph}
 
+\item{EastSumStat}{East Summary Statistics file, Only applicable for single look designs with CombPValue method}
+
 \item{Parallel}{Logical; TRUE: Parallel computations}
 
 \item{UpdateStrategy}{Logical to specify the updated strategy (Not Implemented yet) default FALSE}
@@ -106,52 +134,82 @@ Function to perform Adaptive GMCP simulation for Multi-Arm Multi-Stage Multi-End
 }
 \examples{
 
+#######################################################################
+###############  Script to Run Adapt GMCP Simulations #################
+#######################################################################
 
-rm(list = ls())
 library(AdaptGMCP)
-library(rstudioapi)
-
 ########################## Inputs ##############################
 #------------------Test Method----------------------------------
 #options- 'CombPValue': Combining p-values, 'CER': Conditional Error
-Method <- 'CER' #CombPValue/CER
+Method <- 'CER'
 
 #-----------------------Total Sample Size------------------------
-SampleSize <- 324
+SampleSize <- 400
+
 #-----------------------Design Alpha-----------------------------
 alpha <- 0.025
 
-#----------------------Test Statistics---------------------------
-#options : 'z' :- Z Statistics, 't-equal' :- t Statistics with equal variance, 't-unequal' :- t Statistics with unequal variance
-TestStat <- 't-equal'
-
-#---------FWER Control Method(Applicable for CER Method only)------
-#options: 'CombinationTest' : combined incremental p-values for stage-2 testing, 'None': Cumulative classical test statistics.
-FWERControl <- 'None'
-
 #-----------------------Number of Arms--------------------------
-nArms <- 3
+#Note: Including Control Arm
+nArms <- 4
 
 #-------------------Number of Endpoints-------------------------
 nEps  <- 2
+
+#-----------------------Endpoint Type----------------------------
+# List containing the endpoint types
+# Options : "Continuous", "Binary"
+EpType <- list("EP1" = "Continuous",
+               "EP2" = "Binary")
+
+#----------------------Test Statistics(Continuous)---------------------------
+#options : "z" :- Z Statistics, "t-equal" :- t Statistics with equal variance, "t-unequal" :- t Statistics with unequal variance
+TestStatCon <- "t-equal"
+
+#----------------------Test Statistics(Binary)---------------------------
+#options : "Pooled" :- Z Statistics with equal variances, "UnPooled" :- Z Statistics with un-equal variances
+TestStatBin <- "UnPooled"
+
+#---------FWER Control Method(Applicable for CER Method only)------
+#options: 'CombinationTest' : combined incremental p-values for stage-2 testing, 'None': Cumulative classical test statistics.
+FWERControl <- "None"
+
+
 #-------------Arm-Wise mean for each endpoints-----------------
+# List containing the arm-wise(continuous) means
 #Note: The first input is for control arm and the rest are for the treatments
-Arms.Mean <- list('EP1' = c(0,0.4,0.3),
-                 'EP2' = c(0.1,0.45,0.25))
+Arms.Mean <- list('EP1' = c(0, 0.4, 0.4, 0.4),
+                  'EP2' = NA)
 
 #-------------Arm-Wise planned Std. Dev. for each endpoints-----
-#Note: The first input is for control arm and the rest are for the treatments
-Arms.std.dev <- list('EP1' = c(1.1,1.2,1.3),
-                     'EP2' = c(1.5,1.6,1.7))
+# List containing the arm-wise(continuous) standard deviations
+# Note: The first input is for control arm and the rest are for the treatments
+Arms.std.dev <- list('EP1' = c(1.1, 1.2, 1.3, 1.4),
+                     'EP2' = NA)
+
+#--------Use Common standard deviations for boundary computation-----
+#TRUE = the treatment standard deviations assumed to be same as the control for boundary computations for continuous endpoints
+#FALSE = the treatment standard deviations assumed to be same as given in Arms.std.dev.
+CommonStdDev <- FALSE
+
+
+#-------------Arm-Wise proportion for each endpoints-----------------
+# List containing the arm-wise(Binary) proportions
+# Note: The first input is for control arm and the rest are for the treatments
+Arms.Prop <- list('EP1'=NA,
+                  'EP2' =c(0.1, 0.4, 0.4, 0.4))
 
 #-------------Arm-Wise planned allocation Ratio----------------
-#Note: The first input is for control arm and the rest are for the treatments
-Arms.alloc.ratio <- c(1,1,1)
+# Vector containing the arm-wise allocation ratios
+# Note: The first input is for control arm and the rest are for the treatments
+Arms.alloc.ratio <- c(1, 1, 1, 1)
 
 #-------------Correlation between End points -------------------
-EP.Corr <- matrix(c(1,0.5,
-                   0.5,1),
-                 nrow = 2)
+# Note: For composite endpoints this correlation is assumed to be normal scale correlations
+EP.Corr <- matrix(c(1, 0.5,
+                    0.5, 1),
+                  nrow = nEps)
 
 #----------------Initial Weights---------------------
 #Note: Hypotheses will follow the order of Endpoints and Treatments as given in 'Arms.Mean' and 'Arms.std.dev' inputs
@@ -159,14 +217,18 @@ EP.Corr <- matrix(c(1,0.5,
 # H1 = (Trt1 vs Ctr for EP1), H2 = (Trt2 vs Ctr for EP1), H3 = (Trt1 vs Ctr for EP2), H4 = (Trt2 vs Ctr for EP2)
 #The initial weights and the transition matrix will follow the order accordingly as (H1,H2,H3,H4)
 
-WI <-  c(0.5,0.5,0,0)
+WI <-  c(1/3, 1/3, 1/3, 0, 0, 0)
 
 #---------------Transition Matrix--------------------
-G <- matrix(c(0,0.5,0.5,0,
-             0.5,0,0,0.5,
-             0,1,0,0,
-             1,0,0,0),
-           nrow = nEps*(nArms-1), byrow = TRUE)
+G <- matrix(c(0,0,0,     1,0,0,
+              0,0,0,     0,1,0,
+              0,0,0,     0,0,1,
+              0,1/2,1/2, 0,0,0,
+              1/2,0,1/2, 0,0,0,
+              1/2,1/2,0, 0,0,0),
+            nrow = nEps*(nArms-1), byrow = TRUE)
+
+
 
 #-------------------Test Type------------------------
 # Testing Procedure
@@ -204,15 +266,15 @@ SelectEndPoint <- 1
 
 #-----------------Selection Based on----------------------
 #Options- 'delta': delta, 'teststat': Test Statistics, 'stderror' : Standard Error of the test stat,  'pvalue': p-value(un-adj)
-SelectionScale <- 'pvalue'
+SelectionScale <- 'teststat'
 
 #-----------------Selection Criteria----------------------
 #Options- 'best': best r, 'threshold': threshold for selection, 'epsilon': for epsilon neighborhood
-SelectionCriterion <- 'best'
+SelectionCriterion <- 'threshold'
 
 #-----------------Selection Criteria Parameter----------------------
 # r for best, threshold value for threshold and epsilon distance for criteria 'epsilon'
-SelectionParmeter <- 1
+SelectionParmeter <- 0.6745
 
 #----------------Keep associated Hypothesis-------------------------
 #TRUE: keep all the associated hypothesis for the selected arms, FALSE otherwise
@@ -240,16 +302,20 @@ plotGraphs <- TRUE
 Parallel <- TRUE
 
 #-----------------------Run Simulation--------------------------------------
-#Please uncomment the following code to run the simulation(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
+# Uncomment the following code to run simulation;
+# short cut: 1) select all the following lines 2) ctrl+shift+c]
 #
-# out <- simMAMSMEP(alpha = alpha, SampleSize = SampleSize,nArms = nArms,nEps = nEps, TestStat=TestStat, FWERControl = FWERControl,
-#            Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, Arms.alloc.ratio = Arms.alloc.ratio,
-#            EP.Corr = EP.Corr,WI = WI, G = G, test.type = test.type,info_frac = info_frac,
-#            typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
-#            Selection = Selection,SelectionLook = SelectionLook,SelectEndPoint = SelectEndPoint,SelectionScale = SelectionScale,
-#            SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
-#            ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
-#            Method = Method, plotGraphs = plotGraphs, Parallel = Parallel)
+# out <- simMAMSMEP(
+#   alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType=EpType,
+#   TestStatCon = TestStatCon, TestStatBin = TestStatBin, FWERControl = FWERControl,
+#   Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, CommonStdDev = CommonStdDev, Arms.Prop = Arms.Prop, Arms.alloc.ratio = Arms.alloc.ratio,
+#   EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type, info_frac = info_frac,
+#   typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
+#   Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
+#   SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
+#   ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
+#   Method = Method, plotGraphs = plotGraphs, Parallel = Parallel
+# )
 # out
 
 

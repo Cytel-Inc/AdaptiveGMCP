@@ -2,13 +2,16 @@
 % Please edit documentation in R/cerAdaptGMCP_Analysis.R
 \name{adaptGMCP_CER}
 \alias{adaptGMCP_CER}
-\title{Function to perform Adaptive GMCP Analysis following Combined P-Value(Inverse Normal) method}
+\title{Function to perform Adaptive GMCP Analysis following Conditional Error Rate method}
 \usage{
 adaptGMCP_CER(
   nArms = 3,
   nEps = 2,
   SampleSize = 500,
-  sigma = list(Group1 = c(1, 1, 1), Group1 = c(1, 1, 1)),
+  EpType = list(EP1 = "Continuous", EP2 = "Binary"),
+  sigma = list(EP1 = c(1, 1.1, 1.2), EP2 = NA),
+  CommonStdDev = FALSE,
+  prop.ctr = list(EP1 = NA, EP2 = 0.2),
   allocRatio = c(1, 1, 1),
   WI = c(0.5, 0.5, 0, 0),
   G = matrix(c(0, 0.5, 0.5, 0, 0.5, 0, 0, 0.5, 0, 1, 0, 0, 1, 0, 0, 0), nrow = nEps *
@@ -17,6 +20,9 @@ adaptGMCP_CER(
   alpha = 0.025,
   info_frac = c(0.5, 1),
   typeOfDesign = "asOF",
+  deltaWT = 0,
+  deltaPT1 = 0,
+  gammaA = 2,
   AdaptStage2 = TRUE,
   plotGraphs = TRUE
 )
@@ -28,7 +34,13 @@ adaptGMCP_CER(
 
 \item{SampleSize}{Plan Sample Size}
 
-\item{sigma}{Arm-Wise sigma for each endpoint}
+\item{EpType}{list of endpoint types (options : "Continuous","Binary")}
+
+\item{sigma}{Arm-Wise sigma for each endpoint(for EpType = "Continuous")}
+
+\item{CommonStdDev}{TRUE = the treatment standard deviations assumed to be same as the control for boundary computations for continuous endpoints, FALSE = the treatment standard deviations assumed to be same as given in Arms.std.dev.}
+
+\item{prop.ctr}{proportion for control arm for each endpoint(for EpType = "Binary")}
 
 \item{allocRatio}{Arm-Wise allocation ratio}
 
@@ -42,14 +54,20 @@ adaptGMCP_CER(
 
 \item{info_frac}{Vector of information fraction}
 
-\item{typeOfDesign}{The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), default is "OF".}
+\item{typeOfDesign}{The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy") default is "asOF".}
+
+\item{deltaWT}{Parameter for alpha spending function for typeOfDesign = "WT"}
+
+\item{deltaPT1}{Parameter for alpha spending function for typeOfDesign = "PT"}
+
+\item{gammaA}{Parameter for alpha spending function for typeOfDesign = "asHSD" & "asKD"}
 
 \item{AdaptStage2}{TRUE: Adaptation option will be given for stage-2, FALSE : proceed as planned.}
 
 \item{plotGraphs}{TRUE: plot intermediate graphs}
 }
 \description{
-Function to perform Adaptive GMCP Analysis following Combined P-Value(Inverse Normal) method
+Function to perform Adaptive GMCP Analysis following Conditional Error Rate method
 }
 \examples{
 #######################################################################
@@ -60,22 +78,41 @@ library(AdaptGMCP)
 
 ########################## Inputs ##############################
 #-----------------------Total Sample Size------------------------
-SampleSize <- 400
+SampleSize <- 360
 
 #-----------------------Design Alpha------------------------
 alpha <- 0.025
 
 #-----------------------Number of Arms------------------------
+#Note: Including Control Arm
 nArms <- 3
 
 #-------------------Number of Endpoints------------------------
 nEps  <- 2
 
+#------------------list with endpoint types--------------------
+# List containing the endpoint types
+# Options : "Continuous", "Binary"
+EpType <- list("EP1" = "Continuous",
+               "EP2"="Binary")
+
 #-------------Arm-Wise planned Std. Dev. for each endpoints-----
-# Vector of length = nArms
-# Not required for test.type = 'Non-Parametric'
-sigma <- list('Ep1' = c(1,1,1),
-             'Ep2' = c(1,1,1))
+# List containing the arm-wise(continuous) standard deviations
+# The First input is for the control arm
+# Not required for test.type = 'Non-Parametric' or endpoint type as "Binary"
+sigma <- list("EP1" = c(1, 1, 1),
+              "EP2" = NA)
+
+#--------Use Common standard deviations for boundary computation-----
+#TRUE = the treatment standard deviations assumed to be same as the control for boundary computations for continuous endpoints
+#FALSE = the treatment standard deviations assumed to be same as given in Arms.std.dev.
+CommonStdDev <- FALSE
+
+#-------------proportion for control arm-------------------
+# List containing the Control Arm(Binary) Proportions
+# Not required for test.type = 'Non-Parametric' or endpoint type as "Continuous"
+prop.ctr <- list("EP1" = NA,
+                "EP2" = 0.2)
 
 #-----------------------Arm-Wise Allocation Ratio------------------------
 # Vector of length = nArms
@@ -92,7 +129,7 @@ G <- matrix(c(0,1/2,1/2,0,
               1/2,0,0,1/2,
               0,1,0,0,
               1,0,0,0),
-           nrow = nEps*(nArms-1), byrow = TRUE)
+            nrow = nEps*(nArms-1), byrow = TRUE)
 
 #----------------Information Fraction----------------
 #The number of lookes is same as the length of info_frac(for FSD info_frac = 1)
@@ -128,9 +165,11 @@ plotGraphs <- TRUE
 #Please uncomment the following code to run the Analysis(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
 #
 #
-# adaptGMCP_CER(nArms = nArms, nEps = nEps, sigma = sigma,
-#               allocRatio = allocRatio, SampleSize = SampleSize,
-#               alpha = alpha, WI = WI, G = G, info_frac = info_frac,
-#               typeOfDesign = typeOfDesign, test.type = test.type,
-#               AdaptStage2 = AdaptStage2,plotGraphs = plotGraphs)
+# adaptGMCP_CER(nArms = nArms, nEps = nEps, EpType = EpType,
+#               sigma = sigma, CommonStdDev = CommonStdDev,
+#               prop.ctr = prop.ctr, allocRatio = allocRatio,
+#               SampleSize = SampleSize, alpha = alpha, WI = WI,
+#               G = G, info_frac = info_frac, typeOfDesign = typeOfDesign,
+#               test.type = test.type, AdaptStage2 = AdaptStage2,
+#               plotGraphs = plotGraphs)
 }

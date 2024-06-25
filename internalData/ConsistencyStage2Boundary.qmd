@@ -16,40 +16,40 @@ $P_{H_J}[[p_{j,1} > \alpha_{j,1}(w_{j,J} * \alpha)] \cap [p_{j,2} \leq \alpha_{j
 library(rpact)
 library(knitr)
 library(mvtnorm)
-#########################Inputs#########################
+######################### Inputs#########################
 
-#Design Alpha
+# Design Alpha
 alpha <- 0.05
 
-#Info Fraction
-info_frac <- c(0.5,1)
+# Info Fraction
+info_frac <- c(0.5, 1)
 
-#Spending Function
-typeOfDesign <- 'asOF'
+# Spending Function
+typeOfDesign <- "asOF"
 
-#Weights for the intersection hypothesis
-w <- c(0.9,0.1)   
+# Weights for the intersection hypothesis
+w <- c(0.9, 0.1)
 
-#Stage-1 p-values for the intersection hypothesis
-p1 <- c(0.1,0.2)
+# Stage-1 p-values for the intersection hypothesis
+p1 <- c(0.1, 0.2)
 
-#new weights for stage-2
-v <- c(0.9,0.1) 
+# new weights for stage-2
+v <- c(0.9, 0.1)
 ########################################################
 
-PlanBdry <- lapply(w, function(x)
-  {
-  des<- rpact::getDesignGroupSequential(kMax = 2, alpha = x*alpha, 
-                              informationRates =info_frac, 
-                              typeOfDesign = typeOfDesign )
+PlanBdry <- lapply(w, function(x) {
+  des <- rpact::getDesignGroupSequential(
+    kMax = 2, alpha = x * alpha,
+    informationRates = info_frac,
+    typeOfDesign = typeOfDesign
+  )
   des$stageLevels
 })
-  
-PlanBdryDF <- data.frame(cbind(w,do.call(rbind, PlanBdry)))
-names(PlanBdryDF) <- c('Weight','Stage1PlanBdry','Stage2PlanBdry')
 
-knitr::kable(PlanBdryDF, caption = 'Planned Boundaries')
+PlanBdryDF <- data.frame(cbind(w, do.call(rbind, PlanBdry)))
+names(PlanBdryDF) <- c("Weight", "Stage1PlanBdry", "Stage2PlanBdry")
 
+knitr::kable(PlanBdryDF, caption = "Planned Boundaries")
 ```
 
 **Computation of PCER**
@@ -65,22 +65,19 @@ $A_{j,J}(w_{j,J} * \alpha) = P[Z_{j,2} \geq \Phi^{-1}(1-\alpha_2(w_{j,J}*\alpha)
 The CER for the intersection hypothesis is defined as $B_J = \sum_{j \in J} A_{j,J}(w_{j,J} * \alpha)$
 
 ```{r}
-#Component-wise PCER
-getPCER <- function(a2, p1, info_frac)
-{
-  r <- sqrt(info_frac[1]) #sqrt(n1/n2) = sqrt(t1)
-  1-pnorm(qnorm(1-a2),mean = r*qnorm(1-p1), sd = sqrt(1-r^2))
+# Component-wise PCER
+getPCER <- function(a2, p1, info_frac) {
+  r <- sqrt(info_frac[1]) # sqrt(n1/n2) = sqrt(t1)
+  1 - pnorm(qnorm(1 - a2), mean = r * qnorm(1 - p1), sd = sqrt(1 - r^2))
 }
 
-PCER <- unlist(lapply(1:length(p1), function(x)
-  {
-  getPCER(a2=PlanBdryDF$Stage2PlanBdry[x], p1[x], info_frac)
-  
+PCER <- unlist(lapply(1:length(p1), function(x) {
+  getPCER(a2 = PlanBdryDF$Stage2PlanBdry[x], p1[x], info_frac)
 }))
 
 PlanBdryDF$PCER <- PCER
-PlanBdryDF$CER <- rep(sum(PCER),nrow(PlanBdryDF))
-knitr::kable(PlanBdryDF,caption = 'PCER & CER')
+PlanBdryDF$CER <- rep(sum(PCER), nrow(PlanBdryDF))
+knitr::kable(PlanBdryDF, caption = "PCER & CER")
 ```
 
 **Computation of New Boundaries(** $\tilde{c}_{J,(2)}$ **)**
@@ -90,32 +87,29 @@ If the modified weights are $v_{j,J}$ the critical point $\tilde{c}_{J,(2)}$ can
 $\sum_{j \in J} P[p_{j,2} \leq v_{j,J} *\tilde{c}_{J,(2)} \space | \space p_{j,1}] = B_J$
 
 ```{r}
-
 #########################################################
 
-getAdjBdry <- function(v, p1, info_frac, PCER)
-{
-  getCER <- function(c2, v, p1, info_frac)
-  {
-    a2 <- c2*v
-    sum(unlist(lapply(1:length(p1), function(x){
-               getPCER(a2= a2[x], p1[x], info_frac)})))
+getAdjBdry <- function(v, p1, info_frac, PCER) {
+  getCER <- function(c2, v, p1, info_frac) {
+    a2 <- c2 * v
+    sum(unlist(lapply(1:length(p1), function(x) {
+      getPCER(a2 = a2[x], p1[x], info_frac)
+    })))
   }
-  
-  GetC2 <- function(x)
-  {
-    getCER(x, v, p1, info_frac)- sum(PCER)
+
+  GetC2 <- function(x) {
+    getCER(x, v, p1, info_frac) - sum(PCER)
   }
-  uniroot(GetC2,interval = c(0,1),tol = 1E-8)$root
+  uniroot(GetC2, interval = c(0, 1), tol = 1E-8)$root
 }
 
 c2 <- getAdjBdry(v, p1, info_frac, PCER)
 
 AdjBdryDF1 <- PlanBdryDF
 AdjBdryDF1$New_Weights <- v
-AdjBdryDF1$Stage2AdjBdry <- c2*v
+AdjBdryDF1$Stage2AdjBdry <- c2 * v
 AdjBdryDF1$AbsDiff <- abs(AdjBdryDF1$Stage2PlanBdry - AdjBdryDF1$Stage2AdjBdry)
-knitr::kable(AdjBdryDF1, caption = 'Stage-2 Adjusted Boundary')
+knitr::kable(AdjBdryDF1, caption = "Stage-2 Adjusted Boundary")
 ```
 
 **Alternative Proposal**
@@ -125,65 +119,68 @@ From the computed CER ($B_J$) we can compute the adjusted PCER, $A_{j,J}^*(v_{j,
 The Steps to find the $\gamma_J$ is same as discussed earlier. i.e. $\sum_{j \in J} A_{j,J}^*(v_{j,J} * \gamma_J) = B_J$
 
 ```{r}
-#Function to compute the stage-2 boundary 
-getStage2Bdry <- function(ej, aj1, info_frac) #e: sig level, a1: stage-1 boundary
+# Function to compute the stage-2 boundary
+getStage2Bdry <- function(ej, aj1, info_frac) # e: sig level, a1: stage-1 boundary
 {
-  if((ej-aj1)>0 || ej != 0) #compute boundary when the exit prob >0
-  {
-    exitProb<-function(x)
+  if ((ej - aj1) > 0 || ej != 0) # compute boundary when the exit prob >0
     {
-      upper <- c(qnorm(1-aj1), Inf)
-      lower <- c(-Inf, qnorm(1-x))
-      r <- sqrt(info_frac[1])
-      sigma <- matrix(c(1,r, r,1), nrow = 2)
-      pmvnorm(lower = lower, upper = upper, sigma = sigma)[1]-(ej-aj1)
-    }
-    return(uniroot(f = exitProb, interval = c(0,1), tol = 1E-8)$root)
-  }else # else the minimum possible boundary in p-value scale = 0
+      exitProb <- function(x) {
+        upper <- c(qnorm(1 - aj1), Inf)
+        lower <- c(-Inf, qnorm(1 - x))
+        r <- sqrt(info_frac[1])
+        sigma <- matrix(c(1, r, r, 1), nrow = 2)
+        pmvnorm(lower = lower, upper = upper, sigma = sigma)[1] - (ej - aj1)
+      }
+      return(uniroot(f = exitProb, interval = c(0, 1), tol = 1E-8)$root)
+    } else # else the minimum possible boundary in p-value scale = 0
   {
     return(0)
   }
 }
 
-#Function to compute the Adj Boundary based on modified weights 
-getStage2BdryAdj <- function(a1,p1,v,BJ,info_frac)
-{
-  #Function to compute adjusted PCER for arbtrary g
-  getAdjPCER <- function(g,a1,p1, v,info_frac)
-  {
-    e <- v*g 
-    a2adj <- unlist(lapply(1:length(e),
-                           function(x){getStage2Bdry(ej = e[x], aj1 = a1[x],
-                                                     info_frac = info_frac)}
+# Function to compute the Adj Boundary based on modified weights
+getStage2BdryAdj <- function(a1, p1, v, BJ, info_frac) {
+  # Function to compute adjusted PCER for arbtrary g
+  getAdjPCER <- function(g, a1, p1, v, info_frac) {
+    e <- v * g
+    a2adj <- unlist(lapply(
+      1:length(e),
+      function(x) {
+        getStage2Bdry(
+          ej = e[x], aj1 = a1[x],
+          info_frac = info_frac
+        )
+      }
     ))
-    A_adj <- unlist(lapply(1:length(a2adj), function(x){
+    A_adj <- unlist(lapply(1:length(a2adj), function(x) {
       getPCER(a2 = a2adj[x], p1 = p1[x], info_frac)
     }))
     A_adj
   }
-  
-  #Function to search for optimum g
-  OptimGamma <- function(x)
-  {
-    sum(getAdjPCER(g = x,a1 = a1,p1 = p1, v = v,info_frac = info_frac))-BJ
+
+  # Function to search for optimum g
+  OptimGamma <- function(x) {
+    sum(getAdjPCER(g = x, a1 = a1, p1 = p1, v = v, info_frac = info_frac)) - BJ
   }
-  gOpt <- uniroot(OptimGamma,interval = c(0,1),tol = 1E-8)$root
-  PCER_adj <- getAdjPCER(g = gOpt,a1 = a1, p1 = p1, v=v, info_frac = info_frac)
-  
-  Stage2AdjBdry <- unlist(lapply(1:length(v), function(x){
-    getStage2Bdry(ej = gOpt*v[x], aj1= a1[x], info_frac)
+  gOpt <- uniroot(OptimGamma, interval = c(0, 1), tol = 1E-8)$root
+  PCER_adj <- getAdjPCER(g = gOpt, a1 = a1, p1 = p1, v = v, info_frac = info_frac)
+
+  Stage2AdjBdry <- unlist(lapply(1:length(v), function(x) {
+    getStage2Bdry(ej = gOpt * v[x], aj1 = a1[x], info_frac)
   }))
-  
-  list('gamma'=gOpt, 'PCER_adj'=PCER_adj, 'Stage2AdjBdry'=Stage2AdjBdry)
+
+  list("gamma" = gOpt, "PCER_adj" = PCER_adj, "Stage2AdjBdry" = Stage2AdjBdry)
 }
 
 
-Stage2BdryAdj <- getStage2BdryAdj(a1=PlanBdryDF$Stage1PlanBdry,
-                     p1=p1,v=v,BJ=sum(PlanBdryDF$PCER),info_frac)
+Stage2BdryAdj <- getStage2BdryAdj(
+  a1 = PlanBdryDF$Stage1PlanBdry,
+  p1 = p1, v = v, BJ = sum(PlanBdryDF$PCER), info_frac
+)
 AdjBdryDF2 <- PlanBdryDF
 AdjBdryDF2$New_Weights <- v
 AdjBdryDF2$PCER_Adj <- Stage2BdryAdj$PCER_adj
 AdjBdryDF2$Stage2AdjBdry <- Stage2BdryAdj$Stage2AdjBdry
 AdjBdryDF2$AbsDiff <- abs(AdjBdryDF2$Stage2PlanBdry - AdjBdryDF2$Stage2AdjBdry)
-knitr::kable(AdjBdryDF2, caption = 'Stage-2 Adjusted Boundary(Alternative Method)')
+knitr::kable(AdjBdryDF2, caption = "Stage-2 Adjusted Boundary(Alternative Method)")
 ```
