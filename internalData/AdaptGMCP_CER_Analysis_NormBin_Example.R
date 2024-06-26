@@ -88,6 +88,10 @@ AdaptStage2 <- TRUE
 #-------------------Plot Intermediate Graphs------------------------
 plotGraphs <- TRUE
 
+#---------Stage-2 adaptive boundaries as non-parametric--------------
+#The stage-2 adaptive boundaries will be computed as non-parametric by using the total CER for all the subsets, else it will follow the planned design
+Stage2NParam <- FALSE
+
 #--------------Run Analysis--------------------------
 ###For Interim-look inputs follow the R console#####
 #Please uncomment the following code to run the Analysis(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
@@ -98,5 +102,5 @@ plotGraphs <- TRUE
 #               prop.ctr = prop.ctr, allocRatio = allocRatio,
 #               SampleSize = SampleSize, alpha = alpha, WI = WI,
 #               G = G, info_frac = info_frac, typeOfDesign = typeOfDesign,
-#               test.type = test.type, AdaptStage2 = AdaptStage2,
+#               test.type = test.type, AdaptStage2 = AdaptStage2, Stage2NParam = Stage2NParam,
 #               plotGraphs = plotGraphs)
