@@ -96,7 +96,7 @@ Note: The similar process can be followed to compute the cumulative raw p-values
 
 Note: The similar process can be followed to compute the cumulative raw p-values by using cumulative stage-wise data.
 
-## Bondary Computation
+## Boundary Computation
 
 ### Distribution of the test statistics
 

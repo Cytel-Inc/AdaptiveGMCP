@@ -17,6 +17,7 @@
 #' @param deltaPT1 Parameter for alpha spending function for typeOfDesign = "PT"
 #' @param gammaA 	Parameter for alpha spending function for typeOfDesign = "asHSD" & "asKD"
 #' @param AdaptStage2 TRUE: Adaptation option will be given for stage-2, FALSE : proceed as planned.
+#' @param Stage2NParam TRUE: The stage-2 adaptive boundaries will be computed as non-parametric by using the total CER for all the subsets, else it will follow the planned design
 #' @param plotGraphs TRUE: plot intermediate graphs
 #' @example ./internalData/AdaptGMCP_CER_Analysis_NormBin_Example.R
 #' @export
@@ -47,6 +48,7 @@ adaptGMCP_CER <- function(
     deltaPT1 = 0,
     gammaA = 2,
     AdaptStage2 = TRUE,
+    Stage2NParam = FALSE,
     plotGraphs = TRUE) {
 
   ###### Input Validation #####
@@ -128,6 +130,7 @@ adaptGMCP_CER <- function(
     "Stage2AllocSampleSize" = NA,
     "Stage1Obj" = NA,
     "AdaptObj" = NA,
+    "Stage2NParam" = Stage2NParam,
     "allGraphsPrev" = allGraphs,
     "allGraphs" = allGraphs,
     "SubText" = SubText

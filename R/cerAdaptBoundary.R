@@ -78,7 +78,8 @@ adaptBdryCER <- function(mcpObj) {
       Stage2Sigma = Stage2Sigma,
       PlanSSHyp = PlanSSHyp,
       ModSSHyp = ModSSHyp,
-      Stage2HypoIDX = get_numeric_part(mcpObj$IndexSet)
+      Stage2HypoIDX = get_numeric_part(mcpObj$IndexSet),
+      Stage2NParam = mcpObj$Stage2NParam
     )
 
     SubSets <- c(SubSets, adaptOut$SubSets)
@@ -156,8 +157,12 @@ adaptBdryCER <- function(mcpObj) {
 
 
 
+#Stage2NParam : if True it will assume the stage-2 adaptive boundaries are non-parametric, else it will follow the planned design
+#Recomened(A.M,26th Jun,2024) : We should set it as TRUE only when we modify the stage-2 weights and wish to keep the flexibility of modifying the weights arbitrarily.
+#For simulations this should be set as FALSE
 getAdaptBdry <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
-                         Sigma, Stage2Sigma, Stage2HypoIDX, PlanSSHyp, ModSSHyp) {
+                         Sigma, Stage2Sigma, Stage2HypoIDX,
+                         PlanSSHyp, ModSSHyp,Stage2NParam=FALSE) {
   get_Sets <- connSets(J = J, w = w1, test.type = test.type, HypoMap = HypoMap)
   conn_Sets <- get_Sets$connSets
   conn_Sets_name <- paste("(", paste(
@@ -178,6 +183,7 @@ getAdaptBdry <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
   cerParamGrps <- pcerNParamGrps <- c()
   ScaleWeights <- c()
 
+  TotCER <- 0 #required to compute the stage-2 boundaries as non-parametric
   ################### Adjusted Boundary for parametric subsets######################
   if (length(ParamGrps) != 0) {
     for (pGrp in ParamGrps) {
@@ -203,27 +209,30 @@ getAdaptBdry <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
           InfoMatrix = InfoMatrix, stage2sigmaS = stage2sigmaS, Conditional = TRUE
         )
         cerParamGrps <- c(cerParam, cerParamGrps)
+        TotCER <- TotCER + cerParam
 
-        # Compute Stage-2 adaptive boundary based on new weights & distribution
-        # boundaries for only available hypothesis which have non-zero weights
-        pGrpMod <- pGrp[pGrp %in% Stage2HypoIDX &
-          pGrp %in% which(w2 > 0)]
+        if(!Stage2NParam){
+          # Follow the planned design, i.e. No modification of weights is assumed
+          # Compute Stage-2 adaptive boundary based on new weights & distribution
+          # boundaries for only available hypothesis which have non-zero weights
+          pGrpMod <- pGrp[pGrp %in% Stage2HypoIDX &
+                            pGrp %in% which(w2 > 0)]
 
-        if (length(pGrpMod) > 1) {
-          stage2sigmaSMod <- Stage2Sigma$Stage2SigmaS[[epIDX]][floor(pGrpMod / epIDX), floor(pGrpMod / epIDX)]
+          if (length(pGrpMod) > 1) {
+            stage2sigmaSMod <- Stage2Sigma$Stage2SigmaS[[epIDX]][floor(pGrpMod / epIDX), floor(pGrpMod / epIDX)]
 
-          InfoMatrixMod <- cbind(
-            Sigma$InfoMatrix[[epIDX]][, 1],
-            Stage2Sigma$Stage2InfoMatrixCum[[epIDX]]
-          )[floor(pGrpMod / epIDX), ]
+            InfoMatrixMod <- cbind(
+              Sigma$InfoMatrix[[epIDX]][, 1],
+              Stage2Sigma$Stage2InfoMatrixCum[[epIDX]]
+            )[floor(pGrpMod / epIDX), ]
 
-          cJ2Mod <- getStage2CondParamBdry(
-            cer = cerParam, p1 = p1[pGrpMod],
-            w = w2[pGrpMod], InfoMatrix = InfoMatrixMod,
-            stage2sigmaS = stage2sigmaSMod, Conditional = TRUE
-          )
-          Stage2AdjBdry[pGrpMod] <- cJ2Mod * w2[pGrpMod]
-        } else if (length(pGrpMod) == 1) # If after adaptation pGrpMod becomes a singleton set
+            cJ2Mod <- getStage2CondParamBdry(
+              cer = cerParam, p1 = p1[pGrpMod],
+              w = w2[pGrpMod], InfoMatrix = InfoMatrixMod,
+              stage2sigmaS = stage2sigmaSMod, Conditional = TRUE
+            )
+            Stage2AdjBdry[pGrpMod] <- cJ2Mod * w2[pGrpMod]
+          } else if (length(pGrpMod) == 1) # If after adaptation pGrpMod becomes a singleton set
           {
             SS1Mod <- ModSSHyp[[1]][pGrpMod]
             SS2Mod <- ModSSHyp[[2]][pGrpMod]
@@ -240,6 +249,9 @@ getAdaptBdry <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
             Stage2AdjBdry[pGrpMod] <- SingleParmOut$Stage2AdjBdry
             ScaleWeights <- c(ScaleWeights, SingleParmOut$adjWeights)
           }
+          #End of Stage2NParam loop
+        }
+        #End of pGrp loop
       }
     }
   }
@@ -258,17 +270,17 @@ getAdaptBdry <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
 
     pcerNParamGrps <- pcer
     cerNParam <- sum(pcer)
+    TotCER <- TotCER + cerNParam
 
-    # Compute Stage-2 adaptive boundary based on new Sample Size & weights
-
-    NPGrpsMod <- NParamGrps[NParamGrps %in% Stage2HypoIDX &
-      NParamGrps %in% which(w2 > 0)] # boundaries for only available hypothesis
-
-    if (length(NPGrpsMod) != 0) # & cerNParam < 1
+    if(!Stage2NParam){
+      # Follow the planned design, i.e. No modification of weights is assumed
+      # Compute Stage-2 adaptive boundary based on new Sample Size & weights
+      NPGrpsMod <- NParamGrps[NParamGrps %in% Stage2HypoIDX &
+                                NParamGrps %in% which(w2 > 0)] # boundaries for only available hypothesis
+      if (length(NPGrpsMod) != 0) # & cerNParam < 1
       {
         SS1Mod <- ModSSHyp[[1]][NPGrpsMod]
         SS2Mod <- ModSSHyp[[2]][NPGrpsMod]
-
         nParmOut <- getStage2CondNParamBdry(
           a1 = a1[NPGrpsMod],
           p1 = p1[NPGrpsMod],
@@ -277,22 +289,35 @@ getAdaptBdry <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
           SS1 = SS1Mod,
           SS2 = SS2Mod
         )
-        # Alternative approch to compute the boundary
-        # if(length(NPGrpsMod)==1){
-        #   alternative <- getStage2CondNParamBdry1Hypo(p1=p1[NPGrpsMod],
-        #                                               v=w2[NPGrpsMod],
-        #                                               BJ=cerNParam,
-        #                                               SS1=SS1Mod,
-        #                                               SS2=SS2Mod)
-        # }
 
         Stage2AdjBdry[NPGrpsMod] <- nParmOut$Stage2AdjBdry
         #ScaleWeights <- c(ScaleWeights, nParmOut$adjWeights)
       } else {
-      Stage2AdjBdry[NPGrpsMod] <- 0
+        Stage2AdjBdry[NPGrpsMod] <- 0
+      }
     }
   }
 
+  #Compute the Stage-2 non-parametric boundaries based on the TotCER from all the param and non-param sub-sets
+  if(Stage2NParam){
+    NPGrpsMod <- which(w2 > 0) #Stage-2 boundaries for the non-zero stage-2 weights
+    if (length(NPGrpsMod) != 0)
+    {
+      SS1Mod <- ModSSHyp[[1]][NPGrpsMod]
+      SS2Mod <- ModSSHyp[[2]][NPGrpsMod]
+      nParmOut <- getStage2CondNParamBdry(
+        a1 = a1[NPGrpsMod],
+        p1 = p1[NPGrpsMod],
+        v = w2[NPGrpsMod],
+        BJ = TotCER,
+        SS1 = SS1Mod,
+        SS2 = SS2Mod
+      )
+      Stage2AdjBdry[NPGrpsMod] <- nParmOut$Stage2AdjBdry
+    } else {
+      Stage2AdjBdry[NPGrpsMod] <- 0
+    }
+  }
 
   SubSets <- paste(
     paste("P :", paste(
