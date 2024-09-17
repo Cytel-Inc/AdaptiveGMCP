@@ -20,7 +20,6 @@ MAMSMEP_sim2 <- function(gmcpSimObj) {
   EfficacyTable <- data.frame()
   names(PowerTab) <- powersName
   SelectionTab <- data.frame()
-
   if (gmcpSimObj$Method == "CER") {
     if (gmcpSimObj$Parallel) {
       cores <- parallel::detectCores()
@@ -236,6 +235,7 @@ getPreSimObjs <- function(gmcpSimObj) {
 
   #--------------------------------------------------------------------------------------
   ############################## Planned Sample Size ################################
+
   planSS <- getPlanAllocatedSamples(
     SS = gmcpSimObj$Max_SS,
     allocRatio = gmcpSimObj$Arms.alloc.ratio,
@@ -324,7 +324,8 @@ getPreSimObjs <- function(gmcpSimObj) {
         Sigma = Sigma,
         WH = WH,
         HypoMap = HypoMap,
-        Scale = "Score"
+        Scale = "Score",
+        planSSCum = planSSCum
       )
 
 

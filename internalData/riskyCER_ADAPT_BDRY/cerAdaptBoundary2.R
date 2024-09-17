@@ -1,7 +1,6 @@
 #Boundary computation based on the mcpObj
 #ModifiedStage2Weights : Ajoy.M: Highly risky should be triggered only for modified testing strategy in analysis, implemeted for one specific example not generalized.(13Jun,24)
 adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
-
   nHypothesis <- length(mcpObj$IntialHypothesis)
   nLooks <- length(mcpObj$Stage1Obj$info_frac)
 
@@ -74,7 +73,7 @@ adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
     RestrictedSet <- c(RestrictedSet, paste(paste('H',which(w2 != 0),sep = ''),collapse = ','))
 
 
-    adaptOut <- getAdaptBdry2(
+    adaptOut <- getAdaptBdry(
       J = J, w1 = w1, w2 = w2, a2 = a2, a1 = a1, p1 = p1,
       test.type = mcpObj$test.type,
       HypoMap = mcpObj$HypoMap,
@@ -160,7 +159,9 @@ adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
 }
 
 
-getAdaptBdry2 <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
+
+
+getAdaptBdry <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
                          Sigma, Stage2Sigma, Stage2HypoIDX, PlanSSHyp, ModSSHyp,
                          ModifiedStage2Weights = F) {
   get_Sets <- connSets(J = J, w = w1, test.type = test.type, HypoMap = HypoMap)
@@ -183,126 +184,130 @@ getAdaptBdry2 <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
   cerParamGrps <- pcerNParamGrps <- c()
   ScaleWeights <- c()
 
-totalbrdycrossingprobstage2condi = function(cJ2){
-    exitproblist = numeric()
-    for (edx in conn_Sets) {
-      if (length(edx) > 1) {
-        ## Dunnett Weighted Parametric ##
-        gIDX <- unique(HypoMap[edx, ]$Groups)
-        #Exist probability for parametric sub-set at stage 2
-        pGrp = edx
+  ################### Adjusted Boundary for parametric subsets######################
+  if (length(ParamGrps) != 0) {
+    for (pGrp in ParamGrps) {
+      if (length(pGrp) != 0) {
+        Jh <- pGrp
         epIDX <- unique(HypoMap[pGrp, ]$Groups)
+        wJh <- w1[pGrp]
+        aJh <- a2[pGrp]
+        cJ2Ratio <- aJh / wJh
+        if (length(cJ2Ratio) > 1) {
+          if (max(abs(diff(cJ2Ratio))) > 1E-3) print("Error in Parametric SubGroup")
+        }
+
+        cJ2 <- cJ2Ratio[1]
+        pJh <- p1[pGrp]
+
+        # Compute Parametric CER based on old weights
         stage2sigmaS <- Stage2Sigma$SigmaSIncr[[epIDX]][floor(pGrp / epIDX), floor(pGrp / epIDX)]
         InfoMatrix <- Sigma$InfoMatrix[[epIDX]][floor(pGrp / epIDX), ]
-        pJh <- p1[pGrp]
-        wJh <- w1[pGrp]
-        exitproblist <- c(exitproblist, exitProbStage2Cond(cJ2 = cJ2, p1 = pJh, w = wJh,
-          InfoMatrix = InfoMatrix, stage2sigmaS = stage2sigmaS, Conditional = TRUE))
 
-      } else {
-        ## Non-Parametric ##
-        pJh <- p1[edx]
-        wJh <- w1[edx]
-        #PlanSSHyp <- getHypoSS(SS = planSSCum, HypoMap = HypoMap)
-        ss1 = PlanSSHyp[[1]][edx]; ss2 = PlanSSHyp[[2]][edx]
-        #Exist probability for non parametric sub-set at stage 2
-        exitproblist <- c(exitproblist, getPCER2(cJ2 = cJ2, wJh = wJh,  p1 = pJh, ss1 = PlanSSHyp[[1]][edx], ss2 = PlanSSHyp[[2]][edx]))
+        cerParam <- exitProbStage2Cond(
+          cJ2 = cJ2, p1 = pJh, w = wJh,
+          InfoMatrix = InfoMatrix, stage2sigmaS = stage2sigmaS, Conditional = TRUE
+        )
+        cerParamGrps <- c(cerParam, cerParamGrps)
+
+        # Compute Stage-2 adaptive boundary based on new weights & distribution
+        # boundaries for only available hypothesis which have non-zero weights
+        if(ModifiedStage2Weights){
+          #Ajoy.M: Highly risky should be triggered only for modified testing strategy in analysis, implemeted for one specific example not generalized.(13Jun,24)
+          pGrpMod <- which(w2 > 0)
+        }else{
+          pGrpMod <- pGrp[pGrp %in% Stage2HypoIDX &
+                            pGrp %in% which(w2 > 0)]
+        }
+
+
+        if (length(pGrpMod) > 1) {
+          stage2sigmaSMod <- Stage2Sigma$Stage2SigmaS[[epIDX]][floor(pGrpMod / epIDX), floor(pGrpMod / epIDX)]
+
+          InfoMatrixMod <- cbind(
+            Sigma$InfoMatrix[[epIDX]][, 1],
+            Stage2Sigma$Stage2InfoMatrixCum[[epIDX]]
+          )[floor(pGrpMod / epIDX), ]
+
+          cJ2Mod <- getStage2CondParamBdry(
+            cer = cerParam, p1 = p1[pGrpMod],
+            w = w2[pGrpMod], InfoMatrix = InfoMatrixMod,
+            stage2sigmaS = stage2sigmaSMod, Conditional = TRUE
+          )
+          Stage2AdjBdry[pGrpMod] <- cJ2Mod * w2[pGrpMod]
+        } else if (length(pGrpMod) == 1) # If after adaptation pGrpMod becomes a singleton set
+          {
+            SS1Mod <- ModSSHyp[[1]][pGrpMod]
+            SS2Mod <- ModSSHyp[[2]][pGrpMod]
+
+            SingleParmOut <- getStage2CondNParamBdry(
+              a1 = a1[pGrpMod], p1 = p1[pGrpMod],
+              v = w2[pGrpMod], BJ = cerParam, SS1 = SS1Mod, SS2 = SS2Mod
+            )
+
+            # Alternative approch to compute the boundary
+            # alternative <- getStage2CondNParamBdry1Hypo(p1=p1[pGrpMod],v=w2[pGrpMod],BJ=cerParam,
+            #                                             SS1=SS1Mod, SS2=SS2Mod)
+
+            Stage2AdjBdry[pGrpMod] <- SingleParmOut$Stage2AdjBdry
+            ScaleWeights <- c(ScaleWeights, SingleParmOut$adjWeights)
+          }
       }
     }
-    return(sum(na.omit(exitproblist)))
   }
-
-  cJ1 <- (a1 / w1)[!is.infinite(a1 / w1) & !is.na(a1 / w1)][1]
-  cJ2 <- (a2 / w2)[!is.infinite(a2 / w2) & !is.na(a2 / w2)][1]
-
-  cer <- totalbrdycrossingprobstage2condi(cJ2 = cJ2)
-
-  #Computing the stage two boundary
-  get_Sets_stage2 <- connSets(J = J, w = w2, test.type = test.type, HypoMap = HypoMap)
-  conn_Sets_stage2 <- get_Sets_stage2$connSets
-
-  totalbrdycrossingprobstage2condi2 = function(cJ2){
-    exitproblist = numeric()
-    for (edx in conn_Sets_stage2) {
-      if (length(edx) > 1) {
-        ## Dunnett Weighted Parametric ##
-        gIDX <- unique(HypoMap[edx, ]$Groups)
-        #Exist probability for parametric sub-set at stage 2
-        pGrp = edx
-        epIDX <- unique(HypoMap[pGrp, ]$Groups)
-        stage2sigmaSMod <- Stage2Sigma$Stage2SigmaS[[epIDX]][floor(pGrp / epIDX), floor(pGrp / epIDX)]
-
-        InfoMatrixMod <- cbind(
-          Sigma$InfoMatrix[[epIDX]][, 1],
-          Stage2Sigma$Stage2InfoMatrixCum[[epIDX]]
-        )[floor(pGrp / epIDX), ]
-
-        pJh <- p1[pGrp]
-        wJh <- w1[pGrp]
-        exitproblist <- c(exitproblist, exitProbStage2Cond(cJ2 = cJ2, p1 = pJh, w = wJh,
-          InfoMatrix = InfoMatrixMod, stage2sigmaS = stage2sigmaSMod, Conditional = TRUE))
-
-      } else {
-        ## Non-Parametric ##
-        pJh <- p1[edx]
-        wJh <- w1[edx]
-
-        #Exist probability for non parametric sub-set at stage 2
-        exitproblist <- c(exitproblist, getPCER2(cJ2 = cJ2, wJh = wJh,  p1 = pJh, ss1 = ModSSHyp[[1]][edx], ss2 = ModSSHyp[[2]][edx]))
-      }
-    }
-    return(sum(na.omit(exitproblist)))
-  }
-
-  getStage2AdaptBdry <- function(x){
-    totalbrdycrossingprobstage2condi2(cJ2 = x) - cer
-  }
-
-  cJ2Adapt <- uniroot(f = getStage2AdaptBdry, interval = c(0, 1 / max(w2[w2!= 0])), tol = 1E-16)$root
+  ############# End of Parametric Computations ##################
 
   ############ Adjusted Boundary for non-parametric subsets######################
 
-  # if (length(NParamGrps) != 0) {
-  #   wJh <- as.numeric(w1)[NParamGrps]
-  #   aJh <- as.numeric(a2[NParamGrps])
-  #   pJh <- as.numeric(p1[NParamGrps])
-  #
-  #   pcer <- unlist(lapply(1:length(NParamGrps), function(x) {
-  #     getPCER(a2 = aJh[x], p1 = pJh[x], ss1 = PlanSSHyp[[1]][x], ss2 = PlanSSHyp[[2]][x])
-  #   }))
-  #
-  #   pcerNParamGrps <- pcer
-  #   cerNParam <- sum(pcer)
-  #
-  #   # Compute Stage-2 adaptive boundary based on new Sample Size & weights
-  #   if(ModifiedStage2Weights){
-  #     #Ajoy.M: Highly risky should be triggered only for modified testing strategy in analysis, implemeted for one specific example not generalized.(13Jun,24)
-  #     NPGrpsMod <- which(w2 > 0)
-  #   }else{
-  #     NPGrpsMod <- NParamGrps[NParamGrps %in% Stage2HypoIDX &
-  #                               NParamGrps %in% which(w2 > 0)] # boundaries for only available hypothesis
-  #   }
-  #
-  #   if (length(NPGrpsMod) != 0) # & cerNParam < 1
-  #     {
-  #       SS1Mod <- ModSSHyp[[1]][NPGrpsMod]
-  #       SS2Mod <- ModSSHyp[[2]][NPGrpsMod]
-  #
-  #       nParmOut <- getStage2CondNParamBdry(
-  #         a1 = a1[NPGrpsMod],
-  #         p1 = p1[NPGrpsMod],
-  #         v = w2[NPGrpsMod],
-  #         BJ = cerNParam,
-  #         SS1 = SS1Mod,
-  #         SS2 = SS2Mod
-  #       )
-  #
-  #       Stage2AdjBdry[NPGrpsMod] <- nParmOut$Stage2AdjBdry
-  #       #ScaleWeights <- c(ScaleWeights, nParmOut$adjWeights)
-  #     } else {
-  #     Stage2AdjBdry[NPGrpsMod] <- 0
-  #   }
-  # }
+  if (length(NParamGrps) != 0) {
+    wJh <- as.numeric(w1)[NParamGrps]
+    aJh <- as.numeric(a2[NParamGrps])
+    pJh <- as.numeric(p1[NParamGrps])
+
+    pcer <- unlist(lapply(1:length(NParamGrps), function(x) {
+      getPCER(a2 = aJh[x], p1 = pJh[x], ss1 = PlanSSHyp[[1]][x], ss2 = PlanSSHyp[[2]][x])
+    }))
+
+    pcerNParamGrps <- pcer
+    cerNParam <- sum(pcer)
+
+    # Compute Stage-2 adaptive boundary based on new Sample Size & weights
+    if(ModifiedStage2Weights){
+      #Ajoy.M: Highly risky should be triggered only for modified testing strategy in analysis, implemeted for one specific example not generalized.(13Jun,24)
+      NPGrpsMod <- which(w2 > 0)
+    }else{
+      NPGrpsMod <- NParamGrps[NParamGrps %in% Stage2HypoIDX &
+                                NParamGrps %in% which(w2 > 0)] # boundaries for only available hypothesis
+    }
+
+    if (length(NPGrpsMod) != 0) # & cerNParam < 1
+      {
+        SS1Mod <- ModSSHyp[[1]][NPGrpsMod]
+        SS2Mod <- ModSSHyp[[2]][NPGrpsMod]
+
+        nParmOut <- getStage2CondNParamBdry(
+          a1 = a1[NPGrpsMod],
+          p1 = p1[NPGrpsMod],
+          v = w2[NPGrpsMod],
+          BJ = cerNParam,
+          SS1 = SS1Mod,
+          SS2 = SS2Mod
+        )
+        # Alternative approch to compute the boundary
+        # if(length(NPGrpsMod)==1){
+        #   alternative <- getStage2CondNParamBdry1Hypo(p1=p1[NPGrpsMod],
+        #                                               v=w2[NPGrpsMod],
+        #                                               BJ=cerNParam,
+        #                                               SS1=SS1Mod,
+        #                                               SS2=SS2Mod)
+        # }
+
+        Stage2AdjBdry[NPGrpsMod] <- nParmOut$Stage2AdjBdry
+        #ScaleWeights <- c(ScaleWeights, nParmOut$adjWeights)
+      } else {
+      Stage2AdjBdry[NPGrpsMod] <- 0
+    }
+  }
 
 
   SubSets <- paste(

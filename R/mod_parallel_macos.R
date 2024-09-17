@@ -25,12 +25,9 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
         {
         cl <- parallel::makeCluster(cores[1] - 1, type = "PSOCK")
       parallel::clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
-      out <- parallel::parLapply(cl = cl, 1:gmcpSimObj$nSimulation,
-                                 function(x) {
-                                   out_SingleSim <- SingleSimCER2(x, gmcpSimObj,
-                                                                  preSimObjs)
-                                   return(out_SingleSim)
-                                 })
+      out <- parallel::parLapply(cl = cl, 1:gmcpSimObj$nSimulation, function(x){
+                                  out_SingleSim <- SingleSimCER2(x, gmcpSimObj, preSimObjs)
+                                  return(out_SingleSim)})
       parallel::stopCluster(cl)
       }
       else

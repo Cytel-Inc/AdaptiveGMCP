@@ -2,7 +2,7 @@
 #######################################################################
 ###############  Script to Run Adapt GMCP Simulations #################
 #######################################################################
-
+rm(list = ls())
 library(AdaptGMCP)
 ########################## Inputs ##############################
 #------------------Test Method----------------------------------
@@ -152,7 +152,7 @@ KeepAssosiatedEps <- TRUE
 ImplicitSSR <- 'Selection'
 
 #-------------------Number of Simulations-------------------------------------
-nSimulation <- 1000
+nSimulation <- 1
 
 #-------------------Simulation Seed-------------------------------------
 Seed <- 100
@@ -170,17 +170,17 @@ Parallel <- TRUE
 # Uncomment the following code to run simulation;
 # short cut: 1) select all the following lines 2) ctrl+shift+c]
 #
-# out <- simMAMSMEP(
-#   alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType=EpType,
-#   TestStatCon = TestStatCon, TestStatBin = TestStatBin, FWERControl = FWERControl,
-#   Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, CommonStdDev = CommonStdDev, Arms.Prop = Arms.Prop, Arms.alloc.ratio = Arms.alloc.ratio,
-#   EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type, info_frac = info_frac,
-#   typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
-#   Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
-#   SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
-#   ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
-#   Method = Method, plotGraphs = plotGraphs, Parallel = Parallel
-# )
-# out
+out <- simMAMSMEP(
+  alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType=EpType,
+  TestStatCon = TestStatCon, TestStatBin = TestStatBin, FWERControl = FWERControl,
+  Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, CommonStdDev = CommonStdDev, Arms.Prop = Arms.Prop, Arms.alloc.ratio = Arms.alloc.ratio,
+  EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type, info_frac = info_frac,
+  typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
+  Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
+  SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
+  ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
+  Method = Method, plotGraphs = plotGraphs, Parallel = Parallel
+)
+#out
 
 

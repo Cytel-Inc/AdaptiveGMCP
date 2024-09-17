@@ -21,6 +21,7 @@ PerformStage1Test <- function(
     HypoMap,
     CommonStdDev,
     WH) {
+
   # Stage-Wise Cumulative Sample Size
   SS_alloc <- getPlanAllocatedSamples(SS = SampleSize, allocRatio = allocRatio, info_frac = info_frac)
   SS_Cum <- SS_alloc$CumulativeSamples
@@ -42,7 +43,7 @@ PerformStage1Test <- function(
     alpha = alpha, info_frac = info_frac, typeOfDesign = typeOfDesign,
     deltaWT = deltaWT, deltaPT1 = deltaPT1, gammaA = gammaA, userAlphaSpending = userAlphaSpending,
     test.type = test.type,
-    Sigma = Sigma, WH = WH, HypoMap = HypoMap, Scale = "Score"
+    Sigma = Sigma, WH = WH, HypoMap = HypoMap, Scale = "Score", planSSCum = SS_Cum
   )
 
   # Stage1 Analysis
