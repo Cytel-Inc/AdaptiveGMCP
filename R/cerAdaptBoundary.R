@@ -40,16 +40,18 @@ adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
     Stage2Sigma <- NA
   }
 
-  # Compute PCER based on planned sample size
-  PlanSSHyp <- getHypoSS(SS = mcpObj$AllocSampleSize, HypoMap = mcpObj$HypoMap)
-  ModSSHyp <- getHypoSS(SS = mcpObj$Stage2AllocSampleSize, HypoMap = mcpObj$HypoMap)
+  # planned sample size: for non-parametric tests
+  PlanSSHyp <- getHypoSS(SS = mcpObj$AllocSampleSize,
+                         HypoMap = mcpObj$HypoMap)
+  # adapted sample size: for non-parametric tests
+  ModSSHyp <- getHypoSS(SS = mcpObj$Stage2AllocSampleSize,
+                        HypoMap = mcpObj$HypoMap)
 
   SubSets <- c()
   RestrictedSet <- c()
   ConditionalError <- c()
   Stage2AdjBdry <- c()
   InterWeight2 <- c()
-  #ScaleWeights <- rep(NA, nrow(WH_modified))
 
   for (i in seq_len(nrow(WH_modified))) {
     #print(i)
@@ -180,55 +182,61 @@ getAdaptBdry2 <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
   NParamGrps <- testGrps$NParamGrp
 
   Stage2AdjBdry <- rep(0, length(J))
-  cerParamGrps <- pcerNParamGrps <- c()
   ScaleWeights <- c()
 
-totalbrdycrossingprobstage2condi = function(cJ2){
-    exitproblist = numeric()
+  #function to compute the conditional error based on planned design
+  #i.e. planned covariance matrix, planned weights etc.
+  stage2ExitProbCond <- function(cJ2){
+    cerParamGrps <- pcerNParamGrps <- c()
     for (edx in conn_Sets) {
       if (length(edx) > 1) {
-        ## Dunnett Weighted Parametric ##
+        ## Parametric ##
         gIDX <- unique(HypoMap[edx, ]$Groups)
-        #Exist probability for parametric sub-set at stage 2
-        pGrp = edx
+        pGrp <- edx
         epIDX <- unique(HypoMap[pGrp, ]$Groups)
         stage2sigmaS <- Stage2Sigma$SigmaSIncr[[epIDX]][floor(pGrp / epIDX), floor(pGrp / epIDX)]
         InfoMatrix <- Sigma$InfoMatrix[[epIDX]][floor(pGrp / epIDX), ]
         pJh <- p1[pGrp]
         wJh <- w1[pGrp]
-        exitproblist <- c(exitproblist, exitProbStage2Cond(cJ2 = cJ2, p1 = pJh, w = wJh,
-          InfoMatrix = InfoMatrix, stage2sigmaS = stage2sigmaS, Conditional = TRUE))
+        #Exist probability for parametric sub-set at stage 2
+        cerParamGrps <- c(cerParamGrps,
+                          exitProbStage2Cond(cJ2 = cJ2, p1 = pJh, w = wJh,
+                          InfoMatrix = InfoMatrix, stage2sigmaS = stage2sigmaS,
+                          Conditional = TRUE))
 
       } else {
         ## Non-Parametric ##
         pJh <- p1[edx]
         wJh <- w1[edx]
-        #PlanSSHyp <- getHypoSS(SS = planSSCum, HypoMap = HypoMap)
-        ss1 = PlanSSHyp[[1]][edx]; ss2 = PlanSSHyp[[2]][edx]
+        ss1 <- PlanSSHyp[[1]][edx]; ss2 = PlanSSHyp[[2]][edx]
         #Exist probability for non parametric sub-set at stage 2
-        exitproblist <- c(exitproblist, getPCER2(cJ2 = cJ2, wJh = wJh,  p1 = pJh, ss1 = PlanSSHyp[[1]][edx], ss2 = PlanSSHyp[[2]][edx]))
+        pcerNParamGrps <- c(pcerNParamGrps, getPCER2(cJ2 = cJ2, wJh = wJh,  p1 = pJh, ss1 = PlanSSHyp[[1]][edx], ss2 = PlanSSHyp[[2]][edx]))
       }
     }
-    return(sum(na.omit(exitproblist)))
+    return(list("cerParamGrps"=cerParamGrps,
+                "pcerNParamGrps"=pcerNParamGrps))
   }
 
   cJ1 <- (a1 / w1)[!is.infinite(a1 / w1) & !is.na(a1 / w1)][1]
   cJ2 <- (a2 / w2)[!is.infinite(a2 / w2) & !is.na(a2 / w2)][1]
 
-  cer <- totalbrdycrossingprobstage2condi(cJ2 = cJ2)
+  outCER <- stage2ExitProbCond(cJ2 = cJ2)
+  totalCER <- sum(outCER$cerParamGrps,
+                  outCER$pcerNParamGrps)
 
   #Computing the stage two boundary
   get_Sets_stage2 <- connSets(J = J, w = w2, test.type = test.type, HypoMap = HypoMap)
   conn_Sets_stage2 <- get_Sets_stage2$connSets
 
-  totalbrdycrossingprobstage2condi2 = function(cJ2){
+  #function to compute the boundary crossing probabilities based on adaptive design
+  #i.e. modified covariance matrix, modified weights etc.
+  stage2ExitProbCondAdapt <- function(cJ2){
     exitproblist = numeric()
     for (edx in conn_Sets_stage2) {
       if (length(edx) > 1) {
-        ## Dunnett Weighted Parametric ##
+        ## Parametric ##
         gIDX <- unique(HypoMap[edx, ]$Groups)
-        #Exist probability for parametric sub-set at stage 2
-        pGrp = edx
+        pGrp <- edx
         epIDX <- unique(HypoMap[pGrp, ]$Groups)
         stage2sigmaSMod <- Stage2Sigma$Stage2SigmaS[[epIDX]][floor(pGrp / epIDX), floor(pGrp / epIDX)]
 
@@ -238,72 +246,32 @@ totalbrdycrossingprobstage2condi = function(cJ2){
         )[floor(pGrp / epIDX), ]
 
         pJh <- p1[pGrp]
-        wJh <- w1[pGrp]
-        exitproblist <- c(exitproblist, exitProbStage2Cond(cJ2 = cJ2, p1 = pJh, w = wJh,
-          InfoMatrix = InfoMatrixMod, stage2sigmaS = stage2sigmaSMod, Conditional = TRUE))
+        wJh <- w2[pGrp]
+        exitproblist <- c(exitproblist,
+                          exitProbStage2Cond(cJ2 = cJ2, p1 = pJh, w = wJh,
+                          InfoMatrix = InfoMatrixMod, stage2sigmaS = stage2sigmaSMod,
+                          Conditional = TRUE))
 
       } else {
         ## Non-Parametric ##
         pJh <- p1[edx]
-        wJh <- w1[edx]
+        wJh <- w2[edx]
 
         #Exist probability for non parametric sub-set at stage 2
-        exitproblist <- c(exitproblist, getPCER2(cJ2 = cJ2, wJh = wJh,  p1 = pJh, ss1 = ModSSHyp[[1]][edx], ss2 = ModSSHyp[[2]][edx]))
+        exitproblist <- c(exitproblist,
+                          getPCER2(cJ2 = cJ2, wJh = wJh,
+                                   p1 = pJh, ss1 = ModSSHyp[[1]][edx], ss2 = ModSSHyp[[2]][edx]))
       }
     }
     return(sum(na.omit(exitproblist)))
   }
 
   getStage2AdaptBdry <- function(x){
-    totalbrdycrossingprobstage2condi2(cJ2 = x) - cer
+    stage2ExitProbCondAdapt(cJ2 = x) - totalCER
   }
 
   cJ2Adapt <- uniroot(f = getStage2AdaptBdry, interval = c(0, 1 / max(w2[w2!= 0])), tol = 1E-16)$root
-
-  ############ Adjusted Boundary for non-parametric subsets######################
-
-  # if (length(NParamGrps) != 0) {
-  #   wJh <- as.numeric(w1)[NParamGrps]
-  #   aJh <- as.numeric(a2[NParamGrps])
-  #   pJh <- as.numeric(p1[NParamGrps])
-  #
-  #   pcer <- unlist(lapply(1:length(NParamGrps), function(x) {
-  #     getPCER(a2 = aJh[x], p1 = pJh[x], ss1 = PlanSSHyp[[1]][x], ss2 = PlanSSHyp[[2]][x])
-  #   }))
-  #
-  #   pcerNParamGrps <- pcer
-  #   cerNParam <- sum(pcer)
-  #
-  #   # Compute Stage-2 adaptive boundary based on new Sample Size & weights
-  #   if(ModifiedStage2Weights){
-  #     #Ajoy.M: Highly risky should be triggered only for modified testing strategy in analysis, implemeted for one specific example not generalized.(13Jun,24)
-  #     NPGrpsMod <- which(w2 > 0)
-  #   }else{
-  #     NPGrpsMod <- NParamGrps[NParamGrps %in% Stage2HypoIDX &
-  #                               NParamGrps %in% which(w2 > 0)] # boundaries for only available hypothesis
-  #   }
-  #
-  #   if (length(NPGrpsMod) != 0) # & cerNParam < 1
-  #     {
-  #       SS1Mod <- ModSSHyp[[1]][NPGrpsMod]
-  #       SS2Mod <- ModSSHyp[[2]][NPGrpsMod]
-  #
-  #       nParmOut <- getStage2CondNParamBdry(
-  #         a1 = a1[NPGrpsMod],
-  #         p1 = p1[NPGrpsMod],
-  #         v = w2[NPGrpsMod],
-  #         BJ = cerNParam,
-  #         SS1 = SS1Mod,
-  #         SS2 = SS2Mod
-  #       )
-  #
-  #       Stage2AdjBdry[NPGrpsMod] <- nParmOut$Stage2AdjBdry
-  #       #ScaleWeights <- c(ScaleWeights, nParmOut$adjWeights)
-  #     } else {
-  #     Stage2AdjBdry[NPGrpsMod] <- 0
-  #   }
-  # }
-
+  Stage2AdjBdry <- cJ2Adapt*w2
 
   SubSets <- paste(
     paste("P :", paste(
@@ -329,34 +297,29 @@ totalbrdycrossingprobstage2condi = function(cJ2){
       0
     }
   }
+
+  outCER$pcerNParamGrps
   ConditionalError <- paste(
     paste("CER :", paste(
-      unlist(lapply(roundDigit(cerParamGrps, 5), function(x) {
+      unlist(lapply(roundDigit(outCER$cerParamGrps, 5), function(x) {
         paste(x, collapse = ",")
       })),
       collapse = ","
     ), sep = ""),
     ",",
     paste("PCER :", paste(
-      unlist(lapply(roundDigit(pcerNParamGrps, 5), function(x) {
+      unlist(lapply(roundDigit(outCER$pcerNParamGrps, 5), function(x) {
         paste(x, collapse = ",")
       })),
       collapse = ","
     ), sep = ""),
     sep = ""
   )
-  if (length(ScaleWeights) != 0) {
-    ScaleWeights2 <- paste0("(", paste0(roundDigit(ScaleWeights, 5), collapse = ","), ")")
-  } else {
-    ScaleWeights2 <- NA
-  }
-
 
   list(
     "SubSets" = SubSets,
     "ConditionalError" = ConditionalError,
     "Stage2AdjBdry" = Stage2AdjBdry
-    #"ScaledWeights" = ScaleWeights2
   )
 }
 

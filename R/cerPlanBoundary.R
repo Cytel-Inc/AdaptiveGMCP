@@ -55,7 +55,7 @@ planBdryCER <- function(nHypothesis,
 #browser()
   for (i in 1:nrow(WH))
   {
-     print(i)
+    #print(i)
     J <- as.numeric(WH[i, 1:nHypothesis])
     w <- as.numeric(WH[i, (nHypothesis + 1):(2 * nHypothesis)])
 
