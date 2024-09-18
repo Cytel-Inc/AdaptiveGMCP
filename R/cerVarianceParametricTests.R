@@ -346,7 +346,7 @@ getPlanCorrelation <- function(nHypothesis, EpType, SS_Incr, Arms.std.dev, prop.
     SS_lk <- as.numeric(SS_Incr[lkIDX, ])
     ctrSS <- SS_lk[1]
     trtSS <- SS_lk[-1] # Column represents looks
-    allocRatio <- c(1, round(trtSS / ctrSS))
+    allocRatio <- c(1, trtSS / ctrSS)
 
     #Expected Output : SS_lk(the correlation between test statistics of dimension nHypothesisxnHypothesis)
     if(test.type == "Dunnett" || test.type == "Parametric" || test.type == "Partly-Parametric"){
