@@ -198,13 +198,14 @@ getPreSimObjs <- function(gmcpSimObj) {
   ################## Generate unique Seed for the run #########################
   #should not be greater than 4 digits
   if(gmcpSimObj$Seed == "Random"){
-   IntSeed1 <- as.integer(as.POSIXct(Sys.time()))
-   IntSeed2 <- substr(as.character(IntSeed1), nchar(IntSeed1) - 3, nchar(IntSeed1))
-   SimSeed <- ifelse(n1 > 9999,
-              as.integer(
+   IntSeed1 <- as.integer(Sys.time())
+   IntSeed2 <- ifelse(IntSeed1 > 9999,
+        substr(as.character(IntSeed1), nchar(IntSeed1) - 3, nchar(IntSeed1)),
+        substr(IntSeed1)
+        )
+   SimSeed <-as.integer(
                 paste(sample(strsplit(IntSeed2, "")[[1]]),collapse = '')
-                ),
-              n1)
+                )
 
   }
 
