@@ -1,7 +1,7 @@
 Package: AdaptGMCP
 Type: Package
 Title: Graph Based, Adaptive, Multi Arm, Multiple Endpoint Design
-Version: 18.09.24.2
+Version: 19.09.24
 Author: Ajoy Mukhopadhyay
 Maintainer: Ajoy Mukhopadhyay <ajoy.mukhopadhyay@cytel.com>
 Description: (In Progress)This package provides tools to perform multiple testing based on user inputs. 

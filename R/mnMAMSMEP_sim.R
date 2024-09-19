@@ -196,7 +196,17 @@ MAMSMEP_sim2 <- function(gmcpSimObj) {
 getPreSimObjs <- function(gmcpSimObj) {
   #----------------------------------------------------------------------------
   ################## Generate unique Seed for the run #########################
-  SimSeed <- ifelse(gmcpSimObj$Seed == "Random", sample(1:10000, 1), gmcpSimObj$Seed)
+  #should not be greater than 4 digits
+  if(gmcpSimObj$Seed == "Random"){
+   IntSeed1 <- as.integer(as.POSIXct(Sys.time()))
+   IntSeed2 <- substr(as.character(IntSeed1), nchar(IntSeed1) - 3, nchar(IntSeed1))
+   SimSeed <- ifelse(n1 > 9999,
+              as.integer(
+                paste(sample(strsplit(IntSeed2, "")[[1]]),collapse = '')
+                ),
+              n1)
+
+  }
 
   #----------------------------------------------------------------------------
   ################### Arms-EPs-Hypotheses Mapping #####################################

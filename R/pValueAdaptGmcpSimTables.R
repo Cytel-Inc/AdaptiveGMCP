@@ -8,9 +8,18 @@ SimPowers <- function(nSimulation, PowerTab) {
   values <- as.numeric(apply(PowerTab[, -1], 2, function(x) {
     sum(x) / nSimulation
   }))
+  # 95% confidence interval
+  z_alpha <- qnorm(1-0.025)
+  UL <- values + z_alpha*sqrt(values*(1-values)/nSimulation)
+  LL <- values - z_alpha*sqrt(values*(1-values)/nSimulation)
+  ConfIntv <- sapply(1:length(values),function(i){
+    paste('(',round(LL[i],5),',',round(UL[i],5),')',sep = '')
+  })
+
   PowerTable <- data.frame(
     "Overall_Powers" = c("Global Power", "Conjunctive Power", "Disjunctive Power", "FWER"),
-    "Values" = values
+    "Values" = values,
+    "ConfIntv_95perc" = ConfIntv
   )
   PowerTable
 }
