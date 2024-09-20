@@ -22,6 +22,16 @@ simMAMSMEP_Wrapper <- function(InputDF) {
     if (!any(errorLog == F)) {
       # extract the power table from the output
       dfOverall_Powers_long <- out$Overall_Powers_df
+
+      #extracting confidence intervals
+      conf_intervals <- dfOverall_Powers_long$ConfIntv_95perc
+      dfOverall_Powers_long <- dfOverall_Powers_long %>% select(-ConfIntv_95perc)
+      # Add new columns for each confidence interval
+      for (i in 1:nrow(dfOverall_Powers_long)) {
+        col_name <- paste0("CI_95perc_", dfOverall_Powers_long$Overall_Powers[i])
+        dfOverall_Powers_long[ nrow(dfOverall_Powers_long) + 1,] <- c(col_name, conf_intervals[i])
+      }
+
       # convert the power table to wide format and add serial number column
       dfOverall_Powers_wide <- dfOverall_Powers_long %>%
         pivot_wider(names_from = Overall_Powers, values_from = Values) %>%
