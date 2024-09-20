@@ -85,7 +85,7 @@ valInpsimMAMSMEP <- function(inps) {
     logs[[18]] <- 0
   }
 
-  logs[[17]] <- ifelse(inps$Seed == "Random" || is.numeric(inps$Seed),
+  logs[[17]] <- ifelse(inps$Seed == "Random" || is.numeric(as.numeric(inps$Seed)),
     0, "Invalid argument in 'Seed'"
   )
 
