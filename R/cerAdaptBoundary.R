@@ -217,8 +217,9 @@ getAdaptBdry2 <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
                 "pcerNParamGrps"=pcerNParamGrps))
   }
 
-  cJ1 <- (a1 / w1)[!is.infinite(a1 / w1) & !is.na(a1 / w1)][1]
-  cJ2 <- (a2 / w2)[!is.infinite(a2 / w2) & !is.na(a2 / w2)][1]
+
+  cJ1 <- a1[which(w1 != 0)[1]]/w1[which(w1 != 0)[1]]
+  cJ2 <- a2[which(w1 != 0)[1]]/w1[which(w1 != 0)[1]]
 
   outCER <- stage2ExitProbCond(cJ2 = cJ2)
   totalCER <- sum(outCER$cerParamGrps,
