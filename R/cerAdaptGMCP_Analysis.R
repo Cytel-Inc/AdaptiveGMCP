@@ -208,20 +208,20 @@ adaptGMCP_CER <- function(
         }
       ))
 
-      # CERTab <- getCER(b2 = Stage1Test$Stage1Obj$plan_Bdry$Stage2Bdry[oldIdx, ],
-      #                  WH = mcpObj$WH,
-      #                  p1 = mcpObj$p_raw,
-      #                  test.type = mcpObj$test.type,
-      #                  HypoMap = mcpObj$HypoMap,
-      #                  CommonStdDev = mcpObj$CommonStdDev,
-      #                  allocRatio = mcpObj$allocRatio,
-      #                  sigma = mcpObj$sigma,
-      #                  Sigma = Stage1Test$Stage1Obj$Sigma,
-      #                  AllocSampleSize = Stage1Test$Stage1Obj$AllocSampleSize,
-      #                  EpType = mcpObj$lEpType,
-      #                  prop.ctr = mcpObj$prop.ctr)
-      # cat("Table of CER and PCER values conditional on stage one p-values \n")
-      # print(CERTab)
+      CERTab <- getCER(b2 = Stage1Test$Stage1Obj$plan_Bdry$Stage2Bdry[oldIdx, ],
+                       WH = mcpObj$WH,
+                       p1 = mcpObj$p_raw,
+                       test.type = mcpObj$test.type,
+                       HypoMap = mcpObj$HypoMap,
+                       CommonStdDev = mcpObj$CommonStdDev,
+                       allocRatio = mcpObj$allocRatio,
+                       sigma = mcpObj$sigma,
+                       Sigma = Stage1Test$Stage1Obj$Sigma,
+                       AllocSampleSize = Stage1Test$Stage1Obj$AllocSampleSize,
+                       EpType = mcpObj$lEpType,
+                       prop.ctr = mcpObj$prop.ctr)
+      cat("Table of CER and PCER values conditional on stage one p-values \n")
+      print(CERTab)
       # #--------------------------------------
 
       if (plotGraphs) # Plot after Stage-1 analysis

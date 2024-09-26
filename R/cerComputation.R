@@ -148,6 +148,7 @@ getCER <- function(b2,WH,p1,test.type,HypoMap,CommonStdDev,
   InterWeight <- apply(WH, 1, function(h) {
     J <- which(h[1:(length(h) / 2)] == 1)
     w <- h[((length(h) / 2) + 1):length(h)]
+    w <- sapply(w,function(x) roundDigit(x,3))
     paste(w[J], collapse = ",")
   })
 
