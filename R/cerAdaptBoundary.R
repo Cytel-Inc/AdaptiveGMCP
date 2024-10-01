@@ -271,12 +271,8 @@ getAdaptBdry2 <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
     stage2ExitProbCondAdapt(cJ2 = x) - totalCER
   }
 
-  #Martin.p: sum of conditional errors becomes larger than one
-  #but since only one treatment is continued to the second stage
-  #and endpoints are tested hierarchically, such that only one hypothesis
-  #has positive weight, no c_J can be found that leads to a total CER >1.
-  nHypPosWet <- length(w2[w2>0])
-  if(nHypPosWet < totalCER){
+  #Martin.p: if total CER >= 1 reject the intersection hypothesis
+  if(totalCER >= 1){
     Stage2AdjBdry <- rep(0,length(w2))
     Stage2AdjBdry[w2>0] <- 1
 
