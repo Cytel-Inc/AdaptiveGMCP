@@ -146,8 +146,10 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
       CurrSSLk <- Arms.SS.Incr
       mcpObj$AdaptStage2 <- F
 
-      # If Current look Sample Size is different than the plan Sample size then Adapt
-      if (!all(PlanSSLk == CurrSSLk, na.rm = T)) {
+      # If Current look Sample Size is different than the plan Sample size then Adapt.
+      # Since when dropping of an arm changes the planned weights the planned stage-2 boundary will not longer be valid.
+      if (!all(PlanSSLk == CurrSSLk, na.rm = T) ||
+          mcpObj$Selection) {
         mcpObj$AdaptStage2 <- T
         Stage2AllocSampleSize <- unlist(mcpObj$planSS$IncrementalSamples[1, ]) +
           unlist(CurrSSLk)
