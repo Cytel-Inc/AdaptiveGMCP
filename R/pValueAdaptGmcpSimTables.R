@@ -4,14 +4,14 @@
 #-------------- -
 # Compute Overall Power Table from all the simulation
 #-------------- -
-SimPowers <- function(nSimulation, PowerTab) {
+SimPowers <- function(nSimulation, nSimulation_Stage2, PowerTab) {
   values <- as.numeric(apply(PowerTab[, -1], 2, function(x) {
-    sum(x) / nSimulation
+    sum(x) / (nSimulation*nSimulation_Stage2)
   }))
   # 95% confidence interval
   z_alpha <- qnorm(1-0.025)
-  UL <- values + z_alpha*sqrt(values*(1-values)/nSimulation)
-  LL <- values - z_alpha*sqrt(values*(1-values)/nSimulation)
+  UL <- values + z_alpha*sqrt(values*(1-values)/(nSimulation*nSimulation_Stage2))
+  LL <- values - z_alpha*sqrt(values*(1-values)/(nSimulation*nSimulation_Stage2))
   ConfIntv <- sapply(1:length(values),function(i){
     paste('(',round(LL[i],5),',',round(UL[i],5),')',sep = '')
   })
@@ -27,12 +27,13 @@ SimPowers <- function(nSimulation, PowerTab) {
 #------------- -
 # Count contribution to different powers from each simulations
 #------------- -
-CountPower <- function(simID, SummaryStatFile, TrueNull) {
+CountPower <- function(simID, SummaryStatFile, TrueNull , simID_Stage2 = 0) {
   rejMat <- subset(SummaryStatFile, SimID == simID)
   rejMat <- rejMat[, grep("RejStatus", names(rejMat))]
   rej.final <- apply(rejMat, 2, function(col) any(col, na.rm = T))
   data.frame(
     "simID" = simID,
+    "simID_Stage2" = simID_Stage2,
     "nG" = as.integer(any(rej.final)),
     "nC" = as.integer(
       ifelse(length(rej.final[!TrueNull]) == 0, 0, all(rej.final[!TrueNull]))
@@ -91,7 +92,7 @@ checkTrueNull3 <- function(HypoMap, Arms.Mean, Arms.Prop) {
 #------------- -
 # Count contribution to different powers from each simulations
 #------------- -
-CountEfficacy <- function(simID, SummaryStatFile) {
+CountEfficacy <- function(simID, SummaryStatFile, simID_Stage2 = 0) {
   rejMat <- subset(SummaryStatFile, SimID == simID)
   rejMat <- rejMat[, grep("RejStatus", names(rejMat))]
 
@@ -110,8 +111,8 @@ CountEfficacy <- function(simID, SummaryStatFile) {
   eff <- rep(0, length(col_name))
   eff[which(idx == rej_idx)] <- 1
 
-  eff_count <- data.frame(matrix(c(simID, eff), nrow = 1))
-  colnames(eff_count) <- c("simID", col_name)
+  eff_count <- data.frame(matrix(c(simID, simID_Stage2, eff), nrow = 1))
+  colnames(eff_count) <- c("simID", "simID_Stage2", col_name)
   eff_count
 }
 

@@ -87,7 +87,7 @@ planBdryCER <- function(nHypothesis,
     for (edx in conn_Sets) {
       if (length(edx) > 1) {
         ## Dunnett Weighted Parametric ##
-        gIDX <- unique(HypoMap[edx, ]$Groups)
+        gIDX <- unique(HypoMap[edx, ]$Groups) # which endpoint
         #Exist probability for parametric sub-set at stage 1
         exitproblist <- c(exitproblist,
                           exitProbParamStage1(gIDX = gIDX, hIDX = edx, cJ1, wJ = wJ, Sigma, Scale, underNull = TRUE))

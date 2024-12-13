@@ -103,7 +103,8 @@ simMAMSMEP <- function(
     SelectionParmeter = 1,
     KeepAssosiatedEps = TRUE,
     ImplicitSSR = "All",
-    nSimulation = 1000,
+    nSimulation = 5,
+    nSimulation_Stage2 = 1, # this should always take the value 1 when CER is NOT selected
     Seed = 100,
     SummaryStat = FALSE,
     plotGraphs = TRUE,
@@ -181,7 +182,10 @@ simMAMSMEP <- function(
     "plotGraphs" = plotGraphs,
 
     #EastSumStat
-    "EastSumStat" = EastSumStat
+    "EastSumStat" = EastSumStat,
+
+    # number of simulations for stage 2 per stage 1
+    "nSimulation_Stage2" = nSimulation_Stage2
 
   )
 

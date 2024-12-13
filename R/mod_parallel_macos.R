@@ -94,6 +94,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
 
   # Processing simulation results
   Sim_power <- SimPowers(nSimulation = gmcpSimObj$nSimulation,
+                         nSimulation_Stage2 = gmcpSimObj$nSimulation_Stage2,
                          PowerTab = PowerTab)
   Sim_power_df <- Sim_power
   Sim_power <- knitr::kable(Sim_power,

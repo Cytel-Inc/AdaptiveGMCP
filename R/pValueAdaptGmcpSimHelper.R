@@ -420,8 +420,8 @@ getInterimResposes <- function(lookID, mcpObj, gmcpSimObj) {
 
 #-------------- -
 # Generate seed for the given combination (Input Seed, SimulationID,LookID,ArmID)
-getRunSeed <- function(SimSeed, simID, lookID, armIndex) {
-  SimSeed + as.integer(paste(simID, lookID, armIndex, sep = ""))
+getRunSeed <- function(SimSeed, simID, lookID, armIndex, simID_Stage2 = 0) {
+  SimSeed + as.integer(paste(simID, simID_Stage2, lookID, armIndex, sep = ""))
 }
 
 #------------- -

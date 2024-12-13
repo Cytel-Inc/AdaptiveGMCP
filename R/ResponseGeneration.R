@@ -35,7 +35,8 @@ genIncrLookSummary <- function(SimSeed,
                                EPCorr,
                                ArmsPresent,
                                HypoPresent,
-                               HypoMap) {
+                               HypoMap,
+                               simID_Stage2 = 0) {
   tryCatch(
     {
       returnSubjData <- F # Flag to get the Subject level responses(Arm-Wise) as a return object
@@ -89,7 +90,7 @@ genIncrLookSummary <- function(SimSeed,
             lNormStdDev = Arms.std.dev,
             lProp = Arms.Prop,
             mNormCorr = EPCorr,
-            nSeed = getRunSeed(SimSeed = SimSeed, simID = simID, lookID = lookID, armIndex = armIDX)
+            nSeed = getRunSeed(SimSeed = SimSeed, simID = simID, simID_Stage2 = simID_Stage2, lookID = lookID, armIndex = armIDX)
           )
 
 
