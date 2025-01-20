@@ -12,11 +12,11 @@ SingleSimCombPValue2 <- function(simID, gmcpSimObj, preSimObjs){
 }
 
 #CER Method
-SingleSimCER2 <- function(simID, gmcpSimObj, preSimObjs){
+SingleSimCER2 <- function(simID, gmcpSimObj, preSimObjs) {
   tryCatch(
-    SingleSimCER(simID, gmcpSimObj, preSimObjs) ,
-    error = function(e){
-      sprintf("Error Simulation %d ", simID)
+    SingleSimCER(simID, gmcpSimObj, preSimObjs),
+    error = function(e) {
+      sprintf("Error in Simulation %d: %s", simID, e$message)
     }
   )
 }

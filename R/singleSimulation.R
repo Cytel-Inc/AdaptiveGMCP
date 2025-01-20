@@ -97,7 +97,8 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
 
   # Power Table
   powerCountDF <- CountPower(simID = simID, SummaryStatFile = SummStatDF, TrueNull = mcpObj$TrueNull)
-  EffCountDF <- CountEfficacy(simID = simID, SummaryStatFile = SummStatDF)
+  # EffCountDF <- CountEfficacy(simID = simID, SummaryStatFile = SummStatDF)
+  EffCountDF <- t(apply(SummStatDF[, grep("^RejStatus", names(SummStatDF))], 2, any))
 
   SelectionDF <- data.frame()
   # Selection Summary Table
@@ -192,7 +193,7 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
     } else {
       # loop over second stage simulations and save the summary stats for each in a list
       lPowerCountDF <- list()
-      lEffCountDF <- list()
+      lEffCountDF <- vector("list", mcpObj$nSimulation_Stage2)
 
       # Get the per arm incremental sample size
       Arms.SS.Incr <- getInterimSSIncr(
@@ -335,16 +336,30 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
 
         mcpObj$rej_flag_Prev <- mcpObj$rej_flag_Curr
         # Power Table
-        powerCountDF <- CountPower(simID = simID, simID_Stage2 =  nSim_Stage2, SummaryStatFile = SummStatDF, TrueNull = mcpObj$TrueNull)
-        EffCountDF <- CountEfficacy(simID = simID, simID_Stage2 =  nSim_Stage2, SummaryStatFile = SummStatDF)
+        powerCountDF <- tryCatch(
+          {
+            CountPower(simID = simID, SummaryStatFile = SummStatDF, TrueNull = mcpObj$TrueNull)
+          },
+          error = function(e) {
+            message("Error in CountPower: ", e$message)
+            message("Inputs to CountPower: ", capture.output(str(list(
+              simID = simID,
+              SummaryStatFile = SummStatDF,
+              TrueNull = mcpObj$TrueNull
+            ))))
+            stop(e) # Rethrow the error after logging
+          }
+        )
+        # EffCountDF <- CountEfficacy(simID = simID, SummaryStatFile = SummStatDF)
 
         lPowerCountDF[[nSim_Stage2]] <- powerCountDF
-        lEffCountDF[[nSim_Stage2]] <- EffCountDF
+        # lEffCountDF[[nSim_Stage2]] <- EffCountDF
+        lEffCountDF[[nSim_Stage2]] <- t(apply(SummStatDF[, grep("^RejStatus", names(SummStatDF))], 2, any))
       }
       powerCountDF = do.call(rbind, lPowerCountDF)
-      powerCountDF$simID_Stage2 <- NULL
+      # powerCountDF$simID_Stage2 <- NULL
       EffCountDF = do.call(rbind, lEffCountDF)
-      EffCountDF$simID_Stage2 <- NULL
+      # EffCountDF$simID_Stage2 <- NULL
     }
 
     # Check for Early Stopping Conditions
@@ -364,6 +379,13 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
     # End of Look-wise Loop #
   }
 
+  # handle power and efficacy tables if trial stops at look 1
+  if (nrow(mcpObj$SummStatDF) == 1) {
+    SummStatDF <- mcpObj$SummStatDF
+    powerCountDF <- CountPower(simID = simID, SummaryStatFile = SummStatDF, TrueNull = mcpObj$TrueNull)
+    EffCountDF <- t(apply(SummStatDF[, grep("^RejStatus", names(SummStatDF))], 2, any))
+  }
+
   SelectionDF <- data.frame()
   # Selection Summary Table
   if (mcpObj$Selection & length(mcpObj$SelectedIndex) > 0) {
@@ -374,7 +396,7 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
   }
   list(
     "SummStatDF" = SummStatDF,
-    "ArmWiseDF" = ArmWiseDF,
+    "ArmWiseDF" = mcpObj$ArmDataDF,
     "powerCountDF" = powerCountDF,
     "EfficacyTable" = EffCountDF,
     "SelectionDF" = SelectionDF

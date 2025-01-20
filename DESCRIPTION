@@ -11,7 +11,7 @@ LazyData: true
 RoxygenNote: 7.3.2
 Imports: stats, plyr, dplyr,tidyr, rpact, gMCPLite, RColorBrewer, stringr, 
          visNetwork, reshape2, htmltools,gridExtra, parallel, rstudioapi, 
-         matrixcalc, shiny, shinycssloaders, rhandsontable, future, promises
+         matrixcalc, shiny, shinycssloaders, rhandsontable, future, promises, data.table
 Suggests: 
     knitr,
     rmarkdown,

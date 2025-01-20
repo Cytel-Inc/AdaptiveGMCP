@@ -8,6 +8,8 @@
 ## Modification of AdaptGMCP to also work on MacOs/Linux
 
 # Modify the function
+#' @importFrom data.table data.table setDT := .N .SD setorder
+#' @importFrom dplyr %>%
 modified_MAMSMEP_sim2 <- function (gmcpSimObj)
 {
   preSimObjs <<- getPreSimObjs(gmcpSimObj = gmcpSimObj)
@@ -86,12 +88,44 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
       SummaryStatFile <- rbind(SummaryStatFile, out[[i]]$SummStatDF)
       ArmWiseSummary <- rbind(ArmWiseSummary, out[[i]]$ArmWiseDF)
       PowerTab <- rbind(PowerTab, out[[i]]$powerCountDF)
-      EfficacyTable <- plyr::rbind.fill(EfficacyTable, out[[i]]$EfficacyTable)
+      # EfficacyTable <- plyr::rbind.fill(EfficacyTable, out[[i]]$EfficacyTable)
       SelectionTab <- rbind(SelectionTab, out[[i]]$SelectionDF)
       SuccessedSims <- SuccessedSims + 1
     }
   }
+  EfficacyTable <- data.table::rbindlist(lapply(out, function(x) {
+    if (is.list(x) && !is.null(x$EfficacyTable)) { # Check if EfficacyTable exists and is not NULL
+      df <- as.data.frame(matrix(x$EfficacyTable,
+                                 nrow = nrow(x$EfficacyTable),
+                                 dimnames = dimnames(x$EfficacyTable)))
+      return(df)
+    }
+  })) # Fill missing values in the final combined table
+  cols <- grep("^RejStatus", names(EfficacyTable), value = TRUE)  # Identify relevant columns
+  EfficacyTable[
+    , Hypothesis := {
+      # Create a matrix of values for all rows and columns
+      result_matrix <- do.call(cbind, lapply(seq_along(cols), function(i) {
+        ifelse(.SD[[i]], sub("RejStatus", "H", cols[i]), "")
+      }))
 
+      # Collapse each row into a single string
+      apply(result_matrix, 1, function(row) {
+        paste(Filter(nzchar, row), collapse = ", ")
+      })
+    },
+    .SDcols = cols
+  ]
+  EfficacyTable <- EfficacyTable[
+    Hypothesis != "",  # Exclude rows with blank Hypothesis
+    .(Count = .N),     # Count rows per group
+    by = Hypothesis    # Group by Hypothesis
+  ]
+
+  EfficacyTable_totalRows <- sum(EfficacyTable$Count)
+  EfficacyTable[, Percentage := (Count / EfficacyTable_totalRows) * 100]
+  # Sort by Count in descending order
+  data.table::setorder(EfficacyTable, -Count)  # Using setorder() which is faster than order()
   # Processing simulation results
   Sim_power <- SimPowers(nSimulation = gmcpSimObj$nSimulation,
                          nSimulation_Stage2 = gmcpSimObj$nSimulation_Stage2,
@@ -100,10 +134,11 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
   Sim_power <- knitr::kable(Sim_power,
                             align = "c",
                             col.names = c(' ','Overall Powers','Confidence Interval(95%)'))
-  eff_count <- colSums(EfficacyTable[, -1])
-  EffTab <- data.frame(Hypothesis = names(eff_count), Count = eff_count, Percentage = 100 * (eff_count / SuccessedSims), row.names = NULL)
-  rownames(EffTab) <- NULL
-  EffTab <- knitr::kable(EffTab, align = "c")
+  # eff_count <- colSums(EfficacyTable)
+  # EffTab <- data.frame(Hypothesis = names(eff_count), Count = eff_count, Percentage = 100 * (eff_count / SuccessedSims), row.names = NULL)
+  # rownames(EffTab) <- NULL
+  # EffTab <- knitr::kable(EffTab, align = "c")
+  EffTab <- EfficacyTable
 
   if (gmcpSimObj$Selection) {
     SelcCount <- table(SelectionTab$SelectedHypothesis)
