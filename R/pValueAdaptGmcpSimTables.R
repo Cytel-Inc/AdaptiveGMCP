@@ -5,9 +5,7 @@
 # Compute Overall Power Table from all the simulation
 #-------------- -
 SimPowers <- function(nSimulation, nSimulation_Stage2, PowerTab) {
-  values <- as.numeric(apply(PowerTab[, -1], 2, function(x) {
-    sum(x) / (nrow(PowerTab))
-  }))
+  values <- colSums(PowerTab[, -1, with = FALSE]) / nrow(PowerTab)
   # 95% confidence interval
   z_alpha <- qnorm(1-0.025)
   UL <- values + z_alpha*sqrt(values*(1-values)/(nrow(PowerTab)))

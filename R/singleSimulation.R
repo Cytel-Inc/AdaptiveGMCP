@@ -356,7 +356,10 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
         # lEffCountDF[[nSim_Stage2]] <- EffCountDF
         lEffCountDF[[nSim_Stage2]] <- t(apply(SummStatDF[, grep("^RejStatus", names(SummStatDF))], 2, any))
       }
-      powerCountDF = do.call(rbind, lPowerCountDF)
+      powerCountDF <- data.table::rbindlist(lPowerCountDF, fill = TRUE)
+      powerCountDF <- colMeans(powerCountDF, na.rm = TRUE)
+      powerCountDF <- as.data.frame(as.list(powerCountDF))
+
       # powerCountDF$simID_Stage2 <- NULL
       EffCountDF = do.call(rbind, lEffCountDF)
       # EffCountDF$simID_Stage2 <- NULL

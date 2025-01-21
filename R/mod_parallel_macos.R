@@ -14,12 +14,11 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
 {
   preSimObjs <<- getPreSimObjs(gmcpSimObj = gmcpSimObj)
   starttime <- Sys.time()
-  SummaryStatFile <- ArmWiseSummary <- PowerTab <- data.frame()
+  SummaryStatFile <- ArmWiseSummary <- SelectionTab <- data.table()
   powersName <- c("simID", "nG", "nC", "nD", "nF")
-  PowerTab <- data.frame(matrix(nrow = 0, ncol = length(powersName)))
+  PowerTab <- data.table(matrix(nrow = 0, ncol = length(powersName)))
   EfficacyTable <- data.frame()
-  names(PowerTab) <- powersName
-  SelectionTab <- data.frame()
+  data.table::setnames(PowerTab, powersName)
   if (gmcpSimObj$Method == "CER") {
     if (gmcpSimObj$Parallel) {
       cores <- parallel::detectCores()
@@ -85,11 +84,10 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
         sprintf("Error Simulation %d ", i)
       }
     } else {
-      SummaryStatFile <- rbind(SummaryStatFile, out[[i]]$SummStatDF)
-      ArmWiseSummary <- rbind(ArmWiseSummary, out[[i]]$ArmWiseDF)
-      PowerTab <- rbind(PowerTab, out[[i]]$powerCountDF)
-      # EfficacyTable <- plyr::rbind.fill(EfficacyTable, out[[i]]$EfficacyTable)
-      SelectionTab <- rbind(SelectionTab, out[[i]]$SelectionDF)
+      SummaryStatFile <- data.table::rbindlist(list(SummaryStatFile, data.table(out[[i]]$SummStatDF)), use.names = TRUE, fill = TRUE)
+      ArmWiseSummary <- data.table::rbindlist(list(ArmWiseSummary, data.table(out[[i]]$ArmWiseDF)), use.names = TRUE, fill = TRUE)
+      PowerTab <- data.table::rbindlist(list(PowerTab, data.table(out[[i]]$powerCountDF)), use.names = TRUE, fill = TRUE)
+      SelectionTab <- data.table::rbindlist(list(SelectionTab, data.table(out[[i]]$SelectionDF)), use.names = TRUE, fill = TRUE)
       SuccessedSims <- SuccessedSims + 1
     }
   }
@@ -125,7 +123,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
   EfficacyTable_totalRows <- sum(EfficacyTable$Count)
   EfficacyTable[, Percentage := (Count / EfficacyTable_totalRows) * 100]
   # Sort by Count in descending order
-  data.table::setorder(EfficacyTable, -Count)  # Using setorder() which is faster than order()
+  data.table::setorder(EfficacyTable, -Count)
   # Processing simulation results
   Sim_power <- SimPowers(nSimulation = gmcpSimObj$nSimulation,
                          nSimulation_Stage2 = gmcpSimObj$nSimulation_Stage2,
