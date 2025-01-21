@@ -354,14 +354,14 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
 
         lPowerCountDF[[nSim_Stage2]] <- powerCountDF
         # lEffCountDF[[nSim_Stage2]] <- EffCountDF
-        lEffCountDF[[nSim_Stage2]] <- t(apply(SummStatDF[, grep("^RejStatus", names(SummStatDF))], 2, any))
+        # lEffCountDF[[nSim_Stage2]] <- t(apply(SummStatDF[, grep("^RejStatus", names(SummStatDF))], 2, any))
       }
       powerCountDF <- data.table::rbindlist(lPowerCountDF, fill = TRUE)
       powerCountDF <- colMeans(powerCountDF, na.rm = TRUE)
       powerCountDF <- as.data.frame(as.list(powerCountDF))
 
       # powerCountDF$simID_Stage2 <- NULL
-      EffCountDF = do.call(rbind, lEffCountDF)
+      # EffCountDF = do.call(rbind, lEffCountDF)
       # EffCountDF$simID_Stage2 <- NULL
     }
 
@@ -386,7 +386,7 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
   if (nrow(mcpObj$SummStatDF) == 1) {
     SummStatDF <- mcpObj$SummStatDF
     powerCountDF <- CountPower(simID = simID, SummaryStatFile = SummStatDF, TrueNull = mcpObj$TrueNull)
-    EffCountDF <- t(apply(SummStatDF[, grep("^RejStatus", names(SummStatDF))], 2, any))
+    # EffCountDF <- t(apply(SummStatDF[, grep("^RejStatus", names(SummStatDF))], 2, any))
   }
 
   SelectionDF <- data.frame()
@@ -401,7 +401,7 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
     "SummStatDF" = SummStatDF,
     "ArmWiseDF" = mcpObj$ArmDataDF,
     "powerCountDF" = powerCountDF,
-    "EfficacyTable" = EffCountDF,
+    # "EfficacyTable" = EffCountDF,
     "SelectionDF" = SelectionDF
   )
 }

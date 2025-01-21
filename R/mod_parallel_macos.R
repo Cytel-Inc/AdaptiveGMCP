@@ -75,7 +75,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
       })
     }
   }
-
+  startTime_postproc <- Sys.time()
   # Aggregating results
   SuccessedSims <- 0
   for (i in 1:length(out)) {
@@ -91,39 +91,39 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
       SuccessedSims <- SuccessedSims + 1
     }
   }
-  EfficacyTable <- data.table::rbindlist(lapply(out, function(x) {
-    if (is.list(x) && !is.null(x$EfficacyTable)) { # Check if EfficacyTable exists and is not NULL
-      df <- as.data.frame(matrix(x$EfficacyTable,
-                                 nrow = nrow(x$EfficacyTable),
-                                 dimnames = dimnames(x$EfficacyTable)))
-      return(df)
-    }
-  })) # Fill missing values in the final combined table
-  cols <- grep("^RejStatus", names(EfficacyTable), value = TRUE)  # Identify relevant columns
-  EfficacyTable[
-    , Hypothesis := {
-      # Create a matrix of values for all rows and columns
-      result_matrix <- do.call(cbind, lapply(seq_along(cols), function(i) {
-        ifelse(.SD[[i]], sub("RejStatus", "H", cols[i]), "")
-      }))
-
-      # Collapse each row into a single string
-      apply(result_matrix, 1, function(row) {
-        paste(Filter(nzchar, row), collapse = ", ")
-      })
-    },
-    .SDcols = cols
-  ]
-  EfficacyTable <- EfficacyTable[
-    Hypothesis != "",  # Exclude rows with blank Hypothesis
-    .(Count = .N),     # Count rows per group
-    by = Hypothesis    # Group by Hypothesis
-  ]
-
-  EfficacyTable_totalRows <- sum(EfficacyTable$Count)
-  EfficacyTable[, Percentage := (Count / EfficacyTable_totalRows) * 100]
-  # Sort by Count in descending order
-  data.table::setorder(EfficacyTable, -Count)
+  # EfficacyTable <- data.table::rbindlist(lapply(out, function(x) {
+  #   if (is.list(x) && !is.null(x$EfficacyTable)) { # Check if EfficacyTable exists and is not NULL
+  #     df <- as.data.frame(matrix(x$EfficacyTable,
+  #                                nrow = nrow(x$EfficacyTable),
+  #                                dimnames = dimnames(x$EfficacyTable)))
+  #     return(df)
+  #   }
+  # })) # Fill missing values in the final combined table
+  # cols <- grep("^RejStatus", names(EfficacyTable), value = TRUE)  # Identify relevant columns
+  # EfficacyTable[
+  #   , Hypothesis := {
+  #     # Create a matrix of values for all rows and columns
+  #     result_matrix <- do.call(cbind, lapply(seq_along(cols), function(i) {
+  #       ifelse(.SD[[i]], sub("RejStatus", "H", cols[i]), "")
+  #     }))
+  #
+  #     # Collapse each row into a single string
+  #     apply(result_matrix, 1, function(row) {
+  #       paste(Filter(nzchar, row), collapse = ", ")
+  #     })
+  #   },
+  #   .SDcols = cols
+  # ]
+  # EfficacyTable <- EfficacyTable[
+  #   Hypothesis != "",  # Exclude rows with blank Hypothesis
+  #   .(Count = .N),     # Count rows per group
+  #   by = Hypothesis    # Group by Hypothesis
+  # ]
+  #
+  # EfficacyTable_totalRows <- sum(EfficacyTable$Count)
+  # EfficacyTable[, Percentage := (Count / EfficacyTable_totalRows) * 100]
+  # # Sort by Count in descending order
+  # data.table::setorder(EfficacyTable, -Count)
   # Processing simulation results
   Sim_power <- SimPowers(nSimulation = gmcpSimObj$nSimulation,
                          nSimulation_Stage2 = gmcpSimObj$nSimulation_Stage2,
@@ -136,7 +136,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
   # EffTab <- data.frame(Hypothesis = names(eff_count), Count = eff_count, Percentage = 100 * (eff_count / SuccessedSims), row.names = NULL)
   # rownames(EffTab) <- NULL
   # EffTab <- knitr::kable(EffTab, align = "c")
-  EffTab <- EfficacyTable
+  # EffTab <- EfficacyTable
 
   if (gmcpSimObj$Selection) {
     SelcCount <- table(SelectionTab$SelectedHypothesis)
@@ -148,6 +148,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
   }
 
   elapsedTime <- Sys.time() - starttime
+  elapsedTime_postProc <- Sys.time() - startTime_postproc
 
   # Detailed output preparation
   detailOutput <- if (gmcpSimObj$Method == "CER") {
@@ -158,13 +159,14 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              Boundary_Table = preSimObjs$plan_Bdry$PlanBdryTab,
              Overall_Powers = Sim_power,
              Overall_Powers_df = Sim_power_df,
-             EfficacyTable = EffTab,
+             # EfficacyTable = EffTab,
              SelectionTable = SelecTab,
              Summary_Stat = SummaryStatFile,
              ArmWiseSummary = ArmWiseSummary,
              Seed = preSimObjs$SimSeed,
              SuccessedSims = SuccessedSims,
-             elapsedTime = elapsedTime
+             elapsedTime = elapsedTime,
+             elapsedTime_postProc = elapsedTime_postProc
            ),
            list(
              PlanSampleSizeCum = preSimObjs$planSS$CumulativeSamples,
@@ -172,11 +174,12 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              Boundary_Table = preSimObjs$plan_Bdry$PlanBdryTab,
              Overall_Powers = Sim_power,
              Overall_Powers_df = Sim_power_df,
-             EfficacyTable = EffTab,
+             # EfficacyTable = EffTab,
              SelectionTable = SelecTab,
              Seed = preSimObjs$SimSeed,
              SuccessedSims = SuccessedSims,
-             elapsedTime = elapsedTime
+             elapsedTime = elapsedTime,
+             elapsedTime_postProc = elapsedTime_postProc
            )
     )
   } else {

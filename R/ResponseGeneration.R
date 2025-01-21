@@ -46,7 +46,7 @@ genIncrLookSummary <- function(SimSeed,
       CtrSS <- TrtSS <- CtrSoS <- TrtSoS <- CtrSum <- TrtSum <-
         CtrMean <- TrtMean <- rep(NA, nrow(HypoMap))
 
-      armData <- data.frame()
+      armData <- data.table()
       SubjData <- list()
       for (armIDX in 1:length(ArmsPresent))
       {
@@ -97,17 +97,26 @@ genIncrLookSummary <- function(SimSeed,
           if (returnSubjData) SubjData[[paste("Arm", armIDX, sep = "")]] <- arm_response
 
 
-          arm_sumry <- data.frame(armSumry(arm_response),row.names = NULL)
-          arm_sumry$Groups <- grps
+          arm_sumry <- data.table::as.data.table(armSumry(arm_response))
+          arm_sumry[, Groups := grps]
 
-          armdatadf <- data.frame(cbind(
-            rep(simID, length(grps)), rep(lookID, length(grps)),
-            rep(armIDX, length(grps)), grps,
-            rep(arm_SS, length(grps)), arm_sumry$Avg,
-            arm_sumry$SumOfSquare
-          ),row.names = NULL)
-          colnames(armdatadf) <- c("SimID", "LookID", "ArmID", "EpID", "Completers", "Mean", "SumOfSquares")
-          armData <- rbind(armData, armdatadf)
+          # armdatadf <- data.frame(cbind(
+          #   rep(simID, length(grps)), rep(lookID, length(grps)),
+          #   rep(armIDX, length(grps)), grps,
+          #   rep(arm_SS, length(grps)), arm_sumry$Avg,
+          #   arm_sumry$SumOfSquare
+          # ),row.names = NULL)
+          # colnames(armdatadf) <- c("SimID", "LookID", "ArmID", "EpID", "Completers", "Mean", "SumOfSquares")
+          armdatadf <- data.table(
+            SimID = rep(simID, length(grps)),
+            LookID = rep(lookID, length(grps)),
+            ArmID = rep(armIDX, length(grps)),
+            EpID = grps,
+            Completers = rep(arm_SS, length(grps)),
+            Mean = arm_sumry$Avg,
+            SumOfSquares = arm_sumry$SumOfSquare
+          )
+          armData <- data.table::rbindlist(list(armData, armdatadf), use.names = TRUE, fill = TRUE)
 
           if (armIDX == 1) {
             CtrSS[which(HypoMap$Control == armIDX)] <- Arms.SS[armIDX]
@@ -139,9 +148,9 @@ genIncrLookSummary <- function(SimSeed,
       colnames(SoS_df) <- colnames(SUM_df) <- colnames(MEAN_df) <- c("Control", "Treatment")
 
       if (returnSubjData) {
-        return(list("SSIncrDF" = SS_df, "SumOfSquareDF" = SoS_df, "SumDF" = SUM_df, "MeanDF" = MEAN_df, "ArmData" = armData, "SubjData" = SubjData))
+        return(list("SSIncrDF" = SS_df, "SumOfSquareDF" = SoS_df, "SumDF" = SUM_df, "MeanDF" = MEAN_df, "ArmData" = as.data.frame(armData), "SubjData" = SubjData))
       } else {
-        return(list("SSIncrDF" = SS_df, "SumOfSquareDF" = SoS_df, "SumDF" = SUM_df, "MeanDF" = MEAN_df, "ArmData" = armData))
+        return(list("SSIncrDF" = SS_df, "SumOfSquareDF" = SoS_df, "SumDF" = SUM_df, "MeanDF" = MEAN_df, "ArmData" = as.data.frame(armData)))
       }
     },
     error = function(err) {
