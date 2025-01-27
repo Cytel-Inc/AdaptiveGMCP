@@ -465,22 +465,22 @@ getInterimSSIncr <- function(lookID, PlanSSIncr, ArmsPresent, ArmsRetained,
   planSS <- SS.arm <- PlanSSIncr[lookID, ] # If no Implicit SSR is needed SS.arm = Planned Sample Size
 
   if (ImplicitSSR == "Selection" & lookID > 1) # Re-allocate samples from only de-selected arms
-    {
-      AditionalSS <- sum(planSS[which(ArmsRetained)])
-      ss_frac <- Arms.alloc.ratio[ArmsPresent] / sum(Arms.alloc.ratio[ArmsPresent])
-      SS.arm.add <- round(AditionalSS * ss_frac)
-      SS.arm.add[1] <- AditionalSS - sum(SS.arm.add[-1])
-      SS.arm[which(ArmsPresent)] <- SS.arm[which(ArmsPresent)] + SS.arm.add
-      SS.arm[which(!ArmsPresent)] <- NA
-    } else if (ImplicitSSR == "All" & lookID > 1) # Allocate all the samples planed to the available arms
-    {
-      AditionalSS <- sum(planSS[which(!ArmsPresent)])
-      ss_frac <- Arms.alloc.ratio[ArmsPresent] / sum(Arms.alloc.ratio[ArmsPresent])
-      SS.arm.add <- round(AditionalSS * ss_frac)
-      SS.arm.add[1] <- AditionalSS - sum(SS.arm.add[-1])
-      SS.arm[which(ArmsPresent)] <- SS.arm[which(ArmsPresent)] + SS.arm.add
-      SS.arm[which(!ArmsPresent)] <- NA
-    } else {
+  {
+    AditionalSS <- sum(planSS[which(ArmsRetained)])
+    ss_frac <- Arms.alloc.ratio[ArmsPresent] / sum(Arms.alloc.ratio[ArmsPresent])
+    SS.arm.add <- round(AditionalSS * ss_frac)
+    SS.arm.add[1] <- AditionalSS - sum(SS.arm.add[-1])
+    SS.arm[which(ArmsPresent)] <- SS.arm[which(ArmsPresent)] + SS.arm.add
+    SS.arm[which(!ArmsPresent)] <- NA
+  } else if (ImplicitSSR == "All" & lookID > 1) # Allocate all the samples planed to the available arms
+  {
+    AditionalSS <- sum(planSS[which(!ArmsPresent)])
+    ss_frac <- Arms.alloc.ratio[ArmsPresent] / sum(Arms.alloc.ratio[ArmsPresent])
+    SS.arm.add <- round(AditionalSS * ss_frac)
+    SS.arm.add[1] <- AditionalSS - sum(SS.arm.add[-1])
+    SS.arm[which(ArmsPresent)] <- SS.arm[which(ArmsPresent)] + SS.arm.add
+    SS.arm[which(!ArmsPresent)] <- NA
+  } else {
     SS.arm[!ArmsPresent] <- NA
   }
   SS.arm

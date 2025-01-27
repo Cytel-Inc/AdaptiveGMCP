@@ -23,24 +23,24 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
     if (gmcpSimObj$Parallel) {
       cores <- parallel::detectCores()
       if(.Platform$OS.type == "windows")# check OS
-        {
+      {
         cl <- parallel::makeCluster(cores[1] - 1, type = "PSOCK")
-      parallel::clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
-      out <- parallel::parLapply(cl = cl, 1:gmcpSimObj$nSimulation, function(x){
-                                  out_SingleSim <- SingleSimCER2(x, gmcpSimObj, preSimObjs)
-                                  return(out_SingleSim)})
-      parallel::stopCluster(cl)
+        parallel::clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
+        out <- parallel::parLapply(cl = cl, 1:gmcpSimObj$nSimulation, function(x){
+          out_SingleSim <- SingleSimCER2(x, gmcpSimObj, preSimObjs)
+          return(out_SingleSim)})
+        parallel::stopCluster(cl)
       }
       else
-        {
-          ###--- code to run in parallel on macos
-          out <- parallel::mclapply(1:gmcpSimObj$nSimulation, function(x) {
-        out_SingleSim <- SingleSimCER2(x, gmcpSimObj, preSimObjs)
-        return(out_SingleSim)
-      },mc.cores = cores[1] - 1)
-         ###---
-    }
+      {
+        ###--- code to run in parallel on macos
+        out <- parallel::mclapply(1:gmcpSimObj$nSimulation, function(x) {
+          out_SingleSim <- SingleSimCER2(x, gmcpSimObj, preSimObjs)
+          return(out_SingleSim)
+        },mc.cores = cores[1] - 1)
+        ###---
       }
+    }
     else {
       out <- lapply(1:gmcpSimObj$nSimulation, function(x) {
         SingleSimCER2(x, gmcpSimObj, preSimObjs)
@@ -62,14 +62,14 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
       }
       else
       {
-      ###--- code to run in parallel on macos
-      out <- parallel::mclapply(1:gmcpSimObj$nSimulation, function(x) {
-        out_SingleSim <- SingleSimCombPValue2(x, gmcpSimObj, preSimObjs)
-        return(out_SingleSim)
-      },mc.cores = cores[1] - 1)
-      ###---
-    }
-      } else {
+        ###--- code to run in parallel on macos
+        out <- parallel::mclapply(1:gmcpSimObj$nSimulation, function(x) {
+          out_SingleSim <- SingleSimCombPValue2(x, gmcpSimObj, preSimObjs)
+          return(out_SingleSim)
+        },mc.cores = cores[1] - 1)
+        ###---
+      }
+    } else {
       out <- lapply(1:gmcpSimObj$nSimulation, function(x) {
         SingleSimCombPValue2(x, gmcpSimObj, preSimObjs)
       })
@@ -84,10 +84,10 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
         sprintf("Error Simulation %d ", i)
       }
     } else {
-      SummaryStatFile <- data.table::rbindlist(list(SummaryStatFile, data.table(out[[i]]$SummStatDF)), use.names = TRUE, fill = TRUE)
-      ArmWiseSummary <- data.table::rbindlist(list(ArmWiseSummary, data.table(out[[i]]$ArmWiseDF)), use.names = TRUE, fill = TRUE)
+      # SummaryStatFile <- data.table::rbindlist(list(SummaryStatFile, data.table(out[[i]]$SummStatDF)), use.names = TRUE, fill = TRUE)
+      # ArmWiseSummary <- data.table::rbindlist(list(ArmWiseSummary, data.table(out[[i]]$ArmWiseDF)), use.names = TRUE, fill = TRUE)
       PowerTab <- data.table::rbindlist(list(PowerTab, data.table(out[[i]]$powerCountDF)), use.names = TRUE, fill = TRUE)
-      SelectionTab <- data.table::rbindlist(list(SelectionTab, data.table(out[[i]]$SelectionDF)), use.names = TRUE, fill = TRUE)
+      # SelectionTab <- data.table::rbindlist(list(SelectionTab, data.table(out[[i]]$SelectionDF)), use.names = TRUE, fill = TRUE)
       SuccessedSims <- SuccessedSims + 1
     }
   }
@@ -138,18 +138,18 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
   # EffTab <- knitr::kable(EffTab, align = "c")
   # EffTab <- EfficacyTable
 
-  if (gmcpSimObj$Selection) {
-    SelcCount <- table(SelectionTab$SelectedHypothesis)
-    SelcPerc <- 100 * (SelcCount / SuccessedSims)
-    SelecTab <- data.frame(Hypothesis = names(SelcCount), Count = as.vector(SelcCount), Percentage = as.vector(SelcPerc), row.names = NULL)
-    SelecTab <- knitr::kable(SelecTab, align = "c")
-  } else {
-    SelecTab <- NA
-  }
+  # if (gmcpSimObj$Selection) {
+  #   SelcCount <- table(SelectionTab$SelectedHypothesis)
+  #   SelcPerc <- 100 * (SelcCount / SuccessedSims)
+  #   SelecTab <- data.frame(Hypothesis = names(SelcCount), Count = as.vector(SelcCount), Percentage = as.vector(SelcPerc), row.names = NULL)
+  #   SelecTab <- knitr::kable(SelecTab, align = "c")
+  # } else {
+  #   SelecTab <- NA
+  # }
 
   elapsedTime <- Sys.time() - starttime
   elapsedTime_postProc <- Sys.time() - startTime_postproc
-
+  gmcpSimObj$SummaryStat <- FALSE
   # Detailed output preparation
   detailOutput <- if (gmcpSimObj$Method == "CER") {
     ifElse(gmcpSimObj$SummaryStat,
@@ -161,8 +161,8 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              Overall_Powers_df = Sim_power_df,
              # EfficacyTable = EffTab,
              SelectionTable = SelecTab,
-             Summary_Stat = SummaryStatFile,
-             ArmWiseSummary = ArmWiseSummary,
+             # Summary_Stat = SummaryStatFile,
+             # ArmWiseSummary = ArmWiseSummary,
              Seed = preSimObjs$SimSeed,
              SuccessedSims = SuccessedSims,
              elapsedTime = elapsedTime,
@@ -175,7 +175,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              Overall_Powers = Sim_power,
              Overall_Powers_df = Sim_power_df,
              # EfficacyTable = EffTab,
-             SelectionTable = SelecTab,
+             # SelectionTable = SelecTab,
              Seed = preSimObjs$SimSeed,
              SuccessedSims = SuccessedSims,
              elapsedTime = elapsedTime,
@@ -191,10 +191,10 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              Inverse_Normal_Weights = preSimObjs$InvNormWeights$InvNormWeightsTab,
              Overall_Powers = Sim_power,
              Overall_Powers_df = Sim_power_df,
-             EfficacyTable = EffTab,
-             SelectionTable = SelecTab,
-             Summary_Stat = SummaryStatFile,
-             ArmWiseSummary = ArmWiseSummary,
+             # EfficacyTable = EffTab,
+             # SelectionTable = SelecTab,
+             # Summary_Stat = SummaryStatFile,
+             # ArmWiseSummary = ArmWiseSummary,
              Seed = preSimObjs$SimSeed,
              SuccessedSims = SuccessedSims,
              elapsedTime = elapsedTime
@@ -206,8 +206,8 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              Inverse_Normal_Weights = preSimObjs$InvNormWeights$InvNormWeightsTab,
              Overall_Powers = Sim_power,
              Overall_Powers_df = Sim_power_df,
-             EfficacyTable = EffTab,
-             SelectionTable = SelecTab,
+             # EfficacyTable = EffTab,
+             # SelectionTable = SelecTab,
              Seed = preSimObjs$SimSeed,
              SuccessedSims = SuccessedSims,
              elapsedTime = elapsedTime
