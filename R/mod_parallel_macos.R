@@ -160,7 +160,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              Overall_Powers = Sim_power,
              Overall_Powers_df = Sim_power_df,
              # EfficacyTable = EffTab,
-             SelectionTable = SelecTab,
+             # SelectionTable = SelecTab,
              # Summary_Stat = SummaryStatFile,
              # ArmWiseSummary = ArmWiseSummary,
              Seed = preSimObjs$SimSeed,
