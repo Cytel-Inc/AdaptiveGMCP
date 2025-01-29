@@ -111,6 +111,11 @@ simMAMSMEP <- function(
     EastSumStat = NULL,
     Parallel = TRUE) {
 
+  # nSimulation_Stage2 should always take value 1 if method is not CER
+  if (Method != "CER") {
+    nSimulation_Stage2 = 1
+  }
+
   TailType <- "RightTail" ## Default Right
   UpdateStrategy <- F ## Not implemented yet
   des.type <- "MAMSMEP" ## Multi-Arm Multi-Stage Multi-EndPoints
