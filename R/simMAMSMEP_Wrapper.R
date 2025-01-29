@@ -103,6 +103,7 @@ run1TestCase <- function(InputDF) {
   SummaryStat <- InputDF$SummaryStat
   plotGraphs <- InputDF$plotGraphs
   Parallel <- InputDF$Parallel
+  nSimulation_Stage2 <- InputDF$nSimulation_Stage2
   # put the following code in try catch so the loop continues even if one iteration fails
   out <- simMAMSMEP(
     alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType=lEpType,
@@ -113,7 +114,7 @@ run1TestCase <- function(InputDF) {
     Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
     SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
     ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
-    Method = Method, plotGraphs = plotGraphs, Parallel = Parallel,CommonStdDev = CommonStdDev
+    Method = Method, plotGraphs = plotGraphs, Parallel = Parallel,CommonStdDev = CommonStdDev, nSimulation_Stage2 = nSimulation_Stage2
   )
   out
 }
