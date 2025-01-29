@@ -81,6 +81,7 @@ perLookTest <- function(Arms.SS.Incr, SummStat, mcpObj) {
           {
             Stage1Objs <- mcpObj$Stage1Obj
             if (!mcpObj$AdaptStage2) {
+              #This section should be execute only with planned design(no selection/SSR)
               WH_modified_idx <- as.vector(apply(
                 mcpObj$WH[, grep("H", names(mcpObj$WH))], 1,
                 function(x) {

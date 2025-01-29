@@ -20,7 +20,6 @@ MAMSMEP_sim2 <- function(gmcpSimObj) {
   EfficacyTable <- data.frame()
   names(PowerTab) <- powersName
   SelectionTab <- data.frame()
-
   if (gmcpSimObj$Method == "CER") {
     if (gmcpSimObj$Parallel) {
       cores <- parallel::detectCores()
@@ -197,7 +196,20 @@ MAMSMEP_sim2 <- function(gmcpSimObj) {
 getPreSimObjs <- function(gmcpSimObj) {
   #----------------------------------------------------------------------------
   ################## Generate unique Seed for the run #########################
-  SimSeed <- ifelse(gmcpSimObj$Seed == "Random", sample(1:10000, 1), gmcpSimObj$Seed)
+  #should not be greater than 4 digits
+  if(gmcpSimObj$Seed == "Random"){
+   IntSeed1 <- as.integer(Sys.time())
+   IntSeed2 <- ifelse(IntSeed1 > 9999,
+        substr(as.character(IntSeed1), nchar(IntSeed1) - 3, nchar(IntSeed1)),
+        substr(IntSeed1)
+        )
+   SimSeed <-as.integer(
+                paste(sample(strsplit(IntSeed2, "")[[1]]),collapse = '')
+                )
+
+  } else {
+    SimSeed <- gmcpSimObj$Seed
+  }
 
   #----------------------------------------------------------------------------
   ################### Arms-EPs-Hypotheses Mapping #####################################
@@ -236,6 +248,7 @@ getPreSimObjs <- function(gmcpSimObj) {
 
   #--------------------------------------------------------------------------------------
   ############################## Planned Sample Size ################################
+
   planSS <- getPlanAllocatedSamples(
     SS = gmcpSimObj$Max_SS,
     allocRatio = gmcpSimObj$Arms.alloc.ratio,
@@ -324,7 +337,8 @@ getPreSimObjs <- function(gmcpSimObj) {
         Sigma = Sigma,
         WH = WH,
         HypoMap = HypoMap,
-        Scale = "Score"
+        Scale = "Score",
+        planSSCum = planSSCum
       )
 
 

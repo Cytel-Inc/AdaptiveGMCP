@@ -13,23 +13,55 @@ planBdryCER <- function(nHypothesis,
                         Sigma,
                         WH,
                         HypoMap,
-                        Scale) {
+                        Scale,
+                        planSSCum) {
   Method <- c()
   SubSets <- c()
-  SignfLevel <- c()
+  SignfLevelStage1 <- SignfLevelStage2 <- c()
+
+  if(typeOfDesign == "WT"){
+    alpha1 <- rpact::getDesignGroupSequential(
+      kMax = nLooks, alpha = alpha,
+      informationRates = info_frac,
+      typeOfDesign = typeOfDesign,
+      deltaWT = deltaWT
+    )$alphaSpent[1]
+  }else if(typeOfDesign == "PT"){
+    alpha1 <- rpact::getDesignGroupSequential(
+      kMax = nLooks, alpha = alpha,
+      informationRates = info_frac,
+      typeOfDesign = typeOfDesign,
+      deltaPT1 = deltaPT1
+    )$alphaSpent[1]
+  }else if(typeOfDesign == "asHSD" || typeOfDesign == "asKD"){
+    alpha1 <- rpact::getDesignGroupSequential(
+      kMax = nLooks, alpha = alpha,
+      informationRates = info_frac,
+      typeOfDesign = typeOfDesign,
+      gammaA = gammaA
+    )$alphaSpent[1]
+  }else{
+    alpha1 <- rpact::getDesignGroupSequential(
+      kMax = nLooks, alpha = alpha,
+      informationRates = info_frac,
+      typeOfDesign = typeOfDesign
+    )$alphaSpent[1]
+  }
+
 
   Stage1Bdry <- Stage2Bdry <- matrix(0, nrow = nrow(WH), ncol = nHypothesis)
   colnames(Stage1Bdry) <- paste("a", 1:nHypothesis, "1", sep = "")
   colnames(Stage2Bdry) <- paste("a", 1:nHypothesis, "2", sep = "")
-
+#browser()
   for (i in 1:nrow(WH))
   {
-    # print(i)
+    #print(i)
     J <- as.numeric(WH[i, 1:nHypothesis])
     w <- as.numeric(WH[i, (nHypothesis + 1):(2 * nHypothesis)])
 
     get_Sets <- connSets(J = J, w = w, test.type = test.type, HypoMap = HypoMap)
     conn_Sets <- get_Sets$connSets
+
     conn_Sets_name <- paste("(", paste(
       unlist(lapply(conn_Sets, function(x) {
         paste(x, collapse = ",")
@@ -39,42 +71,98 @@ planBdryCER <- function(nHypothesis,
 
     SubSets <- c(SubSets, conn_Sets_name)
     Method <- c(Method, get_Sets$Method)
+    siglev1 <- siglev2 <- list()
+    siglev1 <- append(siglev1, round(alpha1, 6))
+    siglev2 <- append(siglev2, alpha)
+    wJ <- as.numeric(w) # wJ : weights for the intersection J(including weights with 0)
 
-    siglev <- list()
+    #=================================================================
+    #Define function for total brdy crossing probability at stage 1
+    #=================================================================
+    totalbrdycrossingprobstage1 = function(cJ1){
+
+    #siglev <- append(siglev, paste("S1:", alpha1))
+    exitproblist = numeric()
+
     for (edx in conn_Sets) {
       if (length(edx) > 1) {
         ## Dunnett Weighted Parametric ##
-        sig_level <- alpha * sum(w[edx])
         gIDX <- unique(HypoMap[edx, ]$Groups)
-        wJ <- as.numeric(w) # wJ : weights for the intersection J(including weights with 0)
+        #Exist probability for parametric sub-set at stage 1
+        exitproblist <- c(exitproblist,
+                          exitProbParamStage1(gIDX = gIDX, hIDX = edx, cJ1, wJ = wJ, Sigma, Scale, underNull = TRUE))
 
-        plan_parm_bdry <- getPlanParmBdry(
-          gIDX = gIDX, hIDX = edx, alpha = sig_level, nLooks = nLooks,
-          info_frac = info_frac, wJ = wJ,
-          Sigma = Sigma, typeOfDesign = typeOfDesign,deltaWT= deltaWT,
-          deltaPT1 = deltaPT1, gammaA = gammaA,
-          userAlphaSpending = userAlphaSpending, Scale = Scale
-        )
-        Stage1Bdry[i, edx] <- plan_parm_bdry$Stage1Bdry[edx]
-        Stage2Bdry[i, edx] <- plan_parm_bdry$Stage2Bdry[edx]
       } else {
         ## Non-Parametric ##
-        sig_level <- alpha * sum(w[edx])
-        plan_nparm_bdry <- getPlanNonParmBdry(
-          nLooks = nLooks, sig_level = sig_level,
-          info_frac = info_frac, typeOfDesign = typeOfDesign, deltaWT= deltaWT,
-          deltaPT1 = deltaPT1, gammaA = gammaA,
-          userAlphaSpending = userAlphaSpending
-        )
-        Stage1Bdry[i, edx] <- plan_nparm_bdry$Stage1Bdry
-        Stage2Bdry[i, edx] <- plan_nparm_bdry$Stage2Bdry
+        #Exist probability for non parametric sub-set at stage 1
+        exitproblist <- c(exitproblist, exitProbNParamStage1(cJ1, wJ, hIDX = edx))
       }
-      siglev <- append(siglev, sig_level)
     }
-    SignfLevel <- c(
-      SignfLevel,
+    return(sum(na.omit(exitproblist)))
+    }
+
+    # Define the function to find the root
+    searchcJ1 <- function(x) {
+      totalbrdycrossingprobstage1(cJ1 = x) - alpha1
+    }
+
+    # Find the root using uniroot
+    cJ1 <- uniroot(f = searchcJ1, interval = c(0, 1 / max(w[w != 0])), tol = 1E-16)$root
+
+    # Update Stage1 Bdry matrix
+    Stage1Bdry[i, as.numeric(unlist(conn_Sets))] <- cJ1 * w[as.numeric(unlist(conn_Sets))]
+
+    #=================================================================
+    #Define function for total brdy crossing probability at stage 2
+    #=================================================================
+   totalbrdycrossingprobstage2 = function(cJ2){
+     #browser()
+     #siglev <- append(siglev, paste("S2:", alpha))
+     exitproblist = numeric()
+     for (edx in conn_Sets) {
+       if (length(edx) > 1) {
+         ## Dunnett Weighted Parametric ##
+         gIDX <- unique(HypoMap[edx, ]$Groups)
+         #Exist probability for parametric sub-set at stage 2
+         exitproblist <- c(exitproblist,
+                           exitProbStage2(gIDX = gIDX, hIDX = edx, cJ2, cJ1 = cJ1, wJ = wJ,
+                                                         Sigma = Sigma, Scale = Scale, underNull = TRUE))
+       } else {
+         ## Non-Parametric ##
+         PlanSSHyp <- getHypoSS(SS = planSSCum, HypoMap = HypoMap)
+         ss1 = PlanSSHyp[[1]][edx]; ss2 = PlanSSHyp[[2]][edx]
+         #Exist probability for non parametric sub-set at stage 2
+         exitproblist <- c(exitproblist, exitProbStage2Nparam2(cJ2, cJ1, ss1 = ss1, ss2 = ss2, wJ, hIDX = edx))
+       }
+     }
+     return(sum(na.omit(exitproblist)))
+   }
+
+    # Define the function to find the root
+   searchcJ2 = function(x){
+     totalbrdycrossingprobstage2(cJ2 = x) - alpha
+   }
+
+   # Find the root using uniroot
+   cJ2 = uniroot(f = searchcJ2 , interval = c(0, 1 / max(w[w!= 0])), tol = 1E-16)$root
+
+   # Update Stage1 Bdry matrix
+   Stage2Bdry[i, as.numeric(unlist(conn_Sets))] <- cJ2 * w[as.numeric(unlist(conn_Sets))]
+
+    SignfLevelStage1 <- c(
+      SignfLevelStage1,
       paste("(", paste(
-        unlist(lapply(siglev, function(x) {
+        unlist(lapply(siglev1, function(x) {
+          paste(x, collapse = ",")
+        })),
+        collapse = "),("
+      ), ")", sep = "")
+    )
+
+    SignfLevelStage2 <- c(
+      SignfLevelStage2,
+      paste("(", paste(
+        unlist(lapply(siglev2, function(x) {
           paste(x, collapse = ",")
         })),
         collapse = "),("
@@ -108,7 +196,7 @@ planBdryCER <- function(nHypothesis,
     WH[, 1:(ncol(WH) / 2)],
     SubSets,
     Method,
-    SignfLevel
+    SignfLevelStage2
   )
 
   TestProcedureTab1 <- data.frame(
@@ -131,7 +219,7 @@ planBdryCER <- function(nHypothesis,
 
   Stage1BdryTab1 <- knitr::kable(data.frame(
     "Hypotheses" = InterHyp,
-    "Alpha" = SignfLevel,
+    "Alpha" = SignfLevelStage1,
     "Stage1Boundary" = stg1bdry,
     row.names = NULL
   ), align = "c")
@@ -153,7 +241,7 @@ planBdryCER <- function(nHypothesis,
     }
     Stage2BdryTab1 <- knitr::kable(data.frame(
       "Hypotheses" = InterHyp,
-      "Alpha" = SignfLevel,
+      "Alpha" = SignfLevelStage2,
       "Stage2Boundary" = stg2bdry,
       row.names = NULL
     ), align = "c")
@@ -168,6 +256,7 @@ planBdryCER <- function(nHypothesis,
   list(
     "Stage1Bdry" = Stage1Bdry,
     "Stage2Bdry" = Stage2Bdry,
-    "PlanBdryTable" = PlanBdryTab
+    "PlanBdryTable" = PlanBdryTab,
+    "CriticalPoints" = c(cJ1, cJ2)
   )
 }

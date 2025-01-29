@@ -25,12 +25,9 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
         {
         cl <- parallel::makeCluster(cores[1] - 1, type = "PSOCK")
       parallel::clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
-      out <- parallel::parLapply(cl = cl, 1:gmcpSimObj$nSimulation,
-                                 function(x) {
-                                   out_SingleSim <- SingleSimCER2(x, gmcpSimObj,
-                                                                  preSimObjs)
-                                   return(out_SingleSim)
-                                 })
+      out <- parallel::parLapply(cl = cl, 1:gmcpSimObj$nSimulation, function(x){
+                                  out_SingleSim <- SingleSimCER2(x, gmcpSimObj, preSimObjs)
+                                  return(out_SingleSim)})
       parallel::stopCluster(cl)
       }
       else
@@ -96,9 +93,12 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
   }
 
   # Processing simulation results
-  Sim_power <- SimPowers(nSimulation = gmcpSimObj$nSimulation, PowerTab = PowerTab)
+  Sim_power <- SimPowers(nSimulation = gmcpSimObj$nSimulation,
+                         PowerTab = PowerTab)
   Sim_power_df <- Sim_power
-  Sim_power <- knitr::kable(Sim_power, align = "c")
+  Sim_power <- knitr::kable(Sim_power,
+                            align = "c",
+                            col.names = c(' ','Overall Powers','Confidence Interval(95%)'))
   eff_count <- colSums(EfficacyTable[, -1])
   EffTab <- data.frame(Hypothesis = names(eff_count), Count = eff_count, Percentage = 100 * (eff_count / SuccessedSims), row.names = NULL)
   rownames(EffTab) <- NULL

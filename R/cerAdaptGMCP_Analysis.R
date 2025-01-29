@@ -48,7 +48,6 @@ adaptGMCP_CER <- function(
     gammaA = 2,
     AdaptStage2 = TRUE,
     plotGraphs = TRUE) {
-
   ###### Input Validation #####
   # stopifnot('Number of Arms must be > 2',length(nArms) <= 2)
   # stopifnot('Number of End points must be >= 1',length(nEps) < 1)
@@ -223,7 +222,7 @@ adaptGMCP_CER <- function(
                        prop.ctr = mcpObj$prop.ctr)
       cat("Table of CER and PCER values conditional on stage one p-values \n")
       print(CERTab)
-      #--------------------------------------
+      # #--------------------------------------
 
       if (plotGraphs) # Plot after Stage-1 analysis
         {

@@ -1,6 +1,6 @@
 # test one intersection hypothesis
 testInter <- function(pValues, b) {
-  idx <- which(b != 0)
+  idx <- which(b != 0 & !is.na(pValues))
   any(pValues[idx] <= b[idx])
 }
 
