@@ -9,10 +9,13 @@ SimPowers <- function(nSimulation, nSimulation_Stage2, PowerTab) {
   #   sum(x) / (nrow(PowerTab))
   # }))
   values <- colSums(PowerTab[, -1, with = FALSE]) / nrow(PowerTab)
+  values_se <- apply(as.matrix(PowerTab[, -1]), 2, sd)/sqrt(nrow(PowerTab))
   # 95% confidence interval
   z_alpha <- qnorm(1-0.025)
-  UL <- values + z_alpha*sqrt(values*(1-values)/(nrow(PowerTab)))
-  LL <- values - z_alpha*sqrt(values*(1-values)/(nrow(PowerTab)))
+  # UL <- values + z_alpha*sqrt(values*(1-values)/(nrow(PowerTab)))
+  # LL <- values - z_alpha*sqrt(values*(1-values)/(nrow(PowerTab)))
+  UL <- values + z_alpha*values_se
+  LL <- values - z_alpha*values_se
   ConfIntv <- sapply(1:length(values),function(i){
     paste('(',round(LL[i],5),',',round(UL[i],5),')',sep = '')
   })
