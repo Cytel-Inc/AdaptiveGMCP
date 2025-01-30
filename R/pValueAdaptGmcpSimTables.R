@@ -16,6 +16,10 @@ SimPowers <- function(nSimulation, nSimulation_Stage2, PowerTab) {
   # LL <- values - z_alpha*sqrt(values*(1-values)/(nrow(PowerTab)))
   UL <- values + z_alpha*values_se
   LL <- values - z_alpha*values_se
+
+  # ensure cl's are within bounds
+  UL <- pmax(0, pmin(1, UL))
+  LL <- pmax(0, pmin(1, LL))
   ConfIntv <- sapply(1:length(values),function(i){
     paste('(',round(LL[i],5),',',round(UL[i],5),')',sep = '')
   })
