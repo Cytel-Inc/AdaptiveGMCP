@@ -158,7 +158,8 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
       )
 
       ArmData <- currLookDataIncr$ArmData
-      ArmWiseDF_Stage1 <- plyr::rbind.fill(ArmWiseDF, ArmData)
+      ArmWiseDF_Stage1 <- data.table::rbindlist(list(ArmWiseDF, ArmData), fill = TRUE)
+      data.table::setDF(ArmWiseDF_Stage1)
       mcpObj$ArmDataDF <- ArmWiseDF_Stage1
 
       # Summary Statistics based on first look data
@@ -185,9 +186,13 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
       rejStatus <- data.frame(matrix(mcpObj$rej_flag_Curr, nrow = 1))
       names(rejStatus) <- paste("RejStatus", get_numeric_part(mcpObj$HypoMap$Hypothesis), sep = "")
 
-      SummStat_Stage1 <- plyr::rbind.fill(mcpObj$SummStatBlank, SummStat_Stage1)
+      # SummStat_Stage1 <- plyr::rbind.fill(mcpObj$SummStatBlank, SummStat_Stage1)
+      SummStat_Stage1 <- data.table::rbindlist(list(mcpObj$SummStatBlank, SummStat_Stage1), fill = TRUE)
+      data.table::setDF(SummStat_Stage1)
       SummStat_Stage1 <- fillNa(1, SummStat_Stage1, rejStatus)
-      SummStatDF_Stage1 <- plyr::rbind.fill(SummStatDF, SummStat_Stage1)
+      # SummStatDF_Stage1 <- plyr::rbind.fill(SummStatDF, SummStat_Stage1)
+      SummStatDF_Stage1 <- data.table::rbindlist(list(SummStatDF, SummStat_Stage1), fill = TRUE)
+      data.table::setDF(SummStatDF_Stage1)
       mcpObj$SummStatDF <- SummStatDF_Stage1
       mcpObj$rej_flag_Prev <- mcpObj$rej_flag_Curr
     } else {
@@ -246,7 +251,10 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
           HypoMap = mcpObj$HypoMap
         )
         ArmData <- currLookDataIncr$ArmData
-        ArmWiseDF <- plyr::rbind.fill(ArmWiseDF_Stage1, ArmData)
+        # ArmWiseDF <- plyr::rbind.fill(ArmWiseDF_Stage1, ArmData)
+        ArmWiseDF <- data.table::rbindlist(list(ArmWiseDF_Stage1, ArmData), fill = TRUE)
+        data.table::setDF(ArmWiseDF)
+
         mcpObj$ArmDataDF <- ArmWiseDF
 
         if (mcpObj$FWERControl == "CombinationTest") {
@@ -270,8 +278,9 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
           # Stage-2 raw p-values(Incr.)
           pValIncrCurr <- SummStat[, grep("RawPvalues", names(SummStat))]
 
-          pValIncr <- plyr::rbind.fill(pValIncrPrev, pValIncrCurr)
-
+          # pValIncr <- plyr::rbind.fill(pValIncrPrev, pValIncrCurr)
+          pValIncr <- data.table::rbindlist(list(pValIncrPrev, pValIncrCurr), fill = TRUE)
+          data.table::setDF(pValIncr)
           # Converted to Z Statistics(Incr.)
           zIncr <- apply(pValIncr, 2, function(x) {
             qnorm(1 - x)
@@ -328,9 +337,14 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
         rejStatus <- data.frame(matrix(mcpObj$rej_flag_Curr, nrow = 1))
         names(rejStatus) <- paste("RejStatus", get_numeric_part(mcpObj$HypoMap$Hypothesis), sep = "")
 
-        SummStat <- plyr::rbind.fill(mcpObj$SummStatBlank, SummStat)
+        # SummStat <- plyr::rbind.fill(mcpObj$SummStatBlank, SummStat)
+        SummStat <- data.table::rbindlist(list(mcpObj$SummStatBlank, SummStat), fill = TRUE)
+        data.table::setDF(SummStat)
+
         SummStat <- fillNa(1, SummStat, rejStatus)
-        SummStatDF <- plyr::rbind.fill(SummStatDF_Stage1, SummStat)
+        # SummStatDF <- plyr::rbind.fill(SummStatDF_Stage1, SummStat)
+        SummStatDF <- data.table::rbindlist(list(SummStatDF_Stage1, SummStat), fill = TRUE)
+        data.table::setDF(SummStatDF)
         mcpObj$SummStatDF <- SummStatDF
         mcpObj$ArmDataDF <- ArmWiseDF
 

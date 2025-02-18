@@ -105,6 +105,7 @@ run1TestCase <- function(InputDF) {
   Parallel <- InputDF$Parallel
   nSimulation_Stage2 <- InputDF$nSimulation_Stage2
   # put the following code in try catch so the loop continues even if one iteration fails
+  Seed <- if (!is.na(suppressWarnings(as.numeric(Seed)))) as.numeric(Seed) else Seed
   out <- simMAMSMEP(
     alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType=lEpType,
     TestStatCon = TestStatCon, TestStatBin = TestStatBin, FWERControl = FWERControl,

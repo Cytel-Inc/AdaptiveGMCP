@@ -166,7 +166,8 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              Seed = preSimObjs$SimSeed,
              SuccessedSims = SuccessedSims,
              elapsedTime = elapsedTime,
-             elapsedTime_postProc = elapsedTime_postProc
+             elapsedTime_postProc = elapsedTime_postProc,
+             power_raw = PowerTab
            ),
            list(
              PlanSampleSizeCum = preSimObjs$planSS$CumulativeSamples,
@@ -179,7 +180,8 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              Seed = preSimObjs$SimSeed,
              SuccessedSims = SuccessedSims,
              elapsedTime = elapsedTime,
-             elapsedTime_postProc = elapsedTime_postProc
+             elapsedTime_postProc = elapsedTime_postProc,
+             power_raw = PowerTab
            )
     )
   } else {
@@ -197,7 +199,8 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              # ArmWiseSummary = ArmWiseSummary,
              Seed = preSimObjs$SimSeed,
              SuccessedSims = SuccessedSims,
-             elapsedTime = elapsedTime
+             elapsedTime = elapsedTime,
+             power_raw = PowerTab
            ),
            list(
              PlanSampleSize = preSimObjs$planSS$IncrementalSamples,
@@ -210,7 +213,8 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              # SelectionTable = SelecTab,
              Seed = preSimObjs$SimSeed,
              SuccessedSims = SuccessedSims,
-             elapsedTime = elapsedTime
+             elapsedTime = elapsedTime,
+             power_raw = PowerTab
            )
     )
   }
