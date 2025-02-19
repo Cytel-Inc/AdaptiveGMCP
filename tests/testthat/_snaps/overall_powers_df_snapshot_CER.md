@@ -1,4 +1,4 @@
-# MAMS MEP simulation produces expected results
+# CER simulation produces expected results
 
     Code
       result$Overall_Powers_df
