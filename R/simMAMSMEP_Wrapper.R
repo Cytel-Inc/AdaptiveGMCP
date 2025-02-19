@@ -10,6 +10,8 @@ simMAMSMEP_Wrapper <- function(InputDF) {
 
   lOut <- list()
   for (nModelNum in 1:nrow(InputDF)) {
+    # Start timer for this iteration
+    start_time <- Sys.time()
     out <- tryCatch(
       {
         run1TestCase(InputDF = InputDF[nModelNum, ])
@@ -18,7 +20,13 @@ simMAMSMEP_Wrapper <- function(InputDF) {
         paste0("Model ", nModelNum, " execution failed.")
       }
     )
+
+    # End timer and calculate time taken in seconds
+    end_time <- Sys.time()
+    time_taken <- as.numeric(difftime(end_time, start_time, units = "hours"))
+
     errorLog <- c(!grepl("Invalid", out[[1]]), !is.character(out), !is.null(out))
+
     if (!any(errorLog == F)) {
       # extract the power table from the output
       dfOverall_Powers_long <- out$Overall_Powers_df
@@ -42,6 +50,10 @@ simMAMSMEP_Wrapper <- function(InputDF) {
 
       # Output Table
       OutTab <- cbind(mInfo, data.frame(dfOverall_Powers_wide[, -1]))
+
+      # Add TimeTaken column
+      OutTab$HoursTaken <- time_taken
+
       # add each iterations power table to a list
       lOut[[nModelNum]] <- OutTab
 
