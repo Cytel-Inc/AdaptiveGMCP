@@ -60,10 +60,33 @@ PerformStage2Test <- function(mcpObj, AdaptStage2) {
       "Final_Rejection_Status" = FinalRejTab
     )
   } else {
+    ss_stage2_incr <- mcpObj$Stage2AllocSampleSize
+    ss_stage2_incr[2,] <- ss_stage2_incr[2,] - ss_stage2_incr[1,]
+    # calculate adapted information fraction for each hypothesis at stage 2
+    v_adapted_info_fraction <- numeric(0)
+    ss_control <- as.vector(unlist(ss_stage2_incr['Control']))
+    calculate_hm <- function(vControl, vTreatment, stage) (1/vControl[stage] + 1/vTreatment[stage])^-1
+    for (hypothesis in names(mcpObj$p_raw)) {
+      if (is.na(mcpObj$p_raw[hypothesis])) {
+        adapted_info_fraction <- NA
+      } else
+      {
+        treatment_id <- mcpObj$HypoMap[mcpObj$HypoMap$Hypothesis == hypothesis, "Treatment"] - 1
+        ss_treatment <- as.vector(unlist(ss_stage2_incr[paste0("Treatment",treatment_id)]))
+        adapted_info_fraction <- calculate_hm(ss_control, ss_treatment, 1)/(calculate_hm(ss_control, ss_treatment, 1) + calculate_hm(ss_control, ss_treatment, 2))
+      }
+      v_adapted_info_fraction <- c(v_adapted_info_fraction, adapted_info_fraction)
+    }
+
+    adapted_p_value_stage2 <- 1 - pnorm(sqrt(v_adapted_info_fraction)*qnorm(1 - mcpObj$p_raw_stage1) +
+                                          sqrt(1 - v_adapted_info_fraction)*qnorm(1 - mcpObj$p_raw))
+    cat("Cumulative Stage2 p-values:\n")
+    print(adapted_p_value_stage2)
+    cat("\n")
     Stage2Analysis <- closedTest(
       WH = mcpObj$WH,
       boundary = mcpObj$AdaptObj$Stage2AdjBdry,
-      pValues = mcpObj$p_raw,
+      pValues = adapted_p_value_stage2,
       Stage1RejStatus = mcpObj$rej_flag_Prev
     )
     intHypTab <- Stage2Analysis$IntersectHypoTest
@@ -117,7 +140,7 @@ do_ModifyStage2Sample <- function(allocRatio, ArmsPresent, AllocSampleSize) {
     eg_text <- paste("(e.g.",
                      paste(100+1:length(availArmsName),collapse = ","),")")
     cat(
-      "Enter Stage-2 sample size for ", paste(availArmsName, collapse = ", "),
+      "Enter Stage-2 Cumulative sample size for ", paste(availArmsName, collapse = ", "),
       eg_text, "\n"
     )
     newSS <- readline()

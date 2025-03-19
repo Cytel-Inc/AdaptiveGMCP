@@ -72,7 +72,7 @@ planBdryCER <- function(nHypothesis,
     SubSets <- c(SubSets, conn_Sets_name)
     Method <- c(Method, get_Sets$Method)
     siglev1 <- siglev2 <- list()
-    siglev1 <- append(siglev1, round(alpha1, 6))
+    siglev1 <- append(siglev1, round(alpha1, 10))
     siglev2 <- append(siglev2, alpha)
     wJ <- as.numeric(w) # wJ : weights for the intersection J(including weights with 0)
 
@@ -213,7 +213,7 @@ planBdryCER <- function(nHypothesis,
     J <- which(WH[hypIDX, 1:(length(WH) / 2)] == 1)
     stg1bdry <- c(
       stg1bdry,
-      paste(round(Stage1Bdry[hypIDX, J], 6), collapse = ",")
+      paste(round(Stage1Bdry[hypIDX, J], 10), collapse = ",")
     )
   }
 
@@ -236,7 +236,7 @@ planBdryCER <- function(nHypothesis,
       J <- which(WH[hypIDX, 1:(length(WH) / 2)] == 1)
       stg2bdry <- c(
         stg2bdry,
-        paste(round(Stage2Bdry[hypIDX, J], 6), collapse = ",")
+        paste(round(Stage2Bdry[hypIDX, J], 10), collapse = ",")
       )
     }
     Stage2BdryTab1 <- knitr::kable(data.frame(

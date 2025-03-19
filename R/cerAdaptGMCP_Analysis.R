@@ -144,6 +144,7 @@ adaptGMCP_CER <- function(
     mcpObj$p_raw <- addNAPvalue(p_raw, GlobalIndexSet)
 
     if (mcpObj$CurrentLook == 1) {
+      mcpObj$p_raw_stage1 <- mcpObj$p_raw
       Stage1Test <- PerformStage1Test(
         nArms = nArms, nEps = nEps, EpType = EpType, nLooks = nLooks,
         nHypothesis = nHypothesis, sigma = sigma, prop.ctr = prop.ctr,

@@ -228,6 +228,22 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
         # Compute the Stage2 adaptive boundaries
         AdaptResults <- adaptBdryCER(mcpObj)
         mcpObj$AdaptObj <- AdaptResults
+        ss_stage2_incr <- mcpObj$Stage2AllocSampleSize
+        ss_stage2_incr[2,] <- ss_stage2_incr[2,] - ss_stage2_incr[1,]
+      } else
+      {
+        ss_stage2_incr <- mcpObj$planSS$IncrementalSamples
+      }
+
+      # calculate adapted information fraction for each hypothesis for stage 2
+      v_adapted_info_fraction <- numeric(0)
+      ss_control <- as.vector(unlist(ss_stage2_incr['Control']))
+      calculate_hm <- function(vControl, vTreatment, stage) (1/vControl[stage] + 1/vTreatment[stage])^-1
+      for (hypothesis in mcpObj$HypoMap$Hypothesis) {
+        treatment_id <- mcpObj$HypoMap[mcpObj$HypoMap$Hypothesis == hypothesis, "Treatment"] - 1
+        ss_treatment <- as.vector(unlist(ss_stage2_incr[paste0("Treatment",treatment_id)]))
+        adapted_info_fraction <- calculate_hm(ss_control, ss_treatment, 1)/(calculate_hm(ss_control, ss_treatment, 1) + calculate_hm(ss_control, ss_treatment, 2))
+        v_adapted_info_fraction <- c(v_adapted_info_fraction, adapted_info_fraction)
       }
 
       mcpObj_Stage2 <- mcpObj # This will only be run at the end of stage 1. To be used for all stage 2 sims
@@ -323,8 +339,23 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
             IncrLookSummary = currLookDataIncr,
             IncrLookSummaryPrev = IncrLookSummaryPrev,
             HypoMap = mcpObj$HypoMap,
-            Cumulative = TRUE
+            Cumulative = FALSE
           )
+
+          # Stage-1 raw p-values(Incr.)
+          pValIncrPrev <- as.vector(unlist(mcpObj$SummStatDF[
+            mcpObj$SummStatDF$LookID == (mcpObj$CurrentLook - 1),
+            grep("RawPvalues", names(mcpObj$SummStatDF))
+          ]))
+          # Stage-2 raw p-values(Incr.)
+          pValIncrCurr <- as.vector(unlist(SummStat[, grep("RawPvalues", names(SummStat))]))
+
+          # cumulative stage 2 p-values
+          adapted_teststat_stage2 <- sqrt(v_adapted_info_fraction)*qnorm(1 - pValIncrPrev) +
+            sqrt(1 - v_adapted_info_fraction)*qnorm(1 - pValIncrCurr)
+          adapted_p_value_stage2 <- 1 - pnorm(adapted_teststat_stage2)
+          SummStat[, grep("TestStat", names(SummStat))] <- adapted_teststat_stage2
+          SummStat[, grep("RawPvalues", names(SummStat))] <- adapted_p_value_stage2
         }
         # Perform per look Test
         mcpObj <- perLookTest(Arms.SS.Incr = Arms.SS.Incr, SummStat = SummStat, mcpObj = mcpObj)
