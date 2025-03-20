@@ -46,13 +46,17 @@ simMAMSMEP_Wrapper <- function(InputDF) {
         mutate(Sno = nModelNum) %>%
         relocate(Sno, .before = everything())
       # Model ID and Seed Number to reproduce
-      mInfo <- data.frame("ModelID" = InputDF[nModelNum, "ModelID"], "Seed" = out$Seed)
+      mInfo <- data.frame("ModelID" = InputDF[nModelNum, "ModelID"], "seed" = out$Seed)
 
       # Output Table
       OutTab <- cbind(mInfo, data.frame(dfOverall_Powers_wide[, -1]))
 
+      # Add stage wise rejection columns
+      OutTab$StagewiseRejection_Count <- paste(out$stagewiseRejections$Count, collapse = ",")
+      OutTab$StagewiseRejection_Percentage <- paste(out$stagewiseRejections$Percentage, collapse = ",")
       # Add TimeTaken column
       OutTab$HoursTaken <- time_taken
+
 
       # add each iterations power table to a list
       lOut[[nModelNum]] <- OutTab
@@ -70,8 +74,10 @@ simMAMSMEP_Wrapper <- function(InputDF) {
       print(out)
     }
   }
+
   # rbind power tables for each iteration to produce a single table
   dfOut <- do.call(rbind, lOut)
+  dfOut <- dplyr::left_join(dfOut, InputDF, by = "ModelID")
   return(dfOut)
 }
 

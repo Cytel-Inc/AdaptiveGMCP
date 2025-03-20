@@ -78,12 +78,32 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
   startTime_postproc <- Sys.time()
   # Aggregating results
   SuccessedSims <- 0
+  # Initialize stagewise rejection counters
+  stage1Rejections <- 0
+  stage2Rejections <- 0
   for (i in 1:length(out)) {
     if (length(out[[i]]) == 1) {
       if (grepl(pattern = "Error", x = out[[i]])) {
         sprintf("Error Simulation %d ", i)
       }
     } else {
+      df <- out[[i]]$SummStatDF
+
+      # Skip if dataframe is empty or NULL
+      if (is.null(df) || nrow(df) == 0) next
+
+      # Check if any RejStatus columns have TRUE in the first row
+      rejCols <- grep("^RejStatus", names(df), value = TRUE)
+
+      if (any(df[1, rejCols], na.rm = TRUE)) {
+        stage1Rejections <- stage1Rejections + 1
+      } else if (nrow(df) >= 2) {
+        # If first row has no TRUE values and there's a second row,
+        # check if any RejStatus columns have TRUE in the second row
+        if (any(df[2, rejCols], na.rm = TRUE)) {
+          stage2Rejections <- stage2Rejections + 1
+        }
+      }
       # SummaryStatFile <- data.table::rbindlist(list(SummaryStatFile, data.table(out[[i]]$SummStatDF)), use.names = TRUE, fill = TRUE)
       # ArmWiseSummary <- data.table::rbindlist(list(ArmWiseSummary, data.table(out[[i]]$ArmWiseDF)), use.names = TRUE, fill = TRUE)
       PowerTab <- data.table::rbindlist(list(PowerTab, data.table(out[[i]]$powerCountDF)), use.names = TRUE, fill = TRUE)
@@ -91,6 +111,8 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
       SuccessedSims <- SuccessedSims + 1
     }
   }
+  dfStagewiseRejections <- data.frame("Count" = c(stage1Rejections, stage2Rejections),
+                                      "Percentage" = c(stage1Rejections, stage2Rejections)/gmcpSimObj$nSimulation)
   # EfficacyTable <- data.table::rbindlist(lapply(out, function(x) {
   #   if (is.list(x) && !is.null(x$EfficacyTable)) { # Check if EfficacyTable exists and is not NULL
   #     df <- as.data.frame(matrix(x$EfficacyTable,
@@ -167,7 +189,8 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              SuccessedSims = SuccessedSims,
              elapsedTime = elapsedTime,
              elapsedTime_postProc = elapsedTime_postProc,
-             power_raw = PowerTab
+             power_raw = PowerTab,
+             stagewiseRejections = dfStagewiseRejections
            ),
            list(
              PlanSampleSizeCum = preSimObjs$planSS$CumulativeSamples,
@@ -181,7 +204,8 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              SuccessedSims = SuccessedSims,
              elapsedTime = elapsedTime,
              elapsedTime_postProc = elapsedTime_postProc,
-             power_raw = PowerTab
+             power_raw = PowerTab,
+             stagewiseRejections = dfStagewiseRejections
            )
     )
   } else {
@@ -200,7 +224,8 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              Seed = preSimObjs$SimSeed,
              SuccessedSims = SuccessedSims,
              elapsedTime = elapsedTime,
-             power_raw = PowerTab
+             power_raw = PowerTab,
+             stagewiseRejections = dfStagewiseRejections
            ),
            list(
              PlanSampleSize = preSimObjs$planSS$IncrementalSamples,
@@ -214,7 +239,8 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              Seed = preSimObjs$SimSeed,
              SuccessedSims = SuccessedSims,
              elapsedTime = elapsedTime,
-             power_raw = PowerTab
+             power_raw = PowerTab,
+             stagewiseRejections = dfStagewiseRejections
            )
     )
   }
