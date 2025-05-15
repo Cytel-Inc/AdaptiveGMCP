@@ -81,12 +81,16 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
   # Initialize stagewise rejection counters
   stage1Rejections <- 0
   stage2Rejections <- 0
+  # rawpvalues <- list()
+  # lRejStatus <- list()
   for (i in 1:length(out)) {
     if (length(out[[i]]) == 1) {
       if (grepl(pattern = "Error", x = out[[i]])) {
         sprintf("Error Simulation %d ", i)
       }
     } else {
+      # rawpvalues[[i]] = out[[i]]$rawpvalues
+      # lRejStatus[[i]] = out[[i]]$SummStatDF
       df <- out[[i]]$SummStatDF
 
       # Skip if dataframe is empty or NULL
@@ -109,8 +113,15 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
       PowerTab <- data.table::rbindlist(list(PowerTab, data.table(out[[i]]$powerCountDF)), use.names = TRUE, fill = TRUE)
       # SelectionTab <- data.table::rbindlist(list(SelectionTab, data.table(out[[i]]$SelectionDF)), use.names = TRUE, fill = TRUE)
       SuccessedSims <- SuccessedSims + 1
+
     }
   }
+  # save rawpvalues as rds with timestamp in the name
+  # timestamp <- format(Sys.time(), "%y%m%d_%H%M%S")
+  # saveRDS(rawpvalues, paste0("Debug_rawpvalues_", timestamp, ".rds"))
+  # saveRDS(lRejStatus, paste0("Debug_rejstatus_", timestamp, ".rds"))
+  # save(rawpvalues, lRejStatus, file = paste0("Debug_", timestamp, ".rda"))
+
   dfStagewiseRejections <- data.frame("Count" = c(stage1Rejections, stage2Rejections),
                                       "Percentage" = c(stage1Rejections, stage2Rejections)/gmcpSimObj$nSimulation)
   # EfficacyTable <- data.table::rbindlist(lapply(out, function(x) {

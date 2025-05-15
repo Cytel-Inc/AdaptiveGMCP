@@ -56,7 +56,11 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
         Cumulative = FALSE
       )
     }
-
+    if (mcpObj$CurrentLook == 1){
+      mcpObj$rawpvalues$stage1 <- as.vector(unlist(SummStat[, grep("^RawPvalues", names(SummStat))]))
+    } else {
+      mcpObj$rawpvalues$stage2 <- as.vector(unlist(SummStat[, grep("^RawPvalues", names(SummStat))]))
+    }
     # Perform per look Test
     mcpObj <- perLookTest(Arms.SS.Incr = Arms.SS.Incr, SummStat = SummStat, mcpObj = mcpObj)
 
@@ -74,7 +78,9 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
     ArmWiseDF <- plyr::rbind.fill(ArmWiseDF, ArmData)
     mcpObj$SummStatDF <- SummStatDF
     mcpObj$ArmDataDF <- ArmWiseDF
-
+# if (simID == 4) {
+#   browser()
+# }
     mcpObj$rej_flag_Prev <- mcpObj$rej_flag_Curr
     mcpObj$WH_Prev <- mcpObj$WH
 
@@ -114,7 +120,8 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
     "ArmWiseDF" = ArmWiseDF,
     "powerCountDF" = powerCountDF,
     "EfficacyTable" = EffCountDF,
-    "SelectionDF" = SelectionDF
+    "SelectionDF" = SelectionDF,
+    "rawpvalues" = mcpObj$rawpvalues
   )
 }
 
@@ -236,16 +243,19 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
       }
 
       # calculate adapted information fraction for each hypothesis for stage 2
-      v_adapted_info_fraction <- numeric(0)
+      v_adapted_info_fraction_old <- numeric(0)
       ss_control <- as.vector(unlist(ss_stage2_incr['Control']))
       calculate_hm <- function(vControl, vTreatment, stage) (1/vControl[stage] + 1/vTreatment[stage])^-1
       for (hypothesis in mcpObj$HypoMap$Hypothesis) {
         treatment_id <- mcpObj$HypoMap[mcpObj$HypoMap$Hypothesis == hypothesis, "Treatment"] - 1
         ss_treatment <- as.vector(unlist(ss_stage2_incr[paste0("Treatment",treatment_id)]))
         adapted_info_fraction <- calculate_hm(ss_control, ss_treatment, 1)/(calculate_hm(ss_control, ss_treatment, 1) + calculate_hm(ss_control, ss_treatment, 2))
-        v_adapted_info_fraction <- c(v_adapted_info_fraction, adapted_info_fraction)
+        v_adapted_info_fraction_old <- c(v_adapted_info_fraction_old, adapted_info_fraction)
       }
-
+      # revised calculation for adapted info fraction based on info matrix instead of just sample size
+      I1 <- c(preSimObjs$Sigma$InfoMatrix$EP1[,1], preSimObjs$Sigma$InfoMatrix$EP2[,1])
+      I2_incr <- c(AdaptResults$Stage2Sigma$Stage2InfoMatrixIncr$EP1[,1], AdaptResults$Stage2Sigma$Stage2InfoMatrixIncr$EP2[,1])
+      v_adapted_info_fraction <- I1/(I1 + I2_incr)
       mcpObj_Stage2 <- mcpObj # This will only be run at the end of stage 1. To be used for all stage 2 sims
       for (nSim_Stage2 in 1:mcpObj$nSimulation_Stage2)
       {
@@ -349,7 +359,7 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
           ]))
           # Stage-2 raw p-values(Incr.)
           pValIncrCurr <- as.vector(unlist(SummStat[, grep("RawPvalues", names(SummStat))]))
-
+          mcpObj$rawpvalues <- list("stage1" = pValIncrPrev, "stage2" = pValIncrCurr)
           # cumulative stage 2 p-values
           adapted_teststat_stage2 <- sqrt(v_adapted_info_fraction)*qnorm(1 - pValIncrPrev) +
             sqrt(1 - v_adapted_info_fraction)*qnorm(1 - pValIncrCurr)
@@ -447,7 +457,8 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
     "ArmWiseDF" = mcpObj$ArmDataDF,
     "powerCountDF" = powerCountDF,
     # "EfficacyTable" = EffCountDF,
-    "SelectionDF" = SelectionDF
+    "SelectionDF" = SelectionDF,
+    "rawpvalues" = mcpObj$rawpvalues
   )
 }
 

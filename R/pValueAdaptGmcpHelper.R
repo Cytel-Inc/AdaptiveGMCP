@@ -592,7 +592,7 @@ comb.test <- function(p, cr, w) {
   e <- sapply(conn, function(edx) {
     if (length(edx) > 1) # disjoint set with known distribution: Parametric One Sided Test
       {
-        q <- min(1, as.numeric(p[edx]) / as.numeric(w[edx]))
+        q <- min(as.numeric(p[edx]) / as.numeric(w[edx]))
         upper <- qnorm(1 - as.numeric(w[edx]) * q) # z-scale upper bound for right tailed tests
         p_param <- (1 - mvtnorm::pmvnorm(
           lower = -Inf,
