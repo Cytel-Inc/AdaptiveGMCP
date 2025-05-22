@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # Compute adjusted p-value for a parametric test
 # p2 stage-2 p-values for the intersection hypothesis
 # stage-1 boundary for the intersection hypothesis

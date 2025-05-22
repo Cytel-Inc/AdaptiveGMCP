@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # test one intersection hypothesis
 testInter <- function(pValues, b) {
   idx <- which(b != 0 & !is.na(pValues))

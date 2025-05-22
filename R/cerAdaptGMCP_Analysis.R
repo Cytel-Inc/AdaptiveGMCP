@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 #' Function to perform Adaptive GMCP Analysis following Conditional Error Rate method
 #' @param nArms Number of Arms
 #' @param nEps Number of End points
@@ -144,6 +150,7 @@ adaptGMCP_CER <- function(
     mcpObj$p_raw <- addNAPvalue(p_raw, GlobalIndexSet)
 
     if (mcpObj$CurrentLook == 1) {
+      mcpObj$p_raw_stage1 <- mcpObj$p_raw
       Stage1Test <- PerformStage1Test(
         nArms = nArms, nEps = nEps, EpType = EpType, nLooks = nLooks,
         nHypothesis = nHypothesis, sigma = sigma, prop.ctr = prop.ctr,

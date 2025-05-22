@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 #' Function to perform Adaptive GMCP Analysis following Conditional Error Rate method
 #' @param nArms Number of Arms
 #' @param nEps Number of End points

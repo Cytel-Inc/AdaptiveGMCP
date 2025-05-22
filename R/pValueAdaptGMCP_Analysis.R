@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 #' Function to perform Adaptive GMCP Analysis following Combined P-Value(Inverse Normal) method
 #' @param WI Vector of Initial Weights for Global Null(default = \code{rep(1/4,4)})
 #' @param G  Transition Matrix (default = \code{matrix(c(0,1/3,1/3,1/3,  1/3,0,1/3,1/3, 1/3,1/3,0,1/3, 1/3,1/3,1/3,0),nrow = 4)})

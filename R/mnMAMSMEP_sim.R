@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # The file contains supporting functions for Adaptive GMCP Simulation ----
 ## Author: Ajoy.M
 
@@ -225,6 +231,7 @@ getPreSimObjs <- function(gmcpSimObj) {
   #------------------------------------------------------------------------------
   #################### Identify True Null based on given Response #######################
   # TrueNull <- checkTrueNull2(HypoMap = HypoMap, Arms.Mean = gmcpSimObj$Arms.Mean)
+  # returns a vector of boolean of length nHypothesis indicating whether the hypothesis is true null
   TrueNull <- checkTrueNull3(
     HypoMap = HypoMap,
     Arms.Mean = gmcpSimObj$Arms.Mean,
@@ -240,6 +247,7 @@ getPreSimObjs <- function(gmcpSimObj) {
     g = gmcpSimObj$G,
     HypothesisName = HypoMap$Hypothesis
   )
+  # This is a dataframe containing all the intersection hypothesis and their weights
   WH <- allGraphs$IntersectionWeights
 
   # WH <- as.data.frame(gMCPLite::generateWeights(g = gmcpSimObj$G,w = gmcpSimObj$IntialWeights))
@@ -319,7 +327,6 @@ getPreSimObjs <- function(gmcpSimObj) {
       } else {
         Sigma <- NA
       }
-
       #----------------------------------------------------------------------------------
       ######## Computation of Planned Boundaries##############
       plan_Bdry <- planBdryCER(
@@ -340,8 +347,6 @@ getPreSimObjs <- function(gmcpSimObj) {
         Scale = "Score",
         planSSCum = planSSCum
       )
-
-
 
       #----------------------------------------------------------------------------------
       PreSimObj <- list(

@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 test_that("Test Intersection Weights Computation", {
   ## Test Case-1 gate keeping strategy
   w <- c(1 / 2, 1 / 2, 0, 0)

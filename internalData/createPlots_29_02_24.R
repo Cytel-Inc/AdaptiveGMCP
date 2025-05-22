@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # inputDF <- read.csv("C:\\Users\\Anoop.Rawat\\Downloads\\simMAMSMEP_Wrapper_InputData.csv")
 library(AdaptGMCP)
 library(tidyverse)

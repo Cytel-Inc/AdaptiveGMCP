@@ -1,4 +1,8 @@
-
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
 
 #To use East Summary Statistics File(only applicable for one look designs)
 useEastSumStat <- function(SimID, EastSumStat){

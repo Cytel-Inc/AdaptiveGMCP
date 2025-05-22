@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # The file contains supporting functions for Adaptive GMCP Analysis Function AdaptGMCP_Analysis/adaptGMCP_PC(.) ----
 ## Author: Ajoy.M
 
@@ -207,7 +213,12 @@ getRawPValues <- function(mcpObj) {
   P_raw <- c()
   cat("User Input for the look : ", mcpObj$CurrentLook, "\n")
   for (i in mcpObj$IndexSet) {
-    inpP <- readline(prompt = paste("Enter the raw P-Values for ", i, " : "))
+    if (mcpObj$CurrentLook == 1) {
+      inpP <- readline(prompt = paste("Enter the raw P-Values for ", i, " : "))
+    } else
+    {
+      inpP <- readline(prompt = paste("Enter the incremental raw P-Values for ", i, " : "))
+    }
     inpP <- unlist(lapply(inpP, function(x) eval(parse(text = x))))
     P_raw[i] <- inpP
   }
@@ -587,12 +598,18 @@ comb.test <- function(p, cr, w) {
   e <- sapply(conn, function(edx) {
     if (length(edx) > 1) # disjoint set with known distribution: Parametric One Sided Test
       {
-        q <- min(1, as.numeric(p[edx]) / as.numeric(w[edx]))
+        q <- min(as.numeric(p[edx]) / as.numeric(w[edx]))
         upper <- qnorm(1 - as.numeric(w[edx]) * q) # z-scale upper bound for right tailed tests
         p_param <- (1 - mvtnorm::pmvnorm(
           lower = -Inf,
           upper = upper,
-          corr = cr[edx, edx], abseps = 10^-5
+          corr = cr[edx, edx],
+          algorithm = mvtnorm::Miwa(
+            steps = 128,
+            checkCorr = F,
+            maxval = 1e3
+          )
+
         ))
         return(min(1, p_param / sum(as.numeric(w[edx])))) # Partial Parametric
       } else { # disjoint set with unknown distribution: Non-Parametric One Sided Test

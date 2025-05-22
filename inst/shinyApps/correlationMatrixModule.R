@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 library(shiny)
 library(rhandsontable)
 
@@ -10,25 +16,25 @@ matrixInputUI <- function(id) {
 matrixInput <- function(input, output, session, dimension, simulateTrigger) {
   # Reactive value to store the matrix
   matrixData <- reactiveVal()
-  
+
   observe({
     n <- as.numeric(dimension())
-    
+
     # Create an n x n matrix
     MAT <- matrix(rep(0, n^2), nrow = n, ncol = n)
     diag(MAT) <- 1
     MAT[upper.tri(MAT)] <- 0
     MAT[lower.tri(MAT)] <- t(MAT)[upper.tri(MAT)]
-    
+
     rownames(MAT) <- paste0("EP", seq_len(nrow(MAT)))
     colnames(MAT) <- paste0("EP", seq_len(nrow(MAT)))
-    
+
     # Store the initial matrix in reactive value
     matrixData(MAT)
-    
+
     output$corrMatrix <- renderRHandsontable({
-      rh_table <- rhandsontable(matrixData(), readOnly = FALSE) 
-      
+      rh_table <- rhandsontable(matrixData(), readOnly = FALSE)
+
       # Apply conditional readOnly settings
       for (i in 1:nrow(MAT)) {
         for (j in 1:ncol(MAT)) {
@@ -37,7 +43,7 @@ matrixInput <- function(input, output, session, dimension, simulateTrigger) {
           }
         }
       }
-      
+
       rh_table %>%
         hot_cols(renderer = "
                   function (instance, td, row, col, prop, value, cellProperties) {
@@ -67,7 +73,7 @@ matrixInput <- function(input, output, session, dimension, simulateTrigger) {
 processData_corrMatrix <- function(inputElement) {
   # Convert input from the Shiny UI to R object
   df <- hot_to_r(inputElement)
-  
+
   if (!is.null(df) && nrow(df) > 0) {
     # Generate the symmetric matrix
     myMat <- matrix(df, nrow(df), nrow(df))

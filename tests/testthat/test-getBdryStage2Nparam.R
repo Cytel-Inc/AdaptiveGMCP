@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 test_that("Test Non-Parametric Stage-2 plan boundary", {
   # Test Case-1: Spending Function: LD(OF) Validate with East Result
   ej <- 0.025

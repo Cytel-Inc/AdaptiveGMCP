@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 #Boundary computation based on the mcpObj
 #ModifiedStage2Weights : Ajoy.M: Highly risky should be triggered only for modified testing strategy in analysis, implemeted for one specific example not generalized.(13Jun,24)
 adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {

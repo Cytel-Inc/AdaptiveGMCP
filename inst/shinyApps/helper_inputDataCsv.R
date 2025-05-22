@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # This function converts an R object to a string so it can be sent to a csv.
 # Currently, conversion of only list, dataframe and matrix is supported.
 

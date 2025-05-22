@@ -1,4 +1,8 @@
-
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
 
 #Compute adaptive boundaries modified 12-06-2024
 getAdaptBdryModified <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,

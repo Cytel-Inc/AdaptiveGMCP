@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 ########### Boundary Computation Parametric Method ###########
 #------------------------------------------------------------------------- -
 ########### probability of crossing the boundary at stage 1##############
@@ -37,7 +43,11 @@ exitProbStage1 <- function(gIDX, hIDX, cJ1, wJ, Sigma, Scale, underNull = TRUE) 
     upper <- qnorm(1 - wJ[hIDX] * cJ1)
     lower <- -Inf
     1 - mvtnorm::pmvnorm(
-      lower = lower, upper = upper, mean = mu_z, sigma = sigma
+      lower = lower, upper = upper, mean = mu_z, sigma = sigma,
+      algorithm = mvtnorm::Miwa(
+        steps = 128,
+        checkCorr = F,
+        maxval = 1e3)
     )[1]
   } else if (Scale == "Score") {
     if (underNull) {
@@ -47,7 +57,11 @@ exitProbStage1 <- function(gIDX, hIDX, cJ1, wJ, Sigma, Scale, underNull = TRUE) 
     upper <- qnorm(1 - wJ[hIDX] * cJ1) * sqrt(infoMatrix[sIDX, 1])
     lower <- -Inf
     1 - mvtnorm::pmvnorm(
-      lower = lower, upper = upper, mean = mu_s, sigma = sigma
+      lower = lower, upper = upper, mean = mu_s, sigma = sigma,
+      algorithm = Miwa(
+        steps = 128,
+        checkCorr = F,
+        maxval = 1e3)
     )[1]
   }
 }
@@ -114,7 +128,10 @@ exitProbStage2 <- function(gIDX, hIDX, cJ2, cJ1, wJ, Sigma, Scale, underNull = T
       upper = upper,
       mean = mu_z,
       sigma = sigma,
-      Seed = 200295
+      algorithm = mvtnorm::Miwa(
+        steps = 128,
+        checkCorr = F,
+        maxval = 1e3)
     )[1]
     (1 - prob) # Under null this should be cummulative alpha for that look
   } else if (Scale == "Score") {
@@ -134,7 +151,11 @@ exitProbStage2 <- function(gIDX, hIDX, cJ2, cJ1, wJ, Sigma, Scale, underNull = T
       lower = lower,
       upper = upper,
       mean = mu_s,
-      sigma = sigma
+      sigma = sigma,
+      algorithm = mvtnorm::Miwa(
+        steps = 128,
+        checkCorr = F,
+        maxval = 1e3)
     )[1]
     (1 - prob) # Under null this should be cummulative alpha for that look
   }

@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # # Function to plot the graph by using initial weights and the transition matrix.
 # gmcpPlot <- function(
 #     WI = c(1 / 4, 1 / 4, 1 / 4, 1 / 4),

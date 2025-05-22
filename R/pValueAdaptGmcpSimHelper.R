@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # The file contains supporting functions for Adaptive GMCP Simulation Function AdaptGmcp_Simulation/adaptGMCP_SIM(.) ----
 ## Author: Ajoy.M
 
@@ -420,8 +426,11 @@ getInterimResposes <- function(lookID, mcpObj, gmcpSimObj) {
 
 #-------------- -
 # Generate seed for the given combination (Input Seed, SimulationID,LookID,ArmID)
-getRunSeed <- function(SimSeed, simID, lookID, armIndex) {
-  SimSeed + as.integer(paste(simID, lookID, armIndex, sep = ""))
+getRunSeed <- function(SimSeed, simID, lookID, armIndex, simID_Stage2 = 0) {
+  # SimSeed + as.integer(paste(simID, simID_Stage2, lookID, armIndex, sep = ""))
+  SimSeed + simID + simID_Stage2*10^5 + lookID *10 + armIndex
+  # add an error handling condition for when this number becomes too high
+  # and can't be used as an integer anymore
 }
 
 #------------- -

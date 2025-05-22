@@ -1,7 +1,7 @@
 Package: AdaptGMCP
 Type: Package
 Title: Graph Based, Adaptive, Multi Arm, Multiple Endpoint Design
-Version: 02.10.24
+Version: 30.04.25
 Author: Ajoy Mukhopadhyay
 Maintainer: Ajoy Mukhopadhyay <ajoy.mukhopadhyay@cytel.com>
 Description: (In Progress)This package provides tools to perform multiple testing based on user inputs. 
@@ -11,7 +11,7 @@ LazyData: true
 RoxygenNote: 7.3.2
 Imports: stats, plyr, dplyr,tidyr, rpact, gMCPLite, RColorBrewer, stringr, 
          visNetwork, reshape2, htmltools,gridExtra, parallel, rstudioapi, 
-         matrixcalc, shiny, shinycssloaders, rhandsontable, future, promises
+         matrixcalc, shiny, shinycssloaders, rhandsontable, future, promises, data.table
 Suggests: 
     knitr,
     rmarkdown,

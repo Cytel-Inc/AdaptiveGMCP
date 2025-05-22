@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 ################# Computation of Stage-Wise covariance Matrix ###########
 
 #------------------------------------------------------------------------ -
@@ -175,6 +181,7 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
   Stage2SigmaZ <- list() # Z-Scale Modified sigma
   Stage2SigmaS <- list() # Score-Scale Modified sigma
   Stage2InfoMat <- list() # Stage-2 information matrix
+  Stage2InfoMat_Incr <- list() # Stage-2 information matrix (incremental)
 
   ############# With planned Samples for CER computations##############
   nGrps <- length(Sigma$SigmaZ)
@@ -291,6 +298,7 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
     }
     Stage2SigmaZ[[names(Sigma$SigmaZ)[epIDX]]] <- Stage2sigmaZ
     Stage2InfoMat[[names(Sigma$SigmaZ)[epIDX]]] <- Stage2InfoMatrixCum
+    Stage2InfoMat_Incr[[names(Sigma$SigmaZ)[epIDX]]] <- Stage2InfoMatrix
 
     ########## Computation of  Score-scale Covariance Matrix #################
     l <- c(sqrt(Stage2InfoMatrix[, 1])) # this code is only for  2-stage
@@ -302,13 +310,13 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
     }
     Stage2SigmaS[[names(Sigma$SigmaS)[epIDX]]] <- Stage2sigmaS
   }
-
   list(
     "SigmaZIncr" = SigmaZIncr,
     "SigmaSIncr" = SigmaSIncr,
     "Stage2SigmaZ" = Stage2SigmaZ,
     "Stage2SigmaS" = Stage2SigmaS,
-    "Stage2InfoMatrixCum" = Stage2InfoMat
+    "Stage2InfoMatrixCum" = Stage2InfoMat,
+    "Stage2InfoMatrixIncr" = Stage2InfoMat_Incr
   )
 }
 

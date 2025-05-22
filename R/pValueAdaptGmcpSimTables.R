@@ -1,17 +1,31 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # The file contains supporting functions(Detailed Output Tables) for Adaptive GMCP Simulation Function AdaptGmcp_Simulation/adaptGMCP_SIM(.) ----
 ## Author: Ajoy.M
 
 #-------------- -
 # Compute Overall Power Table from all the simulation
 #-------------- -
-SimPowers <- function(nSimulation, PowerTab) {
-  values <- as.numeric(apply(PowerTab[, -1], 2, function(x) {
-    sum(x) / nSimulation
-  }))
+SimPowers <- function(nSimulation, nSimulation_Stage2, PowerTab) {
+  values <- colSums(PowerTab[, -1, with = FALSE]) / nrow(PowerTab)
   # 95% confidence interval
   z_alpha <- qnorm(1-0.025)
-  UL <- values + z_alpha*sqrt(values*(1-values)/nSimulation)
-  LL <- values - z_alpha*sqrt(values*(1-values)/nSimulation)
+  # PowerTab doesn't contain conditional powers
+  if (nSimulation_Stage2 == 1) {
+    UL <- values + z_alpha*sqrt(values*(1-values)/(nrow(PowerTab)))
+    LL <- values - z_alpha*sqrt(values*(1-values)/(nrow(PowerTab)))
+  } else { # PowerTab contains conditional powers
+    values_se <- apply(as.matrix(PowerTab[, -1]), 2, sd)/sqrt(nrow(PowerTab))
+    UL <- values + z_alpha*values_se
+    LL <- values - z_alpha*values_se
+  }
+  # ensure cl's are within bounds
+  UL <- pmax(0, pmin(1, UL))
+  LL <- pmax(0, pmin(1, LL))
   ConfIntv <- sapply(1:length(values),function(i){
     paste('(',round(LL[i],5),',',round(UL[i],5),')',sep = '')
   })
@@ -33,6 +47,7 @@ CountPower <- function(simID, SummaryStatFile, TrueNull) {
   rej.final <- apply(rejMat, 2, function(col) any(col, na.rm = T))
   data.frame(
     "simID" = simID,
+    # "simID_Stage2" = simID_Stage2,
     "nG" = as.integer(any(rej.final)),
     "nC" = as.integer(
       ifelse(length(rej.final[!TrueNull]) == 0, 0, all(rej.final[!TrueNull]))
@@ -91,39 +106,64 @@ checkTrueNull3 <- function(HypoMap, Arms.Mean, Arms.Prop) {
 #------------- -
 # Count contribution to different powers from each simulations
 #------------- -
-CountEfficacy <- function(simID, SummaryStatFile) {
-  rejMat <- subset(SummaryStatFile, SimID == simID)
-  rejMat <- rejMat[, grep("RejStatus", names(rejMat))]
+CountEfficacy <- function(simID, SummaryStatFile, interHypo = NULL) {
+  # Subset rows and select relevant columns using base R for better parallel compatibility
+  rejMat <- SummaryStatFile[SummaryStatFile$SimID == simID,
+                            grep("RejStatus", colnames(SummaryStatFile), value = TRUE)]
 
-  rej.final <- apply(rejMat, 2, function(col) any(col, na.rm = T))
+  # Check rejection status for each column
+  rej.final <- colSums(!is.na(rejMat) & rejMat != 0) > 0
   n <- length(rej.final)
-  if (n == 0) rej.final <- rep(F, n)
+  if (n == 0) rej.final <- rep(FALSE, n)
+
+  # if (is.null(interHypo)){
+  # Generate combinations - moved this calculation to PreSimObj for CER
   interHypo <- genCombs(n)
+  # }
 
-  idx <- lapply(1:nrow(interHypo), function(x) paste(interHypo[x, ], collapse = ""))
-  rej_idx <- paste(as.integer(rej.final), collapse = "")
+  # Create index strings with explicit type conversion
+  idx <- apply(interHypo, 1, function(x) paste(as.character(x), collapse = ""))
+  rej_idx <- paste(as.character(as.integer(rej.final)), collapse = "")
 
-  col_name <- lapply(1:nrow(interHypo), function(x) {
-    paste(paste("H", which(interHypo[x, ] == 1), sep = ""), collapse = ",")
+  # Generate column names
+  col_name <- apply(interHypo, 1, function(row) {
+    paste(paste0("H", which(row == 1)), collapse = ",")
   })
 
-  eff <- rep(0, length(col_name))
-  eff[which(idx == rej_idx)] <- 1
+  # Mark efficacy
+  eff <- numeric(length(idx))
+  match_idx <- match(rej_idx, idx)
+  if (!is.na(match_idx)) {
+    eff[match_idx] <- 1
+  }
 
-  eff_count <- data.frame(matrix(c(simID, eff), nrow = 1))
-  colnames(eff_count) <- c("simID", col_name)
-  eff_count
+  # Create output data frame using base R
+  eff_count <- data.frame(
+    simID = simID,
+    matrix(eff, nrow = 1)
+  )
+  colnames(eff_count) <- c("simID",col_name)
+
+  return(eff_count)
 }
 
 genCombs <- function(n) {
-  combs <- rep(0, n)
-  combs <- data.frame(do.call(rbind, lapply(0:n, function(i) {
-    t(apply(combn(1:n, i), 2, function(k) {
-      combs[k] <- 1
-      combs
-    }))
-  })))
-  combs <- combs[-1, ]
-  rownames(combs) <- NULL
-  return(combs)
+  if (n == 0) {
+    return(data.frame())
+  }
+  # Calculate total number of combinations (2^n - 1, excluding all zeros)
+  total_combs <- 2^n - 1
+
+  # Create binary representations
+  binary_nums <- 1:total_combs
+
+  # Convert to binary matrix
+  result <- matrix(0, nrow = total_combs, ncol = n)
+  for(i in 1:n) {
+    result[, i] <- (binary_nums %% 2^i) >= 2^(i-1)
+  }
+
+  result <- as.data.frame(result)
+  rownames(result) <- NULL
+  return(result)
 }

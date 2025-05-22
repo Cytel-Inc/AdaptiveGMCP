@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # Function to compute the Stage-wise planned boundaries for all intersection
 getPlanNonParmBdry <- function(nLooks, sig_level, info_frac, typeOfDesign = "asOF",
                                deltaWT,deltaPT1, gammaA,userAlphaSpending) {

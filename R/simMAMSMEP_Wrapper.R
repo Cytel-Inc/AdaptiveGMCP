@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 #' Wrapper function that takes all inputs through a single R dataframe
 #' @param InputDF R Dataframe: This is the csv/excel input data in the R dataframe format
 #' @example ./internalData/RunBatches12-04-24.R
@@ -10,6 +16,8 @@ simMAMSMEP_Wrapper <- function(InputDF) {
 
   lOut <- list()
   for (nModelNum in 1:nrow(InputDF)) {
+    # Start timer for this iteration
+    start_time <- Sys.time()
     out <- tryCatch(
       {
         run1TestCase(InputDF = InputDF[nModelNum, ])
@@ -18,7 +26,13 @@ simMAMSMEP_Wrapper <- function(InputDF) {
         paste0("Model ", nModelNum, " execution failed.")
       }
     )
+
+    # End timer and calculate time taken in seconds
+    end_time <- Sys.time()
+    time_taken <- as.numeric(difftime(end_time, start_time, units = "hours"))
+
     errorLog <- c(!grepl("Invalid", out[[1]]), !is.character(out), !is.null(out))
+
     if (!any(errorLog == F)) {
       # extract the power table from the output
       dfOverall_Powers_long <- out$Overall_Powers_df
@@ -38,10 +52,18 @@ simMAMSMEP_Wrapper <- function(InputDF) {
         mutate(Sno = nModelNum) %>%
         relocate(Sno, .before = everything())
       # Model ID and Seed Number to reproduce
-      mInfo <- data.frame("ModelID" = InputDF[nModelNum, "ModelID"], "Seed" = out$Seed)
+      mInfo <- data.frame("ModelID" = InputDF[nModelNum, "ModelID"], "seed" = out$Seed)
 
       # Output Table
       OutTab <- cbind(mInfo, data.frame(dfOverall_Powers_wide[, -1]))
+
+      # Add stage wise rejection columns
+      OutTab$StagewiseRejection_Count <- paste(out$stagewiseRejections$Count, collapse = ",")
+      OutTab$StagewiseRejection_Percentage <- paste(out$stagewiseRejections$Percentage, collapse = ",")
+      # Add TimeTaken column
+      OutTab$HoursTaken <- time_taken
+
+
       # add each iterations power table to a list
       lOut[[nModelNum]] <- OutTab
 
@@ -58,8 +80,10 @@ simMAMSMEP_Wrapper <- function(InputDF) {
       print(out)
     }
   }
+
   # rbind power tables for each iteration to produce a single table
   dfOut <- do.call(rbind, lOut)
+  dfOut <- dplyr::left_join(dfOut, InputDF, by = "ModelID")
   return(dfOut)
 }
 
@@ -103,7 +127,9 @@ run1TestCase <- function(InputDF) {
   SummaryStat <- InputDF$SummaryStat
   plotGraphs <- InputDF$plotGraphs
   Parallel <- InputDF$Parallel
+  nSimulation_Stage2 <- InputDF$nSimulation_Stage2
   # put the following code in try catch so the loop continues even if one iteration fails
+  Seed <- if (!is.na(suppressWarnings(as.numeric(Seed)))) as.numeric(Seed) else Seed
   out <- simMAMSMEP(
     alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType=lEpType,
     TestStatCon = TestStatCon, TestStatBin = TestStatBin, FWERControl = FWERControl,
@@ -113,7 +139,7 @@ run1TestCase <- function(InputDF) {
     Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
     SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
     ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
-    Method = Method, plotGraphs = plotGraphs, Parallel = Parallel,CommonStdDev = CommonStdDev
+    Method = Method, plotGraphs = plotGraphs, Parallel = Parallel,CommonStdDev = CommonStdDev, nSimulation_Stage2 = nSimulation_Stage2
   )
   out
 }

@@ -1,3 +1,8 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
 
 simMAMSMEP_BIN <- function(
     Method = "CombPValue",

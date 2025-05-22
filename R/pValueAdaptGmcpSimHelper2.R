@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # The file contains supporting functions(Adaptations) for Adaptive GMCP Simulation Function AdaptGmcp_Simulation/adaptGMCP_SIM(.) ----
 ## Author: Ajoy.M
 
@@ -48,8 +54,10 @@ getSelectedHypo2 <- function(simID, mcpObj) {
 
   ############### Step-1: get the available hypothesis to select#################
   # Subset for the not rejected hypothesis
-  contHypo <- mcpObj$HypoMap[mcpObj$HypoPresent, ]
-
+  # contHypo <- mcpObj$HypoMap[mcpObj$HypoPresent, ]
+  # only exclude the treatments for which both endpoints are rejected
+  hypothesis_not_rejected <- mcpObj$HypoMap[!mcpObj$rej_flag_Prev, ]
+  contHypo <- mcpObj$HypoMap[mcpObj$HypoMap$Treatment %in% hypothesis_not_rejected$Treatment, ]
   # Selection based on end points
   if (mcpObj$SelectEndPoint != "overall") {
     contHypo <- contHypo[contHypo$Groups == mcpObj$SelectEndPoint, ]
@@ -118,14 +126,14 @@ getSelectedHypo2 <- function(simID, mcpObj) {
     }
     bestScale <- ScaleVar[which(ranks == 1)]
     selectedH <- contHypo$Hypothesis[ScaleVar <= bestScale + mcpObj$SelectionParmeter &
-      ScaleVar >= bestScale - mcpObj$SelectionParmeter]
+                                       ScaleVar >= bestScale - mcpObj$SelectionParmeter]
 
   } else if (mcpObj$SelectionCriterion == "random"){
     # Random Selection
     Seed <- getRunSeed(SimSeed = mcpObj$SimSeed,
-                      simID = simID,
-                      lookID = mcpObj$SelectionLook,
-                      armIndex = 0)
+                       simID = simID,
+                       lookID = mcpObj$SelectionLook,
+                       armIndex = 0)
     set.seed(seed = Seed)
     nSelecHyp <- sample(0:nrow(contHypo),size = 1)
     if(nSelecHyp == 0){
@@ -138,34 +146,35 @@ getSelectedHypo2 <- function(simID, mcpObj) {
   #--------------------------------------------------------------------------------
 
   if (length(selectedH) != 0) # If the selection set is non empty
-    {
-      if (mcpObj$KeepAssosiatedEps) { # Keep all the associated hypothesis
-        notRejSet <- mcpObj$HypoMap[mcpObj$HypoPresent, ]
-        selectedArms <- getArms2(SetH = selectedH, HypoMap = notRejSet)
-        AssociatedHypo <- notRejSet$Hypothesis[notRejSet$Treatment %in% selectedArms]
+  {
+    if (mcpObj$KeepAssosiatedEps) { # Keep all the associated hypothesis
+      # notRejSet <- mcpObj$HypoMap[mcpObj$HypoPresent, ]
+      notRejSet <- mcpObj$HypoMap[mcpObj$HypoMap$Treatment %in% hypothesis_not_rejected$Treatment, ]
+      selectedArms <- getArms2(SetH = selectedH, HypoMap = notRejSet)
+      AssociatedHypo <- notRejSet$Hypothesis[notRejSet$Treatment %in% selectedArms]
 
-        selectedH <- AssociatedHypo
-      }
+      selectedH <- AssociatedHypo
+    }
 
 
-      dropedArms <- setdiff(
-        (1:length(mcpObj$ArmsPresent))[mcpObj$ArmsPresent],
-        getArms2(SetH = selectedH, HypoMap = mcpObj$HypoMap)
-      )
+    dropedArms <- setdiff(
+      (1:length(mcpObj$ArmsPresent))[mcpObj$ArmsPresent],
+      getArms2(SetH = selectedH, HypoMap = mcpObj$HypoMap)
+    )
 
-      mcpObj$ArmsRetained[dropedArms] <- T
-      mcpObj$ArmsPresent[dropedArms] <- F
-      mcpObj$SelectedIndex <- selectedH
-      HypoPresentAfterSelct <- rep(F, length(mcpObj$HypoPresent))
-      HypoPresentAfterSelct[get_numeric_part(selectedH)] <- T
-      mcpObj$HypoPresent <- HypoPresentAfterSelct
-      SelectedIDX <- rep(F, length(mcpObj$HypoPresent))
-      SelectedIDX[get_numeric_part(mcpObj$SelectedIndex)] <- T
-      mcpObj$DropedFlag <- (!SelectedIDX) & (!mcpObj$rej_flag_Curr) # Hypothesis not selected and not rejected are defined as droped
+    mcpObj$ArmsRetained[dropedArms] <- T
+    mcpObj$ArmsPresent[dropedArms] <- F
+    mcpObj$SelectedIndex <- selectedH
+    HypoPresentAfterSelct <- rep(F, length(mcpObj$HypoPresent))
+    HypoPresentAfterSelct[get_numeric_part(selectedH)] <- T
+    mcpObj$HypoPresent <- HypoPresentAfterSelct
+    SelectedIDX <- rep(F, length(mcpObj$HypoPresent))
+    SelectedIDX[get_numeric_part(mcpObj$SelectedIndex)] <- T
+    mcpObj$DropedFlag <- (!SelectedIDX) & (!mcpObj$rej_flag_Curr) # Hypothesis not selected and not rejected are defined as droped
 
-      mcpObj$IndexSet <- mcpObj$HypoMap$Hypothesis[mcpObj$HypoPresent]
-      mcpObj$WH <- mcpObj$WH[which(apply(mcpObj$WH[mcpObj$IndexSet], 1, sum, na.rm = T) != 0), ]
-    } else # If the selection set is empty
+    mcpObj$IndexSet <- mcpObj$HypoMap$Hypothesis[mcpObj$HypoPresent]
+    mcpObj$WH <- mcpObj$WH[which(apply(mcpObj$WH[mcpObj$IndexSet], 1, sum, na.rm = T) != 0), ]
+  } else # If the selection set is empty
   {
     mcpObj$ContTrial <- F
   }
@@ -208,12 +217,12 @@ getSelectedHypo <- function(mcpObj, gmcpSimObj, PreSimObj) {
       }
     }
     if (length(selectedH) != 0) # If the selection set is non empty
-      {
-        dropedArms <- setdiff(names(mcpObj$ArmsPresent[mcpObj$ArmsPresent]), getArms(selectedH, PreSimObj$index_map))
-        mcpObj$ArmsRetained[dropedArms] <- T
-        mcpObj$ArmsPresent[dropedArms] <- F
-        mcpObj$SelectedIndex <- selectedH
-      } else # If the selection set is empty
+    {
+      dropedArms <- setdiff(names(mcpObj$ArmsPresent[mcpObj$ArmsPresent]), getArms(selectedH, PreSimObj$index_map))
+      mcpObj$ArmsRetained[dropedArms] <- T
+      mcpObj$ArmsPresent[dropedArms] <- F
+      mcpObj$SelectedIndex <- selectedH
+    } else # If the selection set is empty
     {
       mcpObj$ContTrial <- F
     }
@@ -233,11 +242,11 @@ getSelectedHypo <- function(mcpObj, gmcpSimObj, PreSimObj) {
     }))]
 
     if (length(selectedH) != 0) # If the selection set is non empty
-      {
-        mcpObj$ArmsRetained[dropedArms] <- T
-        mcpObj$ArmsPresent[dropedArms] <- F
-        mcpObj$SelectedIndex <- selectedH
-      } else # If the selection set is empty
+    {
+      mcpObj$ArmsRetained[dropedArms] <- T
+      mcpObj$ArmsPresent[dropedArms] <- F
+      mcpObj$SelectedIndex <- selectedH
+    } else # If the selection set is empty
     {
       mcpObj$ContTrial <- F
     }

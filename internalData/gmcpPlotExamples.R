@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # ## Example-1: Primary and secondary type hypothesis
 # #Initial weights
 # WI <- c(1/2,1/2,0,0)

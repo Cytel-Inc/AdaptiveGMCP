@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # Define UI for the data input module
 IADataInputUI <- function(id) {
   ns <- NS(id)
@@ -32,7 +38,7 @@ IADataInputServer <- function(id, numRows) {
       }
       return(df)
     })
-    
+
     # Use the reactive dataframe for rendering the table
     output$dataInput <- renderRHandsontable({
       rh <- rhandsontable(dfReactive(), rowHeaders = FALSE)
@@ -47,14 +53,14 @@ IADataInputServer <- function(id, numRows) {
 processData_IAInput <- function(inputElement) {
   # Convert input from the Shiny UI to R object
   df <- hot_to_r(inputElement)
-  
+
   # Initialize an empty list in case df is NULL or has no rows
   myList <- list()
-  
+
   if (!is.null(df) && nrow(df) > 0) {
     # Generate a list of means
     myList <- lapply(seq_len(nrow(df)), function(i) as.vector(unlist(df[i, 2], use.names = FALSE)))
   }
-  
+
   return(myList)
 }

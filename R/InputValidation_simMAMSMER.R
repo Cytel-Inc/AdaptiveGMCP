@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # To test the input arguments of simMAMSMEP
 # Note : The error text must contain the word "Invalid" so that later they can be processed appropriately
 valInpsimMAMSMEP <- function(inps) {
