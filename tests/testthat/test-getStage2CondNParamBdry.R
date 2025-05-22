@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 test_that("Test Stage-2 adapted Non-Parametric boundary(Cum.)", {
   # Test Case-1: Consistency with East 2-sample Muller-Schefer Benchmarks
   a1 <- 0.00152532273778278

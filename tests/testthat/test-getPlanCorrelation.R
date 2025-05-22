@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 test_that("Test Correlation Computation for Combining p-values(Dunnett)", {
   # Test Case-1: Consistency with getSigma results
   # Arms: 3, Eps: 1, Hypothesis: 2

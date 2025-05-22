@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # This function generate single arm(having multiple endpoint) responses given the normal scale correlation matrix
 # nSubject number of response to generate
 # lEpType list with endpoint types

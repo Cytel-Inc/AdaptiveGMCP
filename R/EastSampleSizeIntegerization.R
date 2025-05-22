@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 #Arm-wise look-wise sample size distribution
 
 SS_Alloc=function(SS='SampleSize',r='AllocationRatio',InfoFrac='InfoFrac')

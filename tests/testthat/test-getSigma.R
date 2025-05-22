@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 test_that("Test the Sigma Matrix Computation for MAMSMEP(Parametric) designs", {
   # Test Case:1 Two-Stage Multi-Arm with one Endpoint
   # Arms: 3, Eps: 1, Hypothesis: 2

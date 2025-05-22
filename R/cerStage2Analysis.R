@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 PerformStage2Test <- function(mcpObj, AdaptStage2) {
   Stage1Objs <- mcpObj$Stage1Obj
   if (!AdaptStage2) {

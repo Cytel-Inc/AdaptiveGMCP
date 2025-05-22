@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # Compute the CER for all intersection hypothesis after stage-1 analysis(only for CER analysis tool)
 #' @param b2 stage-2 planned boundaries
 #' @param WH Weights for all intersection hypothesis

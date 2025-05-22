@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 #' Wrapper function that takes all inputs through a single R dataframe
 #' @param InputDF R Dataframe: This is the csv/excel input data in the R dataframe format
 #' @example ./internalData/RunBatches12-04-24.R

@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 test_that("Test Plan Parametric Boundary(CER Method)", {
   # Test Case1: Validate with East MAMS-GS boundary
   # Arms : 3, Looks: 2, Hypothesis: 2

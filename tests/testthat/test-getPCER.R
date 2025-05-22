@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 test_that("Test PCER computations", {
   # Test Case1: VConsistency with East 2-sample Muller-Schefer Benchmarks
   a2 <- 0.0244997717772641

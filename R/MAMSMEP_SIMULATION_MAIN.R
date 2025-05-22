@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 #' Function to perform Adaptive GMCP simulation for Multi-Arm Multi-Stage Multi-Endpoint simulations for Combining p-values method and CER method(2-Stage)
 #' @param Method 'CombPValue': for combining p-values method, 'CER': for Conditional Error method.
 #' @param alpha Type-1 error

@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # Function to perform Adaptive GMCP Analysis following Combined P-Value(Inverse Normal) method
 # nArms Number of Arms
 # nEps Number of End points

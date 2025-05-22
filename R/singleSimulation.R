@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 # Perform Single Simulation for combining p-values method
 # simID Simulation ID
 # gmcpSimObj obj with simulation inputs

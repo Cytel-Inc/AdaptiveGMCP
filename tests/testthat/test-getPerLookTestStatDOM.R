@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 test_that("Test Computations of per-look Summary Statistics Computations", {
   # Test Case1: Verify Look1 summary statistics with Excel Benchmarks(from the subject data)
   SimSeed <- 100
