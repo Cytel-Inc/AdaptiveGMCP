@@ -8,10 +8,10 @@ adaptGMCP_CER(
   nArms = 3,
   nEps = 2,
   SampleSize = 500,
-  EpType = list(EP1 = "Continuous", EP2 = "Binary"),
-  sigma = list(EP1 = c(1, 1.1, 1.2), EP2 = NA),
+  EpType = list(EP1 = "Continuous", EP2 = "Continuous"),
+  sigma = list(EP1 = c(1, 1.1, 1.2), EP2 = c(1, 1.1, 1.2)),
   CommonStdDev = FALSE,
-  prop.ctr = list(EP1 = NA, EP2 = 0.2),
+  prop.ctr = list(EP1 = NA, EP2 = NA),
   allocRatio = c(1, 1, 1),
   WI = c(0.5, 0.5, 0, 0),
   G = matrix(c(0, 0.5, 0.5, 0, 0.5, 0, 0, 0.5, 0, 1, 0, 0, 1, 0, 0, 0), nrow = nEps *
@@ -70,6 +70,12 @@ adaptGMCP_CER(
 Function to perform Adaptive GMCP Analysis following Conditional Error Rate method
 }
 \examples{
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 #######################################################################
 ###############   Script to Run CER Analysis examples #################
 #######################################################################
@@ -78,41 +84,22 @@ library(AdaptGMCP)
 
 ########################## Inputs ##############################
 #-----------------------Total Sample Size------------------------
-SampleSize <- 360
+SampleSize <- 400
 
 #-----------------------Design Alpha------------------------
 alpha <- 0.025
 
 #-----------------------Number of Arms------------------------
-#Note: Including Control Arm
 nArms <- 3
 
 #-------------------Number of Endpoints------------------------
 nEps  <- 2
 
-#------------------list with endpoint types--------------------
-# List containing the endpoint types
-# Options : "Continuous", "Binary"
-EpType <- list("EP1" = "Continuous",
-               "EP2"="Binary")
-
 #-------------Arm-Wise planned Std. Dev. for each endpoints-----
-# List containing the arm-wise(continuous) standard deviations
-# The First input is for the control arm
-# Not required for test.type = 'Non-Parametric' or endpoint type as "Binary"
-sigma <- list("EP1" = c(1, 1, 1),
-              "EP2" = NA)
-
-#--------Use Common standard deviations for boundary computation-----
-#TRUE = the treatment standard deviations assumed to be same as the control for boundary computations for continuous endpoints
-#FALSE = the treatment standard deviations assumed to be same as given in Arms.std.dev.
-CommonStdDev <- FALSE
-
-#-------------proportion for control arm-------------------
-# List containing the Control Arm(Binary) Proportions
-# Not required for test.type = 'Non-Parametric' or endpoint type as "Continuous"
-prop.ctr <- list("EP1" = NA,
-                "EP2" = 0.2)
+# Vector of length = nArms
+# Not required for test.type = 'Non-Parametric'
+sigma <- list('Ep1' = c(1,1,1),
+             'Ep2' = c(1,1,1))
 
 #-----------------------Arm-Wise Allocation Ratio------------------------
 # Vector of length = nArms
@@ -129,7 +116,7 @@ G <- matrix(c(0,1/2,1/2,0,
               1/2,0,0,1/2,
               0,1,0,0,
               1,0,0,0),
-            nrow = nEps*(nArms-1), byrow = TRUE)
+           nrow = nEps*(nArms-1), byrow = TRUE)
 
 #----------------Information Fraction----------------
 #The number of lookes is same as the length of info_frac(for FSD info_frac = 1)
@@ -161,15 +148,10 @@ AdaptStage2 <- TRUE
 plotGraphs <- TRUE
 
 #--------------Run Analysis--------------------------
-###For Interim-look inputs follow the R console#####
-#Please uncomment the following code to run the Analysis(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
-#
-#
-# adaptGMCP_CER(nArms = nArms, nEps = nEps, EpType = EpType,
-#               sigma = sigma, CommonStdDev = CommonStdDev,
-#               prop.ctr = prop.ctr, allocRatio = allocRatio,
-#               SampleSize = SampleSize, alpha = alpha, WI = WI,
-#               G = G, info_frac = info_frac, typeOfDesign = typeOfDesign,
-#               test.type = test.type, AdaptStage2 = AdaptStage2,
-#               plotGraphs = plotGraphs)
+###For Interim-look inputs follow the R console. To quit, press the Esc key#####
+adaptGMCP_CER(nArms = nArms, nEps = nEps, sigma = sigma,
+              allocRatio = allocRatio, SampleSize = SampleSize,
+              alpha = alpha, WI = WI, G = G, info_frac = info_frac,
+              typeOfDesign = typeOfDesign, test.type = test.type,
+              AdaptStage2 = AdaptStage2,plotGraphs = plotGraphs)
 }

@@ -39,7 +39,8 @@
 #' @param KeepAssosiatedEps Logical, True: keep all the associated hypothesis for the selected arms
 #' @param ImplicitSSR Character; 'Selection': re-allocate samples only from de-selected arms to available arms, 'All': Allocate all the planned samples(for the look) to the available arms, 'None': No Re-allocation
 #' @param UpdateStrategy Logical to specify the updated strategy (Not Implemented yet) default FALSE
-#' @param nSimulation Numeric: number of simulations(default=1000)
+#' @param nSimulation Numeric: Number of simulations(default=100)
+#' @param nSimulation_Stage2 Numeric: Number of stage 2 simulations per stage 1 simulation(default = 1). This input is only applicable for Method = 'CER'.
 #' @param Seed 'Random' for randomly generating seed else any integer value(default = 'Random')
 #' @param SummaryStat Logical; TRUE if simulation level data is required(default = FALSE)
 #' @param plotGraphs Logical; TRUE: plot the initial graph
@@ -109,7 +110,7 @@ simMAMSMEP <- function(
     SelectionParmeter = 1,
     KeepAssosiatedEps = TRUE,
     ImplicitSSR = "All",
-    nSimulation = 5,
+    nSimulation = 100,
     nSimulation_Stage2 = 1, # this should always take the value 1 when CER is NOT selected
     Seed = 100,
     SummaryStat = FALSE,
