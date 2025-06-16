@@ -24,16 +24,16 @@
 #' @param gammaA 	Parameter for alpha spending function for typeOfDesign = "asHSD" & "asKD"
 #' @param AdaptStage2 TRUE: Adaptation option will be given for stage-2, FALSE : proceed as planned.
 #' @param plotGraphs TRUE: plot intermediate graphs
-#' @example ./internalData/AdaptGMCP_CER_Analysis_NormBin_Example.R
+#' @example ./internalData/AdaptGMCP_CER_Analysis_Example.R
 #' @export
 adaptGMCP_CER <- function(
     nArms = 3,
     nEps = 2,
     SampleSize = 500,
-    EpType = list("EP1" = "Continuous", "EP2" = "Binary"),
-    sigma = list("EP1" = c(1, 1.1, 1.2), "EP2" = NA),
+    EpType = list("EP1" = "Continuous", "EP2" = "Continuous"),
+    sigma = list("EP1" = c(1, 1.1, 1.2), "EP2" = c(1, 1.1, 1.2)),
     CommonStdDev = FALSE,
-    prop.ctr = list("EP1" = NA, "EP2" = 0.2),
+    prop.ctr = list("EP1" = NA, "EP2" = NA),
     allocRatio = c(1, 1, 1),
     WI = c(0.5, 0.5, 0, 0),
     G = matrix(

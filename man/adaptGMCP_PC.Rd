@@ -60,6 +60,12 @@ adaptGMCP_PC(
 Function to perform Adaptive GMCP Analysis following Combined P-Value(Inverse Normal) method
 }
 \examples{
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 #######################################################################
 #####   Script to Run Combining P-value Analysis examples #############
 #######################################################################

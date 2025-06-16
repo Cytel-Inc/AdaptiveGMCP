@@ -76,12 +76,9 @@ AdaptStage2 <- TRUE
 plotGraphs <- TRUE
 
 #--------------Run Analysis--------------------------
-###For Interim-look inputs follow the R console#####
-#Please uncomment the following code to run the Analysis(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
-#
-#
-# adaptGMCP_CER(nArms = nArms, nEps = nEps, sigma = sigma,
-#               allocRatio = allocRatio, SampleSize = SampleSize,
-#               alpha = alpha, WI = WI, G = G, info_frac = info_frac,
-#               typeOfDesign = typeOfDesign, test.type = test.type,
-#               AdaptStage2 = AdaptStage2,plotGraphs = plotGraphs)
+###For Interim-look inputs follow the R console. To quit, press the Esc key#####
+adaptGMCP_CER(nArms = nArms, nEps = nEps, sigma = sigma,
+              allocRatio = allocRatio, SampleSize = SampleSize,
+              alpha = alpha, WI = WI, G = G, info_frac = info_frac,
+              typeOfDesign = typeOfDesign, test.type = test.type,
+              AdaptStage2 = AdaptStage2,plotGraphs = plotGraphs)

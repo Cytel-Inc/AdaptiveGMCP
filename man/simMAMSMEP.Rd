@@ -40,7 +40,7 @@ simMAMSMEP(
   SelectionParmeter = 1,
   KeepAssosiatedEps = TRUE,
   ImplicitSSR = "All",
-  nSimulation = 5,
+  nSimulation = 100,
   nSimulation_Stage2 = 1,
   Seed = 100,
   SummaryStat = FALSE,
@@ -116,7 +116,9 @@ simMAMSMEP(
 
 \item{ImplicitSSR}{Character; 'Selection': re-allocate samples only from de-selected arms to available arms, 'All': Allocate all the planned samples(for the look) to the available arms, 'None': No Re-allocation}
 
-\item{nSimulation}{Numeric: number of simulations(default=1000)}
+\item{nSimulation}{Numeric: Number of simulations(default=100)}
+
+\item{nSimulation_Stage2}{Numeric: Number of stage 2 simulations per stage 1 simulation(default = 1). This input is only applicable for Method = 'CER'.}
 
 \item{Seed}{'Random' for randomly generating seed else any integer value(default = 'Random')}
 
@@ -134,6 +136,12 @@ simMAMSMEP(
 Function to perform Adaptive GMCP simulation for Multi-Arm Multi-Stage Multi-Endpoint simulations for Combining p-values method and CER method(2-Stage)
 }
 \examples{
+# --------------------------------------------------------------------------------------------------
+#
+# ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
+#
+# --------------------------------------------------------------------------------------------------
+
 
 #######################################################################
 ###############  Script to Run Adapt GMCP Simulations #################
@@ -162,15 +170,11 @@ nEps  <- 2
 # List containing the endpoint types
 # Options : "Continuous", "Binary"
 EpType <- list("EP1" = "Continuous",
-               "EP2" = "Binary")
+               "EP2" = "Continuous")
 
 #----------------------Test Statistics(Continuous)---------------------------
 #options : "z" :- Z Statistics, "t-equal" :- t Statistics with equal variance, "t-unequal" :- t Statistics with unequal variance
 TestStatCon <- "t-equal"
-
-#----------------------Test Statistics(Binary)---------------------------
-#options : "Pooled" :- Z Statistics with equal variances, "UnPooled" :- Z Statistics with un-equal variances
-TestStatBin <- "UnPooled"
 
 #---------FWER Control Method(Applicable for CER Method only)------
 #options: 'CombinationTest' : combined incremental p-values for stage-2 testing, 'None': Cumulative classical test statistics.
@@ -181,25 +185,19 @@ FWERControl <- "None"
 # List containing the arm-wise(continuous) means
 #Note: The first input is for control arm and the rest are for the treatments
 Arms.Mean <- list('EP1' = c(0, 0.4, 0.4, 0.4),
-                  'EP2' = NA)
+                  'EP2' = c(0, 0.4, 0.4, 0.4))
 
 #-------------Arm-Wise planned Std. Dev. for each endpoints-----
 # List containing the arm-wise(continuous) standard deviations
 # Note: The first input is for control arm and the rest are for the treatments
 Arms.std.dev <- list('EP1' = c(1.1, 1.2, 1.3, 1.4),
-                     'EP2' = NA)
+                     'EP2' = c(1.1, 1.2, 1.3, 1.4))
 
 #--------Use Common standard deviations for boundary computation-----
 #TRUE = the treatment standard deviations assumed to be same as the control for boundary computations for continuous endpoints
 #FALSE = the treatment standard deviations assumed to be same as given in Arms.std.dev.
 CommonStdDev <- FALSE
 
-
-#-------------Arm-Wise proportion for each endpoints-----------------
-# List containing the arm-wise(Binary) proportions
-# Note: The first input is for control arm and the rest are for the treatments
-Arms.Prop <- list('EP1'=NA,
-                  'EP2' =c(0.1, 0.4, 0.4, 0.4))
 
 #-------------Arm-Wise planned allocation Ratio----------------
 # Vector containing the arm-wise allocation ratios
@@ -288,7 +286,8 @@ KeepAssosiatedEps <- TRUE
 ImplicitSSR <- 'Selection'
 
 #-------------------Number of Simulations-------------------------------------
-nSimulation <- 1
+nSimulation <- 10
+nSimulation_Stage2 <- 10
 
 #-------------------Simulation Seed-------------------------------------
 Seed <- 100
@@ -308,16 +307,20 @@ Parallel <- TRUE
 #
 out <- simMAMSMEP(
   alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType=EpType,
-  TestStatCon = TestStatCon, TestStatBin = TestStatBin, FWERControl = FWERControl,
-  Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, CommonStdDev = CommonStdDev, Arms.Prop = Arms.Prop, Arms.alloc.ratio = Arms.alloc.ratio,
+  TestStatCon = TestStatCon, FWERControl = FWERControl,
+  Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev, CommonStdDev = CommonStdDev, Arms.alloc.ratio = Arms.alloc.ratio,
   EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type, info_frac = info_frac,
   typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
   Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
   SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
-  ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
+  ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, nSimulation_Stage2 = nSimulation_Stage2, Seed = Seed, SummaryStat = SummaryStat,
   Method = Method, plotGraphs = plotGraphs, Parallel = Parallel
 )
-#out
 
+outPower <- out$Overall_Powers
+outPower
+
+# To view the full simulation output, uncomment the following line
+# print(out)
 
 }
