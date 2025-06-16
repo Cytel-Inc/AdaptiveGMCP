@@ -20,44 +20,31 @@ The following are some of the key functions provided by the AdaptGMCP package:
 
 For detailed usage and arguments of each function, please refer to the help section in R after installing the package (e.g., `?simMAMSMEP`).
 
-## Quick Start: Running `simMAMSMEP`
+## Quick Start
 
-To help you get started, an example script demonstrating the use of the `simMAMSMEP` function is provided in the repository:
+### `simMAMSMEP`
 
-[internalData/MAMSMEP_Simulation_Example.R](internalData/MAMSMEP_Simulation_Example.R)
+- **Example script:** [internalData/MAMSMEP_Simulation_Example.R](internalData/MAMSMEP_Simulation_Example.R)
+- **How to use:** Open and run the script in R to see a typical workflow.
+- **Documentation:** For detailed documentation on all arguments, run:
+  ```R
+  ?simMAMSMEP
+  ```
 
-You can open and run this script in R to see a typical workflow.
+### `adaptGMCP_CER`
 
-For detailed documentation on all arguments, run:
+- **Example script:** [internalData/AdaptGMCP_CER_Analysis_Example.R](internalData/AdaptGMCP_CER_Analysis_Example.R)
+- **How to use:** Open and run the script in R to perform analysis using the Conditional Error Rate method.
+- **Documentation:** For detailed documentation on all arguments, run:
+  ```R
+  ?adaptGMCP_CER
+  ```
 
-```R
-?simMAMSMEP
-```
+### `adaptGMCP_PC`
 
-## Quick Start: Running `adaptGMCP_CER`
-
-An example script for the `adaptGMCP_CER` function is available:
-
-[internalData/AdaptGMCP_CER_Analysis_Example.R](internalData/AdaptGMCP_CER_Analysis_Example.R)
-
-To use this function, open and run the script in R. This will demonstrate how to perform analysis using the Conditional Error Rate method.
-
-For detailed documentation on all arguments, run:
-
-```R
-?adaptGMCP_CER
-```
-
-## Quick Start: Running `adaptGMCP_PC`
-
-An example script for the `adaptGMCP_PC` function is available:
-
-[internalData/AdaptGMCP_Analysis_Example.R](internalData/AdaptGMCP_Analysis_Example.R)
-
-Open and run this script in R to see how to use the p-value combination method for your analysis.
-
-For detailed documentation on all arguments, run:
-
-```R
-?adaptGMCP_PC
-```
+- **Example script:** [internalData/AdaptGMCP_Analysis_Example.R](internalData/AdaptGMCP_Analysis_Example.R)
+- **How to use:** Open and run the script in R to use the p-value combination method for your analysis.
+- **Documentation:** For detailed documentation on all arguments, run:
+  ```R
+  ?adaptGMCP_PC
+  ```
