@@ -164,9 +164,6 @@ plotGraphs <- TRUE
 Parallel <- TRUE
 
 #-----------------------Run Simulation--------------------------------------
-# Uncomment the following code to run simulation;
-# short cut: 1) select all the following lines 2) ctrl+shift+c]
-#
 out <- simMAMSMEP(
   alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType=EpType,
   TestStatCon = TestStatCon, FWERControl = FWERControl,
