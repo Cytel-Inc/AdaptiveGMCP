@@ -49,9 +49,9 @@ For detailed usage and arguments of each function, please refer to the help sect
   ?adaptGMCP_PC
   ```
 
-## Testing Status
+## Note
 
-The binary and mixed endpoint engine is currently undergoing testing. We welcome your feedback to help improve its reliability.
+The binary and mixed endpoint engine is currently undergoing testing. We welcome your feedback to help improve the R package.
 
 **How to report bugs or observations:**
 
