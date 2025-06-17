@@ -48,3 +48,22 @@ For detailed usage and arguments of each function, please refer to the help sect
   ```R
   ?adaptGMCP_PC
   ```
+
+## Testing Status
+
+The binary and mixed endpoint engine is currently undergoing testing. We welcome your feedback to help improve its reliability.
+
+**How to report bugs or observations:**
+
+1. Go to the [Issues](https://github.com/Cytel-Inc/AdaptiveGMCP/issues) section of the GitHub repository.
+2. Click on the "New issue" button.
+3. Provide a clear and descriptive title for your issue.
+4. In the description, include as much detail as possible, such as:
+   - Steps to reproduce the problem
+   - Expected and actual behavior
+   - Any error messages or warnings
+   - Relevant code snippets or data (if applicable)
+   - Your R version and operating system
+5. Submit the issue.
+
+Your input is valuable and will help us address problems and improve the package for all users.
