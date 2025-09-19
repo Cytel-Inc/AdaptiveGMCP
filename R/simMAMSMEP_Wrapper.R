@@ -108,12 +108,12 @@ run1TestCase <- function(InputDF) {
   G <- eval(parse(text = InputDF$G))
   test.type <- InputDF$test.type
   info_frac <- eval(parse(text = InputDF$info_frac))
-  typeOfDesign <- InputDF$typeOfDesign
+  typeOfDesign <- ifelse(is.na(InputDF$typeOfDesign), "asOF", InputDF$typeOfDesign)
   MultipleWinners <- InputDF$MultipleWinners
   MultipleWinners <- ifelse(is.na(MultipleWinners),FALSE,MultipleWinners)
   Selection <- InputDF$Selection
   Selection <- ifelse(is.na(Selection),FALSE, Selection)
-  CommonStdDev <- InputDF$CommonStdDev
+  CommonStdDev <- ifelse(is.na(InputDF$CommonStdDev), F, InputDF$CommonStdDev)
   SelectionLook <- InputDF$SelectionLook
   SelectEndPoint <- InputDF$SelectEndPoint
   SelectionScale <- InputDF$SelectionScale
