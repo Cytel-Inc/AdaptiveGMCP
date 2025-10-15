@@ -19,7 +19,6 @@
 modified_MAMSMEP_sim2 <- function (gmcpSimObj)
 {
   ### Ani:
-  browser()
   ######################
 
   preSimObjs <<- getPreSimObjs(gmcpSimObj = gmcpSimObj)
