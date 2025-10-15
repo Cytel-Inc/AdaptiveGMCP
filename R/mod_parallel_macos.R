@@ -18,6 +18,10 @@
 #' @importFrom dplyr %>%
 modified_MAMSMEP_sim2 <- function (gmcpSimObj)
 {
+  ### Ani:
+  browser()
+  ######################
+
   preSimObjs <<- getPreSimObjs(gmcpSimObj = gmcpSimObj)
   starttime <- Sys.time()
   SummaryStatFile <- ArmWiseSummary <- SelectionTab <- data.table()
@@ -25,6 +29,11 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
   PowerTab <- data.table(matrix(nrow = 0, ncol = length(powersName)))
   EfficacyTable <- data.frame()
   data.table::setnames(PowerTab, powersName)
+
+  # Table for storing raw p-values from each simulation
+  tabRawPVals <- data.table(matrix(nrow = 0, ncol = gmcpSimObj$nHypothesis))
+  data.table::setnames(tabRawPVals, paste0("RawPvalues", 1:gmcpSimObj$nHypothesis))
+
   if (gmcpSimObj$Method == "CER") {
     if (gmcpSimObj$Parallel) {
       cores <- parallel::detectCores()
@@ -118,8 +127,25 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
       # ArmWiseSummary <- data.table::rbindlist(list(ArmWiseSummary, data.table(out[[i]]$ArmWiseDF)), use.names = TRUE, fill = TRUE)
       PowerTab <- data.table::rbindlist(list(PowerTab, data.table(out[[i]]$powerCountDF)), use.names = TRUE, fill = TRUE)
       # SelectionTab <- data.table::rbindlist(list(SelectionTab, data.table(out[[i]]$SelectionDF)), use.names = TRUE, fill = TRUE)
-      SuccessedSims <- SuccessedSims + 1
 
+      # Extract raw p-values from SummStatDF
+      if (!is.null(df) && nrow(df) > 0) {
+        # Get columns containing raw p-values (RawPvalues1, RawPvalues2, etc.)
+        rawPvalCols <- grep("^RawPvalues", names(df), value = TRUE)
+
+        if (length(rawPvalCols) > 0) {
+          # Extract just the raw p-value columns
+          rawPvalsDf <- df[, rawPvalCols, drop = FALSE]
+
+          # # Rename columns to match H1, H2, etc. format
+          # colnames(rawPvalsDf) <- paste0("H", 1:gmcpSimObj$nHypothesis)
+
+          # Add to the tabRawPVals data.table
+          tabRawPVals <- data.table::rbindlist(list(tabRawPVals, data.table(rawPvalsDf)), use.names = TRUE, fill = TRUE)
+        }
+      }
+
+      SuccessedSims <- SuccessedSims + 1
     }
   }
   # save rawpvalues as rds with timestamp in the name
@@ -207,7 +233,8 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              elapsedTime = elapsedTime,
              elapsedTime_postProc = elapsedTime_postProc,
              power_raw = PowerTab,
-             stagewiseRejections = dfStagewiseRejections
+             stagewiseRejections = dfStagewiseRejections,
+             rawPValues = tabRawPVals
            ),
            list(
              PlanSampleSizeCum = preSimObjs$planSS$CumulativeSamples,
@@ -222,7 +249,8 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              elapsedTime = elapsedTime,
              elapsedTime_postProc = elapsedTime_postProc,
              power_raw = PowerTab,
-             stagewiseRejections = dfStagewiseRejections
+             stagewiseRejections = dfStagewiseRejections,
+             rawPValues = tabRawPVals
            )
     )
   } else {
@@ -242,7 +270,8 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              SuccessedSims = SuccessedSims,
              elapsedTime = elapsedTime,
              power_raw = PowerTab,
-             stagewiseRejections = dfStagewiseRejections
+             stagewiseRejections = dfStagewiseRejections,
+             rawPValues = tabRawPVals
            ),
            list(
              PlanSampleSize = preSimObjs$planSS$IncrementalSamples,
@@ -257,7 +286,8 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
              SuccessedSims = SuccessedSims,
              elapsedTime = elapsedTime,
              power_raw = PowerTab,
-             stagewiseRejections = dfStagewiseRejections
+             stagewiseRejections = dfStagewiseRejections,
+             rawPValues = tabRawPVals
            )
     )
   }

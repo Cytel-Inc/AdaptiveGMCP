@@ -3,3 +3,24 @@
 .RData
 .Ruserdata
 inst/doc
+hs_err_pid12628.log
+hs_err_pid34352.log
+internalData/AGMCP_2Lk_Out_03Oct25-19_30.csv
+internalData/AGMCP_Output_21Sep.csv
+internalData/Batch_AGMCP_2Lks.xlsx
+internalData/BatchOutput_Scenario1To46.csv
+internalData/BatchOutput_Scenario1To56.csv
+internalData/CER_Inp_1ep5arms.csv
+internalData/gMCP Error.JPG
+internalData/gMCP_output_22Sep.csv
+internalData/grMCP_Out_22Sep.csv
+internalData/grMCPPValSimOut-25ksims.csv
+internalData/grMCPPValSimOut-NonPar-12.3Min.csv
+internalData/grMCPPValSimOut-Par-4.1Min.csv
+internalData/Log-Batch_gMCP_FS_Sim_Bin.txt
+internalData/Output_08Sep25-22_22.csv
+internalData/Output_FS_GMCP_Sim_Bin.csv
+RawPValues_20250919_184740.csv
+internalData/RawPValues_20251003_181429.csv
+internalData/RawPValues_20251003_192924.csv
+internalData/RawPValues_165_models.csv

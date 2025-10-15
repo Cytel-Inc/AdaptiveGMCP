@@ -39,19 +39,20 @@ library(tidyverse)
 
 # Now trying the same example using simMAMSMEP_Wrapper()
 # dfInput <- read_csv("internalData/BatchInput_FS_GMCP_Sim_Bin.csv")
-dfInput <- read_csv("internalData/BatchInput_FS_GMCP_Sim_Bin_2.csv")
+# dfInput <- read_csv("internalData/BatchInput_AGMCP_Sim_Bin_2.csv")
+dfInput <- read_csv("internalData/BatchInput_AGMCP_Sim_Bin_3.csv")
 sOutFilePrefix <- "Output"
 sOutPath <- "internalData/"
 
-nModelsToRun <- 163 # 164 # 169 # 166:177 # dfInput$ModelID # 110 # 1:60 #
+nModelsToRun <- dfInput$ModelID # c(1, 10, 26, 33, 66, 77, 102)
 
-# TRIAL RUN - START >>>>>>>>>>>>
-# To do a trial run, uncomment this block so that the tests are run with a
-# small number of simulations rather than the number specified in the input
-# file.
-dfInput$nSimulation <- 10 # 10000
-dfInput$Parallel <- FALSE
-# TRIAL RUN - OVER >>>>>>>>>>>>
+# # TRIAL RUN - START >>>>>>>>>>>>
+# # To do a trial run, uncomment this block so that the tests are run with a
+# # small number of simulations rather than the number specified in the input
+# # file.
+# dfInput$nSimulation <- 10000 # 10 #
+# dfInput$Parallel <- FALSE
+# # TRIAL RUN - OVER >>>>>>>>>>>>
 
 tStartTime <- Sys.time()
 

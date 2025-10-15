@@ -6,6 +6,7 @@ library(gMCP)
 library(dplyr)
 library(tidyr)
 library(purrr)
+library(parallel)
 
 #' Wrapper function that takes all inputs through a single R dataframe and
 #' calls gMCP::calcPower() on each row of the dataframe (one test case)
@@ -274,6 +275,45 @@ DummyCalcPower <- function(graph, alpha, mean, corr.sim, corr.test, n.sim) {
   )
 
   return(out)
+}
+
+# Function to run graphTest in parallel
+runParallelGraphTest <- function(pvalues, graph, dAlpha, mCorrTest) {
+  # Determine the number of cores to use (leave one for the OS)
+  n_cores <- max(1, detectCores() - 1)
+
+  # Create a Windows cluster
+  cl <- makeCluster(n_cores)
+
+  # Export necessary objects to the cluster
+  clusterExport(cl, varlist = c("graph", "dAlpha", "mCorrTest"), envir = environment())
+
+  # Load gMCP package on each cluster node
+  clusterEvalQ(cl, library(gMCP))
+
+  # Define a wrapper function for a single row
+  test_fun <- function(pvec, dAlpha, graph, cr) {
+    gMCP::graphTest(pvalues = matrix(pvec, nrow = 1), alpha = dAlpha, graph = graph, cr = cr)
+  }
+
+  # Apply the function to each row of pvalues in parallel
+  testResultsList <- parLapply(cl, seq_len(nrow(pvalues)), function(i) {
+    out <- test_fun(pvalues[i, ], dAlpha, graph, mCorrTest)
+    return(out)
+  })
+
+  # Stop the cluster
+  stopCluster(cl)
+
+  # Combine the results into a matrix with same dimensions as pvalues
+  testResults <- matrix(
+    unlist(testResultsList),
+    nrow = nrow(pvalues),
+    ncol = ncol(pvalues),
+    byrow = TRUE
+  )
+
+  return(testResults)
 }
 
 ###################################
