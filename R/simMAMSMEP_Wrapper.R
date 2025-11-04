@@ -14,7 +14,13 @@ simMAMSMEP_Wrapper <- function(InputDF) {
   library(dplyr)
   library(tidyr)
 
+  # ### Ani:
+  # browser()
+  # ###
+  #
   lOut <- list()
+  allRawPValues <- data.frame() # Initialize dataframe to collect raw p-values
+
   for (nModelNum in 1:nrow(InputDF)) {
     # Start timer for this iteration
     start_time <- Sys.time()
@@ -67,6 +73,29 @@ simMAMSMEP_Wrapper <- function(InputDF) {
       # add each iterations power table to a list
       lOut[[nModelNum]] <- OutTab
 
+      # Collect raw p-values if they exist
+      if (!is.null(out$rawPValues) && is.data.frame(out$rawPValues) && nrow(out$rawPValues) > 0) {
+        # Add model number column
+        modelRawPValues <- out$rawPValues
+        modelRawPValues$ModelNum <- nModelNum
+        modelRawPValues$ModelID <- InputDF[nModelNum, "ModelID"]
+
+        # InputDF[nModelNum, "info_frac"]
+        modelRawPValues$Look <- rep(1:length(eval(
+          parse(text = InputDF[nModelNum, ]$info_frac)
+          )), length.out = nrow(out$rawPValues))
+
+        dfTemp <- modelRawPValues %>% select(-c(ModelNum, ModelID, Look))
+        dfTemp <- cbind(modelRawPValues$ModelNum, modelRawPValues$ModelID,
+                        modelRawPValues$Look, dfTemp)
+        modelRawPValues <- dfTemp %>% rename(ModelNum = V1, ModelID = V2,
+                                             Look = V3)
+
+        # Append to the combined dataframe
+        # allRawPValues <- rbind(allRawPValues, modelRawPValues)
+        allRawPValues <- bind_rows(allRawPValues, modelRawPValues)
+      }
+
       passedTxt <- paste0("Model ", nModelNum, " execution completed successfully.")
       cat("\n", passedTxt, "\n")
       print(paste0("Power table for ", nModelNum, ":"))
@@ -84,6 +113,15 @@ simMAMSMEP_Wrapper <- function(InputDF) {
   # rbind power tables for each iteration to produce a single table
   dfOut <- do.call(rbind, lOut)
   dfOut <- dplyr::left_join(dfOut, InputDF, by = "ModelID")
+
+  # Save combined raw p-values to CSV if we have data
+  if (nrow(allRawPValues) > 0) {
+    timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+    csvFilePath <- paste0("internalData/RawPValues_", timestamp, ".csv")
+    write.csv(allRawPValues, file = csvFilePath, row.names = FALSE)
+    cat("\nRaw p-values saved to:", csvFilePath, "\n")
+  }
+
   return(dfOut)
 }
 
@@ -93,7 +131,7 @@ run1TestCase <- function(InputDF) {
   Method <- InputDF$Method
   SampleSize <- InputDF$SampleSize
   alpha <- InputDF$alpha
-  TestStatCon <- InputDF$TestStatCon
+  TestStatCont <- InputDF$TestStatCont
   TestStatBin <- InputDF$TestStatBin
   FWERControl <- InputDF$FWERControl
   nArms <- InputDF$nArms
@@ -108,12 +146,12 @@ run1TestCase <- function(InputDF) {
   G <- eval(parse(text = InputDF$G))
   test.type <- InputDF$test.type
   info_frac <- eval(parse(text = InputDF$info_frac))
-  typeOfDesign <- InputDF$typeOfDesign
+  typeOfDesign <- ifelse(is.na(InputDF$typeOfDesign), "asOF", InputDF$typeOfDesign)
   MultipleWinners <- InputDF$MultipleWinners
   MultipleWinners <- ifelse(is.na(MultipleWinners),FALSE,MultipleWinners)
   Selection <- InputDF$Selection
   Selection <- ifelse(is.na(Selection),FALSE, Selection)
-  CommonStdDev <- InputDF$CommonStdDev
+  CommonStdDev <- ifelse(is.na(InputDF$CommonStdDev), F, InputDF$CommonStdDev)
   SelectionLook <- InputDF$SelectionLook
   SelectEndPoint <- InputDF$SelectEndPoint
   SelectionScale <- InputDF$SelectionScale
@@ -132,7 +170,7 @@ run1TestCase <- function(InputDF) {
   Seed <- if (!is.na(suppressWarnings(as.numeric(Seed)))) as.numeric(Seed) else Seed
   out <- simMAMSMEP(
     alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType=lEpType,
-    TestStatCon = TestStatCon, TestStatBin = TestStatBin, FWERControl = FWERControl,
+    TestStatCont = TestStatCont, TestStatBin = TestStatBin, FWERControl = FWERControl,
     Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev,Arms.Prop = Arms.Prop, Arms.alloc.ratio = Arms.alloc.ratio,
     EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type, info_frac = info_frac,
     typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
