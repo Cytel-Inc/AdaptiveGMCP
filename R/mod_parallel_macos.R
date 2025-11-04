@@ -18,9 +18,9 @@
 #' @importFrom dplyr %>%
 modified_MAMSMEP_sim2 <- function (gmcpSimObj)
 {
-  ### Ani:
-  browser()
-  ######################
+  #######################################
+  # browser()
+  #######################################
 
   preSimObjs <<- getPreSimObjs(gmcpSimObj = gmcpSimObj)
   starttime <- Sys.time()
@@ -40,10 +40,17 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
       if(.Platform$OS.type == "windows")# check OS
       {
         cl <- parallel::makeCluster(cores[1] - 1, type = "PSOCK")
+        parallel::clusterEvalQ(cl, {
+          library(AdaptGMCP)
+          NULL # Returning NULL from clusterEvalQ to avoid returning whatever
+               # the library() function returns
+        })
         parallel::clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
         out <- parallel::parLapply(cl = cl, 1:gmcpSimObj$nSimulation, function(x){
           out_SingleSim <- SingleSimCER2(x, gmcpSimObj, preSimObjs)
-          return(out_SingleSim)})
+          return(out_SingleSim)
+        })
+
         parallel::stopCluster(cl)
       }
       else
@@ -58,15 +65,24 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
     }
     else {
       out <- lapply(1:gmcpSimObj$nSimulation, function(x) {
-        SingleSimCER2(x, gmcpSimObj, preSimObjs)
+        out_SingleSim <- SingleSimCER2(x, gmcpSimObj, preSimObjs)
+        if(x%%50 == 0) {
+          print(paste0("Completed ", x, " simulations"))
+        }
+        return(out_SingleSim)
       })
     }
-  } else {
+  } else { # means gmcpSimObj$Method == "CombPValue"
     if (gmcpSimObj$Parallel) {
       cores <- parallel::detectCores()
       if(.Platform$OS.type == "windows")#check OS
       {
         cl <- parallel::makeCluster(cores[1] - 1, type = "PSOCK")
+        parallel::clusterEvalQ(cl, {
+          library(AdaptGMCP)
+          NULL # Returning NULL from clusterEvalQ to avoid returning whatever
+          # the library() function returns
+        })
         parallel::clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
         out <- parallel::parLapply(cl = cl, 1:gmcpSimObj$nSimulation,
                                    function(x) {
@@ -74,6 +90,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
                                                                            preSimObjs)
                                      return(out_SingleSim)
                                    })
+        parallel::stopCluster(cl)
       }
       else
       {
@@ -90,6 +107,11 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
       })
     }
   }
+
+  #######################################
+  # browser()
+  #######################################
+
   startTime_postproc <- Sys.time()
   # Aggregating results
   SuccessedSims <- 0

@@ -27,7 +27,12 @@ adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
   }))
 
   # Computed covariance matrix
-  if (mcpObj$test.type == "Partly-Parametric" || mcpObj$test.type == "Parametric") {
+  # Bug fix: Earlier Stage2Sigma was calculated only in case of Partly-Parametric
+  # and Parametric tests and it was set to NA in case of Non-Parametric.
+  # However, this led to problems in the function SingleSimCER() as it
+  # requires the fisher info matrix in all cases.
+  # Fixed this bug by calculating Stage2Sigma unconditionally.
+  # if (mcpObj$test.type == "Partly-Parametric" || mcpObj$test.type == "Parametric") {
     Stage2Sigma <- getStage2Sigma(
       nHypothesis = nHypothesis,
       EpType = mcpObj$lEpType,
@@ -42,9 +47,9 @@ adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
       Stage2sigma = mcpObj$sigma,
       CommonStdDev = mcpObj$CommonStdDev
     )
-  } else {
-    Stage2Sigma <- NA
-  }
+  # } else {
+  #   Stage2Sigma <- NA
+  # }
 
   # planned sample size: for non-parametric tests
   PlanSSHyp <- getHypoSS(SS = mcpObj$AllocSampleSize,

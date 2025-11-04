@@ -50,7 +50,7 @@ nModelsToRun <- dfInput$ModelID # c(1, 10, 26, 33, 66, 77, 102)
 # # To do a trial run, uncomment this block so that the tests are run with a
 # # small number of simulations rather than the number specified in the input
 # # file.
-# dfInput$nSimulation <- 10000 # 10 #
+dfInput$nSimulation <- 100 # 10000 #
 # dfInput$Parallel <- FALSE
 # # TRIAL RUN - OVER >>>>>>>>>>>>
 
