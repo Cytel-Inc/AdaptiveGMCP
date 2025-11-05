@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+.lintr
 inst/doc
 hs_err_pid12628.log
 hs_err_pid34352.log
@@ -31,3 +32,7 @@ internalData/AGMCP_2Lk_1E_ue_10k_HPC_Out2.csv
 internalData/HPC_Out_CER_Bin_1ep3arms_03Nov25-10_55.csv
 internalData/HPC_Out_CER_Bin_1ep3arms_29Oct25-21_01.csv
 bom_pkgdepends.csv
+out_renv.xlsx
+out_renv.csv
+internalData/devtools_check_05Nov2025.txt
+internalData/devtools_check_changes.txt
