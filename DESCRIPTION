@@ -14,7 +14,7 @@ RoxygenNote: 7.3.3
 Imports: data.table, dplyr, gMCPLite, htmltools, knitr, Matrix, matrixcalc, mvtnorm, parallel, 
          plyr, RColorBrewer, rpact, shiny, stringr
 Suggests: future, ggplot2, gMCP, graphicalMCP, gridExtra, lintr, promises, purrr, reshape2, 
-          rhandsontable, rmarkdown, shinycssloaders, testthat (>= 3.0.0), tidyr, tidyverse, usethis, 
+          rhandsontable, rmarkdown, shinycssloaders, testthat (>= 3.0.0), tidyr, usethis, 
           visNetwork
 Config/testthat/edition: 3
 VignetteBuilder: knitr
