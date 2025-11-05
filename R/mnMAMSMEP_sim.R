@@ -315,7 +315,12 @@ getPreSimObjs <- function(gmcpSimObj) {
     {
       #----------------------------------------------------------------------------------
       ######## Computation of covariance matrix##############
-      if (gmcpSimObj$test.type == "Partly-Parametric" || gmcpSimObj$test.type == "Parametric") {
+      # Bug fix: Earlier Sigma was calculated only in case of Partly-Parametric
+      # and Parametric tests and it was set to NA in case of Non-Parametric.
+      # However, this led to problems in the function SingleSimCER() as it
+      # requires the fisher info matrix in all cases.
+      # Fixed this bug by calculating Sigma unconditionally.
+      # if (gmcpSimObj$test.type == "Partly-Parametric" || gmcpSimObj$test.type == "Parametric") {
         Sigma <- getSigma(
           SS_Cum = planSS$CumulativeSamples,
           sigma = gmcpSimObj$Arms.std.dev,
@@ -324,9 +329,9 @@ getPreSimObjs <- function(gmcpSimObj) {
           prop.ctr = gmcpSimObj$prop.ctr,
           CommonStdDev = gmcpSimObj$CommonStdDev
         )
-      } else {
-        Sigma <- NA
-      }
+      # } else {
+      #   Sigma <- NA
+      # }
       #----------------------------------------------------------------------------------
       ######## Computation of Planned Boundaries##############
       plan_Bdry <- planBdryCER(

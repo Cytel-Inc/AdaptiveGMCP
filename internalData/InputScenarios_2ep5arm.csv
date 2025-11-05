@@ -7,7 +7,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 2,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0,0, 0.4),'EP2' = c(0,0,0,0,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -16,7 +16,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 3,Information specific to the model,CombPValue,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0,0, 0.4),'EP2' = c(0,0,0,0,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -25,7 +25,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 4,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0,0, 0.4),'EP2' = c(0,0,0,0,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -34,7 +34,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 5,Information specific to the model,CombPValue,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0,0, 0.4),'EP2' = c(0,0,0,0,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -43,7 +43,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 6,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0,0, 0.4),'EP2' = c(0,0,0,0,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -52,7 +52,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 7,Information specific to the model,CombPValue,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0,0, 0.4),'EP2' = c(0,0,0,0,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -61,7 +61,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 8,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0,0, 0.4),'EP2' = c(0,0,0,0,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -70,7 +70,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 9,Information specific to the model,CombPValue,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0,0.4, 0.4),'EP2' = c(0,0,0,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -79,7 +79,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 10,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0,0.4, 0.4),'EP2' = c(0,0,0,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -88,7 +88,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 11,Information specific to the model,CombPValue,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0,0.4, 0.4),'EP2' = c(0,0,0,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -97,7 +97,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 12,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0,0.4, 0.4),'EP2' = c(0,0,0,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -106,7 +106,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 13,Information specific to the model,CombPValue,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0,0.4, 0.4),'EP2' = c(0,0,0,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -115,7 +115,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 14,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0,0.4, 0.4),'EP2' = c(0,0,0,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -124,7 +124,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 15,Information specific to the model,CombPValue,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0,0.4, 0.4),'EP2' = c(0,0,0,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -133,7 +133,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 16,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0,0.4, 0.4),'EP2' = c(0,0,0,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -142,7 +142,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 17,Information specific to the model,CombPValue,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0.4,0.4, 0.4),'EP2' = c(0,0,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -151,7 +151,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 18,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0.4,0.4, 0.4),'EP2' = c(0,0,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -160,7 +160,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 19,Information specific to the model,CombPValue,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0.4,0.4, 0.4),'EP2' = c(0,0,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -169,7 +169,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 20,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0.4,0.4, 0.4),'EP2' = c(0,0,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -178,7 +178,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 21,Information specific to the model,CombPValue,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0.4,0.4, 0.4),'EP2' = c(0,0,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -187,7 +187,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 22,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0.4,0.4, 0.4),'EP2' = c(0,0,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -196,7 +196,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 23,Information specific to the model,CombPValue,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0.4,0.4, 0.4),'EP2' = c(0,0,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -205,7 +205,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 24,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0,0.4,0.4, 0.4),'EP2' = c(0,0,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -214,7 +214,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 25,Information specific to the model,CombPValue,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0.4,0.4,0.4, 0.4),'EP2' = c(0,0.4,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -223,7 +223,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 26,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0.4,0.4,0.4, 0.4),'EP2' = c(0,0.4,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -232,7 +232,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,-0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 27,Information specific to the model,CombPValue,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0.4,0.4,0.4, 0.4),'EP2' = c(0,0.4,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -241,7 +241,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 28,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0.4,0.4,0.4, 0.4),'EP2' = c(0,0.4,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -250,7 +250,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 29,Information specific to the model,CombPValue,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0.4,0.4,0.4, 0.4),'EP2' = c(0,0.4,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -259,7 +259,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 30,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0.4,0.4,0.4, 0.4),'EP2' = c(0,0.4,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -268,7 +268,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,threshold,0.6745,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 31,Information specific to the model,CombPValue,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0.4,0.4,0.4, 0.4),'EP2' = c(0,0.4,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -277,7 +277,7 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE
 32,Information specific to the model,CER,500,0.025,t-equal,FALSE,UnPooled,None,5,2,"list('EP1' = 'Continuous','EP2'='Continuous')","list('EP1' = c(0,0.4,0.4,0.4, 0.4),'EP2' = c(0,0.4,0.4,0.4,0.4))","list('EP1' = c(1,1,1, 1, 1),'EP2' = c(1,1,1, 1, 1))","list('EP1'=NA, 'EP2' =NA)","c(1,1,1,1,1)","matrix(c(1,0.5,0.5,1),nrow = 2)","c(0.25,0.25,0.25,0.25, 0, 0, 0, 0)","matrix(c(0,1/12,1/12,1/12,3/4,0,0,0,
               1/12,0,1/12,1/12,0,3/4,0,0,
               1/12,1/12,0,1/12,0,0,3/4,0,
@@ -286,4 +286,4 @@
               1/3,0,1/3,1/3,0,0,0,0,
               1/3,1/3,0,1/3,0,0,0,0,
               1/3,1/3,1/3,0,0,0,0,0),
-            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,FALSE
+            nrow = nEps*(nArms-1), byrow = T)",Partly-Parametric,"c(1/2,1)",asOF,TRUE,TRUE,1,1,teststat,best,1,TRUE,Selection,100000,100,Random,FALSE,FALSE,TRUE

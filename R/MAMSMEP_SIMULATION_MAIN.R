@@ -118,6 +118,12 @@ simMAMSMEP <- function(
     EastSumStat = NULL,
     Parallel = TRUE) {
 
+  # Ani: Applying correction suggested by Pralay when allocation ratio for
+  # control is not equal to 1.
+  # This is done by dividing all arm wise alloc ratios by the alloc ratio for
+  # control so that the control alloc ratio is always 1 as is assumed in the code.
+  Arms.alloc.ratio <- Arms.alloc.ratio / Arms.alloc.ratio[1]
+
   # nSimulation_Stage2 should always take value 1 if method is not CER
   if (Method != "CER") {
     nSimulation_Stage2 = 1
@@ -198,7 +204,6 @@ simMAMSMEP <- function(
 
     # number of simulations for stage 2 per stage 1
     "nSimulation_Stage2" = nSimulation_Stage2
-
   )
 
   logs <- valInpsimMAMSMEP(inps = gmcpSimObj)
