@@ -50,7 +50,7 @@ library(renv)
   renv::install("<pkg name>") # Use this instead of install.packages()
   renv::snapshot()
 
-  ## PINNING A SPECIFIC VERSION OF A DEPENDENT PAKCAGE
+  ## PINNING A SPECIFIC VERSION OF A DEPENDENT PACKAGE
   # If your package depends on a specific version of a package, you can pin it
   # in the lockfile:
   renv::record("dplyr@1.1.4")
