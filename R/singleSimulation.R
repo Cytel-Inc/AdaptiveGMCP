@@ -41,6 +41,7 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
         Arms.Mean = mcpObj$Arms.Mean,
         Arms.std.dev = mcpObj$Arms.std.dev,
         Arms.Prop = mcpObj$Arms.Prop,
+        UseCC = mcpObj$UseCC,
         Arms.alloc.ratio = mcpObj$Arms.alloc.ratio,
         Arms.SS = Arms.SS.Incr,
         EPCorr = mcpObj$EP.Corr,
@@ -135,9 +136,9 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
 # gmcpSimObj obj with simulation inputs
 # preSimObjs obj with intermediate inputs
 SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
-  #######################################
+  # ######################################
   # browser()
-  #######################################
+  # ######################################
   # Initialize Intermediate Inputs
   mcpObj <- initialize_mcpObj(gmcpSimObj = gmcpSimObj, preSimObjs = preSimObjs)
   SummStatDF <- mcpObj$SummStatBlank
@@ -163,6 +164,7 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
         Arms.Mean = mcpObj$Arms.Mean,
         Arms.std.dev = mcpObj$Arms.std.dev,
         Arms.Prop = mcpObj$Arms.Prop,
+        UseCC = mcpObj$UseCC,
         Arms.alloc.ratio = mcpObj$Arms.alloc.ratio,
         Arms.SS = Arms.SS.Incr,
         EPCorr = mcpObj$EP.Corr,
@@ -291,6 +293,7 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
           Arms.Mean = mcpObj$Arms.Mean,
           Arms.std.dev = mcpObj$Arms.std.dev,
           Arms.Prop = mcpObj$Arms.Prop,
+          UseCC = mcpObj$UseCC,
           Arms.alloc.ratio = mcpObj$Arms.alloc.ratio,
           Arms.SS = Arms.SS.Incr,
           EPCorr = mcpObj$EP.Corr,

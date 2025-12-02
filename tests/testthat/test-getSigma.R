@@ -17,13 +17,15 @@ test_that("Test the Sigma Matrix Computation for MAMSMEP(Parametric) designs", {
     50, 50, 50,
     100, 100, 100
   ), nrow = 2, byrow = T)
+  info_frac <- c(0.5, 1)
 
   out <- getSigma(EpType = EpType,
                   SS_Cum = SS_Cum,
                   prop.ctr =  prop.ctr,
                   sigma = sigma,
                   allocRatio = allocRatio,
-                  CommonStdDev = CommonStdDev)
+                  CommonStdDev = CommonStdDev,
+                  info_frac = info_frac)
   varZ <- diag(out$SigmaZ$EP1)
   names(varZ) <- NULL
   # Test Varience of Z stat is 1

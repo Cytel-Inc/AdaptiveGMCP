@@ -5,6 +5,8 @@
 ^/internalData
 ^\.lintr$
 ^\.vscode$
+^\.bdscript.ps1$
+^\.packrat.lock$
 ^internalData/devtools_check_05Nov2025.txt$
 ^internalData/HPC_Out_CER_Bin_1ep3arms_03Nov25-10_55.csv$
 ^internalData/HPC_Out_CER_Bin_1ep3arms_29Oct25-21_01.csv$

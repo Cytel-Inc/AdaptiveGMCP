@@ -19,22 +19,26 @@ mvtNormResponse <- function(n, mean, arm_sigma, seed) {
 #----------------- -
 # Arm-Wise summary
 # Ani: Added vEPType for calculating continuity corrected binary props
+# Added bUseCC to indicate whether continuity correction is to be applied
 #----------------- -
-armSumry <- function(x, vEPType) {
+armSumry <- function(x, bUseCC, vEPType) {
   arm_sum <- apply(x, 2, sum)
   # arm_avg <- apply(x, 2, mean)
   arm_sumOfsquare <- apply(x^2, 2, sum)
 
   # Setting arm wise cont correction in case of binary endpoints only.
-  # It is set to 0 for other endpoint types.
+  # It is set to 0 for other endpoint types or if bUseCC is FALSE in case of binary endpoints.
   arm_cc_num <- rep(0, length(vEPType))
   arm_cc_den <- rep(0, length(vEPType))
-  binIDX <- which(vEPType == "Binary")
-  arm_cc_num[binIDX] <- 0.5
-  arm_cc_den[binIDX] <- 1
-  # Note that if none of the endpoints are Binary, then which() returns an empty
-  # vector, so binIDX is empty, and all arm_cc_num[] and arm_cc_den[] values
-  # remain 0 as we would want.
+
+  if(bUseCC) {
+    binIDX <- which(vEPType == "Binary")
+    arm_cc_num[binIDX] <- 0.5
+    arm_cc_den[binIDX] <- 1
+    # Note that if none of the endpoints are Binary, then which() returns an empty
+    # vector, so binIDX is empty, and all arm_cc_num[] and arm_cc_den[] values
+    # remain 0 as we would want.
+  }
 
   nSS <- if(length(vEPType) == 1) {
     length(x)
@@ -58,6 +62,7 @@ genIncrLookSummary <- function(SimSeed,
                                Arms.Mean,
                                Arms.std.dev,
                                Arms.Prop,
+                               UseCC,
                                Arms.alloc.ratio,
                                Arms.SS,
                                EPCorr,
@@ -125,7 +130,7 @@ genIncrLookSummary <- function(SimSeed,
 
           if (returnSubjData) SubjData[[paste("Arm", armIDX, sep = "")]] <- arm_response
 
-          arm_sumry <- data.table::as.data.table(armSumry(arm_response, vEPType))
+          arm_sumry <- data.table::as.data.table(armSumry(arm_response, UseCC, vEPType))
           arm_sumry[, Groups := grps]
 
           # ####################
@@ -725,46 +730,4 @@ getPerLookTestStat <- function(simID,
       traceback()
     }
   )
-}
-
-
-#----------------- -
-# Summary Arm-Wise
-#----------------- -
-perArmData <- function(simSeed, simID, lookID, Arms.Mean, Arms.std.dev, Arms.alloc.ratio, Arms.SS,
-                       ArmsPresent, HypoPresent, HypoMap) {
-  if (lookID == 1) # for look 1 and FSD
-    {
-      SS.arm <- mcpObj$PlannedSS[1, ]
-      mu.arm <- gmcpSimObj$Arms.Mean
-      sd.arm <- gmcpSimObj$Arms.std.dev
-      result_list <- lapply(1:length(SS.arm), function(x) {
-        normalResponse(
-          armID = names(SS.arm)[x], n = SS.arm[x],
-          mu = mu.arm[x], s = sd.arm[x], Arm.seed = getRunSeed(SimSeed, simID, lookID, x)
-        )
-      })
-      df <- data.frame(Arm = character(), Mean = numeric(), SE = numeric())
-      df <- do.call(rbind, lapply(result_list, as.data.frame))
-      rownames(df) <- NULL
-      return(df)
-    } else # interim and Final look
-  {
-    LookNrespose <- getInterimResposes(lookID, mcpObj, gmcpSimObj)
-    mu.arm <- LookNrespose$mu.arm
-    sd.arm <- LookNrespose$sd.arm
-    SS.arm <- LookNrespose$SS.arm
-    SS.arm <- SS.arm[names(mu.arm)]
-
-    result_list <- lapply(1:length(SS.arm), function(x) {
-      normalResponse(
-        armID = names(SS.arm)[x], n = SS.arm[x],
-        mu = mu.arm[x], s = sd.arm[x], Arm.seed = getRunSeed(SimSeed, simID, lookID, x)
-      )
-    })
-    df <- data.frame(Arm = character(), Mean = numeric(), SE = numeric())
-    df <- do.call(rbind, lapply(result_list, as.data.frame))
-    rownames(df) <- NULL
-    return(df)
-  }
 }

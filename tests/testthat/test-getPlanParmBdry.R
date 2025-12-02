@@ -26,7 +26,8 @@ test_that("Test Plan Parametric Boundary(CER Method)", {
                     sigma = sigma,
                     prop.ctr = prop.ctr,
                     allocRatio = allocRatio,
-                    CommonStdDev = CommonStdDev)
+                    CommonStdDev = CommonStdDev,
+                    info_frac = info_frac)
   gIDX <- 1
   hIDX <- c(1, 2)
   typeOfDesign <- "asOF"
@@ -62,7 +63,8 @@ test_that("Test Plan Parametric Boundary(CER Method)", {
                     SS_Cum = SS_Cum,
                     sigma = sigma,
                     allocRatio = allocRatio,
-                    CommonStdDev = CommonStdDev)
+                    CommonStdDev = CommonStdDev,
+                    info_frac = info_frac)
   gIDX <- 1
   hIDX <- c(1, 2)
   typeOfDesign <- "asOF"
@@ -105,7 +107,8 @@ test_that("Test Plan Parametric Boundary(CER Method)", {
                     SS_Cum = SS_Cum,
                     sigma = sigma,
                     allocRatio = allocRatio,
-                    CommonStdDev = CommonStdDev)
+                    CommonStdDev = CommonStdDev,
+                    info_frac = info_frac)
 
   # EP-1
   gIDX <- 1
@@ -157,7 +160,8 @@ test_that("Test Plan Parametric Boundary(CER Method)", {
                     sigma = sigma,
                     prop.ctr =  prop.ctr,
                     allocRatio = allocRatio,
-                    CommonStdDev = CommonStdDev)
+                    CommonStdDev = CommonStdDev,
+                    info_frac = info_frac)
   gIDX <- 1
   hIDX <- c(1, 2)
   typeOfDesign <- "noEarlyEfficacy"

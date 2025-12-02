@@ -1,9 +1,14 @@
 Package: AdaptGMCP
 Type: Package
 Title: Graph Based, Adaptive, Multi-Arm, Multi-Endpoint Designs
-Version: 30.05.25.9000
-Author: Ajoy Mukhopadhyay, Anoop Singh Rawat, Aniruddha Deshmukh
-Maintainer: Aniruddha Deshmukh <aniruddha.deshmukh@cytel.com>
+Version: 30.05.25.9001
+Authors@R: c(
+    person("Ajoy", "Mukhopadhyay", role = "aut"),
+    person("Anoop Singh", "Rawat", role = "aut"),
+    person("Aniruddha", "Deshmukh", 
+           email = "aniruddha.deshmukh@cytel.com",
+           role = c("aut", "cre"))
+    )
 Description: (In Progress) This package provides tools to perform multiple testing based on user inputs.
 License: GPL-3
 URL: https://github.com/Cytel-Inc/AdaptiveGMCP

@@ -2,26 +2,38 @@
 # This file contains code for executing a batch of simulations for 2 look
 # GMCP designs with binary endpoints.
 
-# library(tidyverse)
+library(tidyverse)
 
-nSim <- 10 # 1000 # 10000 # 50000
-nSim2 <- 5 # 100 # 1000 # 1000
-
-out <- simMAMSMEP(
-  Method = "CER", alpha = 0.025, SampleSize = 162, nArms = 3, nEps = 1,
-  lEpType=list('EP1' = 'Binary'), TestStatBin = "UnPooled", FWERControl = "CombinationTest",
-  Arms.Prop = list('EP1' = c(0.1, 0.1, 0.1)),
-  Arms.alloc.ratio = c(1,1, 1), EP.Corr = matrix(1), WI = c(rep(1/2,2)),
-  G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Partly-Parametric",
-  info_frac = c(0.75,1), typeOfDesign = "asOF",
-  MultipleWinners = T, Selection = F, SelectionLook = NA, SelectEndPoint = NA,
-  SelectionScale = NA, SelectionCriterion = NA, SelectionParmeter = NA,
-  KeepAssosiatedEps = NA, ImplicitSSR = "None",
-  nSimulation = nSim, nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = T,
-  plotGraphs = F, Parallel = T # F
-)
-
-print(out)
+# nSim <- 1000 # 10 # 10000 # 50000
+# nSim2 <- 100 # 5 # 1000 # 1000
+# props <- list('EP1' = c(0.1, 0.1, 0.1))
+# # props <- list('EP1' = c(0.4, 0.4, 0.4))
+# # props <- list('EP1' = c(0.5, 0.5, 0.5))
+# # nTotSS <- 162
+# nTotSS <- 600 # 162
+# bUseCC <- F
+# bParallel <- T
+#
+# # nTotSS=600, all pi=0.4: FWER is preserved with and without CC.
+# # nTotSS=162, all pi=0.4: FWER not preserved without CC, but is preserved with CC.
+# # nTotSS=600, all pi=0.1: No CC - FWER preserved
+#
+# out <- simMAMSMEP(
+#   Method = "CER", alpha = 0.025, SampleSize = nTotSS, nArms = 3, nEps = 1,
+#   lEpType=list('EP1' = 'Binary'), TestStatBin = "UnPooled", UseCC = bUseCC,
+#   FWERControl = "CombinationTest",
+#   Arms.Prop = props,
+#   Arms.alloc.ratio = c(1, 1, 1), EP.Corr = matrix(1), WI = c(rep(1/2,2)),
+#   G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Partly-Parametric",
+#   info_frac = c(0.75,1), typeOfDesign = "asOF",
+#   MultipleWinners = T, Selection = F, SelectionLook = NA, SelectEndPoint = NA,
+#   SelectionScale = NA, SelectionCriterion = NA, SelectionParmeter = NA,
+#   KeepAssosiatedEps = NA, ImplicitSSR = "None",
+#   nSimulation = nSim, nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = T,
+#   plotGraphs = F, Parallel = bParallel
+# )
+#
+# print(out)
 
 
 ### HELP EXAMPLE ##############################################
@@ -117,23 +129,869 @@ print(out)
     # outPower
 # HELP EXAMPLE OVER
 ###############################################################
+  # nSim <- 5 # 50000
+  # nSim2 <- 10 # 1000
+  #
+  # # ModelID=1, Scenario=No selection, Partly-Parametric
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 162, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.1, 0.1, 0.1)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Partly-Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
+  #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
+  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=2, Scenario=No selection, Partly-Parametric
+# ##$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+#   out <- simMAMSMEP(
+#     Method = "CER", SampleSize = 1000, alpha = 0.025, TestStatCont = NA, CommonStdDev = F,
+#     TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+#     lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+#     Arms.Prop = list('EP1' = c(0.1, 0.1, 0.1)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+#     WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Partly-Parametric",
+#     info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
+#     SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
+#     SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = 10,
+#     nSimulation_Stage2 = 100, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+#     UseCC = TRUE
+#   )
+  # print(out)
+  #
+  # # ModelID=3, Scenario=Select Best=1, Partly-Parametric
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 162, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.1, 0.1, 0.1)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Partly-Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=4, Scenario=Select Best=1, Partly-Parametric
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 162, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.1, 0.1, 0.1)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Partly-Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=5, Scenario=No selection, Parametric
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 162, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.1, 0.1, 0.1)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
+  #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
+  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=6, Scenario=No selection, Parametric
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 162, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.1, 0.1, 0.1)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
+  #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
+  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=7, Scenario=Select Best=1, Parametric
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 162, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.1, 0.1, 0.1)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=8, Scenario=Select Best=1, Parametric
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 162, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.1, 0.1, 0.1)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=9, Scenario=No sel, Param, SS=600, all props=0.4, lk1=0.75, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
+  #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
+  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 64564, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=10, Scenario=Sel Best=1, Param, SS=600, all props=0.4, SSR=None, lk1=0.75, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 73236, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=11, Scenario=Fut=0.5, Param, SS=600, all props=0.4, SSR=None, lk1=0.75, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 11111, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=12, Scenario=Fut=0.75, no CC, Param, SS=600, all props=0.4, SSR=Sel, lk1=0.75, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 343, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=13, Scenario=Fut=0.5, Param, SS=600, all props=0.4, SSR=Sel, lk1=0.75, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 84234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=14, Scenario=Fut=0.25, Param, SS=600, all props=0.4, SSR=Sel, lk1=0.75, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 4346, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=15, Scenario=Sel Best=1, Param, SS=600, all props=0.4, SSR=Sel, lk1=0.75, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 9504, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=16, Scenario=Sel Best=2, Param, SS=600, all props=0.4, SSR=Sel, lk1=0.75, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
+  #   SelectionParmeter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 2300, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=17, Scenario=No sel, Param, SS=400, all props=0.4, lk1=0.5, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
+  #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
+  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 97827, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=18, Scenario=Sel Best=1, Param, SS=400, all props=0.4, SSR=None, lk1=0.5, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 70743, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=19, Scenario=Fut=0.5, Param, SS=400, all props=0.4, SSR=None, lk1=0.5, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 2402, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=20, Scenario=Fut=0.5, no CC, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 2637, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=21, Scenario=Fut=0.5, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 499, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=22, Scenario=Fut=0.25, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 30953, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=23, Scenario=Sel Best=1, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 59079, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=24, Scenario=Sel Best=2, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, no CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
+  #   SelectionParmeter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 58217, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=25, Scenario=No sel, Param, SS=400, all props=0.4, lk1=0.5, no CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
+  #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
+  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 97827, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=26, Scenario=Sel Best=1, Param, SS=400, all props=0.4, SSR=None, lk1=0.5, no CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 70743, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=27, Scenario=Fut=0.5, Param, SS=400, all props=0.4, SSR=None, lk1=0.5, no CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 2402, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=28, Scenario=Fut=0.5, no CC, FWCtr=None, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, no CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 2637, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=29, Scenario=Fut=0.5, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, no CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 499, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=30, Scenario=Fut=0.25, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, no CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 30953, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=31, Scenario=Sel Best=1, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, no CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 59079, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=32, Scenario=Sel Best=2, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, no CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
+  #   SelectionParmeter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 58217, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = FALSE
+  # )
+  # print(out)
+  #
+  # # ModelID=33, Scenario=No sel, Param, SS=600, all props=0.4, lk1=0.75, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
+  #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
+  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 64564, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=34, Scenario=Sel Best=1, Param, SS=600, all props=0.4, SSR=None, lk1=0.75, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 73236, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=35, Scenario=Fut=0.5, Param, SS=600, all props=0.4, SSR=None, lk1=0.75, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 11111, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=36, Scenario=Fut=0.75, CC, Param, SS=600, all props=0.4, SSR=Sel, lk1=0.75, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 343, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=37, Scenario=Fut=0.5, Param, SS=600, all props=0.4, SSR=Sel, lk1=0.75, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 84234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=38, Scenario=Fut=0.25, Param, SS=600, all props=0.4, SSR=Sel, lk1=0.75, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 4346, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=39, Scenario=Sel Best=1, Param, SS=600, all props=0.4, SSR=Sel, lk1=0.75, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 9504, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=40, Scenario=Sel Best=2, Param, SS=600, all props=0.4, SSR=Sel, lk1=0.75, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 600, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
+  #   SelectionParmeter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 2300, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=41, Scenario=No sel, Param, SS=400, all props=0.4, lk1=0.5, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
+  #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
+  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 97827, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=42, Scenario=Sel Best=1, Param, SS=400, all props=0.4, SSR=None, lk1=0.5, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 70743, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=43, Scenario=Fut=0.5, Param, SS=400, all props=0.4, SSR=None, lk1=0.5, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 2402, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=44, Scenario=Fut=0.5, CC, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 2637, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=45, Scenario=Fut=0.5, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 499, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=46, Scenario=Fut=0.25, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 30953, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=47, Scenario=Sel Best=1, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 59079, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=48, Scenario=Sel Best=2, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, CC
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
+  #   SelectionParmeter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 58217, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=49, Scenario=No sel, Param, SS=400, all props=0.4, lk1=0.5, CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
+  #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
+  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 97827, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=50, Scenario=Sel Best=1, Param, SS=400, all props=0.4, SSR=None, lk1=0.5, CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 70743, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=51, Scenario=Fut=0.5, Param, SS=400, all props=0.4, SSR=None, lk1=0.5, CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 2402, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=52, Scenario=Fut=0.5, CC, FWCtr=None, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 2637, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=53, Scenario=Fut=0.5, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 499, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=54, Scenario=Fut=0.25, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
+  #   SelectionParmeter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 30953, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=55, Scenario=Sel Best=1, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
+  #   SelectionParmeter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 59079, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
+  #
+  # # ModelID=56, Scenario=Sel Best=2, Param, SS=400, all props=0.4, SSR=Sel, lk1=0.5, CC, FWCtr=None
+  # out <- simMAMSMEP(
+  #   Method = "CER", SampleSize = 400, alpha = 0.025, TestStatCont = NA, CommonStdDev = NA,
+  #   TestStatBin = "UnPooled", FWERControl = "None", nArms = 3, nEps = 1,
+  #   lEpType = list('EP1' = 'Binary'), Arms.Mean = NA, Arms.std.dev = NA,
+  #   Arms.Prop = list('EP1' = c(0.4, 0.4, 0.4)), Arms.alloc.ratio = c(1,1,1), EP.Corr = matrix(1),
+  #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
+  #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
+  #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
+  #   SelectionParmeter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   nSimulation_Stage2 = nSim2, Seed = 58217, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
+  #   UseCC = TRUE
+  # )
+  # print(out)
 
-### 1 CONTINUOUS EP TEST ##########################
-## WITH TREATMENT SELECTION
+
+# ### 1 CONTINUOUS EP TEST ##########################
+# ## WITH TREATMENT SELECTION
 # out <- simMAMSMEP(
-#   Method = "CER", alpha = 0.025, SampleSize = 500, nArms = 5, nEps = 1,
+#   Method = "CER", alpha = 0.025, SampleSize = 1000, nArms = 3, nEps = 1,
 #   lEpType=list('EP1' = 'Continuous'), TestStatCon = "t-equal", FWERControl = "None",
-#   Arms.Mean = list('EP1' = c(0, 0, 0, 0, 0.25)),
-#   Arms.std.dev = list('EP1' = c(1, 1, 1, 1, 1)), CommonStdDev = F,
-#   Arms.alloc.ratio = c(1,0.5,0.5,0.5,0.5), EP.Corr = matrix(1), WI = c(rep(1/4,4)),
-#   G = rbind(H1=c(0,1/3,1/3,1/3), H2=c(1/3,0,1/3,1/3), H3=c(1/3,1/3,0,1/3), H4=c(1/3,1/3,1/3,0)),
+#   Arms.Mean = list('EP1' = c(0, 0, 0)),
+#   Arms.std.dev = list('EP1' = c(5, 5, 5)), CommonStdDev = F,
+#   Arms.alloc.ratio = c(1, 1, 1), EP.Corr = matrix(1), WI = c(rep(1/2,2)),
+#   G = rbind(H1=c(0,1), H2=c(1,0)),
 #   test.type = "Parametric", info_frac = c(1/2,1), typeOfDesign = "asOF",
-#   MultipleWinners = T, Selection = T, SelectionLook = 1, SelectEndPoint = 1,
-#   SelectionScale = "pvalue", SelectionCriterion = "threshold",
-#   SelectionParmeter = 0.75, KeepAssosiatedEps = T, ImplicitSSR = "Selection",
+#   MultipleWinners = T, Selection = F, SelectionLook = NA, SelectEndPoint = NA,
+#   SelectionScale = NA, SelectionCriterion = NA,
+#   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None",
 #   nSimulation = 3, nSimulation_Stage2 = 100, Seed = 1234, SummaryStat = T,
 #   plotGraphs = F, Parallel = F
 # )
+#
+# print(out)
 
 ## WITHOUT TREATMENT SELECTION
 # out <- simMAMSMEP(
@@ -153,52 +1011,70 @@ print(out)
 #
 # out
 #
+
 # ###################################################
-# # We will use the function simMAMSMEP_Wrapper() for executing a batch.
-#
-# # dfInput <- read_csv("internalData/CER_Inp_1ep5arms - Continuous.csv")
-# # dfInput <- read_csv("internalData/InputScenarios_2ep5arm.csv")
-# # dfInput <- read_csv("internalData/CER_Inp_1ep5arms.csv")
-# dfInput <- read_csv("internalData/Inp_CER_Bin_1ep3arms.csv")
+# We will use the function simMAMSMEP_Wrapper() for executing a batch.
+
+# dfInput <- read_csv("internalData/CER_Inp_1ep5arms - Continuous.csv")
+# dfInput <- read_csv("internalData/InputScenarios_2ep5arm.csv")
+# dfInput <- read_csv("internalData/CER_Inp_1ep5arms.csv")
+dfInput <- read_csv("internalData/Inp_CER_Bin_1ep3arms.csv")
+# dfInput <- read_csv("internalData/Inp_CER_Cont_1ep3arms.csv")
 # sOutFilePrefix <- "Out_CER_Bin_1ep3arms"
-# sOutPath <- "internalData/"
-#
-# nModelsToRun <- dfInput$ModelID # 36 # 2 # 1 #
-#
-# # TRIAL RUN - START >>>>>>>>>>>>
-# # To do a trial run, uncomment this block so that the tests are run with a
-# # small number of simulations rather than the number specified in the input
-# # file.
-# # dfInput$nSimulation <- 25 #
-# # dfInput$nSimulation_Stage2 <- 1000
-# # dfInput$Parallel <- FALSE
-# # dfInput$test.type <- "Parametric"
-# df <- dfInput %>% filter(ModelID %in% nModelsToRun)
-# print(paste0("Method = ", df$Method[1])) # CER / CombPValue
-# print(paste0("nSimulation = ", df$nSimulation[1]))
-# print(paste0("nSimulation_Stage2 = ", df$nSimulation_Stage2[1]))
-# print(paste0("Parallel = ", df$Parallel[1]))
-# print(paste0("lEpType = ", df$lEpType[1]))
-# print(paste0("test.type = ", df$test.type[1])) # Non-Parametric / Bonf
-# print(paste0("Seed = ", df$Seed[1]))
-# # TRIAL RUN - OVER >>>>>>>>>>>>
-#
-# tStartTime <- Sys.time()
-#
-# dfOutput <- simMAMSMEP_Wrapper(InputDF = dfInput %>%
-#                                  filter(ModelID %in% nModelsToRun))
-#
-# tElapTime <- Sys.time() - tStartTime
-#
-# dfOutput
-#
+sOutFilePrefix <- "OutCERBin1ep3armsLargeN"
+# sOutFilePrefix <- "Out_CER_Cont_1ep3arms"
+sOutPath <- "internalData/"
+
+nModelsToRun <- 99:113 # 57:98
+# nModelsToRun <- c(17, 41) #Model 9: N=600, t1=0.75
+#                          #Model 17: N=400, t1=0.5
+# nModelsToRun <- c(1:8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+#                   24, 25, 26, 27, 28, 29, 31, 32, 33, 36, 38, 40, 43, 44, 51,
+#                   52, 53) # 9:56 # dfInput$ModelID
+# nModelsToRun <- c(9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+#                   24, 25, 26, 27, 28, 29, 31, 32, 33, 36, 38, 40, 43, 44, 51,
+#                   52, 53) # 9:56 # dfInput$ModelID
+
+# TRIAL RUN - START >>>>>>>>>>>>
+# To do a trial run, uncomment this block so that the tests are run with a
+# small number of simulations rather than the number specified in the input
+# file.
+# dfInput$nSimulation <- 5 #
+# dfInput$nSimulation_Stage2 <- 10 # 1000
+# dfInput$Parallel <- FALSE
+# dfInput$test.type <- "Parametric"
+# dfInput$SampleSize <- 10000
+
+df <- dfInput %>% filter(ModelID %in% nModelsToRun)
+print(paste0("Method = ", df$Method[1])) # CER / CombPValue
+print(paste0("nSimulation = ", df$nSimulation[1]))
+print(paste0("nSimulation_Stage2 = ", df$nSimulation_Stage2[1]))
+print(paste0("Parallel = ", df$Parallel[1]))
+print(paste0("lEpType = ", df$lEpType[1]))
+print(paste0("test.type = ", df$test.type[1])) # Non-Parametric / Bonf
+print(paste0("Seed = ", df$Seed[1]))
+# TRIAL RUN - OVER >>>>>>>>>>>>
+
+tStartTime <- Sys.time()
+
+sTimeNow <- format(tStartTime, "%d%h%y-%H_%M")
+sOutPath <- paste0(sOutPath, sOutFilePrefix, "_", sTimeNow, ".csv")
+
+dfOutput <- simMAMSMEP_Wrapper(InputDF = dfInput %>%
+                                 filter(ModelID %in% nModelsToRun),
+                               sOutPath)
+
+tElapTime <- Sys.time() - tStartTime
+
+dfOutput
+
 # #Save Output
 # sTimeNow <- format(Sys.time(), "%d%h%y-%H_%M")
 # sOutPath1 <- paste0(sOutPath, sOutFilePrefix, "_", sTimeNow, ".csv")
 # # sOutPath1 <- paste0(sOutPath, "Output_FS_GMCP_Sim_Bin", ".csv")
 # write.csv(dfOutput, sOutPath1, row.names = F)
-#
-# #Execution details
-# SysInfo <- Sys.info()
-# cat("Execution performed on ", SysInfo['nodename'],"\n",
-#     "Execution time", tElapTime)
+
+#Execution details
+SysInfo <- Sys.info()
+cat("Execution performed on ", SysInfo['nodename'],"\n",
+    "Execution time", tElapTime)

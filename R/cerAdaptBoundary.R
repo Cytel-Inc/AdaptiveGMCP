@@ -93,9 +93,10 @@ adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
       HypoMap = mcpObj$HypoMap,
       Sigma = mcpObj$Stage1Obj$Sigma,
       Stage2Sigma = Stage2Sigma,
+      Stage2HypoIDX = get_numeric_part(mcpObj$IndexSet),
       PlanSSHyp = PlanSSHyp,
       ModSSHyp = ModSSHyp,
-      Stage2HypoIDX = get_numeric_part(mcpObj$IndexSet),
+      t1 = mcpObj$Stage1Obj$info_frac[1],
       ModifiedStage2Weights = ModifiedStage2Weights
     )
 
@@ -175,7 +176,7 @@ adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
 
 getAdaptBdry2 <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
                          Sigma, Stage2Sigma, Stage2HypoIDX, PlanSSHyp, ModSSHyp,
-                         ModifiedStage2Weights = F) {
+                         t1, ModifiedStage2Weights = F) {
   get_Sets <- connSets(J = J, w = w1, test.type = test.type, HypoMap = HypoMap)
   conn_Sets <- get_Sets$connSets
   conn_Sets_name <- paste("(", paste(
@@ -221,7 +222,8 @@ getAdaptBdry2 <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
         wJh <- w1[edx]
         ss1 <- PlanSSHyp[[1]][edx]; ss2 = PlanSSHyp[[2]][edx]
         #Exist probability for non parametric sub-set at stage 2
-        pcerNParamGrps <- c(pcerNParamGrps, getPCER2(cJ2 = cJ2, wJh = wJh,  p1 = pJh, ss1 = PlanSSHyp[[1]][edx], ss2 = PlanSSHyp[[2]][edx]))
+        pcerNParamGrps <- c(pcerNParamGrps, 
+          getPCER2(cJ2 = cJ2, wJh = wJh,  p1 = pJh, ss1 = PlanSSHyp[[1]][edx], ss2 = PlanSSHyp[[2]][edx], t1 = t1))
       }
     }
     return(list("cerParamGrps"=cerParamGrps,
@@ -272,7 +274,8 @@ getAdaptBdry2 <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
         #Exist probability for non parametric sub-set at stage 2
         exitproblist <- c(exitproblist,
                           getPCER2(cJ2 = cJ2, wJh = wJh,
-                                   p1 = pJh, ss1 = ModSSHyp[[1]][edx], ss2 = ModSSHyp[[2]][edx]))
+                                   p1 = pJh, ss1 = ModSSHyp[[1]][edx], ss2 = ModSSHyp[[2]][edx],
+                                   t1 = ModSSHyp[[1]][edx]/ModSSHyp[[2]][edx]))
       }
     }
     return(sum(na.omit(exitproblist)))
