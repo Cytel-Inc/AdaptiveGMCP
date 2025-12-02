@@ -63,7 +63,7 @@ library(renv)
 
 
 ##########################################################
-# PRODUCTING packrat.lock FILE FOR BLACK DUCK ############
+# PRODUCING packrat.lock FILE FOR BLACK DUCK ############
   # As of Nov 2025, Black Duck detector scan works only if the R package
   # contains a packrat.lock file. Black Duck currently does not work with
   # the lockfile produced by renv.
