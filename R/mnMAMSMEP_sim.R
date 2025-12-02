@@ -128,10 +128,7 @@ getPreSimObjs <- function(gmcpSimObj) {
       # requires the fisher info matrix in all cases.
       # Fixed this bug by calculating Sigma unconditionally.
       # if (gmcpSimObj$test.type == "Partly-Parametric" || gmcpSimObj$test.type == "Parametric") {
-      #############
-      # browser()
-      #############
-      Sigma <- getSigma(
+        Sigma <- getSigma(
           SS_Cum = planSS$CumulativeSamples,
           sigma = gmcpSimObj$Arms.std.dev,
           allocRatio = gmcpSimObj$Arms.alloc.ratio,
