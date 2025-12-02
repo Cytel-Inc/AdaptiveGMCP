@@ -2,7 +2,7 @@
 # This file contains code for executing a batch of simulations for 2 look
 # GMCP designs with binary endpoints.
 
-library(tidyverse)
+# library(tidyverse)
 
 nSim <- 10 # 1000 # 10000 # 50000
 nSim2 <- 5 # 100 # 1000 # 1000
