@@ -226,7 +226,8 @@ adaptGMCP_CER <- function(
                        Sigma = Stage1Test$Stage1Obj$Sigma,
                        AllocSampleSize = Stage1Test$Stage1Obj$AllocSampleSize,
                        EpType = mcpObj$lEpType,
-                       prop.ctr = mcpObj$prop.ctr)
+                       prop.ctr = mcpObj$prop.ctr,
+                       t1 = info_frac[1])
       cat("Table of CER and PCER values conditional on stage one p-values \n")
       print(CERTab)
       # #--------------------------------------

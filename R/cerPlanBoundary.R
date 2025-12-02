@@ -86,6 +86,9 @@ planBdryCER <- function(nHypothesis,
     #Define function for total brdy crossing probability at stage 1
     #=================================================================
     totalbrdycrossingprobstage1 = function(cJ1){
+      # ##########################
+      # browser()
+      # ##########################
 
     #siglev <- append(siglev, paste("S1:", alpha1))
     exitproblist = numeric()
@@ -122,7 +125,9 @@ planBdryCER <- function(nHypothesis,
     #Define function for total brdy crossing probability at stage 2
     #=================================================================
    totalbrdycrossingprobstage2 = function(cJ2){
-     #browser()
+     # #########################
+     # browser()
+     # #########################
      #siglev <- append(siglev, paste("S2:", alpha))
      exitproblist = numeric()
      for (edx in conn_Sets) {
@@ -138,7 +143,10 @@ planBdryCER <- function(nHypothesis,
          PlanSSHyp <- getHypoSS(SS = planSSCum, HypoMap = HypoMap)
          ss1 = PlanSSHyp[[1]][edx]; ss2 = PlanSSHyp[[2]][edx]
          #Exist probability for non parametric sub-set at stage 2
-         exitproblist <- c(exitproblist, exitProbStage2Nparam2(cJ2, cJ1, ss1 = ss1, ss2 = ss2, wJ, hIDX = edx))
+         exitproblist <- c(exitproblist,
+                           exitProbStage2Nparam2(cJ2, cJ1, ss1 = ss1, ss2 = ss2,
+                                                 wJ, hIDX = edx,
+                                                 t1 = info_frac[1]))
        }
      }
      return(sum(na.omit(exitproblist)))
@@ -233,7 +241,7 @@ planBdryCER <- function(nHypothesis,
 
   PlanBdryTab <- list(
     "Test_Procedure" = TestProcedureTab1,
-    "Stage1_Bounday" = Stage1BdryTab1
+    "Stage1_Boundary" = Stage1BdryTab1
   )
   if (nLooks == 2) {
     Stage2BdryTab <- cbind(WH[, 1:(ncol(WH) / 2)], Stage2Bdry)
@@ -254,8 +262,8 @@ planBdryCER <- function(nHypothesis,
 
     PlanBdryTab <- list(
       "Test_Procedure" = TestProcedureTab1,
-      "Stage1_Bounday" = Stage1BdryTab1,
-      "Stage2_Bounday" = Stage2BdryTab1
+      "Stage1_Boundary" = Stage1BdryTab1,
+      "Stage2_Boundary" = Stage2BdryTab1
     )
   }
 

@@ -36,3 +36,5 @@ out_renv.xlsx
 out_renv.csv
 internalData/devtools_check_05Nov2025.txt
 internalData/devtools_check_changes.txt
+packrat.lock
+bdscript.ps1

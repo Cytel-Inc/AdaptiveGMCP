@@ -10,6 +10,7 @@
 #' @param SampleSize integer valued Sample Size(default: 500)
 #' @param TestStatCont Test Statistics for continuous endpoints; options: 't-equal' : for t statistics with equal variance, 't-unequal' : for t statistics with unequal variance, 'z' for z statistics
 #' @param TestStatBin Test Statistics for Binary endpoints; options: 'UnPooled', 'Pooled'
+#' @param UseCC TRUE to use continuity correction while estimating proportions for binary endpoints, FALSE otherwise. Ignored for non-binary endpoints.
 #' @param FWERControl applicable for CER method only, 'CombinationTest': combined two stage incremental test statistics, 'None': Cumulative test statistics.
 #' @param nArms integer value to specify the number of arms (default: 3)
 #' @param nEps integer value to specify the number of endpoints
@@ -38,7 +39,6 @@
 #' @param SelectionParmeter r for best, threshold value for threshold or epsilon distance
 #' @param KeepAssosiatedEps Logical, True: keep all the associated hypothesis for the selected arms
 #' @param ImplicitSSR Character; 'Selection': re-allocate samples only from de-selected arms to available arms, 'All': Allocate all the planned samples(for the look) to the available arms, 'None': No Re-allocation
-#' @param UpdateStrategy Logical to specify the updated strategy (Not Implemented yet) default FALSE
 #' @param nSimulation Numeric: Number of simulations(default=100)
 #' @param nSimulation_Stage2 Numeric: Number of stage 2 simulations per stage 1 simulation(default = 1). This input is only applicable for Method = 'CER'.
 #' @param Seed 'Random' for randomly generating seed else any integer value(default = 'Random')
@@ -54,6 +54,7 @@ simMAMSMEP <- function(
     SampleSize = 500,
     TestStatCont = "t-equal",
     TestStatBin = "UnPooled",
+    UseCC = FALSE,
     FWERControl = "None",
     nArms = 3,
     nEps = 2,
@@ -162,6 +163,9 @@ simMAMSMEP <- function(
     "IntialWeights" = WI, "G" = G,
     "Correlation" = NA, "FWERControl" = FWERControl,
     "lEpType" = lEpType, "TestStatBin" = TestStatBin,
+    "UseCC" = UseCC, # Parameter used to configure whether continuity
+                     # correction should be applied while estimating binary
+                     # response proportions or not
 
     # Boundary
     "InfoFrac" = info_frac, "typeOfDesign" = typeOfDesign,

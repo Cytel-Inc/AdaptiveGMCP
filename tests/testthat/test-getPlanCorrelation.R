@@ -14,6 +14,7 @@ test_that("Test Correlation Computation for Combining p-values(Dunnett)", {
   prop.ctr <- NA
   allocRatio <- c(1, 2, 3)
   ctrSS <- c(133, 347)
+  info_frac <- c(133/347, 1)
   SS_Cum <- data.frame('ctr' = ctrSS,
                        'trt1' = allocRatio[2] * ctrSS,
                        'trt2' = allocRatio[3] * ctrSS)
@@ -24,7 +25,8 @@ test_that("Test Correlation Computation for Combining p-values(Dunnett)", {
                           sigma = sigma,
                           prop.ctr =  prop.ctr,
                           allocRatio = allocRatio,
-                          CommonStdDev = CommonStdDev)
+                          CommonStdDev = CommonStdDev,
+                          info_frac = info_frac)
   SigmaZ_Stage <- matrix(outgetSigma$SigmaZ$EP1, nrow = 4)
   sigmaZ_Stage1 <- SigmaZ_Stage[c(1, 2), c(1, 2)]
   sigmaZ_Stage2 <- SigmaZ_Stage[c(3, 4), c(3, 4)]

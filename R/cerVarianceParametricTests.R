@@ -6,52 +6,82 @@
 
 ################# Computation of Stage-Wise covariance Matrix ###########
 
-#------------------------------------------------------------------------ -
-########### Elements of the Z-scale Covariance Matrix##############
+# The function varCovZ is no longer required as it has been replaced by varCovZ_Null.
+# #------------------------------------------------------------------------ -
+# ########### Elements of the Z-scale Covariance Matrix##############
+# # (i1,i2) : index for the hypothesis
+# # (k1,k2) : index for the looks
+# # sigma_0 : Standard deviation for the control arm
+# # sigma_trt : Standard deviation for the treatment arms
+# # ctrSS : stage-wise cumulative samples in control arm
+# # trtSS : stage-wise cumulative samples in treatment arms
+# # InfoMatrix : Fisher information matrix
+# # Returns: The Probability of rejecting in atleast one primary hypothesis at stage1
+# #------------------------------------------------------------------------- -
+# varCovZ <- function(EpType, i1, k1, i2, k2, sigma_0, sigma_trt, ctrProp, ctrSS, trtSS, InfoMatrix) {
+#   if (EpType == "Binary") {
+#     sigma_0 <- sigma_trt <- sqrt(ctrProp * (1 - ctrProp))
+#     if (i1 == i2 & k1 == k2) { # Variance Case-1: Same treatment, same look
+#       1
+#     } else if (k1 == k2 & i1 != i2) # Covariance Case-2: Different treatments, same look
+#       {
+#         sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) * (sigma_0^2 / ctrSS[k2])
+#       } else if (i1 == i2 & k1 != k2) # Covariance Case-3: Same treatment, different looks
+#       {
+#         sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) *
+#           ((sigma_trt^2 / trtSS[i2, max(k1, k2)]) + (sigma_0^2 / ctrSS[max(k1, k2)]))
+#       } else if (i1 != i2 || k1 != k2) # Covariance Case-4: Different treatments, different looks
+#       {
+#         sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) * (sigma_0^2 / ctrSS[max(k1, k2)])
+#       } else {
+#       "Error in covZ"
+#     }
+#   } else if (EpType == "Continuous") {
+#     if (i1 == i2 & k1 == k2) { # Variance Case-1: Same treatment, same look
+#       1
+#     } else if (k1 == k2 & i1 != i2) # Covariance Case-2: Different treatments, same look
+#       {
+#         sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) * (sigma_0^2 / ctrSS[k2])
+#       } else if (i1 == i2 & k1 != k2) # Covariance Case-3: Same treatment, different looks
+#       {
+#         sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) *
+#           ((sigma_trt[i2]^2 / trtSS[i2, max(k1, k2)]) + (sigma_0^2 / ctrSS[max(k1, k2)]))
+#       } else if (i1 != i2 || k1 != k2) # Covariance Case-4: Different treatments, different looks
+#       {
+#         sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) * (sigma_0^2 / ctrSS[max(k1, k2)])
+#       } else {
+#       "Error in covZ"
+#     }
+#   }
+# }
+
+# Function for computing the covariance matrix under the null hypothesis
+# Under the null, we assume that all treatment arms have the same standard deviation as control.
+# This is required for computing the efficacy boundary.
+# With this assumption, the covariance matrix computation simplifies greatly and all dependence on
+# nuisance parameters and arm wise sample sizes goes away. Also, the covariance formulas become endpoint independent.
+# This function is intended to replace the varCovZ function in boundary computation.
 # (i1,i2) : index for the hypothesis
 # (k1,k2) : index for the looks
-# sigma_0 : Standard deviation for the control arm
-# sigma_trt : Standard deviation for the treatment arms
-# ctrSS : stage-wise cumulative samples in control arm
-# trtSS : stage-wise cumulative samples in treatment arms
-# InfoMatrix : Fisher information matrix
-# Returns: The Probability of rejecting in atleast one primary hypothesis at stage1
-#------------------------------------------------------------------------- -
-varCovZ <- function(EpType, i1, k1, i2, k2, sigma_0, sigma_trt, ctrProp, ctrSS, trtSS, InfoMatrix) {
-  if (EpType == "Binary") {
-    sigma_0 <- sigma_trt <- sqrt(ctrProp * (1 - ctrProp))
-    if (i1 == i2 & k1 == k2) { # Variance Case-1
+# allocRatio : vector providing arm wise allocation ratios including control arm
+# info_frac : information fraction at look 1
+varCovZ_Null <- function(i1, k1, i2, k2, allocRatio, info_frac) {
+  val <- if (i1 == i2 & k1 == k2) { # Variance Case-1: Same treatment, same look
       1
-    } else if (k1 == k2 & i1 != i2) # Covariance Case-2
-      {
-        sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) * (sigma_0^2 / ctrSS[k2])
-      } else if (i1 == i2 & k1 != k2) # Covariance Case-3
-      {
-        sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) *
-          ((sigma_trt^2 / trtSS[i2, max(k1, k2)]) + (sigma_0^2 / ctrSS[max(k1, k2)]))
-      } else if (i1 != i2 || k1 != k2) # Covariance Case-4
-      {
-        sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) * (sigma_0^2 / ctrSS[max(k1, k2)])
-      } else {
-      "Error in covZ"
+    } else if (k1 == k2 & i1 != i2) # Covariance Case-2: Different treatments, same look
+    {
+        sqrt(prod(allocRatio[-1] / (1 + allocRatio[-1])))
+    } else if (i1 == i2 & k1 != k2) # Covariance Case-3: Same treatment, different looks
+    {
+      sqrt(info_frac[1])
+    } else if (i1 != i2 & k1 != k2) # Covariance Case-4: Different treatments, different looks
+    {
+      sqrt(info_frac[1] * prod(allocRatio[-1] / (1 + allocRatio[-1])))
+    } else {
+      stop("Error in varCovZ_Null: Invalid indices")
     }
-  } else if (EpType == "Continuous") {
-    if (i1 == i2 & k1 == k2) { # Variance Case-1
-      1
-    } else if (k1 == k2 & i1 != i2) # Covariance Case-2
-      {
-        sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) * (sigma_0^2 / ctrSS[k2])
-      } else if (i1 == i2 & k1 != k2) # Covariance Case-3
-      {
-        sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) *
-          ((sigma_trt[i2]^2 / trtSS[i2, max(k1, k2)]) + (sigma_0^2 / ctrSS[max(k1, k2)]))
-      } else if (i1 != i2 || k1 != k2) # Covariance Case-4
-      {
-        sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) * (sigma_0^2 / ctrSS[max(k1, k2)])
-      } else {
-      "Error in covZ"
-    }
-  }
+
+  return(val)
 }
 
 ##### Computation of Covariance Matrix #############
@@ -60,8 +90,10 @@ varCovZ <- function(EpType, i1, k1, i2, k2, sigma_0, sigma_trt, ctrProp, ctrSS, 
 # sigma : list containing Arm-wise planned standard deviation for Continuous endpoints
 # prop.ctr : list containing control proportion for Binary endpoints
 # allocRatio : allocation ratio for the arms
+# CommonStdDev : Logical flag indicating whether common standard deviation is assumed across arms
+# info_frac : information fraction at look 1
 #------------------------------------------------ -
-getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio, CommonStdDev) {
+getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio, CommonStdDev, info_frac) {
 
   #Treatment standard Deviation is same is control
   #CommonStdDev flag is global variable set from simMAMSMEP(.), adaptGMCP_CER(.) function call
@@ -91,7 +123,10 @@ getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio, CommonStdDev) 
       sigma_0 <- epSig[1]
       sigma_trt <- epSig[-1]
 
-      capLambda <- (sigma_0^2 + sigma_trt^2 / allocRatio[-1])^(-1)
+      # capLambda <- (sigma_0^2 + sigma_trt^2 / allocRatio[-1])^(-1)
+      # Fixing the bug identified by Cyrus in Nov 2025 - earlier capLambda formula used sigma_trt.
+      # However, since we are computing the boundaries under the null hypothesis, we should use sigma_0 for all arms.
+      capLambda <- (1 / sigma_0^2) * (allocRatio[-1] / (1 + allocRatio[-1]))
     } else if (EpType[[i]] == "Binary") {
       nHypothesisEp <- length(allocRatio) - 1 # Two equal dimension sigma matrix for two endpoints
       nLooksEp <- length(ctrSS)
@@ -113,23 +148,33 @@ getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio, CommonStdDev) 
     for (l in 1:length(hIDX))
     {
       for (m in l:length(hIDX)) {
-        if (EpType[[i]] == "Continuous") {
-          sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
-            EpType = "Continuous",
-            i1 = hIDX[l], k1 = lIDX[l],
-            i2 = hIDX[m], k2 = lIDX[m],
-            sigma_0 = sigma_0, sigma_trt = sigma_trt,
-            ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
-          )
-        } else if (EpType[[i]] == "Binary") {
-          sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
-            EpType = "Binary",
-            i1 = hIDX[l], k1 = lIDX[l],
-            i2 = hIDX[m], k2 = lIDX[m],
-            ctrProp = prop.ctr[[i]],
-            ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
-          )
-        }
+        # Replaced varCovZ() with varCovZ_Null() to fix the bug in boundary computation
+        # found by Cyrus in Nov 2025. Earlier covariance computation depended on nuisance parameters,
+        # which was wrong.
+        # Boundary computation should depend only on allocation ratio and information fraction.
+        # if (EpType[[i]] == "Continuous") {
+        #   sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
+        #     EpType = "Continuous",
+        #     i1 = hIDX[l], k1 = lIDX[l],
+        #     i2 = hIDX[m], k2 = lIDX[m],
+        #     sigma_0 = sigma_0, sigma_trt = sigma_trt,
+        #     ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
+        #   )
+        # } else if (EpType[[i]] == "Binary") {
+        #   sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
+        #     EpType = "Binary",
+        #     i1 = hIDX[l], k1 = lIDX[l],
+        #     i2 = hIDX[m], k2 = lIDX[m],
+        #     ctrProp = prop.ctr[[i]],
+        #     ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
+        #   )
+        # }
+        sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ_Null(
+          i1 = hIDX[l], k1 = lIDX[l],
+          i2 = hIDX[m], k2 = lIDX[m],
+          allocRatio = allocRatio,
+          info_frac = info_frac
+        )
       }
     }
     rownames(sigmaZ) <- colnames(sigmaZ) <- paste("Z", hIDX, lIDX, sep = "")
@@ -143,7 +188,7 @@ getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio, CommonStdDev) 
     } else if (nLooksEp == 1) {
       l <- c(sqrt(InfoMatrix[, 1])) # this code is only for  FSD
     } else {
-      print("Error in getSigma: The conversion of Z-Score is not available for Stages > 2")
+      stop("Error in getSigma: The conversion of Z-Score is not available for Stages > 2")
     }
 
     sigmaS <- matrix(NA, nrow = nrow(sigmaZ), ncol = ncol(sigmaZ))
@@ -195,7 +240,10 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
     if (EpType[[i]] == "Continuous") {
       sigma_0 <- sigma[[i]][1]
       sigma_trt <- sigma[[i]][-1]
-      capLambda <- (sigma_0^2 + sigma_trt^2 / allocRatio[-1])^(-1)
+      # capLambda <- (sigma_0^2 + sigma_trt^2 / allocRatio[-1])^(-1)
+      # Fixing the bug identified by Cyrus in Nov 2025 - earlier capLambda formula used sigma_trt.
+      # However, since we are computing the boundaries under the null hypothesis, we should use sigma_0 for all arms.
+      capLambda <- (1 / sigma_0^2) * (allocRatio[-1] / (1 + allocRatio[-1]))
     } else if (EpType[[i]] == "Binary") {
       pi_c <- prop.ctr[[i]]
       capLambda <- (1 / (pi_c * (1 - pi_c))) * (allocRatio[-1] / (1 + allocRatio[-1]))
@@ -214,21 +262,30 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
     for (l in 1:k)
     {
       for (m in l:k) {
-        if (EpType[[i]] == "Continuous") {
-          sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
-            EpType = "Continuous",
-            i1 = l, k1 = 1, i2 = m, k2 = 1,
-            sigma_0 = sigma_0, sigma_trt = sigma_trt,
-            ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
-          )
-        } else if (EpType[[i]] == "Binary") {
-          sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
-            EpType = "Binary",
-            i1 = l, k1 = 1, i2 = m, k2 = 1,
-            ctrProp = pi_c,
-            ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
-          )
-        }
+        # Replaced varCovZ() with varCovZ_Null() to fix the bug in boundary computation
+        # found by Cyrus in Nov 2025. Earlier covariance computation depended on nuisance parameters,
+        # which was wrong.
+        # Boundary computation should depend only on allocation ratio and information fraction.
+        # if (EpType[[i]] == "Continuous") {
+        #   sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
+        #     EpType = "Continuous",
+        #     i1 = l, k1 = 1, i2 = m, k2 = 1,
+        #     sigma_0 = sigma_0, sigma_trt = sigma_trt,
+        #     ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
+        #   )
+        # } else if (EpType[[i]] == "Binary") {
+        #   sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
+        #     EpType = "Binary",
+        #     i1 = l, k1 = 1, i2 = m, k2 = 1,
+        #     ctrProp = pi_c,
+        #     ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
+        #   )
+        # }
+        sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ_Null(
+          i1 = l, k1 = 1, i2 = m, k2 = 1,
+          allocRatio = allocRatio,
+          info_frac = 1
+        )
       }
     }
     SigmaZIncr[[names(Sigma$SigmaZ)[i]]] <- sigmaZ
@@ -256,7 +313,10 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
     if (EpType[[epIDX]] == "Continuous") {
       Stage2sigma_0 <- Stage2sigma[[epIDX]][1]
       Stage2sigma_trt <- Stage2sigma[[epIDX]][-1]
-      Stage2capLambda <- (Stage2sigma_0^2 + Stage2sigma_trt^2 / Stage2allocRatio[-1])^(-1)
+      # Stage2capLambda <- (Stage2sigma_0^2 + Stage2sigma_trt^2 / Stage2allocRatio[-1])^(-1)
+      # Fixing the bug identified by Cyrus in Nov 2025 - earlier capLambda formula used sigma_trt.
+      # However, since we are computing the boundaries under the null hypothesis, we should use sigma_0 for all arms.
+      Stage2capLambda <- (1 / Stage2sigma_0^2) * (Stage2allocRatio[-1] / (1 + Stage2allocRatio[-1]))
     } else if (EpType[[epIDX]] == "Binary") {
       pi_c <- prop.ctr[[epIDX]]
       Stage2capLambda <- (1 / (pi_c * (1 - pi_c))) * (Stage2allocRatio[-1] / (1 + Stage2allocRatio[-1]))
@@ -277,23 +337,32 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
     for (l in 1:k)
     {
       for (m in l:k) {
-        if (EpType[[epIDX]] == "Continuous") {
-          Stage2sigmaZ[l, m] <- Stage2sigmaZ[m, l] <- varCovZ(
-            EpType = "Continuous",
-            i1 = l, k1 = 1, i2 = m, k2 = 1,
-            sigma_0 = Stage2sigma_0, sigma_trt = Stage2sigma_trt,
-            ctrSS = Stage2ctrSS, trtSS = Stage2trtSS,
-            InfoMatrix = Stage2InfoMatrix
-          )
-        } else if (EpType[[epIDX]] == "Binary") {
-          Stage2sigmaZ[l, m] <- Stage2sigmaZ[m, l] <- varCovZ(
-            EpType = "Binary",
-            i1 = l, k1 = 1, i2 = m, k2 = 1,
-            ctrProp = pi_c,
-            ctrSS = Stage2ctrSS, trtSS = Stage2trtSS,
-            InfoMatrix = Stage2InfoMatrix
-          )
-        }
+        # Replaced varCovZ() with varCovZ_Null() to fix the bug in boundary computation
+        # found by Cyrus in Nov 2025. Earlier covariance computation depended on nuisance parameters,
+        # which was wrong.
+        # Boundary computation should depend only on allocation ratio and information fraction.
+        # if (EpType[[epIDX]] == "Continuous") {
+        #   Stage2sigmaZ[l, m] <- Stage2sigmaZ[m, l] <- varCovZ(
+        #     EpType = "Continuous",
+        #     i1 = l, k1 = 1, i2 = m, k2 = 1,
+        #     sigma_0 = Stage2sigma_0, sigma_trt = Stage2sigma_trt,
+        #     ctrSS = Stage2ctrSS, trtSS = Stage2trtSS,
+        #     InfoMatrix = Stage2InfoMatrix
+        #   )
+        # } else if (EpType[[epIDX]] == "Binary") {
+        #   Stage2sigmaZ[l, m] <- Stage2sigmaZ[m, l] <- varCovZ(
+        #     EpType = "Binary",
+        #     i1 = l, k1 = 1, i2 = m, k2 = 1,
+        #     ctrProp = pi_c,
+        #     ctrSS = Stage2ctrSS, trtSS = Stage2trtSS,
+        #     InfoMatrix = Stage2InfoMatrix
+        #   )
+        # }
+        Stage2sigmaZ[l, m] <- Stage2sigmaZ[m, l] <- varCovZ_Null(
+          i1 = l, k1 = 1, i2 = m, k2 = 1,
+          allocRatio = Stage2allocRatio,
+          info_frac = 1
+        )
       }
     }
     Stage2SigmaZ[[names(Sigma$SigmaZ)[epIDX]]] <- Stage2sigmaZ
@@ -319,19 +388,6 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
     "Stage2InfoMatrixIncr" = Stage2InfoMat_Incr
   )
 }
-
-
-
-######### Difference Operator For Incremental Sigma############
-getAmatrix <- function(nrow, ncol) {
-  mat <- matrix(0, nrow = nrow, ncol = ncol)
-  for (i in 1:nrow) {
-    mat[i, i] <- -1
-    mat[i, (i + ncol / 2)] <- 1
-  }
-  mat
-}
-
 
 ######## Correlation for Combining p-value dunnett test#############
 getPlanCorrelation <- function(nHypothesis, EpType, SS_Incr, Arms.std.dev, prop.ctr, test.type, CommonStdDev) {
@@ -363,7 +419,10 @@ getPlanCorrelation <- function(nHypothesis, EpType, SS_Incr, Arms.std.dev, prop.
           epSig <- Arms.std.dev[[epIDX]]
           sigma_0 <- epSig[1]
           sigma_trt <- epSig[-1]
-          capLambda <- (sigma_0^2 + sigma_trt^2 / allocRatio[-1])^(-1)
+          # capLambda <- (sigma_0^2 + sigma_trt^2 / allocRatio[-1])^(-1)
+          # Fixing the bug identified by Cyrus in Nov 2025 - earlier capLambda formula used sigma_trt.
+          # However, since we are computing the boundaries under the null hypothesis, we should use sigma_0 for all arms.
+          capLambda <- (1 / sigma_0^2) * (allocRatio[-1] / (1 + allocRatio[-1]))
         } else if (EpType[[epIDX]] == "Binary") {
           pi_c <- prop.ctr[[epIDX]]
           capLambda <- (1 / (pi_c * (1 - pi_c))) * (allocRatio[-1] / (1 + allocRatio[-1]))
@@ -379,21 +438,30 @@ getPlanCorrelation <- function(nHypothesis, EpType, SS_Incr, Arms.std.dev, prop.
         for (l in 1:length(capLambda))
         {
           for (m in l:length(capLambda)) {
-            if (EpType[[epIDX]] == "Continuous") {
-              sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
-                EpType = "Continuous", i1 = l, k1 = 1,
-                i2 = m, k2 = 1,
-                sigma_0 = sigma_0, sigma_trt = sigma_trt,
-                ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
-              )
-            } else if (EpType[[epIDX]] == "Binary") {
-              sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
-                EpType = "Binary", i1 = l, k1 = 1,
-                i2 = m, k2 = 1,
-                ctrProp = pi_c,
-                ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
-              )
-            }
+            # Replaced varCovZ() with varCovZ_Null() to fix the bug in boundary computation
+            # found by Cyrus in Nov 2025. Earlier covariance computation depended on nuisance parameters,
+            # which was wrong.
+            # Boundary computation should depend only on allocation ratio and information fraction.
+            # if (EpType[[epIDX]] == "Continuous") {
+            #   sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
+            #     EpType = "Continuous", i1 = l, k1 = 1,
+            #     i2 = m, k2 = 1,
+            #     sigma_0 = sigma_0, sigma_trt = sigma_trt,
+            #     ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
+            #   )
+            # } else if (EpType[[epIDX]] == "Binary") {
+            #   sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
+            #     EpType = "Binary", i1 = l, k1 = 1,
+            #     i2 = m, k2 = 1,
+            #     ctrProp = pi_c,
+            #     ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
+            #   )
+            # }
+            sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ_Null(
+              i1 = l, k1 = 1, i2 = m, k2 = 1,
+              allocRatio = allocRatio,
+              info_frac = 1
+            )
           }
         }
         SigmaZ[[paste("EP", epIDX, sep = "")]] <- sigmaZ
