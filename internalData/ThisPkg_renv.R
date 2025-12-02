@@ -56,7 +56,7 @@ library(renv)
   renv::record("dplyr@1.1.4")
   renv::snapshot()
 
-  ## UPATING A PACKAGE TO USE ITS LATEST VERSION
+  ## UPDATING A PACKAGE TO USE ITS LATEST VERSION
   renv::update("dplyr")
   renv::snapshot()
 
