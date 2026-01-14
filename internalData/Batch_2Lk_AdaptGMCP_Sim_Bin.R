@@ -4,16 +4,43 @@
 
 library(tidyverse)
 
-# nSim <- 1000 # 10 # 10000 # 50000
-# nSim2 <- 100 # 5 # 1000 # 1000
-# props <- list('EP1' = c(0.1, 0.1, 0.1))
-# # props <- list('EP1' = c(0.4, 0.4, 0.4))
-# # props <- list('EP1' = c(0.5, 0.5, 0.5))
-# # nTotSS <- 162
-# nTotSS <- 600 # 162
-# bUseCC <- F
+#####################################
+# nSim <- 100 # 1000 # 10000 # 50000
+# nSim2 <- 50 # 100 # 1000 # 1000
+# nEps <- 2
+# nArms <- 3
+# lEpType <- list('EP1' = 'Binary', 'EP2' = 'Binary')
+# props <- list('EP1' = c(0.4, 0.4, 0.4), 'EP2' = c(0.5, 0.5, 0.5))
+# # props <- list('EP1' = c(0.1, 0.1, 0.1))
+# # # props <- list('EP1' = c(0.4, 0.4, 0.4))
+# # # props <- list('EP1' = c(0.5, 0.5, 0.5))
+# # # nTotSS <- 162
+# alloc <- c(1,1,1)
+# EP.Corr <- matrix(c(1, 0.5, 0.5, 1), nrow = nEps) # c(1)
+# wi <- c(rep(1/4, 4)) # c(rep(1/2, 2))
+# g <- rbind(H1=c(0, 1/3, 1/3, 1/3), H2=c(1/3, 0, 1/3, 1/3),
+#            H3=c(1/3, 1/3, 0, 1/3), H4=c(1/3, 1/3, 1/3, 0)) # rbind(H1=c(0,1), H2=c(1,0))
+# t <- c(0.5, 1)
+#
+# nTotSS <- 3000 # 600 # 162
+# bUseCC <- T # F
 # bParallel <- T
 #
+# out <- simMAMSMEP(
+#   Method = "CER", SampleSize = nTotSS, alpha = 0.025, TestStatCont = NA, CommonStdDev = F,
+#   TestStatBin = "UnPooled", FWERControl = "CombinationTest", nArms = nArms, nEps = nEps,
+#   lEpType = lEpType, Arms.Mean = NA, Arms.std.dev = NA,
+#   Arms.Prop = props, Arms.alloc.ratio = alloc, EP.Corr = EP.Corr,
+#   WI = wi, G = g, test.type = "Partly-Parametric",
+#   info_frac = t, typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
+#   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
+#   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None",
+#   nSimulation = nSim, nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE,
+#   plotGraphs = FALSE, Parallel = bParallel, UseCC = bUseCC)
+#
+# print(out)
+#####################################
+
 # # nTotSS=600, all pi=0.4: FWER is preserved with and without CC.
 # # nTotSS=162, all pi=0.4: FWER not preserved without CC, but is preserved with CC.
 # # nTotSS=600, all pi=0.1: No CC - FWER preserved
@@ -1018,14 +1045,17 @@ library(tidyverse)
 # dfInput <- read_csv("internalData/CER_Inp_1ep5arms - Continuous.csv")
 # dfInput <- read_csv("internalData/InputScenarios_2ep5arm.csv")
 # dfInput <- read_csv("internalData/CER_Inp_1ep5arms.csv")
-dfInput <- read_csv("internalData/Inp_CER_Bin_1ep3arms.csv")
+#dfInput <- read_csv("internalData/Inp_CER_Bin_1ep3arms.csv")
+# dfInput <- read_csv("internalData/Inp_CER_Bin_2eps3arms.csv")
+dfInput <- read_csv("internalData/Inp_CER_Bin_2eps.csv")
 # dfInput <- read_csv("internalData/Inp_CER_Cont_1ep3arms.csv")
 # sOutFilePrefix <- "Out_CER_Bin_1ep3arms"
-sOutFilePrefix <- "OutCERBin1ep3armsLargeN"
+sOutFilePrefix <- "OutCERBin2eps"
 # sOutFilePrefix <- "Out_CER_Cont_1ep3arms"
 sOutPath <- "internalData/"
 
-nModelsToRun <- 99:113 # 57:98
+nModelsToRun <- 108:123 # 78 # 68:107 # 18:67 # dfInput$ModelID
+# nModelsToRun <- 99:113 # 57:98
 # nModelsToRun <- c(17, 41) #Model 9: N=600, t1=0.75
 #                          #Model 17: N=400, t1=0.5
 # nModelsToRun <- c(1:8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
@@ -1039,8 +1069,8 @@ nModelsToRun <- 99:113 # 57:98
 # To do a trial run, uncomment this block so that the tests are run with a
 # small number of simulations rather than the number specified in the input
 # file.
-# dfInput$nSimulation <- 5 #
-# dfInput$nSimulation_Stage2 <- 10 # 1000
+dfInput$nSimulation <- 5 #
+dfInput$nSimulation_Stage2 <- 10 # 1000
 # dfInput$Parallel <- FALSE
 # dfInput$test.type <- "Parametric"
 # dfInput$SampleSize <- 10000
