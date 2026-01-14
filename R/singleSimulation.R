@@ -136,9 +136,9 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
 # gmcpSimObj obj with simulation inputs
 # preSimObjs obj with intermediate inputs
 SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
-  # ######################################
+  #######################################
   # browser()
-  # ######################################
+  #######################################
   # Initialize Intermediate Inputs
   mcpObj <- initialize_mcpObj(gmcpSimObj = gmcpSimObj, preSimObjs = preSimObjs)
   SummStatDF <- mcpObj$SummStatBlank

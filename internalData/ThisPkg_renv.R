@@ -50,20 +50,20 @@ library(renv)
   renv::install("<pkg name>") # Use this instead of install.packages()
   renv::snapshot()
 
-  ## PINNING A SPECIFIC VERSION OF A DEPENDENT PAKCAGE
+  ## PINNING A SPECIFIC VERSION OF A DEPENDENT PACKAGE
   # If your package depends on a specific version of a package, you can pin it
   # in the lockfile:
   renv::record("dplyr@1.1.4")
   renv::snapshot()
 
-  ## UPATING A PACKAGE TO USE ITS LATEST VERSION
+  ## UPDATING A PACKAGE TO USE ITS LATEST VERSION
   renv::update("dplyr")
   renv::snapshot()
 
 
 
 ##########################################################
-# PRODUCTING packrat.lock FILE FOR BLACK DUCK ############
+# PRODUCING packrat.lock FILE FOR BLACK DUCK ############
   # As of Nov 2025, Black Duck detector scan works only if the R package
   # contains a packrat.lock file. Black Duck currently does not work with
   # the lockfile produced by renv.
