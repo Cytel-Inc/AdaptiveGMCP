@@ -123,19 +123,17 @@ Correlation <- matrix(c(1,0.5,NA,NA,
 plotGraphs <- TRUE
 
 #--------------Run Analysis--------------------------
-###For Interim-look inputs follow the R console#####
-#Please uncomment the following code to run the Analysis(short-cut to uncomment 1.Select the lines, 2.ctr+shift+c)
-#
-# adaptGMCP_PC(
-#   WI = WI,
-#   G = G,
-#   test.type = test.type,
-#   alpha = alpha,
-#   info_frac = info_frac,
-#   typeOfDesign = typeOfDesign,
-#   Correlation = Correlation,
-#   Selection = T,
-#   UpdateStrategy = T,
-#   plotGraphs = plotGraphs
-# )
+###For Interim-look inputs follow the R console. To quit, press the Esc key#####
+adaptGMCP_PC(
+  WI = WI,
+  G = G,
+  test.type = test.type,
+  alpha = alpha,
+  info_frac = info_frac,
+  typeOfDesign = typeOfDesign,
+  Correlation = Correlation,
+  Selection = T,
+  UpdateStrategy = T,
+  plotGraphs = plotGraphs
+)
 }

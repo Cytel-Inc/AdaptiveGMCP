@@ -1,5 +1,7 @@
 # File: Batch_graphicalMCP_Sim.R
 
+source("internalData/graphicalMCP_pow_calc_wrapper.R")
+
 # Read graph input data
 dfInput <- read_csv("internalData/BatchInput_AGMCP_Sim_Bin_3.csv")
 sOutFilePrefix <- "grMCP_Out"
@@ -8,7 +10,7 @@ sOutPath <- "internalData/"
 # Filtering out Sidak test as graphicalMCP does not appear to support it
 dfInput <- dfInput %>% filter(test.type != "Sidak")
 
-nModelsToRun <- dfInput$ModelID # c(110, 112, 113, 115) #
+nModelsToRun <- dfInput$ModelID # c(1, 2, 3) # c(110, 112, 113, 115) #
 
 # TRIAL RUN - START >>>>>>>>>>>>
 # To do a trial run, uncomment this block so that the tests are run with a

@@ -4,10 +4,16 @@
 #
 # --------------------------------------------------------------------------------------------------
 
-# Compute the CER for all intersection hypothesis after stage-1 analysis(only for CER analysis tool)
+#' Compute CER for all intersection hypotheses after stage-1 analysis
+#'
+#' This function computes the Conditional Error Rate (CER) for all intersection
+#' hypotheses after stage-1 analysis (only for CER analysis tool).
+#'
+#' @name getCER
+#' @title Compute Conditional Error Rate
 #' @param b2 stage-2 planned boundaries
 #' @param WH Weights for all intersection hypothesis
-#' @param p observed raw p-values of the current stage
+#' @param p1 observed raw p-values of the current stage
 #' @param test.type test type
 #' @param HypoMap description for arms, endpoints and hypothesis
 #' @param CommonStdDev Common Standard deviation flag
@@ -15,8 +21,14 @@
 #' @param sigma planned arm-wise std.dev
 #' @param Sigma planned var-cov
 #' @param AllocSampleSize planned arm-wise sample size(cum.)
+#' @param EpType endpoint type
+#' @param prop.ctr planned control group response rate (for binary endpoint)
+#' @param t1 planned information fraction at stage-1
+#' @return A list containing CER values and related information
+#' @keywords internal
 getCER <- function(b2,WH,p1,test.type,HypoMap,CommonStdDev,
-                   allocRatio,sigma,Sigma,AllocSampleSize,EpType,prop.ctr){
+                   allocRatio,sigma,Sigma,AllocSampleSize,
+                   EpType,prop.ctr, t1){
 
   SUBSETS <- CONDERR <- c()
   Stage2Sigma <- getStage2PlanSigma(CommonStdDev = CommonStdDev,
@@ -92,7 +104,7 @@ getCER <- function(b2,WH,p1,test.type,HypoMap,CommonStdDev,
       pJh <- as.numeric(p1[NParamGrps])
 
       pcer <- unlist(lapply(1:length(NParamGrps), function(x) {
-        getPCER(a2 = aJh[x], p1 = pJh[x], ss1 = PlanSSHyp[[1]][x], ss2 = PlanSSHyp[[2]][x])
+        getPCER(a2 = aJh[x], p1 = pJh[x], ss1 = PlanSSHyp[[1]][x], ss2 = PlanSSHyp[[2]][x], t1 = t1)
       }))
 
       pcerNParamGrps <- pcer
@@ -189,7 +201,10 @@ getStage2PlanSigma <- function(CommonStdDev,allocRatio, sigma,
     if (EpType[[i]] == "Continuous") {
       sigma_0 <- sigma[[i]][1]
       sigma_trt <- sigma[[i]][-1]
-      capLambda <- (sigma_0^2 + sigma_trt^2 / allocRatio[-1])^(-1)
+      # capLambda <- (sigma_0^2 + sigma_trt^2 / allocRatio[-1])^(-1)
+      # Fixing the bug identified by Cyrus in Nov 2025 - earlier capLambda formula used sigma_trt.
+      # However, since we are computing the boundaries under the null hypothesis, we should use sigma_0 for all arms.
+      capLambda <- (1 / sigma_0^2) * (allocRatio[-1] / (1 + allocRatio[-1]))
     } else if (EpType[[i]] == "Binary") {
       pi_c <- prop.ctr[[i]]
       capLambda <- (1 / (pi_c * (1 - pi_c))) * (allocRatio[-1] / (1 + allocRatio[-1]))
@@ -208,21 +223,30 @@ getStage2PlanSigma <- function(CommonStdDev,allocRatio, sigma,
     for (l in 1:k)
     {
       for (m in l:k) {
-        if (EpType[[i]] == "Continuous") {
-          sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
-            EpType = "Continuous",
-            i1 = l, k1 = 1, i2 = m, k2 = 1,
-            sigma_0 = sigma_0, sigma_trt = sigma_trt,
-            ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
-          )
-        } else if (EpType[[i]] == "Binary") {
-          sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
-            EpType = "Binary",
-            i1 = l, k1 = 1, i2 = m, k2 = 1,
-            ctrProp = pi_c,
-            ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
-          )
-        }
+        # Replaced varCovZ() with varCovZ_Null() to fix the bug in boundary computation
+        # found by Cyrus in Nov 2025. Earlier covariance computation depended on nuisance parameters,
+        # which was wrong.
+        # Boundary computation should depend only on allocation ratio and information fraction.
+        # if (EpType[[i]] == "Continuous") {
+        #   sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
+        #     EpType = "Continuous",
+        #     i1 = l, k1 = 1, i2 = m, k2 = 1,
+        #     sigma_0 = sigma_0, sigma_trt = sigma_trt,
+        #     ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
+        #   )
+        # } else if (EpType[[i]] == "Binary") {
+        #   sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
+        #     EpType = "Binary",
+        #     i1 = l, k1 = 1, i2 = m, k2 = 1,
+        #     ctrProp = pi_c,
+        #     ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
+        #   )
+        # }
+        sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ_Null(
+          i1 = l, k1 = 1, i2 = m, k2 = 1,
+          allocRatio = allocRatio,
+          info_frac = 1
+        )
       }
     }
     SigmaZIncr[[names(Sigma$SigmaZ)[i]]] <- sigmaZ

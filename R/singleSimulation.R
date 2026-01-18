@@ -41,6 +41,7 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
         Arms.Mean = mcpObj$Arms.Mean,
         Arms.std.dev = mcpObj$Arms.std.dev,
         Arms.Prop = mcpObj$Arms.Prop,
+        UseCC = mcpObj$UseCC,
         Arms.alloc.ratio = mcpObj$Arms.alloc.ratio,
         Arms.SS = Arms.SS.Incr,
         EPCorr = mcpObj$EP.Corr,
@@ -163,6 +164,7 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
         Arms.Mean = mcpObj$Arms.Mean,
         Arms.std.dev = mcpObj$Arms.std.dev,
         Arms.Prop = mcpObj$Arms.Prop,
+        UseCC = mcpObj$UseCC,
         Arms.alloc.ratio = mcpObj$Arms.alloc.ratio,
         Arms.SS = Arms.SS.Incr,
         EPCorr = mcpObj$EP.Corr,
@@ -279,6 +281,18 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
       }
 
       mcpObj_Stage2 <- mcpObj # This will only be run at the end of stage 1. To be used for all stage 2 sims
+      # We allow the user to perform multiple stage 2 simulations for each stage 1 simulation.
+      # This is especially useful in case of large problems, i.e. designs with large number of arms and
+      # multiple endpoints. In such cases if we run say 10k simulations for stage 1 and only 1 simulation 
+      # for stage 2 for each stage 1 simulation (like we do in East), then it was found that the confidence
+      # intervals for power estimates were quite wide. To make them tighter, one had to run much larger
+      # number of stage 1 simulations, like 100k or more which made the overall simulation time very long.
+      # This is especially so because in case of CER method, in each of those simulations we would end up
+      # calculating the CER and the adapted stage 2 boundaries which is time consuming.
+      # With the nested simulations method, we can get tighter confidence intervals by running fewer
+      # stage 1 simulations (like 10k) and more stage 2 simulations (like 50 or more) for each stage 1 simulation.
+      # This reduces the overall simulation time significantly as the CER and adapted boundary calculations happen
+      # far fewer times.
       for (nSim_Stage2 in 1:mcpObj$nSimulation_Stage2)
       {
         mcpObj <- mcpObj_Stage2
@@ -291,6 +305,7 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
           Arms.Mean = mcpObj$Arms.Mean,
           Arms.std.dev = mcpObj$Arms.std.dev,
           Arms.Prop = mcpObj$Arms.Prop,
+          UseCC = mcpObj$UseCC,
           Arms.alloc.ratio = mcpObj$Arms.alloc.ratio,
           Arms.SS = Arms.SS.Incr,
           EPCorr = mcpObj$EP.Corr,

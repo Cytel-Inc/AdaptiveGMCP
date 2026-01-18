@@ -10,6 +10,7 @@ simMAMSMEP(
   SampleSize = 500,
   TestStatCont = "t-equal",
   TestStatBin = "UnPooled",
+  UseCC = FALSE,
   FWERControl = "None",
   nArms = 3,
   nEps = 2,
@@ -59,6 +60,8 @@ simMAMSMEP(
 \item{TestStatCont}{Test Statistics for continuous endpoints; options: 't-equal' : for t statistics with equal variance, 't-unequal' : for t statistics with unequal variance, 'z' for z statistics}
 
 \item{TestStatBin}{Test Statistics for Binary endpoints; options: 'UnPooled', 'Pooled'}
+
+\item{UseCC}{TRUE to use continuity correction while estimating proportions for binary endpoints, FALSE otherwise. Ignored for non-binary endpoints.}
 
 \item{FWERControl}{applicable for CER method only, 'CombinationTest': combined two stage incremental test statistics, 'None': Cumulative test statistics.}
 
@@ -129,8 +132,6 @@ simMAMSMEP(
 \item{EastSumStat}{East Summary Statistics file, Only applicable for single look designs with CombPValue method}
 
 \item{Parallel}{Logical; TRUE: Parallel computations}
-
-\item{UpdateStrategy}{Logical to specify the updated strategy (Not Implemented yet) default FALSE}
 }
 \description{
 Function to perform Adaptive GMCP simulation for Multi-Arm Multi-Stage Multi-Endpoint simulations for Combining p-values method and CER method(2-Stage)
@@ -302,9 +303,6 @@ plotGraphs <- TRUE
 Parallel <- TRUE
 
 #-----------------------Run Simulation--------------------------------------
-# Uncomment the following code to run simulation;
-# short cut: 1) select all the following lines 2) ctrl+shift+c]
-#
 out <- simMAMSMEP(
   alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType=EpType,
   TestStatCon = TestStatCon, FWERControl = FWERControl,

@@ -36,3 +36,10 @@ out_renv.xlsx
 out_renv.csv
 internalData/devtools_check_05Nov2025.txt
 internalData/devtools_check_changes.txt
+packrat.lock
+bdscript.ps1
+*.tar.gz
+*.zip
+*.tgz
+AdaptGMCP_*.tar.gz
+AdaptGMCP_*.zip

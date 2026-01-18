@@ -5,10 +5,13 @@
 # --------------------------------------------------------------------------------------------------
 
 #' Wrapper function that takes all inputs through a single R dataframe
+#' Ani: Added sOutPath so that output can be written to the CSV file after every scenario
+#' is simulated rather than at the end of all scenarios.
 #' @param InputDF R Dataframe: This is the csv/excel input data in the R dataframe format
+#' @param sOutPath String: File path to save the output csv file
 #' @example ./internalData/RunBatches12-04-24.R
 #' @export
-simMAMSMEP_Wrapper <- function(InputDF) {
+simMAMSMEP_Wrapper <- function(InputDF, sOutPath) {
   # Update the dataframe column names in the following mapping in case
   # the names in the input csv/excel changes
   library(dplyr)
@@ -20,6 +23,10 @@ simMAMSMEP_Wrapper <- function(InputDF) {
   #
   lOut <- list()
   allRawPValues <- data.frame() # Initialize dataframe to collect raw p-values
+
+  # Open file connection for the entire batch
+  fileConn <- file(sOutPath, "w")  # Open in write mode
+  on.exit(close(fileConn))  # Ensure connection is closed when function exits
 
   for (nModelNum in 1:nrow(InputDF)) {
     # Start timer for this iteration
@@ -73,6 +80,21 @@ simMAMSMEP_Wrapper <- function(InputDF) {
       # add each iterations power table to a list
       lOut[[nModelNum]] <- OutTab
 
+      # Combining input and output for this model
+      dfInpSep <- data.frame(Input = ">>>", stringsAsFactors = FALSE)
+      dfCombined <- cbind(OutTab, dfInpSep, InputDF[nModelNum,
+                                          !(names(InputDF) %in% "ModelID")])
+
+      # Reorder columns to put Scenario right after ModelID
+      col_order <- c("ModelID", "Scenario",
+                     setdiff(names(dfCombined), c("ModelID", "Scenario")))
+      dfCombined <- dfCombined[, col_order]
+
+      # Write to output file using the open connection
+      write.table(dfCombined, file = fileConn, sep = ",",
+                 row.names = FALSE, col.names = (nModelNum == 1))
+      flush(fileConn)  # Ensure data is written to disk after each model
+
       # Collect raw p-values if they exist
       if (!is.null(out$rawPValues) && is.data.frame(out$rawPValues) && nrow(out$rawPValues) > 0) {
         # Add model number column
@@ -114,13 +136,14 @@ simMAMSMEP_Wrapper <- function(InputDF) {
   dfOut <- do.call(rbind, lOut)
   dfOut <- dplyr::left_join(dfOut, InputDF, by = "ModelID")
 
+  ## Uncomment this code block to save raw p-values to a CSV file
   # Save combined raw p-values to CSV if we have data
-  if (nrow(allRawPValues) > 0) {
-    timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-    csvFilePath <- paste0("internalData/RawPValues_", timestamp, ".csv")
-    write.csv(allRawPValues, file = csvFilePath, row.names = FALSE)
-    cat("\nRaw p-values saved to:", csvFilePath, "\n")
-  }
+  # if (nrow(allRawPValues) > 0) {
+  #   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+  #   csvFilePath <- paste0("internalData/RawPValues_", timestamp, ".csv")
+  #   write.csv(allRawPValues, file = csvFilePath, row.names = FALSE)
+  #   cat("\nRaw p-values saved to:", csvFilePath, "\n")
+  # }
 
   return(dfOut)
 }
@@ -133,6 +156,7 @@ run1TestCase <- function(InputDF) {
   alpha <- InputDF$alpha
   TestStatCont <- InputDF$TestStatCont
   TestStatBin <- InputDF$TestStatBin
+  UseCC <- InputDF$UseCC
   FWERControl <- InputDF$FWERControl
   nArms <- InputDF$nArms
   nEps <- InputDF$nEps
@@ -168,9 +192,14 @@ run1TestCase <- function(InputDF) {
   nSimulation_Stage2 <- InputDF$nSimulation_Stage2
   # put the following code in try catch so the loop continues even if one iteration fails
   Seed <- if (!is.na(suppressWarnings(as.numeric(Seed)))) as.numeric(Seed) else Seed
+
+  # #############################
+  # browser()
+  # #############################
+
   out <- simMAMSMEP(
     alpha = alpha, SampleSize = SampleSize, nArms = nArms, nEps = nEps,lEpType=lEpType,
-    TestStatCont = TestStatCont, TestStatBin = TestStatBin, FWERControl = FWERControl,
+    TestStatCont = TestStatCont, TestStatBin = TestStatBin, UseCC = UseCC, FWERControl = FWERControl,
     Arms.Mean = Arms.Mean, Arms.std.dev = Arms.std.dev,Arms.Prop = Arms.Prop, Arms.alloc.ratio = Arms.alloc.ratio,
     EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type, info_frac = info_frac,
     typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
@@ -184,7 +213,9 @@ run1TestCase <- function(InputDF) {
 
 
 #' Create table and plots of given format
+#' @param PowerType : Type of power to be extracted from the output dataframe. Must be one of "Global.Power", "Conjunctive.Power", "Disjunctive.Power", "FWER".
 #' @param dfOut : output from simMAMSMEP_Wrapper
+#' @param TableTemDF : Template table dataframe specifying the scenarios and treatment selection rules
 #' @export
 genPowerTablePlots <- function(PowerType, dfOut, TableTemDF) {
   library(ggplot2)

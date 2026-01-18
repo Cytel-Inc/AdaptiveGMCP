@@ -4,7 +4,7 @@
 library(tidyverse)
 library(gMCP)
 library(parallel)
-# source("R/gMCP_calcPower_wrapper.R", keep.source = TRUE)
+source("internalData/gMCP_calcPower_wrapper.R", keep.source = TRUE)
 
 # Start timing the total execution
 total_start_time <- Sys.time()
@@ -65,7 +65,7 @@ dfResults <- data.frame("ModelID" = uniqueModelIDs)
 dfResults$PowAtlst1 <- rep(NA, length(uniqueModelIDs))
 dfResults$RejectAll <- rep(NA, length(uniqueModelIDs))
 
-nIters <- uniqueModelIDs # uniqueModelIDs[1]
+nIters <- uniqueModelIDs # uniqueModelIDs[1] #
 
 # Loop through each unique ModelID
 for (id in nIters) {

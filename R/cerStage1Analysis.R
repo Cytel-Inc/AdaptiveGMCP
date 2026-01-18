@@ -37,7 +37,7 @@ PerformStage1Test <- function(
     Sigma <- getSigma(
       SS_Cum = SS_Cum, EpType = EpType, sigma = sigma,
       prop.ctr = prop.ctr, allocRatio = allocRatio,
-      CommonStdDev = CommonStdDev
+      CommonStdDev = CommonStdDev, info_frac = info_frac
     )
   } else {
     Sigma <- NA
