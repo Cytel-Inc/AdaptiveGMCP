@@ -13,7 +13,7 @@ This is the first stable production release of AdaptGMCP, transitioning from dat
 
 ### Analysis Functions
 * `adaptGMCP_CER()`: Adaptive GMCP analysis using Conditional Error Rate (CER) method and closed testing
-  - Supports continuous, binary, and mixed endpoint types
+  - Supports continuous, binary, and mixed endpoints
   - Parametric, non-parametric, and partly-parametric test options
   - Two-stage adaptive designs with optional stage 2 adaptation
   - Multiple winner selection strategies
@@ -21,7 +21,7 @@ This is the first stable production release of AdaptGMCP, transitioning from dat
   - Interactive graph visualization
   
 * `adaptGMCP_PC()`: Adaptive GMCP analysis using Combined P-Value (PVCombo) method and closed testing
-  - Supports continuous, binary, and mixed endpoint types
+  - Supports continuous, binary, and mixed endpoints
   - Parametric, non-parametric, and partly-parametric test options
   - Two-stage adaptive designs with optional stage 2 adaptation
   - Multiple winner selection strategies
@@ -30,6 +30,7 @@ This is the first stable production release of AdaptGMCP, transitioning from dat
 
 ### Simulation Capabilities
 * `simMAMSMEP()`: Comprehensive simulation capability for Multi-Arm Multi-Endpoint trials with 2 stages
+  - Supports continuous, binary, and mixed endpoints
   - Supports both PVCombo and CER methods
   - Parametric, non-parametric, and partly-parametric test options
   - Uses closed testing for strong FWER control
