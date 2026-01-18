@@ -6,6 +6,8 @@ library(graphicalMCP)
 library(purrr)
 library(tidyverse)
 
+source("internalData/gMCP_calcPower_wrapper.R")
+
 # Function for simulating a batch of test cases
 graphicalMCP_Wrapper <- function(InputDF) {
   # Update the dataframe column names in the following mapping in case

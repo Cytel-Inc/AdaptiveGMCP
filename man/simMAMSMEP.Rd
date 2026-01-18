@@ -10,6 +10,7 @@ simMAMSMEP(
   SampleSize = 500,
   TestStatCont = "t-equal",
   TestStatBin = "UnPooled",
+  UseCC = FALSE,
   FWERControl = "None",
   nArms = 3,
   nEps = 2,
@@ -59,6 +60,8 @@ simMAMSMEP(
 \item{TestStatCont}{Test Statistics for continuous endpoints; options: 't-equal' : for t statistics with equal variance, 't-unequal' : for t statistics with unequal variance, 'z' for z statistics}
 
 \item{TestStatBin}{Test Statistics for Binary endpoints; options: 'UnPooled', 'Pooled'}
+
+\item{UseCC}{TRUE to use continuity correction while estimating proportions for binary endpoints, FALSE otherwise. Ignored for non-binary endpoints.}
 
 \item{FWERControl}{applicable for CER method only, 'CombinationTest': combined two stage incremental test statistics, 'None': Cumulative test statistics.}
 

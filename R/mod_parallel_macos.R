@@ -16,6 +16,8 @@
 # Modify the function
 #' @importFrom data.table data.table setDT := .N .SD setorder
 #' @importFrom dplyr %>%
+#' @importFrom stats pnorm qnorm pt na.omit reshape sd uniroot
+#' @importFrom utils capture.output str write.table
 modified_MAMSMEP_sim2 <- function (gmcpSimObj)
 {
   #######################################
@@ -36,10 +38,16 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
 
   if (gmcpSimObj$Method == "CER") {
     if (gmcpSimObj$Parallel) {
+      # Cap cores to respect CRAN check limits (max 13 simultaneous processes)
       cores <- parallel::detectCores()
+      max_cores <- if (identical(Sys.getenv("_R_CHECK_LIMIT_CORES_"), "TRUE")) {
+        2L
+      } else {
+        min(cores - 1, 12L)  # Leave 1 for OS, cap at 12 to stay under CRAN's 13 limit
+      }
       if(.Platform$OS.type == "windows")# check OS
       {
-        cl <- parallel::makeCluster(cores[1] - 1, type = "PSOCK")
+        cl <- parallel::makeCluster(max_cores, type = "PSOCK")
         parallel::clusterEvalQ(cl, {
           library(AdaptGMCP)
           NULL # Returning NULL from clusterEvalQ to avoid returning whatever
@@ -59,7 +67,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
         out <- parallel::mclapply(1:gmcpSimObj$nSimulation, function(x) {
           out_SingleSim <- SingleSimCER2(x, gmcpSimObj, preSimObjs)
           return(out_SingleSim)
-        },mc.cores = cores[1] - 1)
+        },mc.cores = max_cores)
         ###---
       }
     }
@@ -74,10 +82,16 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
     }
   } else { # means gmcpSimObj$Method == "CombPValue"
     if (gmcpSimObj$Parallel) {
+      # Cap cores to respect CRAN check limits (max 13 simultaneous processes)
       cores <- parallel::detectCores()
+      max_cores <- if (identical(Sys.getenv("_R_CHECK_LIMIT_CORES_"), "TRUE")) {
+        2L
+      } else {
+        min(cores - 1, 12L)  # Leave 1 for OS, cap at 12 to stay under CRAN's 13 limit
+      }
       if(.Platform$OS.type == "windows")#check OS
       {
-        cl <- parallel::makeCluster(cores[1] - 1, type = "PSOCK")
+        cl <- parallel::makeCluster(max_cores, type = "PSOCK")
         parallel::clusterEvalQ(cl, {
           library(AdaptGMCP)
           NULL # Returning NULL from clusterEvalQ to avoid returning whatever
@@ -98,7 +112,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
         out <- parallel::mclapply(1:gmcpSimObj$nSimulation, function(x) {
           out_SingleSim <- SingleSimCombPValue2(x, gmcpSimObj, preSimObjs)
           return(out_SingleSim)
-        },mc.cores = cores[1] - 1)
+        },mc.cores = max_cores)
         ###---
       }
     } else {

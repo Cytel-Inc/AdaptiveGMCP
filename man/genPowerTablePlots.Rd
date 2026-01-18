@@ -7,7 +7,11 @@
 genPowerTablePlots(PowerType, dfOut, TableTemDF)
 }
 \arguments{
+\item{PowerType}{: Type of power to be extracted from the output dataframe. Must be one of "Global.Power", "Conjunctive.Power", "Disjunctive.Power", "FWER".}
+
 \item{dfOut}{: output from simMAMSMEP_Wrapper}
+
+\item{TableTemDF}{: Template table dataframe specifying the scenarios and treatment selection rules}
 }
 \description{
 Create table and plots of given format

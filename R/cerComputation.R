@@ -4,10 +4,16 @@
 #
 # --------------------------------------------------------------------------------------------------
 
-# Compute the CER for all intersection hypothesis after stage-1 analysis(only for CER analysis tool)
+#' Compute CER for all intersection hypotheses after stage-1 analysis
+#'
+#' This function computes the Conditional Error Rate (CER) for all intersection
+#' hypotheses after stage-1 analysis (only for CER analysis tool).
+#'
+#' @name getCER
+#' @title Compute Conditional Error Rate
 #' @param b2 stage-2 planned boundaries
 #' @param WH Weights for all intersection hypothesis
-#' @param p observed raw p-values of the current stage
+#' @param p1 observed raw p-values of the current stage
 #' @param test.type test type
 #' @param HypoMap description for arms, endpoints and hypothesis
 #' @param CommonStdDev Common Standard deviation flag
@@ -18,6 +24,8 @@
 #' @param EpType endpoint type
 #' @param prop.ctr planned control group response rate (for binary endpoint)
 #' @param t1 planned information fraction at stage-1
+#' @return A list containing CER values and related information
+#' @keywords internal
 getCER <- function(b2,WH,p1,test.type,HypoMap,CommonStdDev,
                    allocRatio,sigma,Sigma,AllocSampleSize,
                    EpType,prop.ctr, t1){
