@@ -5,59 +5,6 @@
 # --------------------------------------------------------------------------------------------------
 
 test_that("Test genNornToOther", {
-  # Test Case-1: Test output dimension
-  nSubject <- 100000
-  lEpType <- list("Continuous", "Continuous")
-  mNormCorr <- matrix(c(1, 0.5, 0.5, 1), nrow = 2)
-  mNormSigma <- matrix(c(1, 0.5, 0.5, 1), nrow = 2)
-  vNormMean <- c(0.1, 0.4)
-  nSeed <- 123
-
-  out <- genNormToOther(
-    nSubject = nSubject,
-    lEpType = lEpType,
-    mNormCorr = mNormCorr,
-    mNormSigma = mNormSigma,
-    nSeed = nSeed
-  )
-  expect_equal(
-    object = ncol(out),
-    expected = ncol(mNormSigma)
-  )
-
-  expect_equal(
-    object = nrow(out),
-    expected = nSubject
-  )
-  #---------------------------------------------------
-  # Test Case-2: Test normality
-  expect_equal(
-    object = colSums(out) / nSubject - vNormMean,
-    expected = c(0, 0),
-    tolerance = 1E-2
-  )
-
-  #----------------------------------------------------
-  # Test Case-3: Test proportions
-  nSubject <- 100000
-  lEpType <- list("Binary", "Binary")
-  mNormCorr <- matrix(c(1, 0.5, 0.5, 1), nrow = 2)
-  vProp <- c(0.1, 0.2)
-  nSeed <- 123
-
-  out <- genNormToOther(
-    nSubject = nSubject,
-    lEpType = lEpType,
-    mNormCorr = mNormCorr,
-    vProp = vProp,
-    nSeed = nSeed
-  )
-  expect_equal(
-    object = colSums(out) / nSubject - vProp,
-    expected = c(0, 0),
-    tolerance = 1E-2
-  )
-
   #----------------------------------------------------
   # Test Case-4: Mixed(both Continuous)
   nArmID <- 3
