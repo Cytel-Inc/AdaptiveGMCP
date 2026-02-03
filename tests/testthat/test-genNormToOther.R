@@ -4,7 +4,7 @@
 #
 # --------------------------------------------------------------------------------------------------
 
-test_that("Test genNornToOther", {
+test_that("Test genNormToOther2", {
   #----------------------------------------------------
   # Test Case-4: Mixed(both Continuous)
   nArmID <- 3

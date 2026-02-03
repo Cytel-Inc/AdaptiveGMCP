@@ -1054,7 +1054,7 @@ sOutFilePrefix <- "OutCERBin2eps"
 # sOutFilePrefix <- "Out_CER_Cont_1ep3arms"
 sOutPath <- "internalData/"
 
-nModelsToRun <- 108:123 # 78 # 68:107 # 18:67 # dfInput$ModelID
+nModelsToRun <- 108 # 108:123 # 78 # 68:107 # 18:67 # dfInput$ModelID
 # nModelsToRun <- 99:113 # 57:98
 # nModelsToRun <- c(17, 41) #Model 9: N=600, t1=0.75
 #                          #Model 17: N=400, t1=0.5
@@ -1069,8 +1069,8 @@ nModelsToRun <- 108:123 # 78 # 68:107 # 18:67 # dfInput$ModelID
 # To do a trial run, uncomment this block so that the tests are run with a
 # small number of simulations rather than the number specified in the input
 # file.
-dfInput$nSimulation <- 5 #
-dfInput$nSimulation_Stage2 <- 10 # 1000
+dfInput$nSimulation <- 100 # 5
+dfInput$nSimulation_Stage2 <- 50 # 3 # 10 # 1000
 # dfInput$Parallel <- FALSE
 # dfInput$test.type <- "Parametric"
 # dfInput$SampleSize <- 10000
