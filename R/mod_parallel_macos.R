@@ -13,9 +13,21 @@
 
 ## Modification of AdaptGMCP to also work on MacOs/Linux
 
+# Helper function to compute maximum cores for parallel processing
+# Limits to 2 cores during CRAN checks, otherwise uses all cores minus 1
+get_max_cores <- function() {
+  cores <- parallel::detectCores()
+  if (identical(Sys.getenv("_R_CHECK_LIMIT_CORES_"), "TRUE")) {
+    2L
+  } else {
+    cores - 1  # Leave 1 core for OS
+  }
+}
+
 # Modify the function
 #' @importFrom data.table data.table setDT := .N .SD setorder
 #' @importFrom dplyr %>%
+#' @importFrom pbapply pblapply
 #' @importFrom stats pnorm qnorm pt na.omit reshape sd uniroot
 #' @importFrom utils capture.output str write.table
 modified_MAMSMEP_sim2 <- function (gmcpSimObj)
@@ -38,13 +50,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
 
   if (gmcpSimObj$Method == "CER") {
     if (gmcpSimObj$Parallel) {
-      # Cap cores to respect CRAN check limits (max 13 simultaneous processes)
-      cores <- parallel::detectCores()
-      max_cores <- if (identical(Sys.getenv("_R_CHECK_LIMIT_CORES_"), "TRUE")) {
-        2L
-      } else {
-        min(cores - 1, 12L)  # Leave 1 for OS, cap at 12 to stay under CRAN's 13 limit
-      }
+      max_cores <- get_max_cores()
       if(.Platform$OS.type == "windows")# check OS
       {
         cl <- parallel::makeCluster(max_cores, type = "PSOCK")
@@ -54,7 +60,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
                # the library() function returns
         })
         parallel::clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
-        out <- parallel::parLapply(cl = cl, 1:gmcpSimObj$nSimulation, function(x){
+        out <- pbapply::pblapply(cl = cl, 1:gmcpSimObj$nSimulation, function(x){
           out_SingleSim <- SingleSimCER2(x, gmcpSimObj, preSimObjs)
           return(out_SingleSim)
         })
@@ -64,10 +70,10 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
       else
       {
         ###--- code to run in parallel on macos
-        out <- parallel::mclapply(1:gmcpSimObj$nSimulation, function(x) {
+        out <- pbapply::pblapply(1:gmcpSimObj$nSimulation, function(x) {
           out_SingleSim <- SingleSimCER2(x, gmcpSimObj, preSimObjs)
           return(out_SingleSim)
-        },mc.cores = max_cores)
+        }, cl = max_cores)
         ###---
       }
     }
@@ -82,13 +88,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
     }
   } else { # means gmcpSimObj$Method == "CombPValue"
     if (gmcpSimObj$Parallel) {
-      # Cap cores to respect CRAN check limits (max 13 simultaneous processes)
-      cores <- parallel::detectCores()
-      max_cores <- if (identical(Sys.getenv("_R_CHECK_LIMIT_CORES_"), "TRUE")) {
-        2L
-      } else {
-        min(cores - 1, 12L)  # Leave 1 for OS, cap at 12 to stay under CRAN's 13 limit
-      }
+      max_cores <- get_max_cores()
       if(.Platform$OS.type == "windows")#check OS
       {
         cl <- parallel::makeCluster(max_cores, type = "PSOCK")
@@ -98,7 +98,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
           # the library() function returns
         })
         parallel::clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
-        out <- parallel::parLapply(cl = cl, 1:gmcpSimObj$nSimulation,
+        out <- pbapply::pblapply(cl = cl, 1:gmcpSimObj$nSimulation,
                                    function(x) {
                                      out_SingleSim <- SingleSimCombPValue2(x, gmcpSimObj,
                                                                            preSimObjs)
@@ -109,10 +109,10 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
       else
       {
         ###--- code to run in parallel on macos
-        out <- parallel::mclapply(1:gmcpSimObj$nSimulation, function(x) {
+        out <- pbapply::pblapply(1:gmcpSimObj$nSimulation, function(x) {
           out_SingleSim <- SingleSimCombPValue2(x, gmcpSimObj, preSimObjs)
           return(out_SingleSim)
-        },mc.cores = max_cores)
+        }, cl = max_cores)
         ###---
       }
     } else {

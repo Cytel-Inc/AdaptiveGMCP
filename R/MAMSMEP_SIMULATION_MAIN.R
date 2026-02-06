@@ -149,6 +149,27 @@ simMAMSMEP <- function(
     }
   }
 
+  # Dimension-based algorithm selection for mvtnorm::pmvnorm()
+  # Calculate the dimension of the multivariate normal distribution
+  mvtnorm_dimension <- (nArms - 1) * nEps
+  
+  # Choose algorithm based on dimension:
+  # - Miwa: Fast and accurate for dimensions <= 20
+  # - GenzBretz: For dimensions > 20 (Miwa becomes inaccurate beyond 20 dimensions)
+  if (mvtnorm_dimension <= 20) {
+    mvtnorm_algo <- mvtnorm::Miwa(
+      steps = 128,
+      checkCorr = FALSE,
+      maxval = 1e3
+    )
+  } else {
+    mvtnorm_algo <- mvtnorm::GenzBretz(
+      maxpts = 25000,
+      abseps = 0.001,
+      releps = 0
+    )
+  }
+
   # Object to run Simulations
   gmcpSimObj <<- list(
     # Methodology
@@ -207,7 +228,10 @@ simMAMSMEP <- function(
     "EastSumStat" = EastSumStat,
 
     # number of simulations for stage 2 per stage 1
-    "nSimulation_Stage2" = nSimulation_Stage2
+    "nSimulation_Stage2" = nSimulation_Stage2,
+
+    # mvtnorm algorithm (dimension-based selection)
+    "mvtnorm_algo" = mvtnorm_algo
   )
 
   logs <- valInpsimMAMSMEP(inps = gmcpSimObj)

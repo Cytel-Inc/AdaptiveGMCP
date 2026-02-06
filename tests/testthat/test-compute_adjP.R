@@ -38,6 +38,16 @@ test_that("Test computations of Adjusted P-values", {
   cr <- matrix(0.5, nrow = 4, ncol = 4)
   diag(cr) <- 1
 
+  mvtnorm_algo <- mvtnorm::Miwa(
+    steps = 128,
+    checkCorr = FALSE,
+    maxval = 1e3
+  )
+
+  gmcpSimObj <<- list(
+    "mvtnorm_algo" = mvtnorm_algo
+  )
+
   adjP <- c()
   for (i in 1:nrow(p))
   {

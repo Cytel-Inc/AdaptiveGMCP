@@ -42,12 +42,11 @@ exitProbStage1 <- function(gIDX, hIDX, cJ1, wJ, Sigma, Scale, underNull = TRUE) 
     sigma <- sigmaZ[sIDX, sIDX]
     upper <- qnorm(1 - wJ[hIDX] * cJ1)
     lower <- -Inf
+
+    # Use dimension-based algorithm selected in simMAMSMEP()
     1 - mvtnorm::pmvnorm(
-      lower = lower, upper = upper, mean = mu_z, sigma = sigma,
-      algorithm = mvtnorm::Miwa(
-        steps = 128,
-        checkCorr = F,
-        maxval = 1e3)
+      lower = lower, upper = upper, mean = mu_z, sigma = sigma, 
+      algorithm = gmcpSimObj$mvtnorm_algo
     )[1]
   } else if (Scale == "Score") {
     if (underNull) {
@@ -56,32 +55,13 @@ exitProbStage1 <- function(gIDX, hIDX, cJ1, wJ, Sigma, Scale, underNull = TRUE) 
     sigma <- sigmaS[sIDX, sIDX]
     upper <- qnorm(1 - wJ[hIDX] * cJ1) * sqrt(infoMatrix[sIDX, 1])
     lower <- -Inf
+
+    # Use dimension-based algorithm selected in simMAMSMEP()
     1 - mvtnorm::pmvnorm(
-      lower = lower, upper = upper, mean = mu_s, sigma = sigma,
-      algorithm = Miwa(
-        steps = 128,
-        checkCorr = F,
-        maxval = 1e3)
+      lower = lower, upper = upper, mean = mu_s, sigma = sigma, 
+      algorithm = gmcpSimObj$mvtnorm_algo
     )[1]
   }
-}
-
-#------------------------------------------------------------------------- -
-#################### Search for stage-1 boundary ##########################
-# alpha1    : alpha spent at stage 1
-# wJ     : The weight for the intersection hypothesis HJ
-# sigmaZ : The co-variance matrix of cummulative z-statistics (2 stages combined)
-# Returns: The critical point cJ1 for testing HJ at stage1
-#------------------------------------------------------------------------- -
-getBdryStage1 <- function(gIDX, hIDX, alpha1, wJ, Sigma, Scale) {
-  minbdry <- 0#  0.00000000001
-  maxbdry <- 1 / max(wJ[wJ != 0])
-  bdry1 <- function(x) {
-    extProb <- exitProbStage1(gIDX = gIDX, hIDX = hIDX, cJ1 = x, wJ = wJ, Sigma = Sigma, Scale = Scale, underNull = TRUE)
-    # cat('cJ1 :',x,'extProb:',extProb,'\n')
-    extProb - alpha1
-  }
-  uniroot(f = bdry1, interval = c(minbdry, maxbdry), tol = 1E-16)$root
 }
 
 #------------------------------------------------------------------------- -
@@ -100,6 +80,8 @@ exitProbStage2 <- function(gIDX, hIDX, cJ2, cJ1, wJ, Sigma, Scale, underNull = T
   })
   set.seed(200295)
   #################################
+
+  # browser()
 
   SigmaZ <- Sigma$SigmaZ
   SigmaS <- Sigma$SigmaS
@@ -123,15 +105,11 @@ exitProbStage2 <- function(gIDX, hIDX, cJ2, cJ1, wJ, Sigma, Scale, underNull = T
     sigma <- sigmaZ[sigmaIDX, sigmaIDX]
     upper <- c(qnorm(1 - wJ[hIDX] * cJ1), qnorm(1 - wJ[hIDX] * cJ2))
     lower <- -Inf
+
+    # Use dimension-based algorithm selected in simMAMSMEP()
     prob <- mvtnorm::pmvnorm(
-      lower = lower,
-      upper = upper,
-      mean = mu_z,
-      sigma = sigma,
-      algorithm = mvtnorm::Miwa(
-        steps = 128,
-        checkCorr = F,
-        maxval = 1e3)
+      lower = lower, upper = upper, mean = mu_z, sigma = sigma, 
+      algorithm = gmcpSimObj$mvtnorm_algo
     )[1]
     (1 - prob) # Under null this should be cummulative alpha for that look
   } else if (Scale == "Score") {
@@ -147,38 +125,14 @@ exitProbStage2 <- function(gIDX, hIDX, cJ2, cJ1, wJ, Sigma, Scale, underNull = T
       qnorm(1 - wJ[hIDX] * cJ2) * sqrt(infoMatrix[sIDX, 2])
     )
     lower <- -Inf
+
+    # Use dimension-based algorithm selected in simMAMSMEP()
     prob <- mvtnorm::pmvnorm(
-      lower = lower,
-      upper = upper,
-      mean = mu_s,
-      sigma = sigma,
-      algorithm = mvtnorm::Miwa(
-        steps = 128,
-        checkCorr = F,
-        maxval = 1e3)
+      lower = lower, upper = upper, mean = mu_s, sigma = sigma, 
+      algorithm = gmcpSimObj$mvtnorm_algo
     )[1]
     (1 - prob) # Under null this should be cummulative alpha for that look
   }
-}
-
-#------------------------------------------------------------------------- -
-#################### Search for stage-2 boundary ##########################
-# alpha  : planned alpha
-# cJ1    : The stage-1 critical point for the intersection hypothesis HJ
-# exitProb1 : Boundary crossing probability at stage-1
-# wJ     : The weight for the intersection hypothesis HJ
-# sigmaZ : The co-variance matrix of cummulative z-statistics (2 stages combined)
-# Returns: The critical point cJ2 for testing HJ at stage2
-#------------------------------------------------------------------------- -
-getBdryStage2 <- function(gIDX, hIDX, alpha, cJ1, wJ, Sigma, Scale = Scale) {
-  minbdry <-  0.00000000001
-  maxbdry <- 1 / max(wJ[wJ != 0])
-  bdry2 <- function(x) {
-    extProb <- exitProbStage2(gIDX = gIDX, hIDX = hIDX, cJ2 = x, cJ1 = cJ1, wJ = wJ, Sigma = Sigma, Scale = Scale, underNull = TRUE)
-    # cat('cJ2 :',x,'extProb:',extProb,'\n')
-    extProb - alpha
-  }
-  uniroot(f = bdry2, interval = c(minbdry, maxbdry), tol = 1E-16)$root
 }
 
 #------------------------------------------------------------------------- -
@@ -207,28 +161,9 @@ exitProbStage2Cond <- function(cJ2, p1, w, InfoMatrix, stage2sigmaS, Conditional
     upper <- sqrt(InfoMatrix[, 2]) * qnorm(1 - w * cJ2)
   }
   lower <- -Inf
+
+  # Use dimension-based algorithm selected in simMAMSMEP()
   1 - mvtnorm::pmvnorm(
-    lower = lower, upper = upper, sigma = stage2sigmaS
+    lower = lower, upper = upper, sigma = stage2sigmaS, algorithm = gmcpSimObj$mvtnorm_algo
   )[1]
-}
-
-
-#------------------------------------------------------------------------- -
-#################### Search for stage-1 boundary ##########################
-# alpha1    : alpha spent at stage 1
-# wJ     : The weight for the intersection hypothesis HJ
-# sigmaZ : The co-variance matrix of cummulative z-statistics (2 stages combined)
-# Returns: The critical point cJ1 for testing HJ at stage1
-#------------------------------------------------------------------------- -
-getStage2CondParamBdry <- function(cer, p1, w, InfoMatrix, stage2sigmaS, Conditional) {
-  minbdry <- 0.0000001
-  maxbdry <- 1 / max(w[w != 0])
-  bdryCond <- function(x) {
-    exitProb <- exitProbStage2Cond(
-      cJ2 = x, p1 = p1, w = w, InfoMatrix = InfoMatrix,
-      stage2sigmaS = stage2sigmaS, Conditional = Conditional
-    )
-    exitProb - cer
-  }
-  uniroot(f = bdryCond, interval = c(minbdry, maxbdry), tol = 1E-16)$root
 }
