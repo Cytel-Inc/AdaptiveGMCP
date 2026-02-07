@@ -46,6 +46,7 @@
 #' @param plotGraphs Logical; TRUE: plot the initial graph
 #' @param EastSumStat East Summary Statistics file, Only applicable for single look designs with CombPValue method
 #' @param Parallel Logical; TRUE: Parallel computations
+#' @param Verbose Logical; TRUE: print additional console messages during simulations providing progress and detailed information (default = FALSE)
 #' @example ./internalData/MAMSMEP_Simulation_Example.R
 #' @export
 simMAMSMEP <- function(
@@ -117,7 +118,8 @@ simMAMSMEP <- function(
     SummaryStat = FALSE,
     plotGraphs = TRUE,
     EastSumStat = NULL,
-    Parallel = TRUE) {
+    Parallel = TRUE,
+    Verbose = FALSE) {
 
   # Ani: Applying correction suggested by Pralay when allocation ratio for
   # control is not equal to 1.
@@ -214,6 +216,7 @@ simMAMSMEP <- function(
     # Simulation Parameters
     "nSimulation" = nSimulation, "Seed" = Seed,
     "SummaryStat" = SummaryStat, "Parallel" = Parallel,
+    "Verbose" = Verbose, # Enable verbose output for detailed simulation progress
 
     # SSR
     "ImplicitSSR" = ImplicitSSR,

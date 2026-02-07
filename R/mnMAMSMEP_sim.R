@@ -142,6 +142,12 @@ getPreSimObjs <- function(gmcpSimObj) {
       # }
       #----------------------------------------------------------------------------------
       ######## Computation of Planned Boundaries##############
+      if(gmcpSimObj$Verbose) {
+        cat("Calculating the planned boundaries for CER method...\n")
+      }
+
+      time1 <- Sys.time()
+
       plan_Bdry <- planBdryCER(
         nHypothesis = gmcpSimObj$nHypothesis,
         nEps = gmcpSimObj$nEps,
@@ -160,6 +166,12 @@ getPreSimObjs <- function(gmcpSimObj) {
         Scale = "Score",
         planSSCum = planSSCum
       )
+
+      time2 <- Sys.time()
+      time_diff <- difftime(time2, time1, units = "secs")
+      if(gmcpSimObj$Verbose) {  
+        cat("Elapsed time: ", round(time_diff, 2), " seconds.\n", sep = "")
+      }
 
       # ###################################
       # # Ani: hardcoding the following variables for debugging

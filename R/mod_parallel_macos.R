@@ -48,6 +48,10 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
   tabRawPVals <- data.table(matrix(nrow = 0, ncol = gmcpSimObj$nHypothesis))
   data.table::setnames(tabRawPVals, paste0("RawPvalues", 1:gmcpSimObj$nHypothesis))
 
+  if(gmcpSimObj$Verbose) {
+    cat("Starting simulations...\n")
+  }
+
   if (gmcpSimObj$Method == "CER") {
     if (gmcpSimObj$Parallel) {
       max_cores <- get_max_cores()
@@ -60,6 +64,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
                # the library() function returns
         })
         parallel::clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
+        cat("Simulation progress:\n")
         out <- pbapply::pblapply(cl = cl, 1:gmcpSimObj$nSimulation, function(x){
           out_SingleSim <- SingleSimCER2(x, gmcpSimObj, preSimObjs)
           return(out_SingleSim)
@@ -70,6 +75,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
       else
       {
         ###--- code to run in parallel on macos
+        cat("Simulation progress:\n")
         out <- pbapply::pblapply(1:gmcpSimObj$nSimulation, function(x) {
           out_SingleSim <- SingleSimCER2(x, gmcpSimObj, preSimObjs)
           return(out_SingleSim)
@@ -78,6 +84,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
       }
     }
     else {
+      cat("Simulation progress:\n")
       out <- lapply(1:gmcpSimObj$nSimulation, function(x) {
         out_SingleSim <- SingleSimCER2(x, gmcpSimObj, preSimObjs)
         if(x%%50 == 0) {
@@ -98,17 +105,19 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
           # the library() function returns
         })
         parallel::clusterExport(cl, c("gmcpSimObj", "preSimObjs"))
+        cat("Simulation progress:\n")
         out <- pbapply::pblapply(cl = cl, 1:gmcpSimObj$nSimulation,
-                                   function(x) {
-                                     out_SingleSim <- SingleSimCombPValue2(x, gmcpSimObj,
-                                                                           preSimObjs)
-                                     return(out_SingleSim)
-                                   })
+                       function(x) {
+                         out_SingleSim <- SingleSimCombPValue2(x, gmcpSimObj,
+                                                               preSimObjs)
+                         return(out_SingleSim)
+                       })
         parallel::stopCluster(cl)
       }
       else
       {
         ###--- code to run in parallel on macos
+        cat("Simulation progress:\n")
         out <- pbapply::pblapply(1:gmcpSimObj$nSimulation, function(x) {
           out_SingleSim <- SingleSimCombPValue2(x, gmcpSimObj, preSimObjs)
           return(out_SingleSim)
@@ -116,6 +125,7 @@ modified_MAMSMEP_sim2 <- function (gmcpSimObj)
         ###---
       }
     } else {
+      cat("Simulation progress:\n")
       out <- lapply(1:gmcpSimObj$nSimulation, function(x) {
         SingleSimCombPValue2(x, gmcpSimObj, preSimObjs)
       })

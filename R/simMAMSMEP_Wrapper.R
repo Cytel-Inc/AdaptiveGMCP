@@ -31,6 +31,10 @@ simMAMSMEP_Wrapper <- function(InputDF, sOutPath) {
   for (nModelNum in 1:nrow(InputDF)) {
     # Start timer for this iteration
     start_time <- Sys.time()
+
+    print(paste0("Running Model ", nModelNum, " out of ", nrow(InputDF),
+                 ": ModelID = ", InputDF[nModelNum, "ModelID"]))
+
     out <- tryCatch(
       {
         run1TestCase(InputDF = InputDF[nModelNum, ])
@@ -206,7 +210,8 @@ run1TestCase <- function(InputDF) {
     Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
     SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
     ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
-    Method = Method, plotGraphs = plotGraphs, Parallel = Parallel,CommonStdDev = CommonStdDev, nSimulation_Stage2 = nSimulation_Stage2
+    Method = Method, plotGraphs = plotGraphs, Parallel = Parallel,CommonStdDev = CommonStdDev, 
+    nSimulation_Stage2 = nSimulation_Stage2, Verbose = TRUE
   )
   out
 }
