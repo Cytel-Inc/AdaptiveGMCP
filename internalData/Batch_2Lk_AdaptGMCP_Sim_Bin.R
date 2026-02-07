@@ -1090,17 +1090,17 @@ sOutFilePrefix <- "Out_TestsVsMartin_ag"
 # sOutFilePrefix <- "Out_CER_Cont_1ep3arms"
 sOutPath <- "internalData/"
 
-# nModelsToRun <- c(108, 109, 110, 111, 116, 117, 118, 119, 120, 121, 122, 123,
-#                  124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,
-#                  136, 137, 138, 139)
-nModelsToRun <- 134 # S3, aggressive
+nModelsToRun <- c(108, 109, 110, 111, 116, 117, 118, 119, 120, 121, 122, 123,
+                 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,
+                 136, 137, 138, 139)
+# nModelsToRun <- 134 # S3, aggressive
 
 # TRIAL RUN - START >>>>>>>>>>>>
 # To do a trial run, uncomment this block so that the tests are run with a
 # small number of simulations rather than the number specified in the input
 # file.
-dfInput$nSimulation <- 10000 # 100 # 5 #
-dfInput$nSimulation_Stage2 <- 100 # 10 # 1000
+dfInput$nSimulation <- 100 # 10000 # 5 #
+dfInput$nSimulation_Stage2 <- 50 # 100 # 1000
 # dfInput$Parallel <- FALSE
 # dfInput$test.type <- "Parametric"
 # dfInput$SampleSize <- 10000
