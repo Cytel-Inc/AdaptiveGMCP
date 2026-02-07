@@ -123,16 +123,19 @@ simMAMSMEP_Wrapper <- function(InputDF, sOutPath) {
       }
 
       passedTxt <- paste0("Model ", nModelNum, " execution completed successfully.")
-      cat("\n", passedTxt, "\n")
-      print(paste0("Power table for ", nModelNum, ":"))
+      cat(passedTxt, "\n")
+      print(paste0("Power table for model ", nModelNum, ":"))
       print(OutTab)
+      cat("\n")
     } else if (grepl("Invalid", out[[1]])) {
       failTxt <- paste0("Model ", nModelNum, " execution failed.")
-      cat("\n", failTxt, "\n")
-      cat("\n Details \n")
+      cat(failTxt, "\n")
+      cat("Details \n")
       print(unlist(out))
+      cat("\n")
     } else {
       print(out)
+      cat("\n")
     }
   }
 
@@ -210,7 +213,7 @@ run1TestCase <- function(InputDF) {
     Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
     SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
     ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
-    Method = Method, plotGraphs = plotGraphs, Parallel = Parallel,CommonStdDev = CommonStdDev, 
+    Method = Method, plotGraphs = plotGraphs, Parallel = Parallel,CommonStdDev = CommonStdDev,
     nSimulation_Stage2 = nSimulation_Stage2, Verbose = TRUE
   )
   out
