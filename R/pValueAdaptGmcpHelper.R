@@ -166,14 +166,14 @@ PerLookMCPAnalysis <- function(mcpObj) {
       }
   }
   notRejected <- paste("H", which(!mcpObj$rej_flag_Curr), sep = "")
-  if (all(mcpObj$DropedFlag == F)) {
-    Droped <- c()
+  if (all(mcpObj$DroppedFlag == F)) {
+    Dropped <- c()
   } else {
-    Droped <- paste("H", which(mcpObj$DropedFlag), sep = "")
+    Dropped <- paste("H", which(mcpObj$DroppedFlag), sep = "")
   }
   # notRejected <- names(mcpObj$rej_flag_Curr[!mcpObj$rej_flag_Curr])
-  # Droped <- names(mcpObj$DropedFlag[mcpObj$DropedFlag])
-  mcpObj$IndexSet <- setdiff(notRejected, Droped)
+  # Dropped <- names(mcpObj$DroppedFlag[mcpObj$DroppedFlag])
+  mcpObj$IndexSet <- setdiff(notRejected, Dropped)
   mcpObj
 }
 
@@ -300,10 +300,10 @@ do_Selection <- function(mcpObj) {
       "both"
     )
 
-    for (i in 1:length(mcpObj$DropedFlag))
+    for (i in 1:length(mcpObj$DroppedFlag))
     {
-      if (!mcpObj$DropedFlag[i] & !mcpObj$rej_flag_Prev[i]) {
-        mcpObj$DropedFlag[i] <- !any(mcpObj$SelectedIndex == names(mcpObj$DropedFlag[i]))
+      if (!mcpObj$DroppedFlag[i] & !mcpObj$rej_flag_Prev[i]) {
+        mcpObj$DroppedFlag[i] <- !any(mcpObj$SelectedIndex == names(mcpObj$DroppedFlag[i]))
       }
     }
 
@@ -585,8 +585,8 @@ ShowResults <- function(mcpObj) {
 #---------------------- -
 StopTrial <- function(mcpObj) {
   StopByEfficacy <- ifelse(mcpObj$MultipleWinners,
-    all(mcpObj$rej_flag_Curr[!mcpObj$DropedFlag] == T), # if all the primary hypothesis are rejected
-    any(mcpObj$rej_flag_Curr[!mcpObj$DropedFlag] == T)
+    all(mcpObj$rej_flag_Curr[!mcpObj$DroppedFlag] == T), # if all the primary hypothesis are rejected
+    any(mcpObj$rej_flag_Curr[!mcpObj$DroppedFlag] == T)
   ) # if any primary hypothesis is rejected
   if (StopByEfficacy) # Stop
     {

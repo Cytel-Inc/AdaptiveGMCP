@@ -32,7 +32,7 @@ library(tidyverse)
 #   WI = wi, G = g, test.type = "Partly-Parametric",
 #   info_frac = t, typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
 #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
-#   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None",
+#   SelectionParameter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None",
 #   nSimulation = nSim, nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE,
 #   plotGraphs = FALSE, Parallel = bParallel, UseCC = bUseCC)
 #
@@ -68,7 +68,7 @@ library(tidyverse)
 #   WI = wi, G = g, test.type = "Partly-Parametric",
 #   info_frac = t, typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
 #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
-#   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None",
+#   SelectionParameter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None",
 #   nSimulation = nSim, nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE,
 #   plotGraphs = FALSE, Parallel = bParallel, UseCC = bUseCC)
 #
@@ -88,7 +88,7 @@ library(tidyverse)
 #   G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Partly-Parametric",
 #   info_frac = c(0.75,1), typeOfDesign = "asOF",
 #   MultipleWinners = T, Selection = F, SelectionLook = NA, SelectEndPoint = NA,
-#   SelectionScale = NA, SelectionCriterion = NA, SelectionParmeter = NA,
+#   SelectionScale = NA, SelectionCriterion = NA, SelectionParameter = NA,
 #   KeepAssosiatedEps = NA, ImplicitSSR = "None",
 #   nSimulation = nSim, nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = T,
 #   plotGraphs = F, Parallel = bParallel
@@ -164,7 +164,7 @@ library(tidyverse)
     # SelectEndPoint <- 1
     # SelectionScale <- 'teststat'
     # SelectionCriterion <- 'threshold'
-    # SelectionParmeter <- 0.6745
+    # SelectionParameter <- 0.6745
     # KeepAssosiatedEps <- TRUE
     # ImplicitSSR <- 'Selection'
     # nSimulation <- 10
@@ -181,7 +181,7 @@ library(tidyverse)
     #   EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type, info_frac = info_frac,
     #   typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
     #   Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
-    #   SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
+    #   SelectionCriterion = SelectionCriterion, SelectionParameter = SelectionParameter, KeepAssosiatedEps = KeepAssosiatedEps,
     #   ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, nSimulation_Stage2 = nSimulation_Stage2, Seed = Seed, SummaryStat = SummaryStat,
     #   Method = Method, plotGraphs = plotGraphs, Parallel = Parallel
     # )
@@ -202,7 +202,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Partly-Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
   #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
-  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -218,7 +218,7 @@ library(tidyverse)
 #     WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Partly-Parametric",
 #     info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
 #     SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
-#     SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = 10,
+#     SelectionParameter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = 10,
 #     nSimulation_Stage2 = 100, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
 #     UseCC = TRUE
 #   )
@@ -233,7 +233,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Partly-Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -248,7 +248,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Partly-Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -263,7 +263,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
   #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
-  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -278,7 +278,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
   #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
-  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -293,7 +293,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -308,7 +308,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 1234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -323,7 +323,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
   #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
-  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 64564, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -338,7 +338,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 73236, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -353,7 +353,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 11111, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -368,7 +368,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 343, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -383,7 +383,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 84234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -398,7 +398,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 4346, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -413,7 +413,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 9504, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -428,7 +428,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
-  #   SelectionParmeter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 2300, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -443,7 +443,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
   #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
-  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 97827, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -458,7 +458,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 70743, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -473,7 +473,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 2402, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -488,7 +488,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 2637, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -503,7 +503,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 499, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -518,7 +518,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 30953, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -533,7 +533,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 59079, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -548,7 +548,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
-  #   SelectionParmeter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 58217, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -563,7 +563,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
   #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
-  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 97827, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -578,7 +578,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 70743, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -593,7 +593,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 2402, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -608,7 +608,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 2637, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -623,7 +623,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 499, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -638,7 +638,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 30953, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -653,7 +653,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 59079, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -668,7 +668,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
-  #   SelectionParmeter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 58217, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = FALSE
   # )
@@ -683,7 +683,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
   #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
-  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 64564, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -698,7 +698,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 73236, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -713,7 +713,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 11111, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -728,7 +728,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 343, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -743,7 +743,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 84234, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -758,7 +758,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 4346, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -773,7 +773,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 9504, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -788,7 +788,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.75,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
-  #   SelectionParmeter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 2300, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -803,7 +803,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
   #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
-  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 97827, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -818,7 +818,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 70743, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -833,7 +833,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 2402, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -848,7 +848,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 2637, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -863,7 +863,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 499, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -878,7 +878,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 30953, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -893,7 +893,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 59079, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -908,7 +908,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
-  #   SelectionParmeter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 58217, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -923,7 +923,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = FALSE,
   #   SelectionLook = NA, SelectEndPoint = NA, SelectionScale = NA, SelectionCriterion = NA,
-  #   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 97827, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -938,7 +938,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "delta", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 70743, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -953,7 +953,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
+  #   SelectionParameter = 0.5, KeepAssosiatedEps = FALSE, ImplicitSSR = "None", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 2402, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -968,7 +968,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.75, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 2637, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -983,7 +983,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.5, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 499, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -998,7 +998,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "threshold",
-  #   SelectionParmeter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 0.25, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 30953, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -1013,7 +1013,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
-  #   SelectionParmeter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 1, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 59079, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -1028,7 +1028,7 @@ library(tidyverse)
   #   WI = c(rep(1/2,2)), G = rbind(H1=c(0,1), H2=c(1,0)), test.type = "Parametric",
   #   info_frac = c(0.5,1), typeOfDesign = "asOF", MultipleWinners = FALSE, Selection = TRUE,
   #   SelectionLook = 1, SelectEndPoint = 1, SelectionScale = "pvalue", SelectionCriterion = "best",
-  #   SelectionParmeter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
+  #   SelectionParameter = 2, KeepAssosiatedEps = TRUE, ImplicitSSR = "Selection", nSimulation = nSim,
   #   nSimulation_Stage2 = nSim2, Seed = 58217, SummaryStat = TRUE, plotGraphs = FALSE, Parallel = TRUE,
   #   UseCC = TRUE
   # )
@@ -1047,7 +1047,7 @@ library(tidyverse)
 #   test.type = "Parametric", info_frac = c(1/2,1), typeOfDesign = "asOF",
 #   MultipleWinners = T, Selection = F, SelectionLook = NA, SelectEndPoint = NA,
 #   SelectionScale = NA, SelectionCriterion = NA,
-#   SelectionParmeter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None",
+#   SelectionParameter = NA, KeepAssosiatedEps = NA, ImplicitSSR = "None",
 #   nSimulation = 3, nSimulation_Stage2 = 100, Seed = 1234, SummaryStat = T,
 #   plotGraphs = F, Parallel = F
 # )
@@ -1064,7 +1064,7 @@ library(tidyverse)
 #   G = rbind(H1=c(0,1/3,1/3,1/3), H2=c(1/3,0,1/3,1/3), H3=c(1/3,1/3,0,1/3), H4=c(1/3,1/3,1/3,0)),
 #   test.type = "Parametric", info_frac = c(1/2,1), typeOfDesign = "asOF",
 #   MultipleWinners = T, Selection = F, SelectionLook = NA, SelectEndPoint = NA,
-#   SelectionScale = NA, SelectionCriterion = NA, SelectionParmeter = NA,
+#   SelectionScale = NA, SelectionCriterion = NA, SelectionParameter = NA,
 #   KeepAssosiatedEps = NA, ImplicitSSR = "None",
 #   nSimulation = 3, nSimulation_Stage2 = 100, Seed = 1234, SummaryStat = T,
 #   plotGraphs = F, Parallel = F
@@ -1090,10 +1090,12 @@ sOutFilePrefix <- "Out_TestsVsMartin_ag"
 # sOutFilePrefix <- "Out_CER_Cont_1ep3arms"
 sOutPath <- "internalData/"
 
-nModelsToRun <- c(108, 109, 110, 111, 116, 117, 118, 119, 120, 121, 122, 123,
-                 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,
-                 136, 137, 138, 139)
-# nModelsToRun <- 134 # S3, aggressive
+# nModelsToRun <- c(108, 109, 110, 111, 116, 117, 118, 119, 120, 121, 122, 123,
+#                  124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,
+#                  136, 137, 138, 139)
+nModelsToRun <- 131 # 139 # S3, aggressive
+# nModelsToRun <- c(138, 137, 136, 134, 132, 130, 128, 127, 125, 139, 123, 121,
+#                  118, 117, 114, 111, 108)
 
 # TRIAL RUN - START >>>>>>>>>>>>
 # To do a trial run, uncomment this block so that the tests are run with a
@@ -1101,7 +1103,7 @@ nModelsToRun <- c(108, 109, 110, 111, 116, 117, 118, 119, 120, 121, 122, 123,
 # file.
 dfInput$nSimulation <- 100 # 10000 # 5 #
 dfInput$nSimulation_Stage2 <- 50 # 100 # 1000
-# dfInput$Parallel <- FALSE
+dfInput$Parallel <- FALSE
 # dfInput$test.type <- "Parametric"
 # dfInput$SampleSize <- 10000
 

@@ -36,7 +36,7 @@
 #' @param SelectEndPoint Indicator to specify which endpoint to select from, e.g. '1': Endpoint 1, '2':Endpoint 2, 'overall': overall
 #' @param SelectionScale Character: Scale parameter on which selection will be based on, options 'delta': delta, 'teststat': Test Statistics, 'stderror' : Standard Error of the test stat,  'pvalue': p-value(un-adj) based selection
 #' @param SelectionCriterion Character: 'best': best r, 'threshold': threshold for selection, 'epsilon': for epsilon neighborhood, 'random': for random selection
-#' @param SelectionParmeter r for best, threshold value for threshold or epsilon distance
+#' @param SelectionParameter r for best, threshold value for threshold or epsilon distance
 #' @param KeepAssosiatedEps Logical, True: keep all the associated hypothesis for the selected arms
 #' @param ImplicitSSR Character; 'Selection': re-allocate samples only from de-selected arms to available arms, 'All': Allocate all the planned samples(for the look) to the available arms, 'None': No Re-allocation
 #' @param nSimulation Numeric: Number of simulations(default=100)
@@ -109,7 +109,7 @@ simMAMSMEP <- function(
     SelectEndPoint = 1,
     SelectionScale = "pvalue",
     SelectionCriterion = "best",
-    SelectionParmeter = 1,
+    SelectionParameter = 1,
     KeepAssosiatedEps = TRUE,
     ImplicitSSR = "All",
     nSimulation = 100,
@@ -210,7 +210,7 @@ simMAMSMEP <- function(
     # Selection
     "SelectEndPoint" = SelectEndPoint, "Selection" = Selection,
     "SelectionLook" = SelectionLook, "SelectionScale" = SelectionScale,
-    "SelectionCriterion" = SelectionCriterion, "SelectionParmeter" = SelectionParmeter,
+    "SelectionCriterion" = SelectionCriterion, "SelectionParameter" = SelectionParameter,
     "KeepAssosiatedEps" = KeepAssosiatedEps,
 
     # Simulation Parameters
@@ -234,7 +234,10 @@ simMAMSMEP <- function(
     "nSimulation_Stage2" = nSimulation_Stage2,
 
     # mvtnorm algorithm (dimension-based selection)
-    "mvtnorm_algo" = mvtnorm_algo
+    "mvtnorm_algo" = mvtnorm_algo,
+
+    # Parameter added to enable debugging
+    "Debug" = FALSE
   )
 
   logs <- valInpsimMAMSMEP(inps = gmcpSimObj)

@@ -97,8 +97,8 @@ adaptGMCP_CER <- function(
     )
   }
 
-  rej_flag_Prev <- rej_flag_Curr <- DropedFlag <- rep(FALSE, nHypothesis)
-  names(rej_flag_Prev) <- names(rej_flag_Curr) <- names(DropedFlag) <- paste("H", 1:nHypothesis, sep = "")
+  rej_flag_Prev <- rej_flag_Curr <- DroppedFlag <- rep(FALSE, nHypothesis)
+  names(rej_flag_Prev) <- names(rej_flag_Curr) <- names(DroppedFlag) <- paste("H", 1:nHypothesis, sep = "")
 
   # info to run per Stage-Wise analysis
   mcpObj <- list(
@@ -121,7 +121,7 @@ adaptGMCP_CER <- function(
     "rej_flag_Curr" = rej_flag_Curr,
     "SelectionLook" = c(),
     "SelectedIndex" = NULL,
-    "DropedFlag" = DropedFlag,
+    "DroppedFlag" = DroppedFlag,
     "LastLook" = nLooks,
     "Modify" = F,
     "ModificationLook" = c(),
@@ -236,8 +236,8 @@ adaptGMCP_CER <- function(
         {
           HypothesisName <- mcpObj$allGraphs$HypothesisName
           HypoIDX <- get_numeric_part(HypothesisName)
-          #Active => not rejected and not droped
-          activeStatus <- (!unlist(mcpObj$rej_flag_Curr[HypoIDX])) &(!mcpObj$DropedFlag)
+          #Active => not rejected and not dropped
+          activeStatus <- (!unlist(mcpObj$rej_flag_Curr[HypoIDX])) &(!mcpObj$DroppedFlag)
           graphIDX <- which(mcpObj$allGraphs$IntersectIDX == paste(as.integer(activeStatus), collapse = ""))
 
           if (length(graphIDX) == 0) {

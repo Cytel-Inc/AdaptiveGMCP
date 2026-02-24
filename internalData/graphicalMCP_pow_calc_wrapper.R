@@ -87,7 +87,7 @@ grphMCP_run1TestCase <- function(InputDF) {
   # SelectEndPoint <- InputDF$SelectEndPoint
   # SelectionScale <- InputDF$SelectionScale
   # SelectionCriterion <- InputDF$SelectionCriterion
-  # SelectionParmeter <- InputDF$SelectionParmeter
+  # SelectionParameter <- InputDF$SelectionParameter
   # KeepAssosiatedEps <- InputDF$KeepAssosiatedEps
   # ImplicitSSR <- InputDF$ImplicitSSR
   # ImplicitSSR <- ifelse(is.na(ImplicitSSR),FALSE,ImplicitSSR)
