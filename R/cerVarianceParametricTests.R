@@ -55,7 +55,7 @@
 #   }
 # }
 
-# Function for computing the covariance matrix under the null hypothesis
+# Function for computing the covariance matrix for Z statistics under the null hypothesis
 # Under the null, we assume that all treatment arms have the same standard deviation as control.
 # This is required for computing the efficacy boundary.
 # With this assumption, the covariance matrix computation simplifies greatly and all dependence on
@@ -70,13 +70,14 @@ varCovZ_Null <- function(i1, k1, i2, k2, allocRatio, info_frac) {
       1
     } else if (k1 == k2 & i1 != i2) # Covariance Case-2: Different treatments, same look
     {
-        sqrt(prod(allocRatio[-1] / (1 + allocRatio[-1])))
+        sqrt((allocRatio[i1] / (1 + allocRatio[i1])) * (allocRatio[i2] / (1 + allocRatio[i2])))
     } else if (i1 == i2 & k1 != k2) # Covariance Case-3: Same treatment, different looks
     {
       sqrt(info_frac[1])
     } else if (i1 != i2 & k1 != k2) # Covariance Case-4: Different treatments, different looks
     {
-      sqrt(info_frac[1] * prod(allocRatio[-1] / (1 + allocRatio[-1])))
+      sqrt(info_frac[1] * 
+        (allocRatio[i1] / (1 + allocRatio[i1])) * (allocRatio[i2] / (1 + allocRatio[i2])))
     } else {
       stop("Error in varCovZ_Null: Invalid indices")
     }

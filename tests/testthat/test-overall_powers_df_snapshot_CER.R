@@ -66,7 +66,7 @@ test_that("CER simulation produces expected results", {
     SelectEndPoint = 1,
     SelectionScale = 'pvalue',
     SelectionCriterion = 'threshold',
-    SelectionParmeter = 0.75,
+    SelectionParameter = 0.75,
     KeepAssosiatedEps = TRUE,
     ImplicitSSR = 'Selection',
     nSimulation = 10,  # Reduced for testing

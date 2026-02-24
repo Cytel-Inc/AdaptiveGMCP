@@ -7,7 +7,7 @@
 #Boundary computation based on the mcpObj
 #ModifiedStage2Weights : Ajoy.M: Highly risky should be triggered only for modified testing strategy in analysis, implemeted for one specific example not generalized.(13Jun,24)
 adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
-
+  # browser()
   nHypothesis <- length(mcpObj$IntialHypothesis)
   nLooks <- length(mcpObj$Stage1Obj$info_frac)
 
@@ -64,6 +64,8 @@ adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
   Stage2AdjBdry <- c()
   InterWeight2 <- c()
 
+  # browser()
+
   for (i in seq_len(nrow(WH_modified))) {
     #print(i)
     p1 <- as.numeric(mcpObj$p_raw)
@@ -104,6 +106,11 @@ adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
     ConditionalError <- c(ConditionalError, adaptOut$ConditionalError)
     Stage2AdjBdry <- rbind(Stage2AdjBdry, adaptOut$Stage2AdjBdry)
     #ScaleWeights[i] <- adaptOut$ScaledWeights
+  }
+
+  if (gmcpSimObj$Debug) {
+    ### Added for debugging purposes, should be removed once the code is verified to be working fine
+    # browser()
   }
 
   colnames(Stage2AdjBdry) <- paste("a", 1:nHypothesis, "2_adj", sep = "")
@@ -206,8 +213,21 @@ getAdaptBdry2 <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
         gIDX <- unique(HypoMap[edx, ]$Groups)
         pGrp <- edx
         epIDX <- unique(HypoMap[pGrp, ]$Groups)
-        stage2sigmaS <- Stage2Sigma$SigmaSIncr[[epIDX]][floor(pGrp / epIDX), floor(pGrp / epIDX)]
-        InfoMatrix <- Sigma$InfoMatrix[[epIDX]][floor(pGrp / epIDX), ]
+
+        # Fixed the following bug in subsetting the covariance matrix:
+        # E.g. Suppose we have 2 groups, group 1 with 4 hypo H1-H4 and group 2 with 4 hypo H5-H8.
+        # Now, if pGrp = c(6, 7) and epIDX is 2, floor(pGrp / epIDX) gives (3, 3).
+        # However, pGrp corresponds to H6 and H7 which are the 2nd and 3rd hypotheses in group 2.
+        # So, we need to extract the 2nd and 3rd rows/columns from the covariance matrix of group 2.
+        # Use of floor is leading to this wrong behavior.
+        ## stage2sigmaS <- Stage2Sigma$SigmaSIncr[[epIDX]][floor(pGrp / epIDX), floor(pGrp / epIDX)]
+        ## InfoMatrix <- Sigma$InfoMatrix[[epIDX]][floor(pGrp / epIDX), ]
+        # Get within-group indices correctly
+        hypothesesInGroup <- which(HypoMap$Groups == epIDX)
+        withinGroupIndices <- match(pGrp, hypothesesInGroup)
+        stage2sigmaS <- Stage2Sigma$SigmaSIncr[[epIDX]][withinGroupIndices, withinGroupIndices]
+        InfoMatrix <- Sigma$InfoMatrix[[epIDX]][withinGroupIndices, ]
+
         pJh <- p1[pGrp]
         wJh <- w1[pGrp]
         #Exist probability for parametric sub-set at stage 2
@@ -222,7 +242,7 @@ getAdaptBdry2 <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
         wJh <- w1[edx]
         ss1 <- PlanSSHyp[[1]][edx]; ss2 = PlanSSHyp[[2]][edx]
         #Exist probability for non parametric sub-set at stage 2
-        pcerNParamGrps <- c(pcerNParamGrps, 
+        pcerNParamGrps <- c(pcerNParamGrps,
           getPCER2(cJ2 = cJ2, wJh = wJh,  p1 = pJh, ss1 = PlanSSHyp[[1]][edx], ss2 = PlanSSHyp[[2]][edx], t1 = t1))
       }
     }
@@ -252,12 +272,26 @@ getAdaptBdry2 <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
         gIDX <- unique(HypoMap[edx, ]$Groups)
         pGrp <- edx
         epIDX <- unique(HypoMap[pGrp, ]$Groups)
-        stage2sigmaSMod <- Stage2Sigma$Stage2SigmaS[[epIDX]][floor(pGrp / epIDX), floor(pGrp / epIDX)]
 
+        # Fixed the following bug in subsetting the covariance matrix:
+        # E.g. Suppose we have 2 groups, group 1 with 4 hypo H1-H4 and group 2 with 4 hypo H5-H8.
+        # Now, if pGrp = c(6, 7) and epIDX is 2, floor(pGrp / epIDX) gives (3, 3).
+        # However, pGrp corresponds to H6 and H7 which are the 2nd and 3rd hypotheses in group 2.
+        # So, we need to extract the 2nd and 3rd rows/columns from the covariance matrix of group 2.
+        # Use of floor is leading to this wrong behavior.
+        ## stage2sigmaSMod <- Stage2Sigma$Stage2SigmaS[[epIDX]][floor(pGrp / epIDX), floor(pGrp / epIDX)]
+        ## InfoMatrixMod <- cbind(
+        ##   Sigma$InfoMatrix[[epIDX]][, 1],
+        ##   Stage2Sigma$Stage2InfoMatrixCum[[epIDX]]
+        ## )[floor(pGrp / epIDX), ]
+        # Get within-group indices correctly
+        hypothesesInGroup <- which(HypoMap$Groups == epIDX)
+        withinGroupIndices <- match(pGrp, hypothesesInGroup)
+        stage2sigmaSMod <- Stage2Sigma$Stage2SigmaS[[epIDX]][withinGroupIndices, withinGroupIndices]
         InfoMatrixMod <- cbind(
           Sigma$InfoMatrix[[epIDX]][, 1],
           Stage2Sigma$Stage2InfoMatrixCum[[epIDX]]
-        )[floor(pGrp / epIDX), ]
+        )[withinGroupIndices, ]
 
         pJh <- p1[pGrp]
         wJh <- w2[pGrp]
@@ -287,12 +321,19 @@ getAdaptBdry2 <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
 
   #Martin.p: if total CER >= 1 reject the intersection hypothesis
   if(totalCER >= 1){
+    ### Added for debugging purposes, should be removed once the code is verified to be working fine
+    if(!gmcpSimObj$Debug) {
+      #   gmcpSimObj$Debug <<- TRUE
+      # browser()
+    }
+    ######################################
+
     Stage2AdjBdry <- rep(0,length(w2))
     Stage2AdjBdry[w2>0] <- 1
 
   }else{
     cJ2Adapt <- uniroot(f = getStage2AdaptBdry,
-                        interval = c(0, 1 / max(w2[w2!= 0])), tol = 1E-16)$root
+                        interval = c(0, 1 / max(w2[w2!= 0])), tol = 1E-6)$root
     Stage2AdjBdry <- cJ2Adapt*w2
   }
 

@@ -80,15 +80,15 @@ getSelectedHypo2 <- function(simID, mcpObj) {
       # for test stat and delta the larger the better(right tail)
       ranks <- rank(-ScaleVar, ties.method = "random")
     }
-    selectedH <- contHypo$Hypothesis[ranks <= mcpObj$SelectionParmeter]
+    selectedH <- contHypo$Hypothesis[ranks <= mcpObj$SelectionParameter]
   } else if (mcpObj$SelectionCriterion == "threshold") {
     # threshold based selection
     if (mcpObj$SelectionScale == "stderror" || mcpObj$SelectionScale == "pvalue") {
       # for p-values and stderror the smaller the better
-      selectedH <- contHypo$Hypothesis[ScaleVar <= mcpObj$SelectionParmeter]
+      selectedH <- contHypo$Hypothesis[ScaleVar <= mcpObj$SelectionParameter]
     } else {
       # for test stat and delta the larger the better(right tail)
-      selectedH <- contHypo$Hypothesis[ScaleVar >= mcpObj$SelectionParmeter]
+      selectedH <- contHypo$Hypothesis[ScaleVar >= mcpObj$SelectionParameter]
     }
   } else if (mcpObj$SelectionCriterion == "epsilon") {
     # epsilon neighbour of best
@@ -100,8 +100,8 @@ getSelectedHypo2 <- function(simID, mcpObj) {
       ranks <- rank(-ScaleVar, ties.method = "random")
     }
     bestScale <- ScaleVar[which(ranks == 1)]
-    selectedH <- contHypo$Hypothesis[ScaleVar <= bestScale + mcpObj$SelectionParmeter &
-                                       ScaleVar >= bestScale - mcpObj$SelectionParmeter]
+    selectedH <- contHypo$Hypothesis[ScaleVar <= bestScale + mcpObj$SelectionParameter &
+                                       ScaleVar >= bestScale - mcpObj$SelectionParameter]
 
   } else if (mcpObj$SelectionCriterion == "random"){
     # Random Selection
@@ -132,20 +132,20 @@ getSelectedHypo2 <- function(simID, mcpObj) {
     }
 
 
-    dropedArms <- setdiff(
+    droppedArms <- setdiff(
       (1:length(mcpObj$ArmsPresent))[mcpObj$ArmsPresent],
       getArms2(SetH = selectedH, HypoMap = mcpObj$HypoMap)
     )
 
-    mcpObj$ArmsRetained[dropedArms] <- T
-    mcpObj$ArmsPresent[dropedArms] <- F
+    mcpObj$ArmsRetained[droppedArms] <- T
+    mcpObj$ArmsPresent[droppedArms] <- F
     mcpObj$SelectedIndex <- selectedH
     HypoPresentAfterSelct <- rep(F, length(mcpObj$HypoPresent))
     HypoPresentAfterSelct[get_numeric_part(selectedH)] <- T
     mcpObj$HypoPresent <- HypoPresentAfterSelct
     SelectedIDX <- rep(F, length(mcpObj$HypoPresent))
     SelectedIDX[get_numeric_part(mcpObj$SelectedIndex)] <- T
-    mcpObj$DropedFlag <- (!SelectedIDX) & (!mcpObj$rej_flag_Curr) # Hypothesis not selected and not rejected are defined as droped
+    mcpObj$DroppedFlag <- (!SelectedIDX) & (!mcpObj$rej_flag_Curr) # Hypothesis not selected and not rejected are defined as dropped
 
     mcpObj$IndexSet <- mcpObj$HypoMap$Hypothesis[mcpObj$HypoPresent]
     mcpObj$WH <- mcpObj$WH[which(apply(mcpObj$WH[mcpObj$IndexSet], 1, sum, na.rm = T) != 0), ]

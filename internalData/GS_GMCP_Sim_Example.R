@@ -252,7 +252,7 @@ sel_scale <- "teststat" # Param SelectionScale: arms with test stat exceeding
 # At look 2, remaining 500 subjects are allocated in equal proportion to
 # selected arms.
 sel_crit <- "threshold" # Param SelectionCriterion
-sel_param <- -0.6745 # Param SelectionParmeter
+sel_param <- -0.6745 # Param SelectionParameter
 # TODO: Investigate how the package understand whether teststat < threshold OR
 # teststat > threshold is to be used as there is no obvious input parameter
 # indicating the comparison type, which should make a difference for left-tailed
@@ -290,7 +290,7 @@ simMAMSMEP(Method = meth, alpha = alp, SampleSize = SS, TestStatCont = stat,
            info_frac = t, typeOfDesign = des, MultipleWinners = mult_win,
            Selection = sel, SelectionLook = sel_lk, SelectEndPoint = sel_ep,
            SelectionScale = sel_scale, SelectionCriterion = sel_crit,
-           SelectionParmeter = sel_param, KeepAssosiatedEps = keep,
+           SelectionParameter = sel_param, KeepAssosiatedEps = keep,
            ImplicitSSR = impl_SSR, nSimulation = nSim, SummaryStat = summ_stat,
            plotGraphs = graph, EastSumStat = East_stat, Parallel = parallel)
 
@@ -303,7 +303,7 @@ simMAMSMEP(Method = meth, alpha = alp, SampleSize = SS, TestStatCont = stat,
 #            info_frac = t, typeOfDesign = des, MultipleWinners = mult_win,
 #            Selection = sel, SelectionLook = sel_lk, SelectEndPoint = sel_ep,
 #            SelectionScale = sel_scale, SelectionCriterion = sel_crit,
-#            SelectionParmeter = sel_param, KeepAssosiatedEps = keep,
+#            SelectionParameter = sel_param, KeepAssosiatedEps = keep,
 #            ImplicitSSR = impl_SSR, nSimulation = nSim, SummaryStat = summ_stat,
 #            plotGraphs = graph, EastSumStat = East_stat, Parallel = parallel)
 

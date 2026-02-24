@@ -36,7 +36,7 @@
 #' @param SelectEndPoint Indicator to specify which endpoint to select from, e.g. '1': Endpoint 1, '2':Endpoint 2, 'overall': overall
 #' @param SelectionScale Character: Scale parameter on which selection will be based on, options 'delta': delta, 'teststat': Test Statistics, 'stderror' : Standard Error of the test stat,  'pvalue': p-value(un-adj) based selection
 #' @param SelectionCriterion Character: 'best': best r, 'threshold': threshold for selection, 'epsilon': for epsilon neighborhood, 'random': for random selection
-#' @param SelectionParmeter r for best, threshold value for threshold or epsilon distance
+#' @param SelectionParameter r for best, threshold value for threshold or epsilon distance
 #' @param KeepAssosiatedEps Logical, True: keep all the associated hypothesis for the selected arms
 #' @param ImplicitSSR Character; 'Selection': re-allocate samples only from de-selected arms to available arms, 'All': Allocate all the planned samples(for the look) to the available arms, 'None': No Re-allocation
 #' @param nSimulation Numeric: Number of simulations(default=100)
@@ -46,6 +46,7 @@
 #' @param plotGraphs Logical; TRUE: plot the initial graph
 #' @param EastSumStat East Summary Statistics file, Only applicable for single look designs with CombPValue method
 #' @param Parallel Logical; TRUE: Parallel computations
+#' @param Verbose Logical; TRUE: print additional console messages during simulations providing progress and detailed information (default = FALSE)
 #' @example ./internalData/MAMSMEP_Simulation_Example.R
 #' @export
 simMAMSMEP <- function(
@@ -108,7 +109,7 @@ simMAMSMEP <- function(
     SelectEndPoint = 1,
     SelectionScale = "pvalue",
     SelectionCriterion = "best",
-    SelectionParmeter = 1,
+    SelectionParameter = 1,
     KeepAssosiatedEps = TRUE,
     ImplicitSSR = "All",
     nSimulation = 100,
@@ -117,7 +118,8 @@ simMAMSMEP <- function(
     SummaryStat = FALSE,
     plotGraphs = TRUE,
     EastSumStat = NULL,
-    Parallel = TRUE) {
+    Parallel = TRUE,
+    Verbose = FALSE) {
 
   # Ani: Applying correction suggested by Pralay when allocation ratio for
   # control is not equal to 1.
@@ -147,6 +149,27 @@ simMAMSMEP <- function(
         test.type <- "Non-Parametric"
       }
     }
+  }
+
+  # Dimension-based algorithm selection for mvtnorm::pmvnorm()
+  # Calculate the dimension of the multivariate normal distribution
+  mvtnorm_dimension <- (nArms - 1) * nEps
+  
+  # Choose algorithm based on dimension:
+  # - Miwa: Fast and accurate for dimensions <= 20
+  # - GenzBretz: For dimensions > 20 (Miwa becomes inaccurate beyond 20 dimensions)
+  if (mvtnorm_dimension <= 20) {
+    mvtnorm_algo <- mvtnorm::Miwa(
+      steps = 128,
+      checkCorr = FALSE,
+      maxval = 1e3
+    )
+  } else {
+    mvtnorm_algo <- mvtnorm::GenzBretz(
+      maxpts = 25000,
+      abseps = 0.001,
+      releps = 0
+    )
   }
 
   # Object to run Simulations
@@ -187,12 +210,13 @@ simMAMSMEP <- function(
     # Selection
     "SelectEndPoint" = SelectEndPoint, "Selection" = Selection,
     "SelectionLook" = SelectionLook, "SelectionScale" = SelectionScale,
-    "SelectionCriterion" = SelectionCriterion, "SelectionParmeter" = SelectionParmeter,
+    "SelectionCriterion" = SelectionCriterion, "SelectionParameter" = SelectionParameter,
     "KeepAssosiatedEps" = KeepAssosiatedEps,
 
     # Simulation Parameters
     "nSimulation" = nSimulation, "Seed" = Seed,
     "SummaryStat" = SummaryStat, "Parallel" = Parallel,
+    "Verbose" = Verbose, # Enable verbose output for detailed simulation progress
 
     # SSR
     "ImplicitSSR" = ImplicitSSR,
@@ -207,7 +231,13 @@ simMAMSMEP <- function(
     "EastSumStat" = EastSumStat,
 
     # number of simulations for stage 2 per stage 1
-    "nSimulation_Stage2" = nSimulation_Stage2
+    "nSimulation_Stage2" = nSimulation_Stage2,
+
+    # mvtnorm algorithm (dimension-based selection)
+    "mvtnorm_algo" = mvtnorm_algo,
+
+    # Parameter added to enable debugging
+    "Debug" = FALSE
   )
 
   logs <- valInpsimMAMSMEP(inps = gmcpSimObj)

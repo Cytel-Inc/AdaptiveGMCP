@@ -31,6 +31,10 @@ simMAMSMEP_Wrapper <- function(InputDF, sOutPath) {
   for (nModelNum in 1:nrow(InputDF)) {
     # Start timer for this iteration
     start_time <- Sys.time()
+
+    print(paste0("Running Model ", nModelNum, " out of ", nrow(InputDF),
+                 ": ModelID = ", InputDF[nModelNum, "ModelID"]))
+
     out <- tryCatch(
       {
         run1TestCase(InputDF = InputDF[nModelNum, ])
@@ -119,16 +123,19 @@ simMAMSMEP_Wrapper <- function(InputDF, sOutPath) {
       }
 
       passedTxt <- paste0("Model ", nModelNum, " execution completed successfully.")
-      cat("\n", passedTxt, "\n")
-      print(paste0("Power table for ", nModelNum, ":"))
+      cat(passedTxt, "\n")
+      print(paste0("Power table for model ", nModelNum, ":"))
       print(OutTab)
+      cat("\n")
     } else if (grepl("Invalid", out[[1]])) {
       failTxt <- paste0("Model ", nModelNum, " execution failed.")
-      cat("\n", failTxt, "\n")
-      cat("\n Details \n")
+      cat(failTxt, "\n")
+      cat("Details \n")
       print(unlist(out))
+      cat("\n")
     } else {
       print(out)
+      cat("\n")
     }
   }
 
@@ -180,7 +187,7 @@ run1TestCase <- function(InputDF) {
   SelectEndPoint <- InputDF$SelectEndPoint
   SelectionScale <- InputDF$SelectionScale
   SelectionCriterion <- InputDF$SelectionCriterion
-  SelectionParmeter <- InputDF$SelectionParmeter
+  SelectionParameter <- InputDF$SelectionParameter
   KeepAssosiatedEps <- InputDF$KeepAssosiatedEps
   ImplicitSSR <- InputDF$ImplicitSSR
   ImplicitSSR <- ifelse(is.na(ImplicitSSR),FALSE,ImplicitSSR)
@@ -204,9 +211,10 @@ run1TestCase <- function(InputDF) {
     EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type, info_frac = info_frac,
     typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
     Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
-    SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
+    SelectionCriterion = SelectionCriterion, SelectionParameter = SelectionParameter, KeepAssosiatedEps = KeepAssosiatedEps,
     ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
-    Method = Method, plotGraphs = plotGraphs, Parallel = Parallel,CommonStdDev = CommonStdDev, nSimulation_Stage2 = nSimulation_Stage2
+    Method = Method, plotGraphs = plotGraphs, Parallel = Parallel,CommonStdDev = CommonStdDev,
+    nSimulation_Stage2 = nSimulation_Stage2, Verbose = TRUE
   )
   out
 }

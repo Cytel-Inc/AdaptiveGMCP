@@ -44,6 +44,10 @@ exitProbStage2Nparam2 <- function(cJ2, cJ1, ss1, ss2, wJ, hIDX, t1) # aj2: stage
   # using the input info fraction directly.
   r <- sqrt(t1) # sqrt(ss1 / ss2)
   sigma <- matrix(c(1, r, r, 1), nrow = 2)
-  prob <- mvtnorm::pmvnorm(lower = lower, upper = upper, sigma = sigma)[1]
+
+  # Use dimension-based algorithm selected in simMAMSMEP()
+  prob <- mvtnorm::pmvnorm(
+    lower = lower, upper = upper, sigma = sigma, algorithm = gmcpSimObj$mvtnorm_algo
+    )[1]
   return(prob + aj1)
 }
