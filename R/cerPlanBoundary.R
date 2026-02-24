@@ -116,7 +116,7 @@ planBdryCER <- function(nHypothesis,
     }
 
     # Find the root using uniroot
-    cJ1 <- uniroot(f = searchcJ1, interval = c(0, 1 / max(w[w != 0])), tol = 1E-16)$root
+    cJ1 <- uniroot(f = searchcJ1, interval = c(alpha1 * 0.999, alpha1 / max(w[w != 0])), tol = 1E-6)$root
 
     # Update Stage1 Bdry matrix
     Stage1Bdry[i, as.numeric(unlist(conn_Sets))] <- cJ1 * w[as.numeric(unlist(conn_Sets))]
@@ -158,7 +158,7 @@ planBdryCER <- function(nHypothesis,
    }
 
    # Find the root using uniroot
-   cJ2 = uniroot(f = searchcJ2 , interval = c(0, 1 / max(w[w!= 0])), tol = 1E-16)$root
+   cJ2 <- uniroot(f = searchcJ2 , interval = c((alpha - alpha1) * 0.999, alpha / max(w[w!= 0])), tol = 1E-6)$root
 
    # Update Stage1 Bdry matrix
    Stage2Bdry[i, as.numeric(unlist(conn_Sets))] <- cJ2 * w[as.numeric(unlist(conn_Sets))]

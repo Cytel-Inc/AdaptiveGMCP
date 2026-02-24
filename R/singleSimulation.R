@@ -136,9 +136,9 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
 # gmcpSimObj obj with simulation inputs
 # preSimObjs obj with intermediate inputs
 SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
-  #######################################
+  ######################################
   # browser()
-  #######################################
+  ######################################
   # Initialize Intermediate Inputs
   mcpObj <- initialize_mcpObj(gmcpSimObj = gmcpSimObj, preSimObjs = preSimObjs)
   SummStatDF <- mcpObj$SummStatBlank
@@ -244,6 +244,12 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
         # Compute the Stage2 adaptive boundaries
 
         AdaptResults <- adaptBdryCER(mcpObj)
+
+        if (gmcpSimObj$Debug) {
+          ### Added for debugging purposes, should be removed once the code is verified to be working fine
+          # browser()
+        }
+
         mcpObj$AdaptObj <- AdaptResults
         ss_stage2_incr <- mcpObj$Stage2AllocSampleSize
         ss_stage2_incr[2,] <- ss_stage2_incr[2,] - ss_stage2_incr[1,]
@@ -283,7 +289,7 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
       mcpObj_Stage2 <- mcpObj # This will only be run at the end of stage 1. To be used for all stage 2 sims
       # We allow the user to perform multiple stage 2 simulations for each stage 1 simulation.
       # This is especially useful in case of large problems, i.e. designs with large number of arms and
-      # multiple endpoints. In such cases if we run say 10k simulations for stage 1 and only 1 simulation 
+      # multiple endpoints. In such cases if we run say 10k simulations for stage 1 and only 1 simulation
       # for stage 2 for each stage 1 simulation (like we do in East), then it was found that the confidence
       # intervals for power estimates were quite wide. To make them tighter, one had to run much larger
       # number of stage 1 simulations, like 100k or more which made the overall simulation time very long.
@@ -496,6 +502,7 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
         # Power Table
         powerCountDF <- tryCatch(
           {
+            # browser()
             CountPower(simID = simID, SummaryStatFile = SummStatDF, TrueNull = mcpObj$TrueNull)
           },
           error = function(e) {
@@ -603,7 +610,7 @@ initialize_mcpObj <- function(gmcpSimObj, preSimObjs) {
     "WH_Prev" = preSimObjs$WH,
     "rej_flag_Prev" = rep(FALSE, gmcpSimObj$nHypothesis),
     "rej_flag_Curr" = rep(FALSE, gmcpSimObj$nHypothesis),
-    "DropedFlag" = rep(FALSE, gmcpSimObj$nHypothesis),
+    "DroppedFlag" = rep(FALSE, gmcpSimObj$nHypothesis),
     "LastLook" = gmcpSimObj$nLooks,
     "Modify" = F,
     "ModificationLook" = c(),

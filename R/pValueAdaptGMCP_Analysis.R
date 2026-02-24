@@ -111,8 +111,8 @@ adaptGMCP_PC <- function(
     plotGraph(HypothesisName = GlobalIndexSet, w = WI, G = G, Title = "Initial Graph")
   }
 
-  rej_flag_Prev <- rej_flag_Curr <- DropedFlag <- rep(FALSE, D)
-  names(rej_flag_Prev) <- names(rej_flag_Curr) <- names(DropedFlag) <- paste("H", 1:D, sep = "")
+  rej_flag_Prev <- rej_flag_Curr <- DroppedFlag <- rep(FALSE, D)
+  names(rej_flag_Prev) <- names(rej_flag_Curr) <- names(DroppedFlag) <- paste("H", 1:D, sep = "")
 
   if (test.type == "Bonf") # Using the partly parametric function to perform Bonferroni test
     {
@@ -163,7 +163,7 @@ adaptGMCP_PC <- function(
     "rej_flag_Curr" = rej_flag_Curr,
     "SelectionLook" = c(),
     "SelectedIndex" = NA,
-    "DropedFlag" = DropedFlag,
+    "DroppedFlag" = DroppedFlag,
     "LastLook" = K,
     "Modify" = F,
     "ModificationLook" = c(),
@@ -204,8 +204,8 @@ adaptGMCP_PC <- function(
       {
         HypothesisName <- mcpObj$allGraphs$HypothesisName
         HypoIDX <- get_numeric_part(HypothesisName)
-        #Active => not rejected and not droped
-        activeStatus <- (!unlist(mcpObj$rej_flag_Curr[HypoIDX])) &(!mcpObj$DropedFlag)
+        #Active => not rejected and not dropped
+        activeStatus <- (!unlist(mcpObj$rej_flag_Curr[HypoIDX])) &(!mcpObj$DroppedFlag)
         graphIDX <- which(mcpObj$allGraphs$IntersectIDX == paste(as.integer(activeStatus), collapse = ""))
 
         if (length(graphIDX) == 0) {

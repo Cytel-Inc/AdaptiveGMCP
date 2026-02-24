@@ -53,7 +53,7 @@ test_that("p value combination  results match benchmark for 5 arm 2 ep", {
     SelectEndPoint = 1,
     SelectionScale = "teststat",
     SelectionCriterion = "threshold",
-    SelectionParmeter = -0.6745,
+    SelectionParameter = -0.6745,
     KeepAssosiatedEps = TRUE,
     ImplicitSSR = "Selection",
     nSimulation = 10,

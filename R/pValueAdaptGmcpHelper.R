@@ -7,6 +7,35 @@
 # The file contains supporting functions for Adaptive GMCP Analysis Function AdaptGMCP_Analysis/adaptGMCP_PC(.) ----
 ## Author: Ajoy.M
 
+###### DEPRECATED: ChooseAlgoForMVN() ######
+# This function has been deprecated in favor of dimension-based algorithm selection.
+# Algorithm is now chosen once in simMAMSMEP() based on (nArms-1)*nEps dimension
+# and stored in gmcpSimObj$mvtnorm_algo for consistent use throughout simulations.
+# 
+# Reason for deprecation:
+# - Checking determinant thousands of times is a performance bottleneck
+# - Both Miwa and GenzBretz fail on singular matrices, so determinant check doesn't help
+# - Dimension is the appropriate criterion (Miwa accurate only up to 20 dimensions)
+#
+# ChooseAlgoForMVN <- function(sigma) {
+#   is_singular <- abs(det(sigma)) < .Machine$double.eps
+#   if (is_singular) {
+#     browser()
+#     algo <- mvtnorm::GenzBretz(
+#       maxpts = 25000,
+#       abseps = 0.001,
+#       releps = 0
+#     )
+#   } else {
+#     algo <- mvtnorm::Miwa(
+#       steps = 128,
+#       checkCorr = F,
+#       maxval = 1e3
+#     )
+#   }
+#   return(algo)
+# }
+
 #----------------------- -
 # For Per look testing
 #----------------------- -
@@ -137,14 +166,14 @@ PerLookMCPAnalysis <- function(mcpObj) {
       }
   }
   notRejected <- paste("H", which(!mcpObj$rej_flag_Curr), sep = "")
-  if (all(mcpObj$DropedFlag == F)) {
-    Droped <- c()
+  if (all(mcpObj$DroppedFlag == F)) {
+    Dropped <- c()
   } else {
-    Droped <- paste("H", which(mcpObj$DropedFlag), sep = "")
+    Dropped <- paste("H", which(mcpObj$DroppedFlag), sep = "")
   }
   # notRejected <- names(mcpObj$rej_flag_Curr[!mcpObj$rej_flag_Curr])
-  # Droped <- names(mcpObj$DropedFlag[mcpObj$DropedFlag])
-  mcpObj$IndexSet <- setdiff(notRejected, Droped)
+  # Dropped <- names(mcpObj$DroppedFlag[mcpObj$DroppedFlag])
+  mcpObj$IndexSet <- setdiff(notRejected, Dropped)
   mcpObj
 }
 
@@ -271,10 +300,10 @@ do_Selection <- function(mcpObj) {
       "both"
     )
 
-    for (i in 1:length(mcpObj$DropedFlag))
+    for (i in 1:length(mcpObj$DroppedFlag))
     {
-      if (!mcpObj$DropedFlag[i] & !mcpObj$rej_flag_Prev[i]) {
-        mcpObj$DropedFlag[i] <- !any(mcpObj$SelectedIndex == names(mcpObj$DropedFlag[i]))
+      if (!mcpObj$DroppedFlag[i] & !mcpObj$rej_flag_Prev[i]) {
+        mcpObj$DroppedFlag[i] <- !any(mcpObj$SelectedIndex == names(mcpObj$DroppedFlag[i]))
       }
     }
 
@@ -556,8 +585,8 @@ ShowResults <- function(mcpObj) {
 #---------------------- -
 StopTrial <- function(mcpObj) {
   StopByEfficacy <- ifelse(mcpObj$MultipleWinners,
-    all(mcpObj$rej_flag_Curr[!mcpObj$DropedFlag] == T), # if all the primary hypothesis are rejected
-    any(mcpObj$rej_flag_Curr[!mcpObj$DropedFlag] == T)
+    all(mcpObj$rej_flag_Curr[!mcpObj$DroppedFlag] == T), # if all the primary hypothesis are rejected
+    any(mcpObj$rej_flag_Curr[!mcpObj$DroppedFlag] == T)
   ) # if any primary hypothesis is rejected
   if (StopByEfficacy) # Stop
     {
@@ -600,16 +629,12 @@ comb.test <- function(p, cr, w) {
       {
         q <- min(as.numeric(p[edx]) / as.numeric(w[edx]))
         upper <- qnorm(1 - as.numeric(w[edx]) * q) # z-scale upper bound for right tailed tests
-        p_param <- (1 - mvtnorm::pmvnorm(
-          lower = -Inf,
-          upper = upper,
-          corr = cr[edx, edx],
-          algorithm = mvtnorm::Miwa(
-            steps = 128,
-            checkCorr = F,
-            maxval = 1e3
-          )
 
+        # Use dimension-based algorithm selected in simMAMSMEP()
+        corr_mat <- cr[edx, edx]
+
+        p_param <- (1 - mvtnorm::pmvnorm(
+          lower = -Inf, upper = upper, corr = corr_mat, algorithm = gmcpSimObj$mvtnorm_algo
         ))
         return(min(1, p_param / sum(as.numeric(w[edx])))) # Partial Parametric
       } else { # disjoint set with unknown distribution: Non-Parametric One Sided Test
