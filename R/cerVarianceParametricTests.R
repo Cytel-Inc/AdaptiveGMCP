@@ -6,55 +6,6 @@
 
 ################# Computation of Stage-Wise covariance Matrix ###########
 
-# The function varCovZ is no longer required as it has been replaced by varCovZ_Null.
-# #------------------------------------------------------------------------ -
-# ########### Elements of the Z-scale Covariance Matrix##############
-# # (i1,i2) : index for the hypothesis
-# # (k1,k2) : index for the looks
-# # sigma_0 : Standard deviation for the control arm
-# # sigma_trt : Standard deviation for the treatment arms
-# # ctrSS : stage-wise cumulative samples in control arm
-# # trtSS : stage-wise cumulative samples in treatment arms
-# # InfoMatrix : Fisher information matrix
-# # Returns: The Probability of rejecting in atleast one primary hypothesis at stage1
-# #------------------------------------------------------------------------- -
-# varCovZ <- function(EpType, i1, k1, i2, k2, sigma_0, sigma_trt, ctrProp, ctrSS, trtSS, InfoMatrix) {
-#   if (EpType == "Binary") {
-#     sigma_0 <- sigma_trt <- sqrt(ctrProp * (1 - ctrProp))
-#     if (i1 == i2 & k1 == k2) { # Variance Case-1: Same treatment, same look
-#       1
-#     } else if (k1 == k2 & i1 != i2) # Covariance Case-2: Different treatments, same look
-#       {
-#         sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) * (sigma_0^2 / ctrSS[k2])
-#       } else if (i1 == i2 & k1 != k2) # Covariance Case-3: Same treatment, different looks
-#       {
-#         sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) *
-#           ((sigma_trt^2 / trtSS[i2, max(k1, k2)]) + (sigma_0^2 / ctrSS[max(k1, k2)]))
-#       } else if (i1 != i2 || k1 != k2) # Covariance Case-4: Different treatments, different looks
-#       {
-#         sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) * (sigma_0^2 / ctrSS[max(k1, k2)])
-#       } else {
-#       "Error in covZ"
-#     }
-#   } else if (EpType == "Continuous") {
-#     if (i1 == i2 & k1 == k2) { # Variance Case-1: Same treatment, same look
-#       1
-#     } else if (k1 == k2 & i1 != i2) # Covariance Case-2: Different treatments, same look
-#       {
-#         sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) * (sigma_0^2 / ctrSS[k2])
-#       } else if (i1 == i2 & k1 != k2) # Covariance Case-3: Same treatment, different looks
-#       {
-#         sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) *
-#           ((sigma_trt[i2]^2 / trtSS[i2, max(k1, k2)]) + (sigma_0^2 / ctrSS[max(k1, k2)]))
-#       } else if (i1 != i2 || k1 != k2) # Covariance Case-4: Different treatments, different looks
-#       {
-#         sqrt(InfoMatrix[i1, k1] * InfoMatrix[i2, k2]) * (sigma_0^2 / ctrSS[max(k1, k2)])
-#       } else {
-#       "Error in covZ"
-#     }
-#   }
-# }
-
 # Function for computing the covariance matrix for Z statistics under the null hypothesis
 # Under the null, we assume that all treatment arms have the same standard deviation as control.
 # This is required for computing the efficacy boundary.
@@ -94,7 +45,8 @@ varCovZ_Null <- function(i1, k1, i2, k2, allocRatio, info_frac) {
 # CommonStdDev : Logical flag indicating whether common standard deviation is assumed across arms
 # info_frac : information fraction at look 1
 #------------------------------------------------ -
-getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio, CommonStdDev, info_frac) {
+getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio, CommonStdDev, info_frac,
+                     Eve_Cum = NA) {
 
   #Treatment standard Deviation is same is control
   #CommonStdDev flag is global variable set from simMAMSMEP(.), adaptGMCP_CER(.) function call
@@ -116,6 +68,7 @@ getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio, CommonStdDev, 
 
 
   for (i in 1:nEps) {
+    infoBase <- ctrSS
     if (EpType[[i]] == "Continuous") {
       nHypothesisEp <- length(sigma[[1]]) - 1 # Two equal dimension sigma matrix for two endpoints
       nLooksEp <- length(ctrSS)
@@ -133,12 +86,24 @@ getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio, CommonStdDev, 
       nLooksEp <- length(ctrSS)
       pi_c <- prop.ctr[[i]]
       capLambda <- (1 / (pi_c * (1 - pi_c))) * (allocRatio[-1] / (1 + allocRatio[-1]))
+    } else if (EpType[[i]] == "Survival") {
+      if (all(is.na(Eve_Cum))) {
+        stop("Error in getSigma: Eve_Cum must be provided for Survival endpoints")
+      }
+      nHypothesisEp <- length(allocRatio) - 1
+      nLooksEp <- length(ctrSS)
+      infoBase <- Eve_Cum[, 1]
+      capLambda <- (allocRatio[-1] / (1 + allocRatio[-1]))
+    } else {
+      stop("Error in getSigma: Unsupported endpoint type")
     }
 
-
-    InfoMatrix <- sapply(ctrSS, function(x) {
-      x * capLambda
-    }) # row=hypothesis, col=looks
+    # TODO-ANI: Check if use of outer() here is correct and whether it gives the same result
+    # as the earlier code.
+    # InfoMatrix <- sapply(ctrSS, function(x) {
+    #      x * capLambda
+    #    })
+    InfoMatrix <- outer(capLambda, infoBase, "*") # row=hypothesis, col=looks
     InfoMat[[paste("EP", i, sep = "")]] <- InfoMatrix
 
     ############### Computation of Z scale Sigma Matrix ################
@@ -149,27 +114,6 @@ getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio, CommonStdDev, 
     for (l in 1:length(hIDX))
     {
       for (m in l:length(hIDX)) {
-        # Replaced varCovZ() with varCovZ_Null() to fix the bug in boundary computation
-        # found by Cyrus in Nov 2025. Earlier covariance computation depended on nuisance parameters,
-        # which was wrong.
-        # Boundary computation should depend only on allocation ratio and information fraction.
-        # if (EpType[[i]] == "Continuous") {
-        #   sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
-        #     EpType = "Continuous",
-        #     i1 = hIDX[l], k1 = lIDX[l],
-        #     i2 = hIDX[m], k2 = lIDX[m],
-        #     sigma_0 = sigma_0, sigma_trt = sigma_trt,
-        #     ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
-        #   )
-        # } else if (EpType[[i]] == "Binary") {
-        #   sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
-        #     EpType = "Binary",
-        #     i1 = hIDX[l], k1 = lIDX[l],
-        #     i2 = hIDX[m], k2 = lIDX[m],
-        #     ctrProp = prop.ctr[[i]],
-        #     ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
-        #   )
-        # }
         sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ_Null(
           i1 = hIDX[l], k1 = lIDX[l],
           i2 = hIDX[m], k2 = lIDX[m],
@@ -210,7 +154,9 @@ getSigma <- function(EpType, SS_Cum, sigma, prop.ctr, allocRatio, CommonStdDev, 
 ##### Covariance Matrix for CER & Stage-2 boundary computations#############
 getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
                            AllocSampleSize, allocRatio, sigma, prop.ctr,
-                           Stage2AllocSampleSize, Stage2allocRatio, Stage2sigma,CommonStdDev) {
+                           Stage2AllocSampleSize, Stage2allocRatio, Stage2sigma,CommonStdDev,
+                           Eve_Cum = NA, Stage2Eve_Cum = NA) {
+  # TODO-ANI: Check how Eve_Cum and Stage2Eve_Cum are passed here and what they contain.
   #Treatment standard Deviation is same is control
   #CommonStdDev flag is global variable set from simMAMSMEP(.), adaptGMCP_CER(.) function call
   if(CommonStdDev == T){
@@ -238,6 +184,8 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
     # SigmaZIncr[[names(Sigma$SigmaZ)[i]]] <- A %*% Sigma$SigmaZ[[i]] %*% t(A)
     # SigmaSIncr[[names(Sigma$SigmaS)[i]]] <- A %*% Sigma$SigmaS[[i]] %*% t(A)
 
+    allocRatioUsed <- allocRatio
+
     if (EpType[[i]] == "Continuous") {
       sigma_0 <- sigma[[i]][1]
       sigma_trt <- sigma[[i]][-1]
@@ -248,13 +196,35 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
     } else if (EpType[[i]] == "Binary") {
       pi_c <- prop.ctr[[i]]
       capLambda <- (1 / (pi_c * (1 - pi_c))) * (allocRatio[-1] / (1 + allocRatio[-1]))
+    } else if (EpType[[i]] == "Survival") {
+      if (all(is.na(Eve_Cum))) {
+        stop("Error in getStage2Sigma: Eve_Cum must be provided for Survival endpoints")
+      }
+
+      # TODO-ANI: Check how Eve_Cum is passed to this function and why it is a list.
+      EIncr <- as.numeric(unlist(Eve_Cum[2, ])) - as.numeric(unlist(Eve_Cum[1, ]))
+      ctrE <- EIncr[1]
+      trtE <- EIncr[-1]
+
+      # TODO-ANI: Check why we need to recompute allocation ratio using events here,
+      # OR whether we should use the original allocRatio here.
+      allocRatioUsed <- c(1, trtE / ctrE)
+
+      capLambda <- (allocRatioUsed[-1] / (1 + allocRatioUsed[-1]))
     }
 
     # AllocSampleSize : the planned sample size
-    SSIncr <- as.numeric(AllocSampleSize[2, ]) - as.numeric(AllocSampleSize[1, ])
-    ctrSS <- SSIncr[1]
-    trtSS <- SSIncr[-1]
-    InfoMatrix <- matrix(ctrSS * capLambda, ncol = 1)
+    # SSIncr <- as.numeric(AllocSampleSize[2, ]) - as.numeric(AllocSampleSize[1, ])
+    if (EpType[[i]] == "Survival") {
+      InfoMatrix <- matrix(ctrE * capLambda, ncol = 1)
+    } else {
+      # TODO-ANI: Check whether using unlist here on AllocSampleSize is correct and whether
+      # that gives the same result as the earlier line, see commented line above.
+      SSIncr <- as.numeric(unlist(AllocSampleSize[2, ])) - as.numeric(unlist(AllocSampleSize[1, ]))
+      ctrSS <- SSIncr[1]
+      trtSS <- SSIncr[-1]
+      InfoMatrix <- matrix(ctrSS * capLambda, ncol = 1)
+    }
 
     ########## Computation of  Z-scale Covariance Matrix #################
     k <- ncol(AllocSampleSize) - 1
@@ -263,28 +233,9 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
     for (l in 1:k)
     {
       for (m in l:k) {
-        # Replaced varCovZ() with varCovZ_Null() to fix the bug in boundary computation
-        # found by Cyrus in Nov 2025. Earlier covariance computation depended on nuisance parameters,
-        # which was wrong.
-        # Boundary computation should depend only on allocation ratio and information fraction.
-        # if (EpType[[i]] == "Continuous") {
-        #   sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
-        #     EpType = "Continuous",
-        #     i1 = l, k1 = 1, i2 = m, k2 = 1,
-        #     sigma_0 = sigma_0, sigma_trt = sigma_trt,
-        #     ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
-        #   )
-        # } else if (EpType[[i]] == "Binary") {
-        #   sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
-        #     EpType = "Binary",
-        #     i1 = l, k1 = 1, i2 = m, k2 = 1,
-        #     ctrProp = pi_c,
-        #     ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
-        #   )
-        # }
         sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ_Null(
           i1 = l, k1 = 1, i2 = m, k2 = 1,
-          allocRatio = allocRatio,
+          allocRatio = allocRatioUsed,
           info_frac = 1
         )
       }
@@ -305,11 +256,28 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
   for (epIDX in 1:nGrps)
   {
     # The Cumulative InfoMatrix is needed for transformation(z to score)
-    Stage2SSCum <- (Stage2AllocSampleSize[2, ])
-    for (s in 1:length(Stage2SSCum)) {
-      if (is.na(Stage2SSCum[s])) Stage2SSCum[s] <- AllocSampleSize[1, s]
+	  # Stage2SSCum <- (Stage2AllocSampleSize[2, ])
+    # for (s in 1:length(Stage2SSCum)) {
+    #   if (is.na(Stage2SSCum[s])) Stage2SSCum[s] <- AllocSampleSize[1, s]
+    # }
+    # Stage2allocRatio <- as.numeric(Stage2SSCum) / as.numeric(Stage2SSCum[1])
+    if (EpType[[epIDX]] == "Survival") {
+      if (all(is.na(Stage2Eve_Cum))) {
+        stop("Error in getStage2Sigma: Stage2Eve_Cum must be provided for Survival endpoints")
+      }
+      Stage2SSCum <- as.numeric(unlist(Stage2Eve_Cum[2, ]))
+      baseSSCum <- as.numeric(unlist(Eve_Cum[1, ]))
+      Stage2SSCum[is.na(Stage2SSCum)] <- baseSSCum[is.na(Stage2SSCum)]
+      Stage2allocRatio <- Stage2SSCum / Stage2SSCum[1]
+    } else {
+      # TODO-ANI: Check why GHCP has changed the earlier code (see commented above)
+      # to the following and whether that is correct.
+      # Then see whether that makes sense for survival above too.
+      Stage2SSCum <- as.numeric(unlist(Stage2AllocSampleSize[2, ]))
+      baseSSCum <- as.numeric(unlist(AllocSampleSize[1, ]))
+      Stage2SSCum[is.na(Stage2SSCum)] <- baseSSCum[is.na(Stage2SSCum)]
+      Stage2allocRatio <- Stage2SSCum / Stage2SSCum[1]
     }
-    Stage2allocRatio <- as.numeric(Stage2SSCum) / as.numeric(Stage2SSCum[1])
 
     if (EpType[[epIDX]] == "Continuous") {
       Stage2sigma_0 <- Stage2sigma[[epIDX]][1]
@@ -321,14 +289,28 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
     } else if (EpType[[epIDX]] == "Binary") {
       pi_c <- prop.ctr[[epIDX]]
       Stage2capLambda <- (1 / (pi_c * (1 - pi_c))) * (Stage2allocRatio[-1] / (1 + Stage2allocRatio[-1]))
+    } else if (EpType[[epIDX]] == "Survival") {
+      Stage2capLambda <- (Stage2allocRatio[-1] / (1 + Stage2allocRatio[-1]))
     }
 
     # The following adjustment is due to change in distribution(as the sample size modified)
-    Stage2SSIncr <- as.numeric(Stage2AllocSampleSize[2, ]) - as.numeric(Stage2AllocSampleSize[1, ])
-    Stage2ctrSS <- Stage2SSIncr[1]
-    Stage2trtSS <- Stage2SSIncr[-1]
-    Stage2InfoMatrix <- matrix(Stage2ctrSS * Stage2capLambda, ncol = 1)
-    Stage2InfoMatrixCum <- matrix(as.numeric(Stage2SSCum[, 1]) * Stage2capLambda, ncol = 1)
+    if (EpType[[epIDX]] == "Survival") {
+      Stage2SSIncr <- as.numeric(unlist(Stage2Eve_Cum[2, ])) - as.numeric(unlist(Stage2Eve_Cum[1, ]))
+      Stage2ctrSS <- Stage2SSIncr[1]
+      Stage2trtSS <- Stage2SSIncr[-1]
+      Stage2InfoMatrix <- matrix(Stage2ctrSS * Stage2capLambda, ncol = 1)
+      Stage2InfoMatrixCum <- matrix(as.numeric(Stage2SSCum[1]) * Stage2capLambda, ncol = 1)
+    } else {
+      # TODO-ANI: Check why GHCP has changed the commented line below to the next line and if that is correct.
+      # Stage2SSIncr <- as.numeric(Stage2AllocSampleSize[2, ]) - as.numeric(Stage2AllocSampleSize[1, ])	
+      Stage2SSIncr <- as.numeric(unlist(Stage2AllocSampleSize[2, ])) - as.numeric(unlist(Stage2AllocSampleSize[1, ]))
+      Stage2ctrSS <- Stage2SSIncr[1]
+      Stage2trtSS <- Stage2SSIncr[-1]
+      Stage2InfoMatrix <- matrix(Stage2ctrSS * Stage2capLambda, ncol = 1)
+      # TODO-ANI: Check why GHCP has changed the commented line below to the next line and if that is correct.
+      # Stage2InfoMatrixCum <- matrix(as.numeric(Stage2SSCum[, 1]) * Stage2capLambda, ncol = 1)
+      Stage2InfoMatrixCum <- matrix(as.numeric(Stage2SSCum[1]) * Stage2capLambda, ncol = 1)
+    }
 
 
     ########## Computation of  Z-scale Covariance Matrix #################
@@ -338,27 +320,6 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
     for (l in 1:k)
     {
       for (m in l:k) {
-        # Replaced varCovZ() with varCovZ_Null() to fix the bug in boundary computation
-        # found by Cyrus in Nov 2025. Earlier covariance computation depended on nuisance parameters,
-        # which was wrong.
-        # Boundary computation should depend only on allocation ratio and information fraction.
-        # if (EpType[[epIDX]] == "Continuous") {
-        #   Stage2sigmaZ[l, m] <- Stage2sigmaZ[m, l] <- varCovZ(
-        #     EpType = "Continuous",
-        #     i1 = l, k1 = 1, i2 = m, k2 = 1,
-        #     sigma_0 = Stage2sigma_0, sigma_trt = Stage2sigma_trt,
-        #     ctrSS = Stage2ctrSS, trtSS = Stage2trtSS,
-        #     InfoMatrix = Stage2InfoMatrix
-        #   )
-        # } else if (EpType[[epIDX]] == "Binary") {
-        #   Stage2sigmaZ[l, m] <- Stage2sigmaZ[m, l] <- varCovZ(
-        #     EpType = "Binary",
-        #     i1 = l, k1 = 1, i2 = m, k2 = 1,
-        #     ctrProp = pi_c,
-        #     ctrSS = Stage2ctrSS, trtSS = Stage2trtSS,
-        #     InfoMatrix = Stage2InfoMatrix
-        #   )
-        # }
         Stage2sigmaZ[l, m] <- Stage2sigmaZ[m, l] <- varCovZ_Null(
           i1 = l, k1 = 1, i2 = m, k2 = 1,
           allocRatio = Stage2allocRatio,
@@ -391,7 +352,8 @@ getStage2Sigma <- function(nHypothesis, EpType, nLooks, Sigma,
 }
 
 ######## Correlation for Combining p-value dunnett test#############
-getPlanCorrelation <- function(nHypothesis, EpType, SS_Incr, Arms.std.dev, prop.ctr, test.type, CommonStdDev) {
+getPlanCorrelation <- function(nHypothesis, EpType, SS_Incr, Arms.std.dev, prop.ctr, 
+  test.type, CommonStdDev, EveIncr = NA) {
   #Treatment standard Deviation is same is control
   #CommonStdDev flag is global variable set from simMAMSMEP(.), adaptGMCP_CER(.) function call
   if(CommonStdDev == T){
@@ -424,14 +386,30 @@ getPlanCorrelation <- function(nHypothesis, EpType, SS_Incr, Arms.std.dev, prop.
           # Fixing the bug identified by Cyrus in Nov 2025 - earlier capLambda formula used sigma_trt.
           # However, since we are computing the boundaries under the null hypothesis, we should use sigma_0 for all arms.
           capLambda <- (1 / sigma_0^2) * (allocRatio[-1] / (1 + allocRatio[-1]))
+
+          InfoMatrix <- sapply(ctrSS, function(x) {
+            x * capLambda
+          }) # row=hypothesis, col=looks
         } else if (EpType[[epIDX]] == "Binary") {
           pi_c <- prop.ctr[[epIDX]]
           capLambda <- (1 / (pi_c * (1 - pi_c))) * (allocRatio[-1] / (1 + allocRatio[-1]))
-        }
 
-        InfoMatrix <- sapply(ctrSS, function(x) {
-          x * capLambda
-        }) # row=hypothesis, col=looks
+          InfoMatrix <- sapply(ctrSS, function(x) {
+            x * capLambda
+          }) # row=hypothesis, col=looks
+        } else if(EpType[[epIDX]] == "Survival") {
+          # In case of survival endpoints, information depends on the number of events.
+          E_lk <- as.numeric(EveIncr[lkIDX, ])
+          ctrE <- E_lk[1]
+          trtE <- E_lk[-1] # Column represents looks
+          allocRatio <- c(1, trtE / ctrE)
+
+          capLambda <- (allocRatio[-1] / (1 + allocRatio[-1]))
+
+          InfoMatrix <- sapply(ctrE, function(x) {
+            x * capLambda
+          }) # row=hypothesis, col=looks
+        }
 
         # Sigma/Corr for ith stage incremental data
         sigmaZ <- matrix(NA, nrow = length(capLambda), ncol = length(capLambda))
@@ -439,25 +417,6 @@ getPlanCorrelation <- function(nHypothesis, EpType, SS_Incr, Arms.std.dev, prop.
         for (l in 1:length(capLambda))
         {
           for (m in l:length(capLambda)) {
-            # Replaced varCovZ() with varCovZ_Null() to fix the bug in boundary computation
-            # found by Cyrus in Nov 2025. Earlier covariance computation depended on nuisance parameters,
-            # which was wrong.
-            # Boundary computation should depend only on allocation ratio and information fraction.
-            # if (EpType[[epIDX]] == "Continuous") {
-            #   sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
-            #     EpType = "Continuous", i1 = l, k1 = 1,
-            #     i2 = m, k2 = 1,
-            #     sigma_0 = sigma_0, sigma_trt = sigma_trt,
-            #     ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
-            #   )
-            # } else if (EpType[[epIDX]] == "Binary") {
-            #   sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ(
-            #     EpType = "Binary", i1 = l, k1 = 1,
-            #     i2 = m, k2 = 1,
-            #     ctrProp = pi_c,
-            #     ctrSS = ctrSS, trtSS = trtSS, InfoMatrix = InfoMatrix
-            #   )
-            # }
             sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ_Null(
               i1 = l, k1 = 1, i2 = m, k2 = 1,
               allocRatio = allocRatio,
@@ -466,7 +425,7 @@ getPlanCorrelation <- function(nHypothesis, EpType, SS_Incr, Arms.std.dev, prop.
           }
         }
         SigmaZ[[paste("EP", epIDX, sep = "")]] <- sigmaZ
-      }
+      } # end of for (epIDX in 1:nEps)
        Sigmalk <- as.matrix(Matrix::bdiag(SigmaZ))
        Sigmalk[Sigmalk == 0] <- NA
        rownames(Sigmalk) <- colnames(Sigmalk) <- paste("Z", 1:nrow(Sigmalk), sep = "")

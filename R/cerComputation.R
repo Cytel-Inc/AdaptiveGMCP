@@ -28,7 +28,8 @@
 #' @keywords internal
 getCER <- function(b2,WH,p1,test.type,HypoMap,CommonStdDev,
                    allocRatio,sigma,Sigma,AllocSampleSize,
-                   EpType,prop.ctr, t1){
+                   EpType,prop.ctr, t1,
+                   Eve_Cum = NA){
 
   SUBSETS <- CONDERR <- c()
   Stage2Sigma <- getStage2PlanSigma(CommonStdDev = CommonStdDev,
@@ -37,7 +38,8 @@ getCER <- function(b2,WH,p1,test.type,HypoMap,CommonStdDev,
                                     Sigma = Sigma,
                                     AllocSampleSize = AllocSampleSize,
                                     EpType = EpType,
-                                    prop.ctr = prop.ctr)
+                                    prop.ctr = prop.ctr,
+                                    Eve_Cum = Eve_Cum)
 
   PlanSSHyp <- getHypoSS(SS = AllocSampleSize,
                          HypoMap = HypoMap)
@@ -180,7 +182,8 @@ getCER <- function(b2,WH,p1,test.type,HypoMap,CommonStdDev,
 
 
 getStage2PlanSigma <- function(CommonStdDev,allocRatio, sigma,
-                               Sigma, AllocSampleSize, EpType, prop.ctr)
+                               Sigma, AllocSampleSize, EpType, prop.ctr,
+                               Eve_Cum = NA)
 {
   #CommonStdDev flag is global variable set from simMAMSMEP(.), adaptGMCP_CER(.) function call
   if(CommonStdDev == T){
@@ -198,6 +201,8 @@ getStage2PlanSigma <- function(CommonStdDev,allocRatio, sigma,
   for (i in 1:nGrps) # For all groups
   {
 
+    allocRatioUsed <- allocRatio
+
     if (EpType[[i]] == "Continuous") {
       sigma_0 <- sigma[[i]][1]
       sigma_trt <- sigma[[i]][-1]
@@ -208,13 +213,32 @@ getStage2PlanSigma <- function(CommonStdDev,allocRatio, sigma,
     } else if (EpType[[i]] == "Binary") {
       pi_c <- prop.ctr[[i]]
       capLambda <- (1 / (pi_c * (1 - pi_c))) * (allocRatio[-1] / (1 + allocRatio[-1]))
+    } else if (EpType[[i]] == "Survival") {
+      if (all(is.na(Eve_Cum))) {
+        stop("Error in getStage2PlanSigma: Eve_Cum must be provided for Survival endpoints")
+      }
+
+      # TODO-ANI: Check whether it is correct to calculate allocation ratio based on events here
+      # or we should just used the planned allocation ratio as in other endpoints.
+      EIncr <- as.numeric(unlist(Eve_Cum[2, ])) - as.numeric(unlist(Eve_Cum[1, ]))
+      ctrE <- EIncr[1]
+      trtE <- EIncr[-1]
+      allocRatioUsed <- c(1, trtE / ctrE)
+
+      capLambda <- (allocRatioUsed[-1] / (1 + allocRatioUsed[-1]))
     }
 
     # AllocSampleSize : the planned sample size
-    SSIncr <- as.numeric(AllocSampleSize[2, ]) - as.numeric(AllocSampleSize[1, ])
-    ctrSS <- SSIncr[1]
-    trtSS <- SSIncr[-1]
-    InfoMatrix <- matrix(ctrSS * capLambda, ncol = 1)
+    if (EpType[[i]] == "Survival") {
+      InfoMatrix <- matrix(ctrE * capLambda, ncol = 1)
+    } else {
+      # TODO-ANI: GHCP replaced the commented line with the next line. Check if that is correct and required.
+      # SSIncr <- as.numeric(AllocSampleSize[2, ]) - as.numeric(AllocSampleSize[1, ])
+      SSIncr <- as.numeric(unlist(AllocSampleSize[2, ])) - as.numeric(unlist(AllocSampleSize[1, ]))
+      ctrSS <- SSIncr[1]
+      trtSS <- SSIncr[-1]
+      InfoMatrix <- matrix(ctrSS * capLambda, ncol = 1)
+    }
 
     ########## Computation of  Z-scale Covariance Matrix #################
     k <- ncol(AllocSampleSize) - 1
@@ -244,7 +268,7 @@ getStage2PlanSigma <- function(CommonStdDev,allocRatio, sigma,
         # }
         sigmaZ[l, m] <- sigmaZ[m, l] <- varCovZ_Null(
           i1 = l, k1 = 1, i2 = m, k2 = 1,
-          allocRatio = allocRatio,
+          allocRatio = allocRatioUsed,
           info_frac = 1
         )
       }

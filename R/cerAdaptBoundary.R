@@ -33,6 +33,21 @@ adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
   # requires the fisher info matrix in all cases.
   # Fixed this bug by calculating Stage2Sigma unconditionally.
   # if (mcpObj$test.type == "Partly-Parametric" || mcpObj$test.type == "Parametric") {
+  
+    isSurvivalTrial <- any(sapply(mcpObj$lEpType, function(x) x == "Survival"))
+    Eve_Cum <- NA
+    Stage2Eve_Cum <- NA
+    if (isSurvivalTrial) {
+      # TODO-ANI: Check whether the following computation of Eve_Cum and Stage2Eve_Cum is correct in this context.
+      Eve_Cum <- mcpObj$planEve$CumulativeSamples
+
+      stage1EveCum <- mcpObj$planEve$IncrementalSamples[1, ]
+      stage2EveIncr <- getInterimSSIncr(lookID = mcpObj$CurrentLook, PlanSSIncr = mcpObj$planEve$IncrementalSamples,
+        ArmsPresent = mcpObj$ArmsPresent, ArmsRetained = mcpObj$ArmsRetained,
+        Arms.alloc.ratio = mcpObj$Arms.alloc.ratio, ImplicitSSR = mcpObj$ImplicitSSR)
+      Stage2Eve_Cum <- rbind(stage1EveCum, stage1EveCum + stage2EveIncr)
+    }
+
     Stage2Sigma <- getStage2Sigma(
       nHypothesis = nHypothesis,
       EpType = mcpObj$lEpType,
@@ -45,7 +60,9 @@ adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
       Stage2AllocSampleSize = mcpObj$Stage2AllocSampleSize,
       Stage2allocRatio = mcpObj$Stage2allocRatio,
       Stage2sigma = mcpObj$sigma,
-      CommonStdDev = mcpObj$CommonStdDev
+      CommonStdDev = mcpObj$CommonStdDev,
+      Eve_Cum = Eve_Cum,
+      Stage2Eve_Cum = Stage2Eve_Cum
     )
   # } else {
   #   Stage2Sigma <- NA

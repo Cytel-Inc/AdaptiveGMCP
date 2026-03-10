@@ -17,6 +17,17 @@ perLookTest <- function(Arms.SS.Incr, SummStat, mcpObj) {
           PlanSSLk <- mcpObj$planSS$IncrementalSamples[mcpObj$CurrentLook, ]
           CurrSSLk <- Arms.SS.Incr
 
+          isSurvivalTrial <- any(sapply(mcpObj$lEpType, function(x) x == "Survival"))
+          # TODO-ANI: Check if the following computation of EveIncr is correct in this context.
+          EveIncr <- if (isSurvivalTrial) {
+                getInterimSSIncr(lookID = mcpObj$CurrentLook, PlanSSIncr = mcpObj$planEve$IncrementalSamples,
+                  ArmsPresent = mcpObj$ArmsPresent, ArmsRetained = mcpObj$ArmsRetained,
+                  Arms.alloc.ratio = mcpObj$Arms.alloc.ratio, ImplicitSSR = mcpObj$ImplicitSSR
+                )
+              } else {
+                NA
+              }
+
           if (!all(PlanSSLk == CurrSSLk, na.rm = T) & mcpObj$test.type == 'Dunnett') {
             # if the sample size is altered the correlation needs to be recomputed
             mcpObj$Correlation <- getPlanCorrelation(
@@ -26,7 +37,8 @@ perLookTest <- function(Arms.SS.Incr, SummStat, mcpObj) {
               test.type = mcpObj$test.type,
               EpType = mcpObj$lEpType,
               prop.ctr = mcpObj$prop.ctr,
-              CommonStdDev = mcpObj$CommonStdDev
+              CommonStdDev = mcpObj$CommonStdDev,
+              EveIncr = EveIncr
             )[[1]]
           } else {
             mcpObj$Correlation <- mcpObj$PlanCorrelation[[mcpObj$CurrentLook]]

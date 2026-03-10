@@ -37,7 +37,6 @@ getPreSimObjs <- function(gmcpSimObj) {
 
   #------------------------------------------------------------------------------
   #################### Identify True Null based on given Response #######################
-  # TrueNull <- checkTrueNull2(HypoMap = HypoMap, Arms.Mean = gmcpSimObj$Arms.Mean)
   # returns a vector of boolean of length nHypothesis indicating whether the hypothesis is true null
   TrueNull <- checkTrueNull3(
     HypoMap = HypoMap,
@@ -73,12 +72,25 @@ getPreSimObjs <- function(gmcpSimObj) {
   planSSIncr <- planSS$IncrementalSamples
   planSSCum <- planSS$CumulativeSamples
 
-  #----------------------------------------------------------------------------------
+  plannedEve <- NA
+  plannedEveIncr <- NA
+  plannedEveCum <- NA
+
+  if(gmcpSimObj$isSurvival) { # at least one endpoint is a survival endpoint
+    # For survival endpoints, we need to calculate the planned number of events
+    plannedEve <- getPlanAllocatedSamples(
+      SS = gmcpSimObj$totalEvents,
+      allocRatio = gmcpSimObj$Arms.alloc.ratio,
+      info_frac = gmcpSimObj$InfoFrac
+    )
+
+    plannedEveIncr <- plannedEve$IncrementalSamples
+    plannedEveCum <- plannedEve$CumulativeSamples
+  }
+
   ######## Computation of Inverse Normal Weights from planned sample size##############
   # Needed for combining p-values method and CER with FWER control as 'CombinationTest'
   InvNormWeights <- getInvNormWeights(planSSIncr = planSSIncr)
-
-  #----------------------------------------------------------------------------------
 
   # Prepare the preSim objects for two methods
   if (gmcpSimObj$Method == "CombPValue") # Inputs for Combining P-values method
@@ -105,7 +117,8 @@ getPreSimObjs <- function(gmcpSimObj) {
         test.type = gmcpSimObj$test.type,
         EpType = gmcpSimObj$lEpType,
         prop.ctr = gmcpSimObj$prop.ctr,
-        CommonStdDev = gmcpSimObj$CommonStdDev
+        CommonStdDev = gmcpSimObj$CommonStdDev,
+        EveIncr = if (gmcpSimObj$isSurvival) plannedEveIncr else NA
       )
 
       #----------------------------------------------------------------------------------
@@ -113,6 +126,7 @@ getPreSimObjs <- function(gmcpSimObj) {
         "IndexSet" = HypoMap$Hypothesis,
         "SimSeed" = SimSeed, "HypoMap" = HypoMap,
         "TrueNull" = TrueNull, "planSS" = planSS,
+        "planEve" = plannedEve,
         "WH" = WH, "InvNormWeights" = InvNormWeights,
         "pValBdry" = pValBdry, "PlanCorrelation" = PlanCorrelation,
         "W_Norm" = InvNormWeights$W_Norm,
@@ -135,7 +149,8 @@ getPreSimObjs <- function(gmcpSimObj) {
           EpType = gmcpSimObj$lEpType,
           prop.ctr = gmcpSimObj$prop.ctr,
           CommonStdDev = gmcpSimObj$CommonStdDev,
-          info_frac = gmcpSimObj$InfoFrac
+          info_frac = gmcpSimObj$InfoFrac,
+          Eve_Cum = if (gmcpSimObj$isSurvival) plannedEveCum else NA
         )
       # } else {
       #   Sigma <- NA
@@ -185,6 +200,7 @@ getPreSimObjs <- function(gmcpSimObj) {
         "IntialHypothesis" = HypoMap$Hypothesis,
         "SimSeed" = SimSeed, "HypoMap" = HypoMap,
         "TrueNull" = TrueNull, "planSS" = planSS,
+        "planEve" = plannedEve,
         "WH" = WH, "Sigma" = Sigma,
         "plan_Bdry" = plan_Bdry, "InvNormWeights" = InvNormWeights
       )
