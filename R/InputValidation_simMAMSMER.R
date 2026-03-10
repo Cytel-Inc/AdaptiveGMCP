@@ -121,9 +121,130 @@ valInpsimMAMSMEP <- function(inps) {
   if(inps$nEps > 1){
     logs[[22]] <- ifelse(matrixcalc::is.positive.semi.definite(inps$EP.Corr),
                          0, "Invalid argument in 'EP.Corr', the matrix is not positive semi-definite")
+  }else {
+     logs[[22]] <- 0
   }
 
+  # ---- Survival endpoint validation ----
+  isSurvival <- any(sapply(inps$lEpType, function(x) x == "Survival"))
 
+  if (isSurvival) {
+    # Survival requires exactly 1 endpoint
+    logs[[23]] <- ifelse(inps$nEps == 1,
+      0, "Invalid argument in 'nEps': must be 1 for Survival endpoint")
+
+    # Only fixed sample and 2-look (1 interim + 1 final) designs supported for Survival
+    logs[[24]] <- ifelse(inps$nLooks <= 2,
+      0, "Invalid argument in 'info_frac': Only 1 or 2 looks are supported for Survival endpoint")
+
+    # Only CombPValue method supported for Survival
+    logs[[25]] <- ifelse(inps$Method == "CombPValue",
+      0, "Invalid argument in 'Method': only 'CombPValue' is supported for Survival endpoint")
+
+    # totalEvents must be specified, positive integer, and <= SampleSize
+    if (!is.na(inps$totalEvents)) {
+      logs[[26]] <- ifelse(
+        is.numeric(inps$totalEvents) && length(inps$totalEvents) == 1 &&
+          inps$totalEvents > 0 && inps$totalEvents == round(inps$totalEvents) &&
+          inps$totalEvents <= inps$Max_SS,
+        0, "Invalid argument in 'totalEvents': must be a positive integer <= SampleSize")
+    } else {
+      logs[[26]] <- "Invalid argument in 'totalEvents': must be specified for Survival endpoint"
+    }
+
+    # armsHazardRates must be specified for Survival endpoint(s).
+    # Expected structure:
+    # - list of length nEps
+    # - for non-Survival endpoints: element must be NA (length 1)
+    # - for Survival endpoints: element must be a positive numeric vector of length nArms
+    surv.idx <- which(inps$lEpType == "Survival")
+    ahr <- inps$armsHazardRates
+
+    armsHazardRatesValid <- TRUE
+    armsHazardRatesMsg <- "Invalid argument in 'armsHazardRates': must be a list of length nEps with NA for non-Survival endpoints and positive numeric vectors of length nArms for Survival endpoints"
+
+    if (is.null(ahr)) {
+      armsHazardRatesValid <- FALSE
+      armsHazardRatesMsg <- "Invalid argument in 'armsHazardRates': must be specified for Survival endpoint(s)"
+    } else if (!is.list(ahr)) {
+      armsHazardRatesValid <- FALSE
+    } else if (length(ahr) != inps$nEps) {
+      armsHazardRatesValid <- FALSE
+      armsHazardRatesMsg <- "Invalid argument in 'armsHazardRates': must be a list of length nEps"
+    } else {
+      for (i in seq_len(inps$nEps)) {
+        elem <- ahr[[i]]
+        if (i %in% surv.idx) {
+          if (!(is.numeric(elem) &&
+            length(elem) == inps$nArms &&
+            !any(is.na(elem)) &&
+            all(elem > 0))) {
+            armsHazardRatesValid <- FALSE
+            armsHazardRatesMsg <- paste0(
+              "Invalid argument in 'armsHazardRates': element ", i,
+              " (Survival endpoint) must be a positive numeric vector of length nArms"
+            )
+            break
+          }
+        } else {
+          is.na.scalar <- length(elem) == 1 && is.atomic(elem) && is.na(elem)
+          if (!is.na.scalar) {
+            armsHazardRatesValid <- FALSE
+            armsHazardRatesMsg <- paste0(
+              "Invalid argument in 'armsHazardRates': element ", i,
+              " (non-Survival endpoint) must be NA"
+            )
+            break
+          }
+        }
+      }
+    }
+
+    logs[[27]] <- ifelse(armsHazardRatesValid, 0, armsHazardRatesMsg)
+
+    # accrualStartTimes and accrualRates must be specified and same length
+    accrualStartTimesValid <- !all(is.na(inps$accrualStartTimes)) &&
+      is.numeric(inps$accrualStartTimes)
+    accrualRatesValid <- !all(is.na(inps$accrualRates)) &&
+      is.numeric(inps$accrualRates)
+
+    if (accrualStartTimesValid && accrualRatesValid) {
+      logs[[28]] <- ifelse(
+        length(inps$accrualStartTimes) == length(inps$accrualRates),
+        0, "Invalid argument in 'accrualStartTimes'/'accrualRates': must be same length")
+
+      logs[[29]] <- ifelse(inps$accrualStartTimes[1] == 0,
+        0, "Invalid argument in 'accrualStartTimes': first element must be 0")
+
+      logs[[30]] <- ifelse(all(inps$accrualRates > 0),
+        0, "Invalid argument in 'accrualRates': all values must be positive")
+
+      # accrualStartTimes must be in strictly increasing order
+      if (length(inps$accrualStartTimes) > 1) {
+        logs[[31]] <- ifelse(
+          all(diff(inps$accrualStartTimes) > 0),
+          0, "Invalid argument in 'accrualStartTimes': must be in strictly increasing order")
+      } else {
+        logs[[31]] <- 0
+      }
+    } else {
+      logs[[28]] <- "Invalid argument in 'accrualStartTimes'/'accrualRates': both must be specified for Survival endpoint"
+      logs[[29]] <- 0
+      logs[[30]] <- 0
+      logs[[31]] <- 0
+    }
+  } else {
+    # Not a survival trial: skip survival-specific checks
+    logs[[23]] <- 0
+    logs[[24]] <- 0
+    logs[[25]] <- 0
+    logs[[26]] <- 0
+    logs[[27]] <- 0
+    logs[[28]] <- 0
+    logs[[29]] <- 0
+    logs[[30]] <- 0
+    logs[[31]] <- 0
+  }
 
   return(logs)
 }

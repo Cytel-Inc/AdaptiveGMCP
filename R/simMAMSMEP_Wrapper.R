@@ -188,7 +188,7 @@ run1TestCase <- function(InputDF) {
   SelectionScale <- InputDF$SelectionScale
   SelectionCriterion <- InputDF$SelectionCriterion
   SelectionParameter <- InputDF$SelectionParameter
-  KeepAssosiatedEps <- InputDF$KeepAssosiatedEps
+  KeepAssociatedHypo <- InputDF$KeepAssociatedHypo
   ImplicitSSR <- InputDF$ImplicitSSR
   ImplicitSSR <- ifelse(is.na(ImplicitSSR),FALSE,ImplicitSSR)
   nSimulation <- InputDF$nSimulation
@@ -211,7 +211,7 @@ run1TestCase <- function(InputDF) {
     EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type, info_frac = info_frac,
     typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
     Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
-    SelectionCriterion = SelectionCriterion, SelectionParameter = SelectionParameter, KeepAssosiatedEps = KeepAssosiatedEps,
+    SelectionCriterion = SelectionCriterion, SelectionParameter = SelectionParameter, KeepAssociatedHypo = KeepAssociatedHypo,
     ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
     Method = Method, plotGraphs = plotGraphs, Parallel = Parallel,CommonStdDev = CommonStdDev,
     nSimulation_Stage2 = nSimulation_Stage2, Verbose = TRUE

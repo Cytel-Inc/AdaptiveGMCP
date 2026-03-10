@@ -1,3 +1,4 @@
+# nolint start: object_name_linter
 # --------------------------------------------------------------------------------------------------
 #
 # ©2025 Cytel, Inc.  All rights reserved.  Licensed pursuant to the GNU General Public License v3.0.
@@ -14,6 +15,20 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
   SummStatDF <- mcpObj$SummStatBlank
   ArmWiseDF <- mcpObj$ArmWiseDataBlank
 
+  # Detect survival trial and generate complete dataset upfront
+  isSurvivalTrial <- any(sapply(mcpObj$lEpType, function(x) x == "Survival"))
+  if (isSurvivalTrial) {
+    survivalData <- GenSurvivalData(
+      nSubjects         = mcpObj$Max_SS,
+      nArms             = mcpObj$nArms,
+      Arms.alloc.ratio  = mcpObj$Arms.alloc.ratio,
+      armsHazardRates   = mcpObj$armsHazardRates,
+      accrualStartTimes = mcpObj$accrualStartTimes,
+      accrualRates      = mcpObj$accrualRates,
+      seed              = mcpObj$SimSeed
+    )
+  }
+
   # look-wise test
   while (mcpObj$ContTrial) {
     # Get the per arm incremental sample size
@@ -21,17 +36,35 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
       lookID = mcpObj$CurrentLook,
       PlanSSIncr = mcpObj$planSS$IncrementalSamples,
       ArmsPresent = mcpObj$ArmsPresent,
-      ArmsRetained = mcpObj$ArmsRetained,
+      ArmsDropped = mcpObj$ArmsDropped,
       Arms.alloc.ratio = mcpObj$Arms.alloc.ratio,
       ImplicitSSR = mcpObj$ImplicitSSR
     )
 
-    if(!is.null(mcpObj$EastSumStat)){
+    if (isSurvivalTrial) {
+      # Survival: determine look timing once, then analyze at current look
+      if (mcpObj$CurrentLook == 1) {
+        lookCalendarTimes <- DetermineLookTiming(
+          survivalData = survivalData,
+          totalEvents = mcpObj$totalEvents,
+          info_frac = mcpObj$InfoFrac
+        )
+      }
+      # ArmData <- mcpObj$ArmWiseDataBlank
+      SummStat <- AnalyzeSurvivalAtLook(
+        simID = simID,
+        lookID = mcpObj$CurrentLook,
+        survivalData = survivalData,
+        lookCalendarTime = lookCalendarTimes[mcpObj$CurrentLook],
+        ArmsPresent = mcpObj$ArmsPresent,
+        HypoMap = mcpObj$HypoMap
+      )
+    } else if (!is.null(mcpObj$EastSumStat)) {
       #Use East Summary Statistics File
       ArmData <- mcpObj$ArmWiseDataBlank
       SummStat <- useEastSumStat(SimID = simID,
                                  mcpObj$EastSumStat)
-    }else{
+    } else {
       #Use R Data Generation
       # Get incremental summary
       currLookDataIncr <- genIncrLookSummary(
@@ -152,7 +185,7 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
         lookID = mcpObj$CurrentLook,
         PlanSSIncr = mcpObj$planSS$IncrementalSamples,
         ArmsPresent = mcpObj$ArmsPresent,
-        ArmsRetained = mcpObj$ArmsRetained,
+        ArmsDropped = mcpObj$ArmsDropped,
         Arms.alloc.ratio = mcpObj$Arms.alloc.ratio,
         ImplicitSSR = mcpObj$ImplicitSSR
       )
@@ -221,7 +254,7 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
         lookID = mcpObj$CurrentLook,
         PlanSSIncr = mcpObj$planSS$IncrementalSamples,
         ArmsPresent = mcpObj$ArmsPresent,
-        ArmsRetained = mcpObj$ArmsRetained,
+        ArmsDropped = mcpObj$ArmsDropped,
         Arms.alloc.ratio = mcpObj$Arms.alloc.ratio,
         ImplicitSSR = mcpObj$ImplicitSSR
       )
@@ -605,7 +638,7 @@ initialize_mcpObj <- function(gmcpSimObj, preSimObjs) {
     "CurrentLook" = 1,
     "HypoPresent" = rep(TRUE, gmcpSimObj$nHypothesis),
     "ArmsPresent" = rep(TRUE, gmcpSimObj$nArms),
-    "ArmsRetained" = rep(FALSE, gmcpSimObj$nArms),
+    "ArmsDropped" = rep(FALSE, gmcpSimObj$nArms),
     "p_raw" = NA,
     "WH_Prev" = preSimObjs$WH,
     "rej_flag_Prev" = rep(FALSE, gmcpSimObj$nHypothesis),
@@ -630,27 +663,27 @@ initialize_mcpObj <- function(gmcpSimObj, preSimObjs) {
 #---------------  -
 # Response Generation for interim looks based on the available arms or re-allocated sample size(Implicit SSR)
 #--------------- -
-getInterimSSIncr <- function(lookID, PlanSSIncr, ArmsPresent, ArmsRetained,
+getInterimSSIncr <- function(lookID, PlanSSIncr, ArmsPresent, ArmsDropped,
                              Arms.alloc.ratio, ImplicitSSR) {
   if (ncol(PlanSSIncr) != length(ArmsPresent) || ncol(PlanSSIncr) != length(Arms.alloc.ratio)) stop("'ncol(PlanSSIncr)', length(Arms.alloc.ratio) and length(ArmsPresent) are not same")
-  if (all(ArmsPresent == F) || all(ArmsRetained == T)) stop("No Arms present to Continue")
+  if (all(ArmsPresent == F) || all(ArmsDropped == T)) stop("No Arms present to Continue")
 
   planSS <- SS.arm <- PlanSSIncr[lookID, ] # If no Implicit SSR is needed SS.arm = Planned Sample Size
 
   if (ImplicitSSR == "Selection" & lookID > 1) # Re-allocate samples from only de-selected arms
   {
-    AditionalSS <- sum(planSS[which(ArmsRetained)])
+    AdditionalSS <- sum(planSS[which(ArmsDropped)])
     ss_frac <- Arms.alloc.ratio[ArmsPresent] / sum(Arms.alloc.ratio[ArmsPresent])
-    SS.arm.add <- round(AditionalSS * ss_frac)
-    SS.arm.add[1] <- AditionalSS - sum(SS.arm.add[-1])
+    SS.arm.add <- round(AdditionalSS * ss_frac)
+    SS.arm.add[1] <- AdditionalSS - sum(SS.arm.add[-1])
     SS.arm[which(ArmsPresent)] <- SS.arm[which(ArmsPresent)] + SS.arm.add
     SS.arm[which(!ArmsPresent)] <- NA
   } else if (ImplicitSSR == "All" & lookID > 1) # Allocate all the samples planed to the available arms
   {
-    AditionalSS <- sum(planSS[which(!ArmsPresent)])
+    AdditionalSS <- sum(planSS[which(!ArmsPresent)])
     ss_frac <- Arms.alloc.ratio[ArmsPresent] / sum(Arms.alloc.ratio[ArmsPresent])
-    SS.arm.add <- round(AditionalSS * ss_frac)
-    SS.arm.add[1] <- AditionalSS - sum(SS.arm.add[-1])
+    SS.arm.add <- round(AdditionalSS * ss_frac)
+    SS.arm.add[1] <- AdditionalSS - sum(SS.arm.add[-1])
     SS.arm[which(ArmsPresent)] <- SS.arm[which(ArmsPresent)] + SS.arm.add
     SS.arm[which(!ArmsPresent)] <- NA
   } else {
@@ -666,3 +699,5 @@ ifElse <- function(test, yes, no) {
     no
   }
 }
+
+# nolint end

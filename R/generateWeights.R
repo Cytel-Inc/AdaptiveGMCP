@@ -20,7 +20,7 @@ genWeights <- function(w, g, HypothesisName) {
   startNodes <- Nodes <- list("Node" = w)
   startEdeges <- Edges <- list("Edges" = g)
 
-  for (genIDX in 1:(n - 1))
+  for (genIDX in seq_len(max(n - 1, 0)))
   {
     nextIntersects <- list()
     nextNodes <- list()

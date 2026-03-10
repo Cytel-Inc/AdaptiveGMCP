@@ -4,55 +4,130 @@
 #
 # --------------------------------------------------------------------------------------------------
 
-#' Function to perform Adaptive GMCP simulation for Multi-Arm Multi-Stage Multi-Endpoint simulations for Combining p-values method and CER method(2-Stage)
-#' @param Method 'CombPValue': for combining p-values method, 'CER': for Conditional Error method.
-#' @param alpha Type-1 error
-#' @param SampleSize integer valued Sample Size(default: 500)
-#' @param TestStatCont Test Statistics for continuous endpoints; options: 't-equal' : for t statistics with equal variance, 't-unequal' : for t statistics with unequal variance, 'z' for z statistics
-#' @param TestStatBin Test Statistics for Binary endpoints; options: 'UnPooled', 'Pooled'
-#' @param UseCC TRUE to use continuity correction while estimating proportions for binary endpoints, FALSE otherwise. Ignored for non-binary endpoints.
-#' @param FWERControl applicable for CER method only, 'CombinationTest': combined two stage incremental test statistics, 'None': Cumulative test statistics.
-#' @param nArms integer value to specify the number of arms (default: 3)
-#' @param nEps integer value to specify the number of endpoints
-#' @param lEpType list with endpoint types
-#' @param Arms.Mean Numeric list to specify the arm-wise mean for each endpoint; Note: The first input is for control arm and the rest are for the treatments.
-#' @param Arms.std.dev Numeric list to specify the arm-wise standard deviation for each endpoint; Note: The first input is for control arm and the rest are for the treatments.
-#' @param CommonStdDev TRUE = the treatment standard deviations assumed to be same as the control for boundary computations for continuous endpoints, FALSE = the treatment standard deviations assumed to be same as given in Arms.std.dev.
-#' @param Arms.Prop Numeric list to specify the arm-wise proportions for each endpoint; Note: The first input is for control arm and the rest are for the treatments.
-#' @param Arms.alloc.ratio Numeric Vector to specify the arm-wise allocation ratio; Note: The first input is for control arm and the rest are for the treatments.
-#' @param EP.Corr correlation matrix for the endpoints(Normal)
-#' @param WI Vector of Initial Weights for Global Null; Note: Hypotheses will follow the order of Endpoints and Treatments as given in 'Arms.Mean' and 'Arms.std.dev' inputs e.g.: If 'Arms.Mean' are given in the format list('EP1'=c(ctr_mean, trt1_mean, trt2_mean), 'EP2'=c(ctr_mean, trt1_mean, trt2_mean)) then the four hypotheses will be H1 = (Trt1 vs Ctr for EP1), H2 = (Trt2 vs Ctr for EP1), H3 = (Trt1 vs Ctr for EP2), H4 = (Trt2 vs Ctr for EP2), The initial weights and the transition matrix will follow the order of hypothesis accordingly as (H1,H2,H3,H4)
-#' @param G  Numeric Matrix to specify the Transition Matrix.
-#' @param test.type Character to specify the type of test want to perform; Available tests for Combining P-values Method :- 'Bonf': Bonferroni, 'Sidak': Sidak, 'Simes': Simes, 'Dunnett': Dunnett and  'Partly-Parametric': Mixed type Tests. Available tests for CER Method :- "Parametric": Weighted Dunnett , "Non-Parametric": Weighted Bonferroni and  'Partly-Parametric': Mixed type Tests.
-#' @param info_frac Numeric Vector to specify look position as fraction of sample size.(for one look can be specified as 1)
-#' @param typeOfDesign The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), user specified alpha("asUser") default is "asOF".
-#' @param deltaWT Parameter for alpha spending function for typeOfDesign = "WT"
-#' @param deltaPT1 Parameter for alpha spending function for typeOfDesign = "PT"
-#' @param gammaA 	Parameter for alpha spending function for typeOfDesign = "asHSD" or "asKD"
-#' @param userAlphaSpending Parameter for alpha spending function for typeOfDesign = "asUser"; applicable for CombPValue methods only
-#' @param MultipleWinners Logical; TRUE: Stop the trial only no more efficacy is possible, FALSE: Stop if at-least one efficacy is observed
-#' @param Selection Logical: TRUE if selection required at interim(default = FALSE)
-#' @param SelectionLook Numeric Vector to specify the selection looks
-#' @param SelectEndPoint Indicator to specify which endpoint to select from, e.g. '1': Endpoint 1, '2':Endpoint 2, 'overall': overall
-#' @param SelectionScale Character: Scale parameter on which selection will be based on, options 'delta': delta, 'teststat': Test Statistics, 'stderror' : Standard Error of the test stat,  'pvalue': p-value(un-adj) based selection
-#' @param SelectionCriterion Character: 'best': best r, 'threshold': threshold for selection, 'epsilon': for epsilon neighborhood, 'random': for random selection
-#' @param SelectionParameter r for best, threshold value for threshold or epsilon distance
-#' @param KeepAssosiatedEps Logical, True: keep all the associated hypothesis for the selected arms
-#' @param ImplicitSSR Character; 'Selection': re-allocate samples only from de-selected arms to available arms, 'All': Allocate all the planned samples(for the look) to the available arms, 'None': No Re-allocation
-#' @param nSimulation Numeric: Number of simulations(default=100)
-#' @param nSimulation_Stage2 Numeric: Number of stage 2 simulations per stage 1 simulation(default = 1). This input is only applicable for Method = 'CER'.
-#' @param Seed 'Random' for randomly generating seed else any integer value(default = 'Random')
-#' @param SummaryStat Logical; TRUE if simulation level data is required(default = FALSE)
-#' @param plotGraphs Logical; TRUE: plot the initial graph
-#' @param EastSumStat East Summary Statistics file, Only applicable for single look designs with CombPValue method
-#' @param Parallel Logical; TRUE: Parallel computations
-#' @param Verbose Logical; TRUE: print additional console messages during simulations providing progress and detailed information (default = FALSE)
+# TODO:
+# 1. Deprecate the parameter FWERControl as its name and values are confusing.
+#    Instead, add a new parameter for determining whether the stage 2 statistic should be
+#    computed using cumulative stage 2 data or as a weighted combination of the incremental
+#    stage 1 and stage 2 statistics in case of CER method.
+# 2. Verify if ImplicitSSR is correctly coded and understand how its different values are expected to impact the results.
+# 3. Disable parameter EastSumStat as it is useful only for debugging. Users will have no use for it.
+
+#' Function to simulate multi-arm, multi-stage, multi-endpoint trials using either 
+#' p-value combination method or CER method
+#' @param Method Character scalar specifying the analysis method to be used for ensuring strong FWER control.
+#'   One of "CombPValue" (p-value combination method) or "CER" (conditional error rate method).
+#' @param alpha Numeric scalar in (0, 1) giving the one-sided family-wise type I error rate.
+#' @param SampleSize Positive integer scalar giving the maximum planned total sample size.
+#' @param totalEvents Positive integer scalar giving the total number of events to observe for the
+#'   survival endpoint of interest. Required when `lEpType` includes "Survival" and must satisfy
+#'   `totalEvents <= SampleSize`. Ignored for non-survival endpoints.
+#' @param TestStatCont Character scalar specifying the test statistic for continuous endpoints.
+#'   One of "t-equal", "t-unequal", or "z". Required when `lEpType` includes "Continuous".
+#'   Ignored for non-continuous endpoints.
+#' @param TestStatBin Character scalar specifying the test statistic for binary endpoints.
+#'   One of "UnPooled" or "Pooled". Required when `lEpType` includes "Binary". Ignored for non-binary endpoints.
+#' @param UseCC Logical scalar. If `TRUE`, applies a continuity correction when estimating binary
+#'   response proportions; ignored for non-binary endpoints.
+#' @param FWERControl Character scalar controlling the stage-1/2 combination used under
+#'   `Method = "CER"`. One of "CombinationTest" (combine incremental stage statistics) or
+#'   "None" (use cumulative statistics). Ignored when `Method != "CER"`.
+#' @param nArms Integer scalar giving the number of trial arms (including control). Must be >= 2.
+#' @param nEps Integer scalar giving the number of endpoints. Must be >= 1.
+#'   For now, `nEps` must be 1 in case of Survival designs.
+#' @param lEpType Named list of length `nEps` specifying endpoint types. Each element must be one
+#'   of "Continuous", "Binary", or "Survival". If any element is "Survival", then the design is
+#'   restricted to `Method = "CombPValue"` with <= 2 looks (`length(info_frac) <= 2`).
+#' @param Arms.Mean Named list of length `nEps`. For continuous endpoints, each element is a
+#'   numeric vector of length `nArms` giving arm-wise means (control first, then treatments).
+#'   Use `NA` for endpoints that are not continuous.
+#' @param Arms.std.dev Named list of length `nEps`. For continuous endpoints, each element is a
+#'   numeric vector of length `nArms` giving arm-wise standard deviations (control first, then treatments).
+#'   Use `NA` for endpoints that are not continuous.
+#' @param CommonStdDev Logical scalar for continuous endpoints. If `TRUE`, treatment standard
+#'   deviations are assumed equal to the control standard deviation for boundary computations.
+#'   Ignored for non-continuous endpoints.
+#' @param Arms.Prop Named list of length `nEps`. For binary endpoints, each element is a numeric
+#'   vector of length `nArms` giving arm-wise response proportions in [0, 1] (control first, then treatments).
+#'   Use `NA` for endpoints that are not binary.
+#' @param Arms.Haz.Rates Numeric vector of length `nArms` giving arm-wise hazard rates (> 0) for
+#'   a survival endpoint (control first, then treatments). Required when `lEpType` includes "Survival".
+#'   Use `NA` for non-survival endpoints.
+#' @param Accr.Start.Times Numeric vector of accrual piece start times for piecewise-constant
+#'   accrual. Must start at 0 and be strictly increasing. Required when `lEpType` includes
+#'   "Survival", ignored otherwise.
+#' @param Accr.Rates Numeric vector of accrual rates (> 0; subjects per unit time) for each
+#'   accrual piece. Must be the same length as `Accr.Start.Times`. Required when `lEpType`
+#'   includes "Survival", ignored otherwise.
+#' @param Arms.alloc.ratio Numeric vector of length `nArms` giving the allocation ratio by arm
+#'   (control first, then treatments). Values are internally rescaled so the control ratio equals 1.
+#' @param EP.Corr Numeric `nEps x nEps` correlation matrix for endpoints, used to generate
+#'   correlated endpoint data. Required when `nEps > 1`, and should be positive semi-definite in that case.
+#' @param WI Numeric vector of initial node weights for the graphical procedure. Must have length
+#'   `nEps * (nArms - 1)` with `sum(WI) <= 1`.
+#'   Hypotheses are ordered by endpoint then treatment, e.g. for two treatments and two endpoints:
+#'   H1 = (Trt1 vs Ctrl, EP1), H2 = (Trt2 vs Ctrl, EP1), H3 = (Trt1 vs Ctrl, EP2),
+#'   H4 = (Trt2 vs Ctrl, EP2).
+#' @param G Numeric transition matrix for the graph with dimension
+#'   `nEps * (nArms - 1) x nEps * (nArms - 1)`. Diagonal elements must be 0 and each row sum must
+#'   be <= 1.
+#' @param test.type Character scalar specifying the testing procedure.
+#'   For `Method = "CombPValue"`: one of "Bonf", "Sidak", "Simes", "Dunnett", or "Partly-Parametric".
+#'   For `Method = "CER"`: one of "Parametric", "Non-Parametric", or "Partly-Parametric".
+#' @param info_frac Numeric vector of information fractions (look positions) with values in (0, 1]
+#'   with the final element equal to 1.
+#'   For non-survival designs, this is interpreted as fractions of total sample size; 
+#'   for survival it is fractions of total events.
+#'   For now, survival designs do not support more than two looks.
+#' @param typeOfDesign Character scalar giving the group sequential design type
+#'   Must be one of: "OF", "P", "WT", "PT", "HP", "WToptimum", "asOF", "asP", "asKD", "asHSD", 
+#'   "noEarlyEfficacy", or "asUser".
+#' @param deltaWT Numeric scalar parameter for the Wang & Tsiatis delta class when
+#'   `typeOfDesign = "WT"`.
+#' @param deltaPT1 Numeric scalar parameter for the Pampallona & Tsiatis class when
+#'   `typeOfDesign = "PT"`.
+#' @param gammaA Numeric scalar parameter for the alpha-spending functions when
+#'   `typeOfDesign` is "asHSD" or "asKD".
+#' @param userAlphaSpending Numeric vector of cumulative alpha spent at each look. Only used when
+#'   `typeOfDesign = "asUser"` (and `Method = "CombPValue"`); otherwise ignored.
+#' @param MultipleWinners Logical scalar. If `TRUE`, the trial continues until efficacy
+#'   is possible for no further endpoint; if `FALSE`, it stops once efficacy is observed 
+#'   for at least one endpoint.
+#' @param Selection Logical scalar indicating whether arm selection is performed at interim looks.
+#'   Only relevant when `length(info_frac) > 1`.
+#' @param SelectionLook Integer vector of interim look indices at which selection is performed.
+#'   For a two-look design, this must be 1 when `Selection` is `TRUE`.
+#' @param SelectEndPoint Endpoint considered for selection. Either an integer in `1:nEps` (select based
+#'   on that endpoint) or the character scalar "overall" (consider all endpoints).
+#' @param SelectionScale Character scalar indicating the metric used for selection. One of
+#'   "delta", "teststat", "stderror", or "pvalue".
+#' @param SelectionCriterion Character scalar indicating the selection rule. One of "best",
+#'   "threshold", "epsilon", or "random". See SelectionParameter for more info.
+#' @param SelectionParameter Numeric scalar tuning parameter for the selection rule:
+#'   number selected for "best", threshold value for "threshold", or epsilon neighborhood size
+#'   for "epsilon".
+#' @param KeepAssociatedHypo Logical scalar. If `TRUE`, keeps all hypotheses associated with the
+#'   selected treatment arms.
+#' @param ImplicitSSR Character scalar specifying implicit sample size reallocation after interim.
+#'   One of "Selection" (reallocate only from de-selected arms), "All" (allocate all planned
+#'   samples to remaining arms), or "None".
+#' @param nSimulation Positive integer scalar giving the number of simulation runs to perform.
+#' @param nSimulation_Stage2 Positive integer scalar giving the number of stage-2 simulations per
+#'   stage-1 simulation. Only applicable for `Method = "CER"`; forced to 1 otherwise.
+#' @param Seed Either the character scalar "Random" (generate a run-specific seed) or an integer
+#'   scalar seed used for reproducibility.
+#' @param SummaryStat Logical scalar. If `TRUE`, returns simulation-level summary data.
+#' @param plotGraphs Logical scalar. If `TRUE`, plots the graph specified by WI and G.
+#' @param EastSumStat East summary statistics input used for single-look designs with
+#'   `Method = "CombPValue"`. Use `NULL` (default) to disable.
+#' @param Parallel Logical scalar indicating whether to run simulations in parallel.
+#' @param Verbose Logical scalar. If `TRUE`, prints additional progress and diagnostic messages.
 #' @example ./internalData/MAMSMEP_Simulation_Example.R
 #' @export
 simMAMSMEP <- function(
     Method = "CombPValue",
     alpha = 0.025,
     SampleSize = 500,
+    totalEvents = NA,
     TestStatCont = "t-equal",
     TestStatBin = "UnPooled",
     UseCC = FALSE,
@@ -76,6 +151,9 @@ simMAMSMEP <- function(
       "EP1" = NA,
       "EP2" = c(0.2, 0.35, 0.45)
     ),
+    Arms.Haz.Rates = NA,
+    Accr.Start.Times = c(0),
+    Accr.Rates = NA,
     Arms.alloc.ratio = c(1, 1, 1),
     EP.Corr = matrix(
       c(
@@ -110,7 +188,7 @@ simMAMSMEP <- function(
     SelectionScale = "pvalue",
     SelectionCriterion = "best",
     SelectionParameter = 1,
-    KeepAssosiatedEps = TRUE,
+    KeepAssociatedHypo = TRUE,
     ImplicitSSR = "All",
     nSimulation = 100,
     nSimulation_Stage2 = 1, # this should always take the value 1 when CER is NOT selected
@@ -172,6 +250,9 @@ simMAMSMEP <- function(
     )
   }
 
+  # Is at least one endpoint a survival endpoint?
+  isSurvival <- any(sapply(lEpType, function(x) x == "Survival"))
+
   # Object to run Simulations
   gmcpSimObj <<- list(
     # Methodology
@@ -211,7 +292,7 @@ simMAMSMEP <- function(
     "SelectEndPoint" = SelectEndPoint, "Selection" = Selection,
     "SelectionLook" = SelectionLook, "SelectionScale" = SelectionScale,
     "SelectionCriterion" = SelectionCriterion, "SelectionParameter" = SelectionParameter,
-    "KeepAssosiatedEps" = KeepAssosiatedEps,
+    "KeepAssociatedHypo" = KeepAssociatedHypo,
 
     # Simulation Parameters
     "nSimulation" = nSimulation, "Seed" = Seed,
@@ -237,7 +318,14 @@ simMAMSMEP <- function(
     "mvtnorm_algo" = mvtnorm_algo,
 
     # Parameter added to enable debugging
-    "Debug" = FALSE
+    "Debug" = FALSE,
+
+    # Survival endpoint parameters
+    "isSurvival" = isSurvival,
+    "totalEvents" = totalEvents,
+    "armsHazardRates" = Arms.Haz.Rates,
+    "accrualStartTimes" = Accr.Start.Times,
+    "accrualRates" = Accr.Rates
   )
 
   logs <- valInpsimMAMSMEP(inps = gmcpSimObj)
