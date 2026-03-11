@@ -90,6 +90,8 @@
 #'   for "epsilon".
 #' @param KeepAssociatedHypo Logical scalar. If `TRUE`, keeps all hypotheses associated with the
 #'   selected treatment arms.
+#' @param SelectionParmeter Deprecated. Use \code{SelectionParameter} instead.
+#' @param KeepAssosiatedEps Deprecated. Use \code{KeepAssociatedHypo} instead.
 #' @param ImplicitSSR Character scalar specifying implicit sample size reallocation after interim.
 #'   One of "Selection" (reallocate only from de-selected arms), "All" (allocate all planned
 #'   samples to remaining arms), or "None".
@@ -168,6 +170,8 @@ simMAMSMEP <- function(
     SelectionCriterion = "best",
     SelectionParameter = 1,
     KeepAssociatedHypo = TRUE,
+    SelectionParmeter = NULL,
+    KeepAssosiatedEps = NULL,
     ImplicitSSR = "All",
     nSimulation = 100,
     nSimulation_Stage2 = 1, # this should always take the value 1 when CER is NOT selected
@@ -177,6 +181,16 @@ simMAMSMEP <- function(
     EastSumStat = NULL,
     Parallel = TRUE,
     Verbose = FALSE) {
+
+  # Handle deprecated parameter aliases (renamed to fix typos)
+  if (!is.null(SelectionParmeter)) {
+    warning("'SelectionParmeter' is deprecated; use 'SelectionParameter' instead.")
+    SelectionParameter <- SelectionParmeter
+  }
+  if (!is.null(KeepAssosiatedEps)) {
+    warning("'KeepAssosiatedEps' is deprecated; use 'KeepAssociatedHypo' instead.")
+    KeepAssociatedHypo <- KeepAssosiatedEps
+  }
 
   # Ani: Applying correction suggested by Pralay when allocation ratio for
   # control is not equal to 1.

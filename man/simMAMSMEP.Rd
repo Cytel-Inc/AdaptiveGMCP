@@ -41,6 +41,8 @@ simMAMSMEP(
   SelectionCriterion = "best",
   SelectionParameter = 1,
   KeepAssociatedHypo = TRUE,
+  SelectionParmeter = NULL,
+  KeepAssosiatedEps = NULL,
   ImplicitSSR = "All",
   nSimulation = 100,
   nSimulation_Stage2 = 1,
@@ -161,6 +163,10 @@ for "epsilon".}
 
 \item{KeepAssociatedHypo}{Logical scalar. If `TRUE`, keeps all hypotheses associated with the
 selected treatment arms.}
+
+\item{SelectionParmeter}{Deprecated. Use \code{SelectionParameter} instead.}
+
+\item{KeepAssosiatedEps}{Deprecated. Use \code{KeepAssociatedHypo} instead.}
 
 \item{ImplicitSSR}{Character scalar specifying implicit sample size reallocation after interim.
 One of "Selection" (reallocate only from de-selected arms), "All" (allocate all planned
