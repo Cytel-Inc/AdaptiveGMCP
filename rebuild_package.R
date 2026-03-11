@@ -16,7 +16,7 @@ library(devtools)
 # Remove old version and reinstall package
 reinstall <- function() {
   message("==== Rebuilding and Reinstalling AdaptGMCP ====\n")
-  
+
   # Check if package is installed
   if ("AdaptGMCP" %in% rownames(installed.packages())) {
     message("Removing old version...")
@@ -25,44 +25,44 @@ reinstall <- function() {
   } else {
     message("No previous version found\n")
   }
-  
+
   # Install package
   message("Installing package...")
-  install(upgrade = "never")
+  devtools::install(upgrade = "never")
   message("✓ Package installed successfully!\n")
-  
+
   message("To load the package, run: load_pkg()")
 }
 
 # Load package for development (without installation)
 load_pkg <- function() {
   message("==== Loading AdaptGMCP for Development ====\n")
-  load_all()
+  devtools::load_all()
   message("✓ Package loaded!")
 }
 
 # Run R CMD check
 check_pkg <- function() {
   message("==== Running R CMD Check ====\n")
-  check()
+  devtools::check()
 }
 
 # Build package tarball
 build_pkg <- function() {
   message("==== Building Package ====\n")
-  build()
+  devtools::build()
 }
 
 # Run tests
 test_pkg <- function() {
   message("==== Running Tests ====\n")
-  test()
+  devtools::test()
 }
 
 # Generate documentation
 document_pkg <- function() {
   message("==== Generating Documentation ====\n")
-  document()
+  devtools::document()
   message("✓ Documentation updated!")
 }
 
@@ -79,7 +79,7 @@ lint_pkg <- function() {
 # Install package dependencies
 install_deps <- function() {
   message("==== Installing Dependencies ====\n")
-  install_deps(dependencies = TRUE)
+  devtools::install_deps(dependencies = TRUE)
   message("✓ Dependencies installed!")
 }
 
@@ -134,25 +134,25 @@ renv_clean <- function() {
 # Check for package inconsistencies and offer fixes
 renv_hygiene <- function() {
   message("==== renv Hygiene Check ====\n")
-  
+
   status <- tryCatch({
     capture.output(renv::status())
   }, error = function(e) {
     message("Error checking renv status: ", e$message)
     return(NULL)
   })
-  
+
   if (is.null(status)) return(invisible(NULL))
-  
+
   # Check if everything is in sync
   if (any(grepl("up to date", status, ignore.case = TRUE))) {
     message("✓ All packages are in sync!\n")
     return(invisible(NULL))
   }
-  
+
   # Show status
   cat(paste(status, collapse = "\n"), "\n\n")
-  
+
   # Offer solutions
   message("Available actions:")
   message("  1. renv_restore()  - Restore packages to match renv.lock")
@@ -197,8 +197,8 @@ quick_reinstall <- function() {
   if ("AdaptGMCP" %in% rownames(installed.packages())) {
     remove.packages("AdaptGMCP", lib = .libPaths()[1])
   }
-  install(upgrade = "never")
-  load_all()
+  devtools::install(upgrade = "never")
+  devtools::load_all()
   message("✓ Done! Package reinstalled and loaded.")
 }
 

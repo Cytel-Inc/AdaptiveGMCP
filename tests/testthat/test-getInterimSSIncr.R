@@ -13,13 +13,13 @@ test_that("Test Per Look Simulation Sample Size(Incr.)", {
     51, 52, 53, 54
   ), nrow = 2, byrow = T)
   ArmsPresent <- c(T, T, T, F)
-  ArmsRetained <- c(F, F, F, F)
+  ArmsDropped <- c(F, F, F, F)
   Arms.alloc.ratio <- c(1, 1, 1, 1)
   ImplicitSSR <- "None"
 
   Stage2SSIncr <- getInterimSSIncr(
     lookID = lookID, PlanSSIncr = PlanSSIncr,
-    ArmsPresent = ArmsPresent, ArmsRetained = ArmsRetained,
+    ArmsPresent = ArmsPresent, ArmsDropped = ArmsDropped,
     Arms.alloc.ratio = Arms.alloc.ratio, ImplicitSSR = ImplicitSSR
   )
 
@@ -35,13 +35,13 @@ test_that("Test Per Look Simulation Sample Size(Incr.)", {
     51, 52, 53, 54
   ), nrow = 2, byrow = T)
   ArmsPresent <- c(T, T, F, F)
-  ArmsRetained <- c(F, F, F, T)
+  ArmsDropped <- c(F, F, F, T)
   Arms.alloc.ratio <- c(1, 1, 1, 1)
   ImplicitSSR <- "Selection"
 
   Stage2SSIncr <- getInterimSSIncr(
     lookID = lookID, PlanSSIncr = PlanSSIncr,
-    ArmsPresent = ArmsPresent, ArmsRetained = ArmsRetained,
+    ArmsPresent = ArmsPresent, ArmsDropped = ArmsDropped,
     Arms.alloc.ratio = Arms.alloc.ratio, ImplicitSSR = ImplicitSSR
   )
 
@@ -57,13 +57,13 @@ test_that("Test Per Look Simulation Sample Size(Incr.)", {
     51, 52, 56, 54
   ), nrow = 2, byrow = T)
   ArmsPresent <- c(T, T, F, F)
-  ArmsRetained <- c(F, F, F, T)
+  ArmsDropped <- c(F, F, F, T)
   Arms.alloc.ratio <- c(1, 1, 1, 1)
   ImplicitSSR <- "All"
 
   Stage2SSIncr <- getInterimSSIncr(
     lookID = lookID, PlanSSIncr = PlanSSIncr,
-    ArmsPresent = ArmsPresent, ArmsRetained = ArmsRetained,
+    ArmsPresent = ArmsPresent, ArmsDropped = ArmsDropped,
     Arms.alloc.ratio = Arms.alloc.ratio, ImplicitSSR = ImplicitSSR
   )
 
@@ -79,13 +79,13 @@ test_that("Test Per Look Simulation Sample Size(Incr.)", {
     51, 52, 56, 54
   ), nrow = 2, byrow = T)
   ArmsPresent <- c(T, T, F)
-  ArmsRetained <- c(F, F, F)
+  ArmsDropped <- c(F, F, F)
   Arms.alloc.ratio <- c(1, 1, 1)
   ImplicitSSR <- "All"
 
   expect_error(getInterimSSIncr(
     lookID = lookID, PlanSSIncr = PlanSSIncr,
-    ArmsPresent = ArmsPresent, ArmsRetained = ArmsRetained,
+    ArmsPresent = ArmsPresent, ArmsDropped = ArmsDropped,
     Arms.alloc.ratio = Arms.alloc.ratio, ImplicitSSR = ImplicitSSR
   ))
 
@@ -95,13 +95,13 @@ test_that("Test Per Look Simulation Sample Size(Incr.)", {
     51, 52, 56
   ), nrow = 2, byrow = T)
   ArmsPresent <- c(F, F, F)
-  ArmsRetained <- c(T, T, T)
+  ArmsDropped <- c(T, T, T)
   Arms.alloc.ratio <- c(1, 1, 1)
   ImplicitSSR <- "All"
 
   expect_error(getInterimSSIncr(
     lookID = lookID, PlanSSIncr = PlanSSIncr,
-    ArmsPresent = ArmsPresent, ArmsRetained = ArmsRetained,
+    ArmsPresent = ArmsPresent, ArmsDropped = ArmsDropped,
     Arms.alloc.ratio = Arms.alloc.ratio, ImplicitSSR = ImplicitSSR
   ))
 })

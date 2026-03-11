@@ -427,7 +427,7 @@ server <- function(input, output, session) {
       SelectionScale = input$selectionScale
       SelectionCriterion = input$selectionCriterion
       SelectionParameter = as.numeric(input$selectionParameter)
-      KeepAssosiatedEps = input$keepAssociatedEps
+      KeepAssociatedHypo = input$keepAssociatedEps
       ImplicitSSR = input$implicitSSR
       nSimulation = as.numeric(input$nSimulation)
       Seed = as.numeric(input$seed)
@@ -463,7 +463,7 @@ server <- function(input, output, session) {
         str(SelectionScale)
         str(SelectionCriterion)
         str(SelectionParameter)
-        str(KeepAssosiatedEps)
+        str(KeepAssociatedHypo)
         str(ImplicitSSR)
         str(nSimulation)
         str(Seed)
@@ -504,7 +504,7 @@ server <- function(input, output, session) {
                                   SelectionScale = ifelse(is.null(SelectionScale),"", SelectionScale),
                                   SelectionCriterion = ifelse(is.null(SelectionCriterion),"", SelectionCriterion),
                                   SelectionParameter = ifelse(is.null(SelectionParameter),"", SelectionParameter),
-                                  KeepAssosiatedEps = ifelse(is.null(KeepAssosiatedEps),"", KeepAssosiatedEps),
+                                  KeepAssociatedHypo = ifelse(is.null(KeepAssociatedHypo),"", KeepAssociatedHypo),
                                   ImplicitSSR = ImplicitSSR,
                                   nSimulation = nSimulation,
                                   Seed = Seed,
@@ -537,7 +537,7 @@ server <- function(input, output, session) {
                    gammaA = gammaA,userAlphaSpending = userAlphaSpending,  MultipleWinners = MultipleWinners,
                    Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint,
                    SelectionScale = SelectionScale, SelectionCriterion = SelectionCriterion,
-                   SelectionParameter = SelectionParameter, KeepAssosiatedEps = KeepAssosiatedEps,
+                   SelectionParameter = SelectionParameter, KeepAssociatedHypo = KeepAssociatedHypo,
                    ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, Seed = Seed, SummaryStat = SummaryStat,
                    Method = Method, plotGraphs = plotGraphs, Parallel = Parallel)
 

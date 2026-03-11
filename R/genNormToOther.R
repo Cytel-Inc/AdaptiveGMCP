@@ -4,42 +4,6 @@
 #
 # --------------------------------------------------------------------------------------------------
 
-# This function generate single arm(having multiple endpoint) responses given the normal scale correlation matrix
-# nSubject number of response to generate
-# lEpType list with endpoint types
-# mNormCorr correlation matrix in normal scale(when marginals are not normal)
-# mNormSigma covariance matrix in normal scale(when marginals are all normal)
-# vNormMean vector of normal means(when marginals are all normal)
-# vProp vector of proportions(when marginals are all binary)
-# nSeed seed
-# return: array of responses(columns = endpoints, Rows = subject)
-genNormToOther <- function(nSubject = 100,
-                           lEpType = list("Continuous", "Continuous"),
-                           mNormCorr = matrix(c(1, 0.5, 0.5, 1), nrow = 2),
-                           mNormSigma = matrix(c(1, 0.5, 0.5, 1), nrow = 2),
-                           vNormMean = c(0.1, 0.4),
-                           vProp = c(0.1, 0.2),
-                           nSeed = 123) {
-  if (all(lEpType == "Continuous")) { # all endpoints continuous
-    mResponse <- getMVNorm(
-      nSubject = nSubject,
-      vNormMean = vNormMean,
-      mNormSigma = mNormSigma,
-      nSeed = nSeed
-    )
-  } else if (all(lEpType == "Binary")) { # all endpoints binary
-    mResponse <- getMVBinom(
-      nSubject = nSubject,
-      vProp = vProp,
-      mNormCorr = mNormCorr,
-      nSeed = nSeed
-    )
-  }
-  # do Something
-  mResponse
-}
-
-
 #------------------------------------------------- -
 # This function generate single arm(having multiple endpoint) responses given the normal scale correlation matrix
 # nArmID Arm Index

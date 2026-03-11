@@ -290,7 +290,7 @@ simMAMSMEP(Method = meth, alpha = alp, SampleSize = SS, TestStatCont = stat,
            info_frac = t, typeOfDesign = des, MultipleWinners = mult_win,
            Selection = sel, SelectionLook = sel_lk, SelectEndPoint = sel_ep,
            SelectionScale = sel_scale, SelectionCriterion = sel_crit,
-           SelectionParameter = sel_param, KeepAssosiatedEps = keep,
+           SelectionParameter = sel_param, KeepAssociatedHypo = keep,
            ImplicitSSR = impl_SSR, nSimulation = nSim, SummaryStat = summ_stat,
            plotGraphs = graph, EastSumStat = East_stat, Parallel = parallel)
 
@@ -303,7 +303,7 @@ simMAMSMEP(Method = meth, alpha = alp, SampleSize = SS, TestStatCont = stat,
 #            info_frac = t, typeOfDesign = des, MultipleWinners = mult_win,
 #            Selection = sel, SelectionLook = sel_lk, SelectEndPoint = sel_ep,
 #            SelectionScale = sel_scale, SelectionCriterion = sel_crit,
-#            SelectionParameter = sel_param, KeepAssosiatedEps = keep,
+#            SelectionParameter = sel_param, KeepAssociatedHypo = keep,
 #            ImplicitSSR = impl_SSR, nSimulation = nSim, SummaryStat = summ_stat,
 #            plotGraphs = graph, EastSumStat = East_stat, Parallel = parallel)
 
