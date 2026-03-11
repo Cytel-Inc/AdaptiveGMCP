@@ -47,7 +47,7 @@ test_that("p value combination simulation produces expected results", {
     SelectionScale = "pvalue",
     SelectionCriterion = "best",
     SelectionParameter = 1,
-    KeepAssosiatedEps = TRUE,
+    KeepAssociatedHypo = TRUE,
     ImplicitSSR = "All",
     nSimulation = 100,
     nSimulation_Stage2 = 1,

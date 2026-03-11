@@ -2,7 +2,8 @@
 % Please edit documentation in R/MAMSMEP_SIMULATION_MAIN.R
 \name{simMAMSMEP}
 \alias{simMAMSMEP}
-\title{Function to perform Adaptive GMCP simulation for Multi-Arm Multi-Stage Multi-Endpoint simulations for Combining p-values method and CER method(2-Stage)}
+\title{Function to simulate multi-arm, multi-stage, multi-endpoint trials using either 
+p-value combination method or CER method}
 \usage{
 simMAMSMEP(
   Method = "CombPValue",
@@ -38,8 +39,10 @@ simMAMSMEP(
   SelectEndPoint = 1,
   SelectionScale = "pvalue",
   SelectionCriterion = "best",
-  SelectionParmeter = 1,
-  KeepAssosiatedEps = TRUE,
+  SelectionParameter = 1,
+  KeepAssociatedHypo = TRUE,
+  SelectionParmeter = NULL,
+  KeepAssosiatedEps = NULL,
   ImplicitSSR = "All",
   nSimulation = 100,
   nSimulation_Stage2 = 1,
@@ -47,94 +50,150 @@ simMAMSMEP(
   SummaryStat = FALSE,
   plotGraphs = TRUE,
   EastSumStat = NULL,
-  Parallel = TRUE
+  Parallel = TRUE,
+  Verbose = FALSE
 )
 }
 \arguments{
-\item{Method}{'CombPValue': for combining p-values method, 'CER': for Conditional Error method.}
+\item{Method}{Character scalar specifying the analysis method to be used for ensuring strong FWER control.
+One of "CombPValue" (p-value combination method) or "CER" (conditional error rate method).}
 
-\item{alpha}{Type-1 error}
+\item{alpha}{Numeric scalar in (0, 1) giving the one-sided family-wise type I error rate.}
 
-\item{SampleSize}{integer valued Sample Size(default: 500)}
+\item{SampleSize}{Positive integer scalar giving the maximum planned total sample size.}
 
-\item{TestStatCont}{Test Statistics for continuous endpoints; options: 't-equal' : for t statistics with equal variance, 't-unequal' : for t statistics with unequal variance, 'z' for z statistics}
+\item{TestStatCont}{Character scalar specifying the test statistic for continuous endpoints.
+One of "t-equal", "t-unequal", or "z". Required when `lEpType` includes "Continuous".
+Ignored for non-continuous endpoints.}
 
-\item{TestStatBin}{Test Statistics for Binary endpoints; options: 'UnPooled', 'Pooled'}
+\item{TestStatBin}{Character scalar specifying the test statistic for binary endpoints.
+One of "UnPooled" or "Pooled". Required when `lEpType` includes "Binary". Ignored for non-binary endpoints.}
 
-\item{UseCC}{TRUE to use continuity correction while estimating proportions for binary endpoints, FALSE otherwise. Ignored for non-binary endpoints.}
+\item{UseCC}{Logical scalar. If `TRUE`, applies a continuity correction when estimating binary
+response proportions; ignored for non-binary endpoints.}
 
-\item{FWERControl}{applicable for CER method only, 'CombinationTest': combined two stage incremental test statistics, 'None': Cumulative test statistics.}
+\item{FWERControl}{Character scalar controlling the stage-1/2 combination used under
+`Method = "CER"`. One of "CombinationTest" (combine incremental stage statistics) or
+"None" (use cumulative statistics). Ignored when `Method != "CER"`.}
 
-\item{nArms}{integer value to specify the number of arms (default: 3)}
+\item{nArms}{Integer scalar giving the number of trial arms (including control). Must be >= 2.}
 
-\item{nEps}{integer value to specify the number of endpoints}
+\item{nEps}{Integer scalar giving the number of endpoints. Must be >= 1.}
 
-\item{lEpType}{list with endpoint types}
+\item{lEpType}{Named list of length `nEps` specifying endpoint types. Each element must be one
+of "Continuous" or "Binary".}
 
-\item{Arms.Mean}{Numeric list to specify the arm-wise mean for each endpoint; Note: The first input is for control arm and the rest are for the treatments.}
+\item{Arms.Mean}{Named list of length `nEps`. For continuous endpoints, each element is a
+numeric vector of length `nArms` giving arm-wise means (control first, then treatments).
+Use `NA` for endpoints that are not continuous.}
 
-\item{Arms.std.dev}{Numeric list to specify the arm-wise standard deviation for each endpoint; Note: The first input is for control arm and the rest are for the treatments.}
+\item{Arms.std.dev}{Named list of length `nEps`. For continuous endpoints, each element is a
+numeric vector of length `nArms` giving arm-wise standard deviations (control first, then treatments).
+Use `NA` for endpoints that are not continuous.}
 
-\item{CommonStdDev}{TRUE = the treatment standard deviations assumed to be same as the control for boundary computations for continuous endpoints, FALSE = the treatment standard deviations assumed to be same as given in Arms.std.dev.}
+\item{CommonStdDev}{Logical scalar for continuous endpoints. If `TRUE`, treatment standard
+deviations are assumed equal to the control standard deviation for boundary computations.
+Ignored for non-continuous endpoints.}
 
-\item{Arms.Prop}{Numeric list to specify the arm-wise proportions for each endpoint; Note: The first input is for control arm and the rest are for the treatments.}
+\item{Arms.Prop}{Named list of length `nEps`. For binary endpoints, each element is a numeric
+vector of length `nArms` giving arm-wise response proportions in [0, 1] (control first, then treatments).
+Use `NA` for endpoints that are not binary.}
 
-\item{Arms.alloc.ratio}{Numeric Vector to specify the arm-wise allocation ratio; Note: The first input is for control arm and the rest are for the treatments.}
+\item{Arms.alloc.ratio}{Numeric vector of length `nArms` giving the allocation ratio by arm
+(control first, then treatments). Values are internally rescaled so the control ratio equals 1.}
 
-\item{EP.Corr}{correlation matrix for the endpoints(Normal)}
+\item{EP.Corr}{Numeric `nEps x nEps` correlation matrix for endpoints, used to generate
+correlated endpoint data. Required when `nEps > 1`, and should be positive semi-definite in that case.}
 
-\item{WI}{Vector of Initial Weights for Global Null; Note: Hypotheses will follow the order of Endpoints and Treatments as given in 'Arms.Mean' and 'Arms.std.dev' inputs e.g.: If 'Arms.Mean' are given in the format list('EP1'=c(ctr_mean, trt1_mean, trt2_mean), 'EP2'=c(ctr_mean, trt1_mean, trt2_mean)) then the four hypotheses will be H1 = (Trt1 vs Ctr for EP1), H2 = (Trt2 vs Ctr for EP1), H3 = (Trt1 vs Ctr for EP2), H4 = (Trt2 vs Ctr for EP2), The initial weights and the transition matrix will follow the order of hypothesis accordingly as (H1,H2,H3,H4)}
+\item{WI}{Numeric vector of initial node weights for the graphical procedure. Must have length
+`nEps * (nArms - 1)` with `sum(WI) <= 1`.
+Hypotheses are ordered by endpoint then treatment, e.g. for two treatments and two endpoints:
+H1 = (Trt1 vs Ctrl, EP1), H2 = (Trt2 vs Ctrl, EP1), H3 = (Trt1 vs Ctrl, EP2),
+H4 = (Trt2 vs Ctrl, EP2).}
 
-\item{G}{Numeric Matrix to specify the Transition Matrix.}
+\item{G}{Numeric transition matrix for the graph with dimension
+`nEps * (nArms - 1) x nEps * (nArms - 1)`. Diagonal elements must be 0 and each row sum must
+be <= 1.}
 
-\item{test.type}{Character to specify the type of test want to perform; Available tests for Combining P-values Method :- 'Bonf': Bonferroni, 'Sidak': Sidak, 'Simes': Simes, 'Dunnett': Dunnett and  'Partly-Parametric': Mixed type Tests. Available tests for CER Method :- "Parametric": Weighted Dunnett , "Non-Parametric": Weighted Bonferroni and  'Partly-Parametric': Mixed type Tests.}
+\item{test.type}{Character scalar specifying the testing procedure.
+For `Method = "CombPValue"`: one of "Bonf", "Sidak", "Simes", "Dunnett", or "Partly-Parametric".
+For `Method = "CER"`: one of "Parametric", "Non-Parametric", or "Partly-Parametric".}
 
-\item{info_frac}{Numeric Vector to specify look position as fraction of sample size.(for one look can be specified as 1)}
+\item{info_frac}{Numeric vector of information fractions (look positions) with values in (0, 1]
+with the final element equal to 1.}
 
-\item{typeOfDesign}{The type of design. Type of design is one of the following: O'Brien & Fleming ("OF"), Pocock ("P"), Wang & Tsiatis Delta class ("WT"), Pampallona & Tsiatis ("PT"), Haybittle & Peto ("HP"), Optimum design within Wang & Tsiatis class ("WToptimum"), O'Brien & Fleming type alpha spending ("asOF"), Pocock type alpha spending ("asP"), Kim & DeMets alpha spending ("asKD"), Hwang, Shi & DeCani alpha spending ("asHSD"), no early efficacy stop ("noEarlyEfficacy"), user specified alpha("asUser") default is "asOF".}
+\item{typeOfDesign}{Character scalar giving the group sequential design type
+Must be one of: "OF", "P", "WT", "PT", "HP", "WToptimum", "asOF", "asP", "asKD", "asHSD", 
+"noEarlyEfficacy", or "asUser".}
 
-\item{deltaWT}{Parameter for alpha spending function for typeOfDesign = "WT"}
+\item{deltaWT}{Numeric scalar parameter for the Wang & Tsiatis delta class when
+`typeOfDesign = "WT"`.}
 
-\item{deltaPT1}{Parameter for alpha spending function for typeOfDesign = "PT"}
+\item{deltaPT1}{Numeric scalar parameter for the Pampallona & Tsiatis class when
+`typeOfDesign = "PT"`.}
 
-\item{gammaA}{Parameter for alpha spending function for typeOfDesign = "asHSD" or "asKD"}
+\item{gammaA}{Numeric scalar parameter for the alpha-spending functions when
+`typeOfDesign` is "asHSD" or "asKD".}
 
-\item{userAlphaSpending}{Parameter for alpha spending function for typeOfDesign = "asUser"; applicable for CombPValue methods only}
+\item{userAlphaSpending}{Numeric vector of cumulative alpha spent at each look. Only used when
+`typeOfDesign = "asUser"` (and `Method = "CombPValue"`); otherwise ignored.}
 
-\item{MultipleWinners}{Logical; TRUE: Stop the trial only no more efficacy is possible, FALSE: Stop if at-least one efficacy is observed}
+\item{MultipleWinners}{Logical scalar. If `TRUE`, the trial continues until efficacy
+is possible for no further endpoint; if `FALSE`, it stops once efficacy is observed 
+for at least one endpoint.}
 
-\item{Selection}{Logical: TRUE if selection required at interim(default = FALSE)}
+\item{Selection}{Logical scalar indicating whether arm selection is performed at interim looks.
+Only relevant when `length(info_frac) > 1`.}
 
-\item{SelectionLook}{Numeric Vector to specify the selection looks}
+\item{SelectionLook}{Integer vector of interim look indices at which selection is performed.
+For a two-look design, this must be 1 when `Selection` is `TRUE`.}
 
-\item{SelectEndPoint}{Indicator to specify which endpoint to select from, e.g. '1': Endpoint 1, '2':Endpoint 2, 'overall': overall}
+\item{SelectEndPoint}{Endpoint considered for selection. Either an integer in `1:nEps` (select based
+on that endpoint) or the character scalar "overall" (consider all endpoints).}
 
-\item{SelectionScale}{Character: Scale parameter on which selection will be based on, options 'delta': delta, 'teststat': Test Statistics, 'stderror' : Standard Error of the test stat,  'pvalue': p-value(un-adj) based selection}
+\item{SelectionScale}{Character scalar indicating the metric used for selection. One of
+"delta", "teststat", "stderror", or "pvalue".}
 
-\item{SelectionCriterion}{Character: 'best': best r, 'threshold': threshold for selection, 'epsilon': for epsilon neighborhood, 'random': for random selection}
+\item{SelectionCriterion}{Character scalar indicating the selection rule. One of "best",
+"threshold", "epsilon", or "random". See SelectionParameter for more info.}
 
-\item{SelectionParmeter}{r for best, threshold value for threshold or epsilon distance}
+\item{SelectionParameter}{Numeric scalar tuning parameter for the selection rule:
+number selected for "best", threshold value for "threshold", or epsilon neighborhood size
+for "epsilon".}
 
-\item{KeepAssosiatedEps}{Logical, True: keep all the associated hypothesis for the selected arms}
+\item{KeepAssociatedHypo}{Logical scalar. If `TRUE`, keeps all hypotheses associated with the
+selected treatment arms.}
 
-\item{ImplicitSSR}{Character; 'Selection': re-allocate samples only from de-selected arms to available arms, 'All': Allocate all the planned samples(for the look) to the available arms, 'None': No Re-allocation}
+\item{SelectionParmeter}{Deprecated. Use \code{SelectionParameter} instead.}
 
-\item{nSimulation}{Numeric: Number of simulations(default=100)}
+\item{KeepAssosiatedEps}{Deprecated. Use \code{KeepAssociatedHypo} instead.}
 
-\item{nSimulation_Stage2}{Numeric: Number of stage 2 simulations per stage 1 simulation(default = 1). This input is only applicable for Method = 'CER'.}
+\item{ImplicitSSR}{Character scalar specifying implicit sample size reallocation after interim.
+One of "Selection" (reallocate only from de-selected arms), "All" (allocate all planned
+samples to remaining arms), or "None".}
 
-\item{Seed}{'Random' for randomly generating seed else any integer value(default = 'Random')}
+\item{nSimulation}{Positive integer scalar giving the number of simulation runs to perform.}
 
-\item{SummaryStat}{Logical; TRUE if simulation level data is required(default = FALSE)}
+\item{nSimulation_Stage2}{Positive integer scalar giving the number of stage-2 simulations per
+stage-1 simulation. Only applicable for `Method = "CER"`; forced to 1 otherwise.}
 
-\item{plotGraphs}{Logical; TRUE: plot the initial graph}
+\item{Seed}{Either the character scalar "Random" (generate a run-specific seed) or an integer
+scalar seed used for reproducibility.}
 
-\item{EastSumStat}{East Summary Statistics file, Only applicable for single look designs with CombPValue method}
+\item{SummaryStat}{Logical scalar. If `TRUE`, returns simulation-level summary data.}
 
-\item{Parallel}{Logical; TRUE: Parallel computations}
+\item{plotGraphs}{Logical scalar. If `TRUE`, plots the graph specified by WI and G.}
+
+\item{EastSumStat}{East summary statistics input used for single-look designs with
+`Method = "CombPValue"`. Use `NULL` (default) to disable.}
+
+\item{Parallel}{Logical scalar indicating whether to run simulations in parallel.}
+
+\item{Verbose}{Logical scalar. If `TRUE`, prints additional progress and diagnostic messages.}
 }
 \description{
-Function to perform Adaptive GMCP simulation for Multi-Arm Multi-Stage Multi-Endpoint simulations for Combining p-values method and CER method(2-Stage)
+Function to simulate multi-arm, multi-stage, multi-endpoint trials using either 
+p-value combination method or CER method
 }
 \examples{
 # --------------------------------------------------------------------------------------------------
@@ -274,11 +333,11 @@ SelectionCriterion <- 'threshold'
 
 #-----------------Selection Criteria Parameter----------------------
 # r for best, threshold value for threshold and epsilon distance for criteria 'epsilon'
-SelectionParmeter <- 0.6745
+SelectionParameter <- 0.6745
 
 #----------------Keep associated Hypothesis-------------------------
 #TRUE: keep all the associated hypothesis for the selected arms, FALSE otherwise
-KeepAssosiatedEps <- TRUE
+KeepAssociatedHypo <- TRUE
 
 #-------------------Implicit SSR-------------------------------------
 #'Selection': re-allocate samples only from de-selected arms to available arms,
@@ -310,7 +369,7 @@ out <- simMAMSMEP(
   EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type, info_frac = info_frac,
   typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
   Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
-  SelectionCriterion = SelectionCriterion, SelectionParmeter = SelectionParmeter, KeepAssosiatedEps = KeepAssosiatedEps,
+  SelectionCriterion = SelectionCriterion, SelectionParameter = SelectionParameter, KeepAssociatedHypo = KeepAssociatedHypo,
   ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, nSimulation_Stage2 = nSimulation_Stage2, Seed = Seed, SummaryStat = SummaryStat,
   Method = Method, plotGraphs = plotGraphs, Parallel = Parallel
 )

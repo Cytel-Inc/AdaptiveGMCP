@@ -59,7 +59,6 @@ valInpsimMAMSMEP <- function(inps) {
     logs[[12]] <- 0
   }
 
-
   logs[[13]] <- ifelse(length(inps$Arms.alloc.ratio) == inps$nArms,
     0, "Invalid argument in 'Arms.alloc.ratio'"
   )
@@ -95,8 +94,6 @@ valInpsimMAMSMEP <- function(inps) {
     0, "Invalid argument in 'Seed'"
   )
 
-
-
   logs[[19]] <- ifelse(length(inps$lEpType) == inps$nEps,
     0, "Invalid argument in 'lEpType'"
   )
@@ -117,13 +114,12 @@ valInpsimMAMSMEP <- function(inps) {
     logs[[21]] <- 0
   }
 
-
   if(inps$nEps > 1){
     logs[[22]] <- ifelse(matrixcalc::is.positive.semi.definite(inps$EP.Corr),
                          0, "Invalid argument in 'EP.Corr', the matrix is not positive semi-definite")
+  } else {
+    logs[[22]] <- 0
   }
-
-
 
   return(logs)
 }

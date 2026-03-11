@@ -139,7 +139,7 @@ SelectionParameter <- 0.6745
 
 #----------------Keep associated Hypothesis-------------------------
 #TRUE: keep all the associated hypothesis for the selected arms, FALSE otherwise
-KeepAssosiatedEps <- TRUE
+KeepAssociatedHypo <- TRUE
 
 #-------------------Implicit SSR-------------------------------------
 #'Selection': re-allocate samples only from de-selected arms to available arms,
@@ -171,7 +171,7 @@ out <- simMAMSMEP(
   EP.Corr = EP.Corr, WI = WI, G = G, test.type = test.type, info_frac = info_frac,
   typeOfDesign = typeOfDesign, MultipleWinners = MultipleWinners,
   Selection = Selection, SelectionLook = SelectionLook, SelectEndPoint = SelectEndPoint, SelectionScale = SelectionScale,
-  SelectionCriterion = SelectionCriterion, SelectionParameter = SelectionParameter, KeepAssosiatedEps = KeepAssosiatedEps,
+  SelectionCriterion = SelectionCriterion, SelectionParameter = SelectionParameter, KeepAssociatedHypo = KeepAssociatedHypo,
   ImplicitSSR = ImplicitSSR, nSimulation = nSimulation, nSimulation_Stage2 = nSimulation_Stage2, Seed = Seed, SummaryStat = SummaryStat,
   Method = Method, plotGraphs = plotGraphs, Parallel = Parallel
 )

@@ -25,6 +25,22 @@ do_SelectionSim2 <- function(simID, mcpObj) {
 # Identify Hypothesis based on selection rule
 #------------- -
 getSelectedHypo2 <- function(simID, mcpObj) {
+  # Hypothesis selection logic coded in this function:
+  # 1. First check the hypothesis rejection flags after look 1 testing and 
+  #    subset the hypothesis that are not rejected.
+  #    These are stored in the var "hypothesis_not_rejected".
+  # 2. Then if SelectEndPoint is set to a specific endpoint, subset from hypothesis_not_rejected,
+  #    the hypotheses corresponding to that endpoint. If SelectEndPoint is "overall", 
+  #    then all the hypotheses from hypothesis_not_rejected are retained for selection.
+  #    These are stored in the var "contHypo".
+  # 3. Then apply the selection rule based on the SelectionCriterion and SelectionScale to contHypo,
+  #    and further narrow down the subset of selected hypotheses.
+  #    These are stored in the var "selectedH".
+  # 4. Finally, if KeepAssociatedHypo is TRUE, then we find which arms selectedH 
+  #    correspond to and all the hypothesis associated with those arms are retained. 
+  #    The final set of selected hypothesis is stored in "selectedH".
+  # 5. The arms that are not in the selectedH are dropped.
+
   # The following script is applicable for Right Tail tests only#
 
   ############### Step-1: get the available hypothesis to select#################
@@ -122,7 +138,7 @@ getSelectedHypo2 <- function(simID, mcpObj) {
 
   if (length(selectedH) != 0) # If the selection set is non empty
   {
-    if (mcpObj$KeepAssosiatedEps) { # Keep all the associated hypothesis
+    if (mcpObj$KeepAssociatedHypo) { # Keep all the associated hypothesis
       # notRejSet <- mcpObj$HypoMap[mcpObj$HypoPresent, ]
       notRejSet <- mcpObj$HypoMap[mcpObj$HypoMap$Treatment %in% hypothesis_not_rejected$Treatment, ]
       selectedArms <- getArms2(SetH = selectedH, HypoMap = notRejSet)
@@ -137,7 +153,7 @@ getSelectedHypo2 <- function(simID, mcpObj) {
       getArms2(SetH = selectedH, HypoMap = mcpObj$HypoMap)
     )
 
-    mcpObj$ArmsRetained[droppedArms] <- T
+    mcpObj$ArmsDropped[droppedArms] <- T
     mcpObj$ArmsPresent[droppedArms] <- F
     mcpObj$SelectedIndex <- selectedH
     HypoPresentAfterSelct <- rep(F, length(mcpObj$HypoPresent))
