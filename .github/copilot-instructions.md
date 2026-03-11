@@ -16,7 +16,7 @@ These instructions make AI agents immediately productive in this R package. They
 - Shiny app: [inst/shinyApps/AdaptGMCPSimApp.R](../inst/shinyApps/AdaptGMCPSimApp.R) with modules in the same folder (e.g., `tabularModule.R`, `correlationMatrixModule.R`).
 
 ## Data & Hypothesis Conventions
-- Hypothesis ordering: iterate endpoints within each treatment before the next endpoint (e.g., for 2 trts × 3 eps: H1=EP1/T1, H2=EP1/T2, H3=EP2/T1, H4=EP2/T2, H5=EP3/T1, H6=EP3/T2). See UI note in [inst/shinyApps/AdaptGMCPSimApp.R](../inst/shinyApps/AdaptGMCPSimApp.R) and `WI`/`G` usage across functions.
+- Hypothesis ordering: order by endpoint, then treatment (iterate treatments within each endpoint; e.g., for 2 trts × 3 eps: H1=EP1/T1, H2=EP1/T2, H3=EP2/T1, H4=EP2/T2, H5=EP3/T1, H6=EP3/T2). See UI note in [inst/shinyApps/AdaptGMCPSimApp.R](../inst/shinyApps/AdaptGMCPSimApp.R) and `WI`/`G` usage across functions.
 - Weights and transitions: `WI` (initial weights) and `G` (transition matrix) drive intersection weights via `genWeights()`; conventions are consistent across simulation and analyses.
 - Info fraction and allocation: `info_frac` is cumulative per-look; `simMAMSMEP` normalizes `Arms.alloc.ratio` so control equals 1.
 - Two-arm constraint: For 2 arms, parametric tests are auto-downgraded (Bonferroni / Non‑Parametric); see logic in [R/MAMSMEP_SIMULATION_MAIN.R](../R/MAMSMEP_SIMULATION_MAIN.R).
