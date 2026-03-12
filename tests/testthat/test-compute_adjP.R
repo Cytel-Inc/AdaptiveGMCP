@@ -38,20 +38,14 @@ test_that("Test computations of Adjusted P-values", {
   cr <- matrix(0.5, nrow = 4, ncol = 4)
   diag(cr) <- 1
 
-  mvtnorm_algo <- mvtnorm::Miwa(
-    steps = 128,
-    checkCorr = FALSE,
-    maxval = 1e3
-  )
-
-  gmcpSimObj <<- list(
-    "mvtnorm_algo" = mvtnorm_algo
-  )
+  nHypo <- ncol(p) # No. of hypotheses being tested
+  mvtnorm_algo <- chooseMVTAlgo(nHypo)
 
   adjP <- c()
   for (i in 1:nrow(p))
   {
-    adjP[i] <- compute_adjP(h = h[i, ], cr = cr, p = p[i, ], test.type = test.type)$adj_pj
+    adjP[i] <- compute_adjP(h = h[i, ], cr = cr, p = p[i, ], 
+                  test.type = test.type, mvtnorm_algo = mvtnorm_algo)$adj_pj
   }
 
   OutRej <- adjP < c(rep(0.002, 4), rep(0.025, 4))
@@ -95,10 +89,14 @@ test_that("Test computations of Adjusted P-values", {
     NA, NA, 0.5, 1
   ), nrow = 4, byrow = T)
 
+  nHypo <- 4 # No. of hypotheses being tested
+  mvtnorm_algo <- chooseMVTAlgo(nHypo)
+
   adjP <- c()
   for (i in 1:nrow(p))
   {
-    adjP[i] <- compute_adjP(h = h[i, ], cr = cr, p = p[i, ], test.type = test.type)$adj_pj
+    adjP[i] <- compute_adjP(h = h[i, ], cr = cr, p = p[i, ], 
+                    test.type = test.type, mvtnorm_algo = mvtnorm_algo)$adj_pj
   }
 
   OutRej <- adjP < c(rep(0.002, 4), rep(0.025, 4))
@@ -142,10 +140,14 @@ test_that("Test computations of Adjusted P-values", {
     NA, NA, NA, 1
   ), nrow = 4, byrow = T)
 
+  nHypo <- 4 # No. of hypotheses being tested
+  mvtnorm_algo <- chooseMVTAlgo(nHypo)
+  
   adjP <- c()
   for (i in 1:nrow(p))
   {
-    adjP[i] <- compute_adjP(h = h[i, ], cr = cr, p = p[i, ], test.type = test.type)$adj_pj
+    adjP[i] <- compute_adjP(h = h[i, ], cr = cr, p = p[i, ], 
+                    test.type = test.type, mvtnorm_algo = mvtnorm_algo)$adj_pj
   }
 
   OutRej <- adjP < c(rep(0.002, 4), rep(0.025, 4))
@@ -183,10 +185,14 @@ test_that("Test computations of Adjusted P-values", {
     nrow = 8, byrow = T
   )
 
+  nHypo <- 4 # No. of hypotheses being tested
+  mvtnorm_algo <- chooseMVTAlgo(nHypo)
+  
   adjP <- c()
   for (i in 1:nrow(p))
   {
-    adjP[i] <- compute_adjP(h = h[i, ], p = p[i, ], test.type = test.type)$adj_pj
+    adjP[i] <- compute_adjP(h = h[i, ], p = p[i, ], 
+                  test.type = test.type, mvtnorm_algo = mvtnorm_algo)$adj_pj
   }
 
   OutRej <- adjP < c(rep(0.002, 4), rep(0.025, 4))
@@ -223,10 +229,14 @@ test_that("Test computations of Adjusted P-values", {
     nrow = 8, byrow = T
   )
 
+  nHypo <- 4 # No. of hypotheses being tested
+  mvtnorm_algo <- chooseMVTAlgo(nHypo)
+  
   adjP <- c()
   for (i in 1:nrow(p))
   {
-    adjP[i] <- compute_adjP(h = h[i, ], p = p[i, ], test.type = test.type)$adj_pj
+    adjP[i] <- compute_adjP(h = h[i, ], p = p[i, ], 
+                    test.type = test.type, mvtnorm_algo = mvtnorm_algo)$adj_pj
   }
 
   OutRej <- adjP < c(rep(0.002, 4), rep(0.025, 4))

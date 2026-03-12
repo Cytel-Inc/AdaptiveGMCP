@@ -6,7 +6,7 @@
 
 #Boundary computation based on the mcpObj
 #ModifiedStage2Weights : Ajoy.M: Highly risky should be triggered only for modified testing strategy in analysis, implemeted for one specific example not generalized.(13Jun,24)
-adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
+adaptBdryCER <- function(mcpObj, mvtnorm_algo, ModifiedStage2Weights = F) {
   # browser()
   nHypothesis <- length(mcpObj$IntialHypothesis)
   nLooks <- length(mcpObj$Stage1Obj$info_frac)
@@ -99,6 +99,7 @@ adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
       PlanSSHyp = PlanSSHyp,
       ModSSHyp = ModSSHyp,
       t1 = mcpObj$Stage1Obj$info_frac[1],
+      mvtnorm_algo = mvtnorm_algo,
       ModifiedStage2Weights = ModifiedStage2Weights
     )
 
@@ -183,7 +184,7 @@ adaptBdryCER <- function(mcpObj, ModifiedStage2Weights = F) {
 
 getAdaptBdry2 <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
                          Sigma, Stage2Sigma, Stage2HypoIDX, PlanSSHyp, ModSSHyp,
-                         t1, ModifiedStage2Weights = F) {
+                         t1, mvtnorm_algo, ModifiedStage2Weights = F) {
   get_Sets <- connSets(J = J, w = w1, test.type = test.type, HypoMap = HypoMap)
   conn_Sets <- get_Sets$connSets
   conn_Sets_name <- paste("(", paste(
@@ -234,7 +235,7 @@ getAdaptBdry2 <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
         cerParamGrps <- c(cerParamGrps,
                           exitProbStage2Cond(cJ2 = cJ2, p1 = pJh, w = wJh,
                           InfoMatrix = InfoMatrix, stage2sigmaS = stage2sigmaS,
-                          Conditional = TRUE))
+                          mvtnorm_algo = mvtnorm_algo, Conditional = TRUE))
 
       } else {
         ## Non-Parametric ##
@@ -298,7 +299,7 @@ getAdaptBdry2 <- function(J, w1, w2, a2, a1, p1, test.type, HypoMap,
         exitproblist <- c(exitproblist,
                           exitProbStage2Cond(cJ2 = cJ2, p1 = pJh, w = wJh,
                           InfoMatrix = InfoMatrixMod, stage2sigmaS = stage2sigmaSMod,
-                          Conditional = TRUE))
+                          mvtnorm_algo = mvtnorm_algo, Conditional = TRUE))
 
       } else {
         ## Non-Parametric ##

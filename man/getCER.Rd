@@ -17,7 +17,8 @@ getCER(
   AllocSampleSize,
   EpType,
   prop.ctr,
-  t1
+  t1,
+  mvtnorm_algo
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ getCER(
 \item{prop.ctr}{planned control group response rate (for binary endpoint)}
 
 \item{t1}{planned information fraction at stage-1}
+
+\item{mvtnorm_algo}{algorithm to compute multivariate normal probabilities}
 }
 \value{
 A list containing CER values and related information

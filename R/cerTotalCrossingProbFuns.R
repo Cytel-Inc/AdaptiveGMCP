@@ -13,7 +13,7 @@
 # underNull : TRUE if the probability is under null
 # Returns: The Probability of rejecting in atleast one primary hypothesis at stage1
 #------------------------------------------------------------------------- -
-exitProbParamStage1 <- function(gIDX, hIDX, cJ1, wJ, Sigma, Scale, underNull = TRUE) {
+exitProbParamStage1 <- function(gIDX, hIDX, cJ1, wJ, Sigma, Scale, mvtnorm_algo, underNull = TRUE) {
   # Make Seed restricted to local##
   old <- .Random.seed
   on.exit({
@@ -45,7 +45,7 @@ exitProbParamStage1 <- function(gIDX, hIDX, cJ1, wJ, Sigma, Scale, underNull = T
 
     # Use dimension-based algorithm selected in simMAMSMEP()
     1 - mvtnorm::pmvnorm(
-      lower = lower, upper = upper, mean = mu_z, sigma = sigma, algorithm = gmcpSimObj$mvtnorm_algo
+      lower = lower, upper = upper, mean = mu_z, sigma = sigma, algorithm = mvtnorm_algo
     )[1]
   } else if (Scale == "Score") {
     if (underNull) {
@@ -57,7 +57,7 @@ exitProbParamStage1 <- function(gIDX, hIDX, cJ1, wJ, Sigma, Scale, underNull = T
 
     # Use dimension-based algorithm selected in simMAMSMEP()
     1 - mvtnorm::pmvnorm(
-      lower = lower, upper = upper, mean = mu_s, sigma = sigma, algorithm = gmcpSimObj$mvtnorm_algo
+      lower = lower, upper = upper, mean = mu_s, sigma = sigma, algorithm = mvtnorm_algo
     )[1]
   }
 }

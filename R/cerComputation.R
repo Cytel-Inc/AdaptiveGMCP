@@ -24,11 +24,12 @@
 #' @param EpType endpoint type
 #' @param prop.ctr planned control group response rate (for binary endpoint)
 #' @param t1 planned information fraction at stage-1
+#' @param mvtnorm_algo algorithm to compute multivariate normal probabilities
 #' @return A list containing CER values and related information
 #' @keywords internal
 getCER <- function(b2,WH,p1,test.type,HypoMap,CommonStdDev,
                    allocRatio,sigma,Sigma,AllocSampleSize,
-                   EpType,prop.ctr, t1){
+                   EpType,prop.ctr, t1, mvtnorm_algo){
 
   SUBSETS <- CONDERR <- c()
   Stage2Sigma <- getStage2PlanSigma(CommonStdDev = CommonStdDev,
@@ -86,9 +87,8 @@ getCER <- function(b2,WH,p1,test.type,HypoMap,CommonStdDev,
           stage2sigmaS <- Stage2Sigma$SigmaSIncr[[epIDX]][floor(pGrp / epIDX), floor(pGrp / epIDX)]
           InfoMatrix <- Sigma$InfoMatrix[[epIDX]][floor(pGrp / epIDX), ]
 
-          cerParam <- exitProbStage2Cond(
-            cJ2 = cJ2, p1 = pJh, w = wJh,
-            InfoMatrix = InfoMatrix, stage2sigmaS = stage2sigmaS, Conditional = TRUE
+          cerParam <- exitProbStage2Cond(cJ2 = cJ2, p1 = pJh, w = wJh, InfoMatrix = InfoMatrix, 
+                        stage2sigmaS = stage2sigmaS, mvtnorm_algo = mvtnorm_algo, Conditional = TRUE
           )
           cerParamGrps <- c(cerParam, cerParamGrps)
         }
@@ -182,7 +182,6 @@ getCER <- function(b2,WH,p1,test.type,HypoMap,CommonStdDev,
 getStage2PlanSigma <- function(CommonStdDev,allocRatio, sigma,
                                Sigma, AllocSampleSize, EpType, prop.ctr)
 {
-  #CommonStdDev flag is global variable set from simMAMSMEP(.), adaptGMCP_CER(.) function call
   if(CommonStdDev == T){
     for(sigIDX in 1:length(sigma))
       if(all(!is.na(sigma[[sigIDX]]))){

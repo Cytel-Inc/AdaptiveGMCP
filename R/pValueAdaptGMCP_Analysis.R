@@ -50,6 +50,11 @@ adaptGMCP_PC <- function(
   K <- length(info_frac)
   GlobalIndexSet <- paste("H", 1:D, sep = "")
 
+  # SETTING MVTNORM ALGORITHM TYPE ###############################
+  # Dimension-based algorithm selection for mvtnorm::pmvnorm()
+  mvtnorm_algo <- chooseMVTAlgo(D)
+  ################################################################
+
   ##################### Get the stage-wise p-value boundaries############################
   UseExternal <- T
   if (UseExternal) # this part of the code can be replaced later with the internal R-codes
@@ -190,7 +195,7 @@ adaptGMCP_PC <- function(
 
     mcpObj$p_raw <- addNAPvalue(p_raw, GlobalIndexSet)
     mcpObj$CutOff <- Threshold[look]
-    mcpObj <- PerLookMCPAnalysis(mcpObj)
+    mcpObj <- PerLookMCPAnalysis(mcpObj, mvtnorm_algo = mvtnorm_algo)
 
     # Pre-computation for the next look
     mcpObj$rej_flag_Prev <- mcpObj$rej_flag_Curr

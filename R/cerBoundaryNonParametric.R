@@ -30,7 +30,8 @@ getPCER2 <- function(p1, ss1, ss2, cJ2, wJh, t1) {
   getPCER(a2 = cJ2 * wJh, p1 = p1, ss1 = ss1, ss2 = ss2, t1 = t1)
 }
 
-exitProbStage2Nparam2 <- function(cJ2, cJ1, ss1, ss2, wJ, hIDX, t1) # aj2: stage 2 bdry, aj1: stage-1 boundary
+exitProbStage2Nparam2 <- function(cJ2, cJ1, ss1, ss2, wJ, hIDX, t1,
+            mvtnorm_algo)
 {
   aj2 = cJ2 * wJ[hIDX]
   aj1 = cJ1 * wJ[hIDX]
@@ -47,7 +48,7 @@ exitProbStage2Nparam2 <- function(cJ2, cJ1, ss1, ss2, wJ, hIDX, t1) # aj2: stage
 
   # Use dimension-based algorithm selected in simMAMSMEP()
   prob <- mvtnorm::pmvnorm(
-    lower = lower, upper = upper, sigma = sigma, algorithm = gmcpSimObj$mvtnorm_algo
+    lower = lower, upper = upper, sigma = sigma, algorithm = mvtnorm_algo
     )[1]
   return(prob + aj1)
 }
