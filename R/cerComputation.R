@@ -24,6 +24,7 @@
 #' @param EpType endpoint type
 #' @param prop.ctr planned control group response rate (for binary endpoint)
 #' @param t1 planned information fraction at stage-1
+#' @param mvtnorm_algo algorithm to compute multivariate normal probabilities
 #' @return A list containing CER values and related information
 #' @keywords internal
 getCER <- function(b2,WH,p1,test.type,HypoMap,CommonStdDev,

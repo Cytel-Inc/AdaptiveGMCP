@@ -136,8 +136,8 @@ planBdryCER <- function(nHypothesis, nEps, nLooks, alpha, info_frac,
          #Exist probability for non parametric sub-set at stage 2
          exitproblist <- c(exitproblist,
                            exitProbStage2Nparam2(cJ2, cJ1, ss1 = ss1, ss2 = ss2,
-                                                 wJ, hIDX = edx, t1 = info_frac[1]),
-                                                 mvtnorm_algo = mvtnorm_algo)
+                                                 wJ, hIDX = edx, t1 = info_frac[1],
+                                                 mvtnorm_algo = mvtnorm_algo))
        }
      }
      return(sum(na.omit(exitproblist)))

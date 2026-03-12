@@ -52,24 +52,7 @@ adaptGMCP_PC <- function(
 
   # SETTING MVTNORM ALGORITHM TYPE ###############################
   # Dimension-based algorithm selection for mvtnorm::pmvnorm()
-  mvtnorm_dimension <- D
-  
-  # Choose algorithm based on dimension:
-  # - Miwa: Fast and accurate for dimensions <= 20
-  # - GenzBretz: For dimensions > 20 (Miwa becomes inaccurate beyond 20 dimensions)
-  if (mvtnorm_dimension <= 20) {
-    mvtnorm_algo <- mvtnorm::Miwa(
-      steps = 128,
-      checkCorr = FALSE,
-      maxval = 1e3
-    )
-  } else {
-    mvtnorm_algo <- mvtnorm::GenzBretz(
-      maxpts = 25000,
-      abseps = 0.001,
-      releps = 0
-    )
-  }
+  mvtnorm_algo <- chooseMVTAlgo(D)
   ################################################################
 
   ##################### Get the stage-wise p-value boundaries############################

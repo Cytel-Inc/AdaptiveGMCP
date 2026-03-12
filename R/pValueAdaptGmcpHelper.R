@@ -569,7 +569,11 @@ StopTrial <- function(mcpObj) {
 # Combination of parametric and non-parametric test(one sided)
 comb.test <- function(p, cr, w, mvtnorm_algo) {
   if (length(cr) > 1) {
-    conn <- conn.comp(cr)
+    # We have stopped using conn.comp() in favor of clique.partition().
+    # conn.comp() finds connected components in the correlation graph, 
+    # which can lead to groups with unknown correlations (NA) that can't be handled by pmvnorm.
+    # conn <- conn.comp(cr)
+    conn <- clique.partition(cr)
   } else {
     conn <- 1
   }
@@ -654,22 +658,85 @@ compute_adjP <- function(h, cr, p, test.type, mvtnorm_algo) {
 #---------------------- -
 
 #---------------------- -
-# to find connected components in an adjacency matrix m(taken from gmcpLite codebase)
-conn.comp <- function(m) {
-  N <- 1:ncol(m)
-  M <- numeric(0)
-  out <- list()
-  while (length(N) > 0) {
-    Q <- setdiff(N, M)[1]
-    while (length(Q) > 0) {
-      w <- Q[1]
-      M <- c(M, w)
-      Q <- setdiff(unique(c(Q, which(!is.na(m[w, ])))), M)
+### We have stopped using conn.comp() in favor of clique.partition().
+### conn.comp() finds connected components in the correlation graph, 
+### which can lead to groups with unknown correlations (NA) that can't be handled by pmvnorm.
+### E.g. using conn.comp with a correlation matrix like the following results in 
+### a single group of all 4 hypotheses, even though the correlation between 
+### H1-H4 and H2-H3 is unknown (NA), which would cause pmvnorm to fail:
+### corr <- matrix(c(1, 0.5, 0.5, NA,
+###                  0.5, 1, NA, 0.5,
+###                  0.5, NA, 1, 0.5,
+###                  NA, 0.5, 0.5, 1), byrow = T, nrow = 4)
+### Such correlation matrices can occur in problems like population enrichment.
+### The newly written function clique.partition() handles such matrices properly.
+# To find connected components in an adjacency matrix m(taken from gmcpLite codebase)
+# conn.comp <- function(m) {
+#   N <- 1:ncol(m)
+#   M <- numeric(0)
+#   out <- list()
+#   while (length(N) > 0) {
+#     Q <- setdiff(N, M)[1]
+#     while (length(Q) > 0) {
+#       w <- Q[1]
+#       M <- c(M, w)
+#       Q <- setdiff(unique(c(Q, which(!is.na(m[w, ])))), M)
+#     }
+#     out <- c(out, list(M))
+#     N <- setdiff(N, M)
+#     M <- numeric(0)
+#   }
+#   return(out)
+# }
+#---------------------- -
+
+#---------------------- -
+# Partition hypotheses into cliques (complete subgraphs) of the known-correlation graph.
+# Unlike conn.comp which finds connected components, this ensures every pair within
+# a group has a known (non-NA) correlation, so the submatrix can safely be passed
+# to pmvnorm. Uses a greedy algorithm: nodes with the most unknown correlations
+# are placed first, and each node is added to the first clique where it fits.
+#---------------------- -
+clique.partition <- function(m) {
+  n <- ncol(m)
+  if (n == 1) return(list(1))
+
+  # known[i,j] = TRUE iff correlation between i and j is specified (non-NA) and i != j
+  known <- !is.na(m) & (row(m) != col(m))
+
+  # Order nodes by number of unknown (NA) correlations descending — hardest to place first
+  na.count <- sapply(seq_len(n), function(i) sum(is.na(m[i, -i])))
+  node.order <- order(na.count, decreasing = TRUE)
+
+  cliques <- list()
+  for (node in node.order) {
+    placed <- FALSE
+    for (k in seq_along(cliques)) {
+      # Node can join clique k only if it has known correlation with every existing member
+      if (all(known[node, cliques[[k]]])) {
+        cliques[[k]] <- c(cliques[[k]], node)
+        placed <- TRUE
+        break
+      }
     }
-    out <- c(out, list(M))
-    N <- setdiff(N, M)
-    M <- numeric(0)
+    if (!placed) {
+      cliques <- c(cliques, list(node))
+    }
   }
-  return(out)
+  return(cliques)
 }
 #---------------------- -
+
+# Choose algorithm based on dimension
+chooseMVTAlgo <- function(mvtnorm_dimension) {
+  # Choose algorithm based on dimension:
+  # - Miwa: Fast and accurate for dimensions <= 20
+  # - GenzBretz: For dimensions > 20 (Miwa becomes inaccurate beyond 20 dimensions)
+  mvtnorm_algo <- if (mvtnorm_dimension <= 20) {
+    mvtnorm::Miwa(steps = 128, checkCorr = FALSE, maxval = 1e3)
+  } else {
+    mvtnorm::GenzBretz(maxpts = 25000, abseps = 0.001, releps = 0)
+  }
+
+  return(mvtnorm_algo)
+}
