@@ -164,7 +164,8 @@ getPreSimObjs <- function(gmcpSimObj) {
         WH = WH,
         HypoMap = HypoMap,
         Scale = "Score",
-        planSSCum = planSSCum
+        planSSCum = planSSCum,
+        mvtnorm_algo = gmcpSimObj$mvtnorm_algo
       )
 
       time2 <- Sys.time()

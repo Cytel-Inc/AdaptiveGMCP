@@ -4,7 +4,7 @@
 #
 # --------------------------------------------------------------------------------------------------
 
-perLookTest <- function(Arms.SS.Incr, SummStat, mcpObj) {
+perLookTest <- function(Arms.SS.Incr, SummStat, mcpObj, mvtnorm_algo) {
   tryCatch(
     {
       p_raw <- unlist(SummStat[, grep("RawPvalues", names(SummStat))]) ## Simulated raw p-values
@@ -33,7 +33,7 @@ perLookTest <- function(Arms.SS.Incr, SummStat, mcpObj) {
           }
 
           mcpObj$CutOff <- mcpObj$pValBdry$Threshold[mcpObj$CurrentLook]
-          mcpObj <- PerLookMCPAnalysis(mcpObj) # Perform Combining p-value Test
+          mcpObj <- PerLookMCPAnalysis(mcpObj, mvtnorm_algo = mvtnorm_algo) # Perform Combining p-value Test
           return(mcpObj)
           #------------------------------------------------------------------------------------
         } else if (mcpObj$Method == "CER") # For CER

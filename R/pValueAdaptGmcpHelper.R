@@ -4,54 +4,23 @@
 #
 # --------------------------------------------------------------------------------------------------
 
-# The file contains supporting functions for Adaptive GMCP Analysis Function AdaptGMCP_Analysis/adaptGMCP_PC(.) ----
-## Author: Ajoy.M
-
-###### DEPRECATED: ChooseAlgoForMVN() ######
-# This function has been deprecated in favor of dimension-based algorithm selection.
-# Algorithm is now chosen once in simMAMSMEP() based on (nArms-1)*nEps dimension
-# and stored in gmcpSimObj$mvtnorm_algo for consistent use throughout simulations.
-# 
-# Reason for deprecation:
-# - Checking determinant thousands of times is a performance bottleneck
-# - Both Miwa and GenzBretz fail on singular matrices, so determinant check doesn't help
-# - Dimension is the appropriate criterion (Miwa accurate only up to 20 dimensions)
-#
-# ChooseAlgoForMVN <- function(sigma) {
-#   is_singular <- abs(det(sigma)) < .Machine$double.eps
-#   if (is_singular) {
-#     browser()
-#     algo <- mvtnorm::GenzBretz(
-#       maxpts = 25000,
-#       abseps = 0.001,
-#       releps = 0
-#     )
-#   } else {
-#     algo <- mvtnorm::Miwa(
-#       steps = 128,
-#       checkCorr = F,
-#       maxval = 1e3
-#     )
-#   }
-#   return(algo)
-# }
-
+# The file contains supporting functions for Adaptive GMCP analysis function adaptGMCP_PC(.) ----
 #----------------------- -
 # For Per look testing
 #----------------------- -
-PerLookMCPAnalysis <- function(mcpObj) {
+PerLookMCPAnalysis <- function(mcpObj, mvtnorm_algo) {
   if (mcpObj$CurrentLook == 1) {
-    WH_Correction <- mcpObj$WH
+    WH_Collection <- mcpObj$WH
   } else {
-    WH_Correction <- getICIndex(mcpObj)
+    WH_Collection <- getICIndex(mcpObj)
   }
 
   # Weight Table Preparation for outputs
-  HypoTab <- WH_Correction[, 1:(ncol(WH_Correction) / 2)]
+  HypoTab <- WH_Collection[, 1:(ncol(WH_Collection) / 2)]
   InterHyp <- apply(HypoTab, 1, function(h) {
     paste(names(HypoTab)[which(h == 1)], collapse = ",")
   })
-  InterWeight <- apply(WH_Correction, 1, function(h) {
+  InterWeight <- apply(WH_Collection, 1, function(h) {
     J <- which(h[1:(length(h) / 2)] == 1)
     w <- h[((length(h) / 2) + 1):length(h)]
     paste(w[J], collapse = ",")
@@ -64,21 +33,18 @@ PerLookMCPAnalysis <- function(mcpObj) {
   #------------------------------------------
 
   P_Adj0 <- Adj_Method <- c()
-  for (intHyp in 1:nrow(WH_Correction)) {
+  for (intHyp in 1:nrow(WH_Collection)) {
     # print(intHyp)
     adjOut <- compute_adjP(
-      h = WH_Correction[intHyp, ],
+      h = WH_Collection[intHyp, ],
       cr = mcpObj$Correlation,
       p = mcpObj$p_raw,
-      test.type = mcpObj$test.type
+      test.type = mcpObj$test.type, 
+      mvtnorm_algo = mvtnorm_algo
     )
     P_Adj0 <- c(P_Adj0, adjOut$adj_pj)
     Adj_Method <- c(Adj_Method, adjOut$adj_method)
   }
-
-  # P_Adj <- as.data.frame(apply(WH_Correction,1,compute_adjP,
-  #                              p=mcpObj$p_raw ,cr=mcpObj$Correlation, test.type = mcpObj$test.type))
-  #
 
   P_Adj <- data.frame(P_Adj0,row.names = NULL)
   colnames(P_Adj) <- paste("PAdj", mcpObj$CurrentLook, sep = "")
@@ -601,7 +567,7 @@ StopTrial <- function(mcpObj) {
 
 #---------------------- -
 # Combination of parametric and non-parametric test(one sided)
-comb.test <- function(p, cr, w) {
+comb.test <- function(p, cr, w, mvtnorm_algo) {
   if (length(cr) > 1) {
     conn <- conn.comp(cr)
   } else {
@@ -625,6 +591,9 @@ comb.test <- function(p, cr, w) {
 
 
   e <- sapply(conn, function(edx) {
+    ###############
+    # browser()
+    ###############
     if (length(edx) > 1) # disjoint set with known distribution: Parametric One Sided Test
       {
         q <- min(as.numeric(p[edx]) / as.numeric(w[edx]))
@@ -634,7 +603,7 @@ comb.test <- function(p, cr, w) {
         corr_mat <- cr[edx, edx]
 
         p_param <- (1 - mvtnorm::pmvnorm(
-          lower = -Inf, upper = upper, corr = corr_mat, algorithm = gmcpSimObj$mvtnorm_algo
+          lower = -Inf, upper = upper, corr = corr_mat, algorithm = mvtnorm_algo
         ))
         return(min(1, p_param / sum(as.numeric(w[edx])))) # Partial Parametric
       } else { # disjoint set with unknown distribution: Non-Parametric One Sided Test
@@ -657,7 +626,7 @@ sidak.test <- function(p, w) {
 
 #---------------------- -
 # Preparation of inputs for adjusted p-value computation
-compute_adjP <- function(h, cr, p, test.type) {
+compute_adjP <- function(h, cr, p, test.type, mvtnorm_algo) {
   n <- length(h)
   I <- h[1:(n / 2)]
   w <- h[((n / 2) + 1):n]
@@ -669,7 +638,7 @@ compute_adjP <- function(h, cr, p, test.type) {
   }
 
   if (test.type == "Partly-Parametric" || test.type == "Dunnett" || test.type == "Bonf") {
-    testOut <- comb.test(p[e], cr[e, e], w[e])
+    testOut <- comb.test(p[e], cr[e, e], w[e], mvtnorm_algo = mvtnorm_algo)
     adj_pj <- testOut$AdjPvalue
     adj_method <- testOut$adjMethod
   } else if (test.type == "Sidak") {

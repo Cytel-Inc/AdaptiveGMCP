@@ -69,7 +69,8 @@ SingleSimCombPValue <- function(simID, gmcpSimObj, preSimObjs) {
       mcpObj$rawpvalues$stage2 <- as.vector(unlist(SummStat[, grep("^RawPvalues", names(SummStat))]))
     }
     # Perform per look Test
-    mcpObj <- perLookTest(Arms.SS.Incr = Arms.SS.Incr, SummStat = SummStat, mcpObj = mcpObj)
+    mcpObj <- perLookTest(Arms.SS.Incr = Arms.SS.Incr, SummStat = SummStat, mcpObj = mcpObj,
+                          mvtnorm_algo = gmcpSimObj$mvtnorm_algo)
 
     # Available Arms & hypothesis after rejection
     mcpObj$ArmsPresent <- getArmsPresent(ArmsPresent = mcpObj$ArmsPresent, rejflags = mcpObj$rej_flag_Curr, HypoMap = mcpObj$HypoMap)
@@ -192,7 +193,8 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
       # Storing the first looks incremental data to compute next look cumulative data
       IncrLookSummaryPrev <- currLookDataIncr
       # Perform per look Test
-      mcpObj <- perLookTest(Arms.SS.Incr = Arms.SS.Incr, SummStat = SummStat_Stage1, mcpObj = mcpObj)
+      mcpObj <- perLookTest(Arms.SS.Incr = Arms.SS.Incr, SummStat = SummStat_Stage1, mcpObj = mcpObj,
+                            mvtnorm_algo = gmcpSimObj$mvtnorm_algo)
 
       # Available Arms & hypothesis after rejection
       mcpObj$ArmsPresent <- getArmsPresent(ArmsPresent = mcpObj$ArmsPresent, rejflags = mcpObj$rej_flag_Curr, HypoMap = mcpObj$HypoMap)
@@ -243,7 +245,7 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
         mcpObj$Stage2allocRatio <- unlist(CurrSSLk) / unlist(CurrSSLk[1])
         # Compute the Stage2 adaptive boundaries
 
-        AdaptResults <- adaptBdryCER(mcpObj)
+        AdaptResults <- adaptBdryCER(mcpObj, mvtnorm_algo = gmcpSimObj$mvtnorm_algo)
 
         if (gmcpSimObj$Debug) {
           ### Added for debugging purposes, should be removed once the code is verified to be working fine
@@ -477,7 +479,8 @@ SingleSimCER <- function(simID, gmcpSimObj, preSimObjs) {
           # SummStat[, grep("RawPvalues", names(SummStat))] <- adapted_p_value_stage2
         }
         # Perform per look Test
-        mcpObj <- perLookTest(Arms.SS.Incr = Arms.SS.Incr, SummStat = SummStat, mcpObj = mcpObj)
+        mcpObj <- perLookTest(Arms.SS.Incr = Arms.SS.Incr, SummStat = SummStat, mcpObj = mcpObj,
+                              mvtnorm_algo = gmcpSimObj$mvtnorm_algo)
 
         # Available Arms & hypothesis after rejection
         mcpObj$ArmsPresent <- getArmsPresent(ArmsPresent = mcpObj$ArmsPresent, rejflags = mcpObj$rej_flag_Curr, HypoMap = mcpObj$HypoMap)

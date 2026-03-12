@@ -5,29 +5,10 @@
 # --------------------------------------------------------------------------------------------------
 
 # Perform Stage-1 Test -------------------------- -
-PerformStage1Test <- function(
-    nArms = 3,
-    nEps = 2,
-    EpType = "Binary",
-    nLooks = 2,
-    nHypothesis = nEps * (nArms - 1),
-    sigma = list("Ep1" = c(1, 1, 1), "Ep2" = c(1, 1, 1)),
-    prop.ctr = list("EP1" = 0.1, "EP2" = 0.2),
-    allocRatio = c(1, 1, 1),
-    SampleSize = 500,
-    alpha = 0.025,
-    info_frac = c(0.5, 1),
-    typeOfDesign = "asOF",
-    deltaWT = 0,
-    deltaPT1 = 0,
-    gammaA = 2,
-    des.type = "MAMSMEP",
-    test.type = "Partly-Parametric",
-    Stage1Pvalues = c(0.00045, 0.0952, 0.0225, 0.1104),
-    HypoMap,
-    CommonStdDev,
-    WH) {
-
+PerformStage1Test <- function(nArms, nEps, EpType, nLooks, nHypothesis, 
+    sigma, prop.ctr, allocRatio, SampleSize, alpha, info_frac, typeOfDesign, 
+    deltaWT, deltaPT1, gammaA, des.type, test.type, Stage1Pvalues, HypoMap,
+    CommonStdDev, WH, mvtnorm_algo) {
   # Stage-Wise Cumulative Sample Size
   SS_alloc <- getPlanAllocatedSamples(SS = SampleSize, allocRatio = allocRatio, info_frac = info_frac)
   SS_Cum <- SS_alloc$CumulativeSamples
@@ -49,7 +30,8 @@ PerformStage1Test <- function(
     alpha = alpha, info_frac = info_frac, typeOfDesign = typeOfDesign,
     deltaWT = deltaWT, deltaPT1 = deltaPT1, gammaA = gammaA, userAlphaSpending = userAlphaSpending,
     test.type = test.type,
-    Sigma = Sigma, WH = WH, HypoMap = HypoMap, Scale = "Score", planSSCum = SS_Cum
+    Sigma = Sigma, WH = WH, HypoMap = HypoMap, Scale = "Score", planSSCum = SS_Cum,
+    mvtnorm_algo = mvtnorm_algo
   )
 
   # Stage1 Analysis

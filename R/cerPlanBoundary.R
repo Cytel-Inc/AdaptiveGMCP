@@ -5,22 +5,10 @@
 # --------------------------------------------------------------------------------------------------
 
 #### Compute plan boundary for parametric, non-parametric and mixed case
-planBdryCER <- function(nHypothesis,
-                        nEps,
-                        nLooks,
-                        alpha,
-                        info_frac,
-                        typeOfDesign,
-                        deltaWT,
-                        deltaPT1,
-                        gammaA,
-                        userAlphaSpending,
-                        test.type,
-                        Sigma,
-                        WH,
-                        HypoMap,
-                        Scale,
-                        planSSCum) {
+planBdryCER <- function(nHypothesis, nEps, nLooks, alpha, info_frac,
+                        typeOfDesign, deltaWT, deltaPT1, gammaA,
+                        userAlphaSpending, test.type, Sigma, WH,
+                        HypoMap, Scale, planSSCum, mvtnorm_algo) {
   Method <- c()
   SubSets <- c()
   SignfLevelStage1 <- SignfLevelStage2 <- c()
@@ -99,7 +87,9 @@ planBdryCER <- function(nHypothesis,
         gIDX <- unique(HypoMap[edx, ]$Groups) # which endpoint
         #Exist probability for parametric sub-set at stage 1
         exitproblist <- c(exitproblist,
-                          exitProbParamStage1(gIDX = gIDX, hIDX = edx, cJ1, wJ = wJ, Sigma, Scale, underNull = TRUE))
+                          exitProbParamStage1(gIDX = gIDX, hIDX = edx, cJ1, wJ = wJ, 
+                            Sigma, Scale, mvtnorm_algo = mvtnorm_algo, 
+                            underNull = TRUE))
 
       } else {
         ## Non-Parametric ##
@@ -137,7 +127,8 @@ planBdryCER <- function(nHypothesis,
          #Exist probability for parametric sub-set at stage 2
          exitproblist <- c(exitproblist,
                            exitProbStage2(gIDX = gIDX, hIDX = edx, cJ2, cJ1 = cJ1, wJ = wJ,
-                                                         Sigma = Sigma, Scale = Scale, underNull = TRUE))
+                                          Sigma = Sigma, Scale = Scale, 
+                                          mvtnorm_algo = mvtnorm_algo, underNull = TRUE))
        } else {
          ## Non-Parametric ##
          PlanSSHyp <- getHypoSS(SS = planSSCum, HypoMap = HypoMap)
@@ -145,8 +136,8 @@ planBdryCER <- function(nHypothesis,
          #Exist probability for non parametric sub-set at stage 2
          exitproblist <- c(exitproblist,
                            exitProbStage2Nparam2(cJ2, cJ1, ss1 = ss1, ss2 = ss2,
-                                                 wJ, hIDX = edx,
-                                                 t1 = info_frac[1]))
+                                                 wJ, hIDX = edx, t1 = info_frac[1]),
+                                                 mvtnorm_algo = mvtnorm_algo)
        }
      }
      return(sum(na.omit(exitproblist)))

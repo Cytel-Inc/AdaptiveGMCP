@@ -75,6 +75,29 @@ adaptGMCP_CER <- function(
   GlobalIndexSet <- paste("H", 1:nHypothesis, sep = "")
   ArmsPresent <- 1:nArms
 
+  # SETTING MVTNORM ALGORITHM TYPE ###############################
+  # Dimension-based algorithm selection for mvtnorm::pmvnorm()
+  # Calculate the dimension of the multivariate normal distribution
+  mvtnorm_dimension <- (nArms - 1) * nEps
+  
+  # Choose algorithm based on dimension:
+  # - Miwa: Fast and accurate for dimensions <= 20
+  # - GenzBretz: For dimensions > 20 (Miwa becomes inaccurate beyond 20 dimensions)
+  if (mvtnorm_dimension <= 20) {
+    mvtnorm_algo <- mvtnorm::Miwa(
+      steps = 128,
+      checkCorr = FALSE,
+      maxval = 1e3
+    )
+  } else {
+    mvtnorm_algo <- mvtnorm::GenzBretz(
+      maxpts = 25000,
+      abseps = 0.001,
+      releps = 0
+    )
+  }
+  ################################################################
+
   # Map for arms and hypothesis
   HypoMap <- getHypoMap2(
     des.type = des.type, nHypothesis = nHypothesis,
@@ -161,7 +184,7 @@ adaptGMCP_CER <- function(
         des.type = des.type,
         test.type = test.type, Stage1Pvalues = mcpObj$p_raw,
         HypoMap = mcpObj$HypoMap,CommonStdDev = mcpObj$CommonStdDev,
-        WH = mcpObj$WH
+        WH = mcpObj$WH, mvtnorm_algo = mvtnorm_algo
       )
       cat("Planned Variance Covariance Matrix \n")
       print(Stage1Test$Stage1Obj$Sigma)
@@ -227,7 +250,8 @@ adaptGMCP_CER <- function(
                        AllocSampleSize = Stage1Test$Stage1Obj$AllocSampleSize,
                        EpType = mcpObj$lEpType,
                        prop.ctr = mcpObj$prop.ctr,
-                       t1 = info_frac[1])
+                       t1 = info_frac[1],
+                       mvtnorm_algo = mvtnorm_algo)
       cat("Table of CER and PCER values conditional on stage one p-values \n")
       print(CERTab)
       # #--------------------------------------
@@ -359,7 +383,7 @@ adaptGMCP_CER <- function(
           }
 
           # Modify the Stage2 boundaries
-          AdaptResults <- adaptBdryCER(mcpObj)
+          AdaptResults <- adaptBdryCER(mcpObj, mvtnorm_algo = mvtnorm_algo)
           mcpObj$AdaptObj <- AdaptResults
         }
 
