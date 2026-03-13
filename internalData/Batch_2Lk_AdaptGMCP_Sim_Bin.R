@@ -1083,17 +1083,19 @@ library(tidyverse)
 # dfInput <- read_csv("internalData/Inp_CER_Bin_2eps3arms.csv")
 # dfInput <- read_csv("internalData/Inp_CER_Bin_2eps.csv")
 # dfInput <- read_csv("internalData/Inp_CER_Cont_1ep3arms.csv")
-dfInput <- read_csv("internalData/TestsVsMartin_adagraph.csv")
+# dfInput <- read_csv("internalData/TestsVsMartin_adagraph.csv")
+dfInput <- read_csv("internalData/Mixed-2OrMoreEPs.csv")
 
 # sOutFilePrefix <- "Out_CER_Bin_1ep3arms"
-sOutFilePrefix <- "Out_TestsVsMartin_ag"
+sOutFilePrefix <- "Out_Mixed-2OrMoreEPs"
 # sOutFilePrefix <- "Out_CER_Cont_1ep3arms"
 sOutPath <- "internalData/"
 
+nModelsToRun <- dfInput$ModelID # Run all models
 # nModelsToRun <- c(108, 109, 110, 111, 116, 117, 118, 119, 120, 121, 122, 123,
 #                  124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,
 #                  136, 137, 138, 139)
-nModelsToRun <- 131 # 139 # S3, aggressive
+# nModelsToRun <- 131 # 139 # S3, aggressive
 # nModelsToRun <- c(138, 137, 136, 134, 132, 130, 128, 127, 125, 139, 123, 121,
 #                  118, 117, 114, 111, 108)
 
@@ -1101,9 +1103,9 @@ nModelsToRun <- 131 # 139 # S3, aggressive
 # To do a trial run, uncomment this block so that the tests are run with a
 # small number of simulations rather than the number specified in the input
 # file.
-dfInput$nSimulation <- 100 # 10000 # 5 #
-dfInput$nSimulation_Stage2 <- 50 # 100 # 1000
-dfInput$Parallel <- FALSE
+dfInput$nSimulation <- 5 # 100 # 10000 #
+dfInput$nSimulation_Stage2 <- 5 # 50 # 100 # 1000
+# dfInput$Parallel <- FALSE
 # dfInput$test.type <- "Parametric"
 # dfInput$SampleSize <- 10000
 

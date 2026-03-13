@@ -671,23 +671,23 @@ compute_adjP <- function(h, cr, p, test.type, mvtnorm_algo) {
 ### Such correlation matrices can occur in problems like population enrichment.
 ### The newly written function clique.partition() handles such matrices properly.
 # To find connected components in an adjacency matrix m(taken from gmcpLite codebase)
-# conn.comp <- function(m) {
-#   N <- 1:ncol(m)
-#   M <- numeric(0)
-#   out <- list()
-#   while (length(N) > 0) {
-#     Q <- setdiff(N, M)[1]
-#     while (length(Q) > 0) {
-#       w <- Q[1]
-#       M <- c(M, w)
-#       Q <- setdiff(unique(c(Q, which(!is.na(m[w, ])))), M)
-#     }
-#     out <- c(out, list(M))
-#     N <- setdiff(N, M)
-#     M <- numeric(0)
-#   }
-#   return(out)
-# }
+conn.comp <- function(m) {
+  N <- 1:ncol(m)
+  M <- numeric(0)
+  out <- list()
+  while (length(N) > 0) {
+    Q <- setdiff(N, M)[1]
+    while (length(Q) > 0) {
+      w <- Q[1]
+      M <- c(M, w)
+      Q <- setdiff(unique(c(Q, which(!is.na(m[w, ])))), M)
+    }
+    out <- c(out, list(M))
+    N <- setdiff(N, M)
+    M <- numeric(0)
+  }
+  return(out)
+}
 #---------------------- -
 
 #---------------------- -
