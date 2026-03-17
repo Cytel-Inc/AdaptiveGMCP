@@ -39,7 +39,7 @@ PerLookMCPAnalysis <- function(mcpObj, mvtnorm_algo) {
       h = WH_Collection[intHyp, ],
       cr = mcpObj$Correlation,
       p = mcpObj$p_raw,
-      test.type = mcpObj$test.type, 
+      test.type = mcpObj$test.type,
       mvtnorm_algo = mvtnorm_algo
     )
     P_Adj0 <- c(P_Adj0, adjOut$adj_pj)
@@ -570,10 +570,10 @@ StopTrial <- function(mcpObj) {
 comb.test <- function(p, cr, w, mvtnorm_algo) {
   if (length(cr) > 1) {
     # We have stopped using conn.comp() in favor of clique.partition().
-    # conn.comp() finds connected components in the correlation graph, 
+    # conn.comp() finds connected components in the correlation graph,
     # which can lead to groups with unknown correlations (NA) that can't be handled by pmvnorm.
-    # conn <- conn.comp(cr)
-    conn <- clique.partition(cr)
+    conn <- conn.comp(cr)
+    # conn <- clique.partition(cr)
   } else {
     conn <- 1
   }
@@ -659,10 +659,10 @@ compute_adjP <- function(h, cr, p, test.type, mvtnorm_algo) {
 
 #---------------------- -
 ### We have stopped using conn.comp() in favor of clique.partition().
-### conn.comp() finds connected components in the correlation graph, 
+### conn.comp() finds connected components in the correlation graph,
 ### which can lead to groups with unknown correlations (NA) that can't be handled by pmvnorm.
-### E.g. using conn.comp with a correlation matrix like the following results in 
-### a single group of all 4 hypotheses, even though the correlation between 
+### E.g. using conn.comp with a correlation matrix like the following results in
+### a single group of all 4 hypotheses, even though the correlation between
 ### H1-H4 and H2-H3 is unknown (NA), which would cause pmvnorm to fail:
 ### corr <- matrix(c(1, 0.5, 0.5, NA,
 ###                  0.5, 1, NA, 0.5,
