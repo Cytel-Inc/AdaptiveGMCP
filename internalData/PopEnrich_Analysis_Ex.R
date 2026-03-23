@@ -1,6 +1,82 @@
 # Example for analysis in the population enrichment case
 library(AdaptGMCP)
 
+# EXAMPLE 2 #############################################
+# Phase-3 clinical trial in severe oral mucositis
+# 2 doses (low, high) compared to placebo, 2 normal endpoints (primary and secondary) evaluated
+# In addition to the full population, a subgroup of patients with HPV+ status is also evaluated.
+# This leads to an 8-hypothesis population enrichment problem:
+# H1/H2: full population, primary endpoint, dose low/high
+# H3/H4: full population, secondary endpoint, dose low/high
+# H5/H6: HPV+ subgroup, primary endpoint, dose low/high
+# H7/H8: HPV+ subgroup, secondary endpoint, dose low/high
+# Note that the hypotheses are arranged in this order: population, endpoint, dose.
+
+# Weights for the graph nodes (hypotheses)
+wi <- c(0.35, 0.35, 0, 0, 0.15, 0.15, 0, 0)
+names(wi) <- c("H1", "H2", "H3", "H4", "H5", "H6", "H7", "H8")
+
+# Transition matrix for the graph:
+G <- matrix(
+  c(
+  # H1    H2    H3    H4    H5    H6    H7    H8
+    0,    0.2,  0.4,  0,    0.2,  0.2,  0,    0,    # H1
+    0.2,  0,    0,    0.4,  0.2,  0.2,  0,    0,    # H2
+    0,    1/3,  0,    0,    1/3,  1/3,  0,    0,    # H3
+    1/3,  0,    0,    0,    1/3,  1/3,  0,    0,    # H4
+    0.2,  0.2,  0,    0,    0,    0.2,  0.4,  0,    # H5
+    0.2,  0.2,  0,    0,    0.2,  0,    0,    0.4,  # H6
+    1/3,  1/3,  0,    0,    0,    1/3,  0,    0,    # H7
+    1/3,  1/3,  0,    0,    1/3,  0,    0,    0     # H8
+  ),
+  nrow = 8, byrow = TRUE,
+  dimnames = list(
+    c("H1","H2","H3","H4","H5","H6","H7","H8"),
+    c("H1","H2","H3","H4","H5","H6","H7","H8")
+  )
+)
+
+corr <- matrix(
+  c(
+  # H1          H2          H3          H4          H5          H6          H7          H8
+    1,          0.5,        NA,         NA,         0.6324555,  0.3162278,  NA,         NA,         # H1
+    0.5,        1,          NA,         NA,         0.3162278,  0.6324555,  NA,         NA,         # H2
+    NA,         NA,         1,          0.5,        NA,         NA,         0.6324555,  0.3162278,  # H3
+    NA,         NA,         0.5,        1,          NA,         NA,         0.3162278,  0.6324555,  # H4
+    0.6324555,  0.3162278,  NA,         NA,         1,          0.5,        NA,         NA,         # H5
+    0.3162278,  0.6324555,  NA,         NA,         0.5,        1,          NA,         NA,         # H6
+    NA,         NA,         0.6324555,  0.3162278,  NA,         NA,         1,          0.5,        # H7
+    NA,         NA,         0.3162278,  0.6324555,  NA,         NA,         0.5,        1           # H8
+  ),
+  nrow = 8, byrow = TRUE,
+  dimnames = list(
+    paste0("H", 1:8),
+    paste0("H", 1:8)
+  )
+)
+
+conn.comp(corr)
+clique.partition(corr)
+
+# Test type
+test <- "Partly-Parametric"
+
+# Type I error
+alp <- 0.025
+
+# Info fraction
+t <- 1 # c(0.5, 1)
+
+# Design type
+des <- "asOF"
+
+# Calling the analysis function for p-value combination method
+# Use these p-values: p =(0.21, 0.04, 0.01, 0.0155, 0.02, 0.01, 0.009, 0.003)
+out <- adaptGMCP_PC(WI=wi, G=G, test.type = test, alpha = alp, info_frac = t,
+                    typeOfDesign = des, Correlation = corr,
+                    Selection = T, UpdateStrategy = T, plotGraphs = T)
+#########################################################
+
 # EXAMPLE 1 #############################################
 # Problem: Full population and a subpopulation (50% of full population)
 # High dose and low dose of the drug being tested
@@ -36,7 +112,7 @@ test <- "Dunnett" # "Bonf" # "Partly-Parametric" #
 alp <- 0.025
 
 # Info fraction
-t <- c(0.5, 1) # This is a fixed sample design
+t <- c(0.5, 1)
 
 # Design type
 des <- "asOF"
@@ -56,53 +132,10 @@ print(x)
 y <- clique.partition(corr)
 print(y)
 
-# Calling the function
+# Calling the analysis function for p-value combination method
 # Use these p-values: p(H1) = 0.00025, p(H2) = 0.0952, p(H3) = 0.0245, p(H4) = 0.1104
 out <- adaptGMCP_PC(WI=wi, G=g, test.type = test, alpha = alp, info_frac = t,
                     typeOfDesign = des, Correlation = corr,
                     Selection = T, UpdateStrategy = T, plotGraphs = T)
+#########################################################
 
-# EXAMPLE 2 #############################################
-# 8-hypothesis population enrichment problem: 2 doses (dose 1, dose 2) x 2 endpoints
-# (primary, secondary) x 2 populations (full population, HPV+ subgroup).
-# H1/H2: primary endpoint, full population, dose 1/2 (initial weight 0.35 each).
-# H3/H4: secondary endpoint, full population, dose 1/2 (initial weight 0).
-# H5/H6: primary endpoint, HPV+ subgroup, dose 1/2 (initial weight 0.15 each).
-# H7/H8: secondary endpoint, HPV+ subgroup, dose 1/2 (initial weight 0).
-G <- matrix(
-  c(
-  # H1    H2    H3    H4    H5    H6    H7    H8
-    0,    0.2,  0.4,  0,    0.2,  0.2,  0,    0,    # H1
-    0.2,  0,    0,    0.4,  0.2,  0.2,  0,    0,    # H2
-    0,    1/3,  0,    0,    1/3,  1/3,  0,    0,    # H3
-    1/3,  0,    0,    0,    1/3,  1/3,  0,    0,    # H4
-    0.2,  0.2,  0,    0,    0,    0.2,  0.4,  0,    # H5
-    0.2,  0.2,  0,    0,    0.2,  0,    0,    0.4,  # H6
-    1/3,  1/3,  0,    0,    0,    1/3,  0,    0,    # H7
-    1/3,  1/3,  0,    0,    1/3,  0,    0,    0     # H8
-  ),
-  nrow = 8, byrow = TRUE,
-  dimnames = list(
-    c("H1","H2","H3","H4","H5","H6","H7","H8"),
-    c("H1","H2","H3","H4","H5","H6","H7","H8")
-  )
-)
-
-corr <- matrix(
-  c(
-  # H1    H2    H3    H4    H5    H6    H7    H8
-    1,    0.5,  NA,   NA,   1,    0.5,  NA,   NA,   # H1
-    0.5,  1,    NA,   NA,   0.5,  1,    NA,   NA,   # H2
-    NA,   NA,   1,    0.5,  NA,   NA,   1,    0.5,  # H3
-    NA,   NA,   0.5,  1,    NA,   NA,   0.5,  1,    # H4
-    1,    0.5,  NA,   NA,   1,    0.5,  NA,   NA,   # H5
-    0.5,  1,    NA,   NA,   0.5,  1,    NA,   NA,   # H6
-    NA,   NA,   1,    0.5,  NA,   NA,   1,    0.5,  # H7
-    NA,   NA,   0.5,  1,    NA,   NA,   0.5,  1     # H8
-  ),
-  nrow = 8, byrow = TRUE,
-  dimnames = list(
-    paste0("H", 1:8),
-    paste0("H", 1:8)
-  )
-)

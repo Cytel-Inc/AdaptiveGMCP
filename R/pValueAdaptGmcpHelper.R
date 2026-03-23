@@ -222,7 +222,7 @@ getRawPValues <- function(mcpObj) {
 #---------------------- -
 
 #---------------------- -
-terminateTrial <- function(mcpObj) {
+trialContinuationDecision <- function(mcpObj) {
   Stop_Trial <- StopTrial(mcpObj)
 
   if (!Stop_Trial) {
@@ -572,8 +572,8 @@ comb.test <- function(p, cr, w, mvtnorm_algo) {
     # We have stopped using conn.comp() in favor of clique.partition().
     # conn.comp() finds connected components in the correlation graph,
     # which can lead to groups with unknown correlations (NA) that can't be handled by pmvnorm.
-    conn <- conn.comp(cr)
-    # conn <- clique.partition(cr)
+    # conn <- conn.comp(cr)
+    conn <- clique.partition(cr)
   } else {
     conn <- 1
   }
