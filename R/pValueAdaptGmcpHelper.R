@@ -42,8 +42,14 @@ PerLookMCPAnalysis <- function(mcpObj, mvtnorm_algo) {
       test.type = mcpObj$test.type,
       mvtnorm_algo = mvtnorm_algo
     )
-    P_Adj0 <- c(P_Adj0, adjOut$adj_pj)
-    Adj_Method <- c(Adj_Method, adjOut$adj_method)
+
+    if (is.list(adjOut)) {
+      P_Adj0 <- c(P_Adj0, adjOut$adj_pj)
+      Adj_Method <- c(Adj_Method, adjOut$adj_method)
+    } else {
+      P_Adj0 <- c(P_Adj0, NA)
+      Adj_Method <- c(Adj_Method, NA)
+    }
   }
 
   P_Adj <- data.frame(P_Adj0,row.names = NULL)
